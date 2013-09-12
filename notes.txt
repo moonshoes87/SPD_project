@@ -1,0 +1,22 @@
+Need to figure out where the Data library comes from.  Do I need to write a program parsing magic_measurements.txt?  I kind of doubt it, but I'm not sure.  
+
+def read_magic_file() in thellier_gui.....  
+
+
+
+This is how the data gets parsed and whatever within thellier_GUI:
+
+class Arai_GUI(wx.Frame):
+
+default self.magic_file = ./magic_measurements.txt # this is how self.get_data functions on initialization
+
+def on_menu_open_magic_file(self, event):
+...
+	self.Data = self.get_data()  # this is the key one
+	self.Data_info=self.get_data_info()
+
+ultimately returns Data
+...
+
+
+I probably want to use def get_PI_parameters().  However, it appears (possibly) that one must do both self.get_data and then self.get_PI_parameters.  At the start of self.get_data, self.Data = {}.  However, at the start of self.get_PI_parameters(), self.Data is referenced as if it were full.  So....
