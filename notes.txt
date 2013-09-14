@@ -1,8 +1,7 @@
 Need to figure out where the Data library comes from.  Do I need to write a program parsing magic_measurements.txt?  I kind of doubt it, but I'm not sure.  
 
-def read_magic_file() in thellier_gui.....  
 
-
+def magic_read(self,infile):  # called from  self.get_data.  reads magic file and returns a dictionary
 
 This is how the data gets parsed and whatever within thellier_GUI:
 
@@ -13,6 +12,8 @@ default self.magic_file = ./magic_measurements.txt # this is how self.get_data f
 def on_menu_open_magic_file(self, event):
 ...
 	self.Data = self.get_data()  # this is the key one
+		  calls self.magic_read() # parses file and returns data dictionary
+		  also self.get_specs() # parses file and returns list (?) of specimen names
 	self.Data_info=self.get_data_info()
 
 ultimately returns Data

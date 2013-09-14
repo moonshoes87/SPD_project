@@ -99,8 +99,11 @@ class Arai_GUI(wx.Frame):
     """
     title = "PmagPy Thellier GUI %s"%CURRENT_VRSION
     
-    def __init__(self):
+    def print_me(self):
+        print "Successful printing"
 
+    def __init__(self):
+        print "__init__ Arai_gui instance"
         global FIRST_RUN
         FIRST_RUN=True
         wx.Frame.__init__(self, None, wx.ID_ANY, self.title)
@@ -113,7 +116,7 @@ class Arai_GUI(wx.Frame):
         #self.accept_new_parameters=copy.deepcopy(accept_new_parameters_default)
         preferences=self.get_preferences()
         self.dpi = 100
-        
+
         self.preferences=preferences
         # inialize selecting criteria
         accept_new_parameters=self.read_criteria_from_file(self.WD+"/pmag_criteria.txt")          
@@ -2072,7 +2075,7 @@ class Arai_GUI(wx.Frame):
         self.Data,self.Data_hierarchy=self.get_data()
         print "self.Data"
 #        print self.Data
-        print self.Data['0238x5721062']['x_ptrm_check_starting_point']
+        print str(self.Data['0238x5721062']['x_ptrm_check_starting_point'])[:500]
         self.Data_info=self.get_data_info() 
 
         self.redo_specimens={}
@@ -3363,7 +3366,7 @@ class Arai_GUI(wx.Frame):
                     tmin=temperatures[tmin_i]
                     tmax=temperatures[tmax_i]
                     pars=self.get_PI_parameters(s,tmin,tmax)
-
+    
                     #-------------------------------------------------            
                     # check if pass the criteria
                     #-------------------------------------------------
@@ -5692,10 +5695,10 @@ class Arai_GUI(wx.Frame):
                 self.pars=self.get_PI_parameters(self.s,float(t1),float(t2))
                 
             self.update_GUI_with_new_interpretation()
-      
+
     def get_PI_parameters(self,s,tmin,tmax):
         print "Doing get_PI_parameters from thellier_gui_spd_lj.py"
-        print "self", self, self.Data
+        print "self", self, str(self.Data)[:500] + "..."
 
 
         def cart2dir(cart): # OLD ONE
@@ -6828,7 +6831,7 @@ class Arai_GUI(wx.Frame):
       print "doing get_data"
       print "self", self
       print "self.Data", self.Data
-      print "magic file", self.magic_file
+      print "magic file:", self.magic_file
 
       def tan_h(x, a, b):
             return a*tanh(b*x)
@@ -7629,8 +7632,8 @@ class Arai_GUI(wx.Frame):
       self.GUI_log.write("-I- number of samples in this project directory: %i\n"%len(Data_hierarchy['samples'].keys()))
 
       #print "done sort blocks to arai, zij. etc."
-      print "returning Data, data_hierarchy"
-#      print Data
+      print "returning Data, data_hierarchy.  This is the completion of self.get_data().  printing Data['0238x5721062']"
+      print str(Data["0238x5721062"])[:500] + "...."
       print "done with get_data"
       return(Data,Data_hierarchy)
 
@@ -7648,9 +7651,10 @@ class Arai_GUI(wx.Frame):
         data_er_ages={}
         data_er_sites={}
 
+
         # samples
         def read_magic_file(path,sort_by_this_name):
-            print "Doing a read_magic_file in thellier_gui in PintPars"
+            print "Doing a read_magic_file in thellier_gui"
             print path
             DATA={}
             fin=open(path,'rU')
@@ -7689,7 +7693,7 @@ class Arai_GUI(wx.Frame):
         Data_info["er_ages"]=data_er_ages
         
         print "data_info"
-        print Data_info
+        print str(Data_info)[:500]
         return(Data_info)
 
     #--------------------------------------------------------------    
@@ -8112,6 +8116,7 @@ class Arai_GUI(wx.Frame):
         """ 
         reads  a Magic template file, puts data in a list of dictionaries
         """
+        print "calling magic_read(self, infile)", infile
         hold,magic_data,magic_record,magic_keys=[],[],{},[]
         try:
             f=open(infile,"rU")
@@ -8157,6 +8162,9 @@ class Arai_GUI(wx.Frame):
         magictype=file_type.lower().split("_")
         Types=['er','magic','pmag','rmag']
         if magictype in Types:file_type=file_type.lower()
+        print "magic data:"
+        print str(magic_data)[:500] + "..."
+        print "file_type", file_type
         return magic_data,file_type
 
 
