@@ -102,7 +102,7 @@ class Arai_GUI(wx.Frame):
     def print_me(self):
         print "Successful printing"
 
-    def __init__(self):
+    def __init__(self, magic_file):
         print "__init__ Arai_gui instance"
         global FIRST_RUN
         FIRST_RUN=True
@@ -7633,7 +7633,9 @@ class Arai_GUI(wx.Frame):
 
       #print "done sort blocks to arai, zij. etc."
       print "returning Data, data_hierarchy.  This is the completion of self.get_data().  printing Data['0238x5721062']"
-      print str(Data["0238x5721062"])[:500] + "...."
+      print str(Data["0238x5721062"]['datablock'])#[:500] + "...."
+      print "Data[s]['pars']:"
+      print str(Data["0238x5721062"]['pars'])
       print "done with get_data"
       return(Data,Data_hierarchy)
 

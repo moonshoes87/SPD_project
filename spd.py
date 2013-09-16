@@ -78,11 +78,19 @@ class PintPars(object):
         self.start=self.t_Arai.index(tmin)
         self.end=self.t_Arai.index(tmax)
 
-        self.pars={}
-        self.pars['lab_dc_field']=Data[self.s]['pars']['lab_dc_field']
-        self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
+        # name of object at end is p
 
+        self.pars={}
+        print "pars"
+        print Data[self.s]['pars']
+        self.pars['lab_dc_field']=Data[self.s]['pars']['lab_dc_field']
+  #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
+        # for some reason missing any magic_method_codes.  possibly these would have been incorporated into the data from rmag_anisotropy or something
+        # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
+        # also, fix the weirdness of having to set the precise number for tmin and tmax
         self.pars['specimen_int_n']=self.end-self.start+1
+
+ 
 
     def York_Regression(self):
         #-------------------------------------------------
@@ -165,8 +173,7 @@ class PintPars(object):
 
     def calculate_all_statistics(self):
         self.York_Regression()
-        print "printing self.pars in spd.py"
-        print str(self.pars)[:500]
+
                 
 
 

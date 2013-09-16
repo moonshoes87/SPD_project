@@ -21,3 +21,36 @@ ultimately returns Data
 
 
 I probably want to use def get_PI_parameters().  However, it appears (possibly) that one must do both self.get_data and then self.get_PI_parameters.  At the start of self.get_data, self.Data = {}.  However, at the start of self.get_PI_parameters(), self.Data is referenced as if it were full.  So....
+
+
+
+
+  #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']                           
+        # for some reason missing any magic_method_codes.  possibly these would have been incorporated into the data from rmag_anisotr
+opy or something                                                                                                                     
+    # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_\
+gui or not                                         
+There's some stuff in the code like:
+
+        for rec in self.Data[self.s]['datablock']:
+          if "LT-NO" in rec['magic_method_codes']:
+              nrm0= "%.2e"%float(rec['measurement_magn_moment'])
+              break
+
+But nowhere do the magic_method codes get pulled out and organized
+                                                                             
+        # also, fix the weirdness of having to set the precise number for tmin and tmax    
+
+next:  
+       experiment with get_PI_parameters.  try running it in the console (using lj version), see what happens
+       
+
+sequence to get Data to feed into spd.py:
+>>> import lj_thellier_gui_spd as tgs
+>>> tgs
+<module 'lj_thellier_gui_spd' from 'lj_thellier_gui_spd.py'>
+>>> gui = tgs.Arai_GUI()
+__init__ Arai_gui instance
+.....
+>>> gui.Data
+.... (necessary Data for spd.py)
