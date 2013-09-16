@@ -5519,7 +5519,8 @@ class Arai_GUI():
         print "pars before importing spd:  ", pars
         import spd
         print "imported spd"
-        pint_pars = spd.PintPars(self.Data,self.s,tmin,tmax)
+        specimen = self.s
+        pint_pars = spd.PintPars(self.Data,specimen,tmin,tmax)
         print "about to 'calculate all statistics'"
         print "pint_pars.calculate_all_statistics()"
         pint_pars.calculate_all_statistics()
