@@ -54,3 +54,12 @@ __init__ Arai_gui instance
 .....
 >>> gui.Data
 .... (necessary Data for spd.py)
+gui.get_PI_parameters(gui.s, 273, 798)
+
+
+
+
+in lj_thellier_gui_spd
+
+added this into get_data()
+self.s = self.specimens[0]  # LORI WEIRD ADDITION 

@@ -168,11 +168,18 @@ class PintPars(object):
                 self.pars['magic_method_codes']+=":LP-PI-ALT-PTRM"
         if 'x_tail_check' in self.Data[self.s].keys():
             if len(self.Data[self.s]['x_tail_check'])>0:
-                self.pars['magic_method_codes']+=":LP-PI-BT-MD"        
+                self.pars['magic_method_codes']+=":LP-PI-BT-MD"
+        print "PintPars object, self.pars after york regression: "
+        print self.pars
+        print "finished with York_regression()"
 
 
     def calculate_all_statistics(self):
+        print "self.pars before York regression:"
+        print self.pars
+        print "calling calculate_all_statistics in spd.py"
         self.York_Regression()
+        print "done with calculate_all_statistics"
 
                 
 

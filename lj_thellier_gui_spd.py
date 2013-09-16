@@ -182,31 +182,6 @@ class Arai_GUI():
 
         #self.tmin_box.SetStringSelection("")
 
-    def on_delete_interpretation_button(self,event):
-        """ save the current interpretation.
-        """
-
-        #if self.s  in self.redo_specimens.keys():
-        #    del self.redo_specimens[self.s]
-        del self.Data[self.s]['pars']
-        self.Data[self.s]['pars']={}
-        self.Data[self.s]['pars']['lab_dc_field']=self.Data[self.s]['lab_dc_field']
-        self.Data[self.s]['pars']['er_specimen_name']=self.Data[self.s]['er_specimen_name']   
-        self.Data[self.s]['pars']['er_sample_name']=self.Data[self.s]['er_sample_name']   
-        self.Data[self.s]['pars']['er_sample_name']=self.Data[self.s]['er_sample_name']   
-        if sample in self.Data_samples.keys():
-            if self.s in self.Data_samples[sample].keys():
-                del self.Data_samples[sample][self.s]
-        self.tmin_box.SetValue("")
-        self.tmax_box.SetValue("")
-        self.clear_boxes()
-        self.draw_figure(self.s)
-        self.draw_sample_mean()
-        self.write_sample_box()
-
-    #----------------------------------------------------------------------
-            
-        
     def  write_acceptance_criteria_to_boxes(self):
         """ Update paleointensity Acceptance criteria boxes.
         """
@@ -4777,13 +4752,14 @@ class Arai_GUI():
 
     def get_PI_parameters(self,s,tmin,tmax):
         print "Doing get_PI_parameters from thellier_gui_spd_lj.py"
-        print "self", self, str(self.Data)[:500] + "..."
+#        print "self", self, str(self.Data)[:500] + "..."
 
 
         def cart2dir(cart): # OLD ONE
             """
             converts a direction to cartesian coordinates
             """
+            print "doing cart2dir in get_PI_parameters"
             Dir=[] # establish a list to put directions in
             rad=pi/180. # constant to convert degrees to radians
             R=sqrt(cart[0]**2+cart[1]**2+cart[2]**2) # calculate resultant vector length
@@ -4802,6 +4778,7 @@ class Arai_GUI():
 
 
         def dir2cart(d):
+            print "doing dir2cart in get_PI_parameters"
            # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
             ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
             d=array(d)
@@ -4828,9 +4805,11 @@ class Arai_GUI():
         """
         calcualte statisics 
         """
+        print "calculating statistics"
         pars=self.Data[s]['pars']
         datablock = self.Data[s]['datablock']
         pars=self.Data[s]['pars']
+        print "new pars", pars
         # get MagIC mothod codes:
 
         #pars['magic_method_codes']="LP-PI-TRM" # thellier Method
@@ -4844,20 +4823,27 @@ class Arai_GUI():
 
         zijdblock=self.Data[s]['zijdblock']        
         z_temperatures=self.Data[s]['z_temp']
-
+        print "got through a few stats"
         #print tmin,tmax,z_temperatures
         # check tmin
         if tmin not in t_Arai or tmin not in z_temperatures:
+            print "t_Arai   ", t_Arai
+            print "z_temperatures  ", z_temperatures
+            print "tmin not in t_Arai or not in z_temperatures"
             return(pars)
         
         # check tmax
         if tmax not in t_Arai or tmin not in z_temperatures:
+            print "returning pars because tmax not in t_Arai"
             return(pars)
+
+        print "got past first 2 if statements"
 
         start=t_Arai.index(tmin)
         end=t_Arai.index(tmax)
 
         if end-start < float(self.accept_new_parameters['specimen_int_n'] -1):
+          print "returning pars because??"
           return(pars)
                                                  
         #-------------------------------------------------
@@ -4874,6 +4860,7 @@ class Arai_GUI():
 
         zdata_segment=self.Data[s]['zdata'][zstart:zend+1]
 
+        print "elephant"
         #  PCA in 2 lines
         M = (zdata_segment-mean(zdata_segment.T,axis=1)).T # subtract the mean (along columns)
         [eigenvalues,eigenvectors] = linalg.eig(cov(M)) # attention:not always sorted
@@ -5529,14 +5516,16 @@ class Arai_GUI():
 ##                if 'sample_type' in Data_info["er_samples"][sample].keys():
 ##                    if Data_info["er_samples"][sample]['sample_type'] in ["Baked Clay","Baked Mud",
 
-
+        print "pars before importing spd:  ", pars
         import spd
         print "imported spd"
-        PintPars = spd.PintPars(self.Data,self.s,tmin,tmax)   
-        print PintPars.calculate_all_statistics()
-        #dog.noise()
+        pint_pars = spd.PintPars(self.Data,self.s,tmin,tmax)
+        print "about to 'calculate all statistics'"
+        print "pint_pars.calculate_all_statistics()"
+        pint_pars.calculate_all_statistics()
         print "giraffes are awesome"
-        return(pars)
+#        return(pars) original
+        return pint_pars
     
     
         
@@ -6101,6 +6090,7 @@ class Arai_GUI():
       #print "done sorting meas data"
       
       self.specimens=Data.keys()
+      self.s = self.specimens[0]  # LORI WEIRD ADDITION
       self.specimens.sort()
 
       
