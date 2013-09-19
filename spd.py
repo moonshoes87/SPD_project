@@ -62,6 +62,7 @@ class PintPars(object):
         print "OSTRICH making PintPars object"
         self.Data=Data
         self.s=specimen_name
+        print self.s
         self.datablock = Data[self.s]['datablock']
 
         self.x_Arai=Data[self.s]['x_Arai']
@@ -99,15 +100,15 @@ class PintPars(object):
         # modified from pmag.py
         #-------------------------------------------------               
 
-        x_Arai_segment= self.x_Arai[self.start:self.end+1]
+        x_Arai_segment= self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
         y_Arai_segment= self.y_Arai[self.start:self.end+1]
 
-        x_Arai_mean=mean(x_Arai_segment)
+        x_Arai_mean=mean(x_Arai_segment) # uses scipy mean function to get the mean of the x points
         y_Arai_mean=mean(y_Arai_segment)
 
         # equations (2),(3) in Coe (1978) for b, sigma
-        n=self.end-self.start+1
-        x_err=x_Arai_segment-x_Arai_mean
+        n=self.end-self.start+1  # n is the number of points involved
+        x_err=x_Arai_segment-x_Arai_mean  # seems to subtract the mean from each number in the x array (???).  it is a scipy array
         y_err=y_Arai_segment-y_Arai_mean
 
         # York b
@@ -117,7 +118,7 @@ class PintPars(object):
         york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b*sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
 
         # beta  parameter                
-        beta_Coe=abs(york_sigma/york_b)
+        beta_Coe=abs(york_sigma/york_b)  # absolute value of york sigma/york_b
 
         # y_T is the intercept of the extrepolated line
         # through the center of mass (see figure 7 in Coe (1978))
@@ -235,4 +236,4 @@ d = {'0238x5721062': {'x_ptrm_check_starting_point': array([ 0.1350966 ,  0.3164
        [-0.0126685 ,  0.0414368 , -0.01525894],
        [ 0.03558526, -0.04587624,  0.02147697],
        [ 0.03800954, -0.04953499, -0.0018531 ]])}}
-p = PintPars(d, '0238x5721062', 273, 798)
+#p = PintPars(d, '0238x5721062', 273, 798)

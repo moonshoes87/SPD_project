@@ -60,8 +60,6 @@ class Arai_GUI():
 
     def __init__(self, magic_file = "magic_measurements.txt"):
         print "__init__ Arai_gui instance"
-        global FIRST_RUN
-        FIRST_RUN=True
         self.redo_specimens={}
         self.currentDirectory = "/Users/nebula/Python/SPD_project"
         self.WD = "/Users/nebula/Python/SPD_project"
@@ -90,103 +88,15 @@ class Arai_GUI():
         self.specimens.sort()                   # get list of specimens
 
         self.get_previous_interpretation() # get interpretations from pmag_specimens.txt
-        FIRST_RUN=False
-
-
-        
-    def get_DIR(self):
-        """ Choose a working directory dialog
-        """
-        if "-WD" in sys.argv and FIRST_RUN:
-            ind=sys.argv.index('-WD')
-            self.WD=sys.argv[ind+1] 
+        print "data info: ", self.Data_info
 
     #----------------------------------------------------------------------
-
-    def on_menu_open_magic_file(self, event):
-        print "doing on_menu_open_magic_file"
-        dlg = wx.FileDialog(
-            self, message="choose a MagIC format measurement file",
-            defaultDir=self.currentDirectory, 
-            defaultFile="",
-            #wildcard=wildcard,
-            style=wx.OPEN | wx.CHANGE_DIR
-            )        
-        if dlg.ShowModal() == wx.ID_OK:
-            new_magic_file = dlg.GetPath()
-            #print "You chose the following file(s):"
-        dlg.Destroy()
-        self.magic_file=new_magic_file
-        path=new_magic_file.split("/")
-        self.WD=new_magic_file.strip(path[-1])
-                                                                
-        self.Data,self.Data_hierarchy=self.get_data()
-        print "self.Data"
-#        print self.Data
-        print str(self.Data['0238x5721062']['x_ptrm_check_starting_point'])[:500]
-        self.Data_info=self.get_data_info() 
-
-        self.redo_specimens={}
-        self.specimens=self.Data.keys()
-        self.specimens.sort()
-        self.specimens_box.SetItems(self.specimens)
-        self.s=self.specimens[0]
-        self.update_selection()
-
     #----------------------------------------------------------------------        
-
-    def on_menu_criteria_file(self, event):
-        
-        """
-        read pmag_criteria.txt file
-        and open changecriteria dialog
-        """
-
-    
-        dlg = wx.FileDialog(
-            self, message="choose a file in a pmagpy format",
-            defaultDir=self.currentDirectory, 
-            defaultFile="pmag_criteria.txt",
-            #wildcard=wildcard,
-            style=wx.OPEN | wx.CHANGE_DIR
-            )
-        if dlg.ShowModal() == wx.ID_OK:
-            criteria_file = dlg.GetPath()
-            print ("-I- Read new criteria file: %s\n"%criteria_file)
-        dlg.Destroy()
-
-        # inialize with Null values
-        tmp_acceptance_criteria,replace_acceptance_criteria=self.get_default_criteria()
-
-        # replace with values from file
-        replace_acceptance_criteria=self.read_criteria_from_file(criteria_file)
-
-        dia = Criteria_Dialog(None, replace_acceptance_criteria,title='Set Acceptance Criteria from file')
-        dia.Center()
-        if dia.ShowModal() == wx.ID_OK: # Until the user clicks OK, show the message            
-            self.On_close_criteria_box(dia)
 
 
 
     #----------------------------------------------------------------------        
 
-    def on_menu_criteria(self, event):
-        
-        """
-        Change acceptance criteria
-        and save it to pmag_criteria.txt
-        """
-                            
-
-        dia = Criteria_Dialog(None, self.accept_new_parameters,title='Set Acceptance Criteria')
-        dia.Center()
-        result = dia.ShowModal()
-
-        if result == wx.ID_OK: # Until the user clicks OK, show the message
-            self.On_close_criteria_box(dia)
-                
-    #----------------------------------------------------------------------
-            
 
     def read_criteria_from_file(self,criteria_file):
 
@@ -876,6 +786,8 @@ class Arai_GUI():
         # End function definitions
         ############
 
+# LJ  PROBABLY DO NOT NEED WHAT IS BELOW....
+    
         start_time=time.time()
         #------------------------------------------------
         # Clean work directory
@@ -1546,36 +1458,6 @@ class Arai_GUI():
         busy_frame.Destroy()
     #----------------------------------------------------------------------
 
-    def on_menu_open_interpreter_file(self, event):
-        try:
-            dirname=self.WD + "/thellier_interpreter"
-        except:
-            dirname=self.WD
-            
-        dlg = wx.FileDialog(self, "Choose an auto-interpreter output file", dirname, "", "*.*", wx.OPEN)
-        if dlg.ShowModal() == wx.ID_OK:
-            filename = dlg.GetFilename()
-            path=dlg.GetPath()
-        #print  filename
-        #print path
-        if "samples" in filename or "bounds" in filename:
-            ignore_n=4
-
-        elif "specimens" in filename or "all" in filename:
-            ignore_n=1
-        else:
-            return()
-        self.frame=MyForm(ignore_n,path)
-        self.frame.Show()
-
-    #----------------------------------------------------------------------
-      
-    def on_menu_open_interpreter_log(self, event):
-        dia = MyLogFileErrors( "Interpreter errors and warnings","%s/thellier_interpreter/thellier_interpreter.log"%(self.WD))
-        dia.Show()
-        dia.Center()
-        
-
 
     #----------------------------------------------------------------------
         
@@ -1959,34 +1841,7 @@ class Arai_GUI():
         print "done"
         print DATA
         return(DATA)
-                
 
-    def on_menu_MagIC_model_builder(self,event):
-        dia = MagIC_model_builder(self.WD,self.Data,self.Data_hierarchy)
-        dia.Show()
-        dia.Center()
-        self.Data,self.Data_hierarchy,self.Data_info={},{},{}
-        self.Data,self.Data_hierarchy=self.get_data() # Get data from magic_measurements and rmag_anistropy if exist.
-        self.Data_info=self.get_data_info() # get all ages, locations etc. (from er_ages, er_sites, er_locations)
-       
-    def on_menu_convert_to_magic(self,event):
-        dia = convert_generic_files_to_MagIC(self.WD)
-        dia.Show()
-        dia.Center()
-        self.magic_file=self.WD+"/"+"magic_measurements.txt"
-#        self.GUI_log=open("%s/Thellier_GUI.log"%self.WD,'w')
-        self.Data,self.Data_hierarchy={},{}
-        self.Data,self.Data_hierarchy=self.get_data() # Get data from magic_measurements and rmag_anistropy if exist.
-        self.Data_info=self.get_data_info() # get all ages, locations etc. (from er_ages, er_sites, er_locations)
-        self.redo_specimens={}
-        self.specimens=self.Data.keys()
-        self.specimens.sort()                                                                
-        self.specimens_box.SetItems(self.specimens)
-        self.s=self.specimens[0]
-        self.update_selection()
-
-    #----------------------------------------------------------------------  
-    #---------------------------------------------------------------------- 
 
 #===========================================================
 # calculate PI statistics
@@ -2924,57 +2779,6 @@ class Arai_GUI():
         self.zijplot.scatter([self.CART_rot[:,0][tmax_index]],[-1* self.CART_rot[:,2][tmax_index]],marker='s',s=50,facecolor='g',edgecolor ='k',zorder=100)
 
 
-##        # draw MAD-box
-##        self.accept_new_parameters['specimen_mad_scat']=True
-##        if 'specimen_mad_scat' in self.accept_new_parameters.keys() and 'specimen_int_mad' in self.accept_new_parameters.keys() :
-##            if self.accept_new_parameters['specimen_mad_scat']==True or self.accept_new_parameters['specimen_mad_scat'] in [1,"True","TRUE",'1']:
-##
-##                # center of mass 
-##                CM=array([CM_x,CM_y,CM_z])
-##
-##                # threshold value for the distance of the point from a line:
-##                # this is depends of MAD
-##                # if MAD= tan-1 [ sigma_perpendicular / sigma_max ]
-##                # then:
-##                # sigma_perpendicular_threshold=tan(MAD_threshold)*sigma_max
-##                sigma_perpendicular_threshold=abs(tan(radians(self.accept_new_parameters['specimen_int_mad'])) *  self.pars["specimen_PCA_sigma_max"] )
-##                mad_box_xy_x1,mad_box_xy_x2=[],[]                
-##                mad_box_xy_y1,mad_box_xy_y2=[],[]                
-##                mad_box_xz_x1,mad_box_xz_x2=[],[]                
-##                mad_box_xz_y1,mad_box_xz_y2=[],[]                
-##
-##                for i in range(len(xx)):
-##                    #xy_x_plus=array(xx[i],yy[i])
-##                                        
-##                    # X-Y projectoin
-##                    x_y_projection=cross(array(PCA_CART_rotated),array([0,0,1]))
-##                    x_y_projection=x_y_projection/sqrt(sum(x_y_projection**2))
-##                    new_vector1=array([xx[i],yy[i]])+2*sigma_perpendicular_threshold*array([x_y_projection[0],x_y_projection[1]])
-##                    new_vector2=array([xx[i],yy[i]])-2*sigma_perpendicular_threshold*array([x_y_projection[0],x_y_projection[1]])
-##                    mad_box_xy_x1.append(new_vector1[0])
-##                    mad_box_xy_y1.append(new_vector1[1])
-##                    mad_box_xy_x2.append(new_vector2[0])
-##                    mad_box_xy_y2.append(new_vector2[1])
-##                                                            
-##
-##                    # X-Z projectoin
-##                    x_z_projection=cross(array(PCA_CART_rotated),array([0,1,0]))
-##                    x_z_projection=x_z_projection/sqrt(sum(x_z_projection**2))
-##                    new_vector1=array([xx[i],zz[i]])+2*sigma_perpendicular_threshold*array([x_z_projection[0],x_z_projection[2]])
-##                    new_vector2=array([xx[i],zz[i]])-2*sigma_perpendicular_threshold*array([x_z_projection[0],x_z_projection[2]])
-##                    mad_box_xz_x1.append(new_vector1[0])
-##                    mad_box_xz_y1.append(new_vector1[1])
-##                    mad_box_xz_x2.append(new_vector2[0])
-##                    mad_box_xz_y2.append(new_vector2[1])
-##
-##
-##                #print mad_box_x1,mad_box_y1
-##                self.zijplot.plot(mad_box_xy_x1,mad_box_xy_y1,ls="--",c='k',lw=0.5)
-##                self.zijplot.plot(mad_box_xy_x2,mad_box_xy_y2,ls="--",c='k',lw=0.5)
-##                self.zijplot.plot(mad_box_xz_x1,mad_box_xz_y1,ls="--",c='k',lw=0.5)
-##                self.zijplot.plot(mad_box_xz_x2,mad_box_xz_y2,ls="--",c='k',lw=0.5)
-
-
 
 
         self.zijplot.set_xlim(xmin, xmax)
@@ -3064,26 +2868,6 @@ class Arai_GUI():
         self.canvas4.draw()
         #start_time_5=time.time() 
         #runtime_sec5 = start_time_5 - start_time_4
-
-    def on_pick(self, event):
-        # The event received here is of the type
-        # matplotlib.backend_bases.PickEvent
-        #
-        # It carries lots of information, of which we're using
-        # only a small amount here.
-        # 
-        box_points = event.artist.get_bbox().get_points()
-        msg = "You've clicked on a bar with coords:\n %s" % box_points
-        
-        dlg = wx.MessageDialog(
-            self, 
-            msg, 
-            "Click!",
-            wx.OK | wx.ICON_INFORMATION)
-
-        dlg.ShowModal() 
-        dlg.Destroy()        
-    
 
 
 

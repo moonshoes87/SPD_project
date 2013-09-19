@@ -46,15 +46,24 @@ next:
        
 
 sequence to get Data to feed into spd.py:
->>> import lj_thellier_gui_spd as tgs
->>> tgs
-<module 'lj_thellier_gui_spd' from 'lj_thellier_gui_spd.py'>
->>> gui = tgs.Arai_GUI()
-__init__ Arai_gui instance
-.....
->>> gui.Data
-.... (necessary Data for spd.py)
-gui.get_PI_parameters(gui.s, 273, 798)
+	 >>> import lj_thellier_gui_spd as tgs
+	 >>> tgs
+	 <module 'lj_thellier_gui_spd' from 'lj_thellier_gui_spd.py'>
+	 >>> gui = tgs.Arai_GUI()
+	 __init__ Arai_gui instance
+	 .....	 
+	>>> gui.Data
+	.... (necessary Data for spd.py)
+	gui.get_PI_parameters(gui.s, 273, 798)
+
+or:
+	import new_lj_thellier_gui_spd as tgs
+	gui = tgs.Arai_GUI()
+	data = gui.Data
+	specimen = gui.Data.keys()[0]
+	import spd
+	thing = spd.PintPars(specimen, data, 273, 798)
+	thing.do_all_statistics()
 
 
 
