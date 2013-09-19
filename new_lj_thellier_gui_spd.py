@@ -55,9 +55,6 @@ class Arai_GUI():
     """
     title = "PmagPy Thellier GUI %s"%CURRENT_VRSION
     
-    def print_me(self):
-        print "Successful printing"
-
     def __init__(self, magic_file = "magic_measurements.txt"):
         print "__init__ Arai_gui instance"
         self.redo_specimens={}
@@ -3015,7 +3012,7 @@ class Arai_GUI():
       # Read magic measurement file and sort to blocks
       #------------------------------------------------
 
-      # All data information is stored in Data[secimen]={}
+      # All data information is stored in Data[specimen]={}
       Data={}
       Data_hierarchy={}
       Data_hierarchy['samples']={}
@@ -3561,7 +3558,7 @@ class Arai_GUI():
         vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
         vds=sum(vector_diffs)  # vds calculation       
         zdata=array(zdata)
-
+    
         Data[s]['vector_diffs']=array(vector_diffs)
         Data[s]['vds']=vds
         Data[s]['zdata']=zdata
@@ -4551,5 +4548,5 @@ class Arai_GUI():
                    print " Something wrong with this specimen! Better fix it or delete it "
                    raw_input(" press return to acknowledge message")
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
-        
+    
         return araiblock,field

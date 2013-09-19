@@ -62,9 +62,11 @@ or:
 	data = gui.Data
 	specimen = gui.Data.keys()[0]
 	import spd
-	thing = spd.PintPars(specimen, data, 273, 798)
-	thing.do_all_statistics()
+	thing = spd.PintPars(data, specimen, 273, 798)
+	thing.calculate_all_statistics()
 
+
+don't forget array behavior options (linspace, arange, etc.)
 
 
 
@@ -72,3 +74,36 @@ in lj_thellier_gui_spd
 
 added this into get_data()
 self.s = self.specimens[0]  # LORI WEIRD ADDITION 
+Will need to change this so that you can select which, or for all, specimens to get_data
+
+Current statistics are all correct between self.Data[self.s]['pars'] and self.pars, although there are fewer in self.pars.Possibly I should simplify what happens in get_data().  
+
+
+
+Next steps:
+It would be nice to take Data out of the PintPars object.  Figure out what is needed, and embed that more directly into the object.  
+Walk through get PI parameters....
+Walk through get data
+
+
+
+
+get_data() calls:
+
+read_magic_file()
+
+def get_specs(self,data):
+
+read_magic_file() returns data from a magic_measurements file that looks like this:
+
+magic file: /Users/nebula/Python/SPD_project/magic_measurements.txt
+calling magic_read(self, infile) /Users/nebula/Python/SPD_project/magic_measurements.txt
+magic data:
+[{'treatment_ac_field': '0', 'treatment_dc_field_theta': '90', 'measurement_temp': '273', 'er_citation_names': 'This study', 'measurement_magn_moment': '2.01e-09', 'treatment_temp': '273', 'measurement_number': '1', 'measurement_standard': 'u', 'er_site_name': '0238x', 'er_sample_name': '0238x601104', 'treatment_dc_field_phi': '0', 'measurement_inc': '-8.8', 'er_location_name': '238', 'measurement_dec': '257.6', 'magic_experiment_name': '0238x6011043:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT...
+file_type magic_measurements
+	  returns a dictionary and a string
+
+def get_specs(self,data):
+        """                                                                                                                            
+         takes a magic format file and returns a list of unique specimen names                                                         
+        """
