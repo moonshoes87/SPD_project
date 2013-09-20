@@ -2,9 +2,9 @@
 global CURRENT_VRSION
 CURRENT_VRSION = "v.2.03"
 import matplotlib
-matplotlib.use('WXAgg')
+#matplotlib.use('WXAgg')
 
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas \
+#from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas \
 
 import sys,pylab,scipy,os
 ##try:
@@ -19,8 +19,8 @@ import copy
 import stat
 import subprocess
 import time
-import wx
-import wx.grid
+#import wx
+#import wx.grid
 import random
 import copy
 from pylab import *
@@ -31,7 +31,7 @@ try:
 except:
     pass
 
-from matplotlib.backends.backend_wx import NavigationToolbar2Wx
+#from matplotlib.backends.backend_wx import NavigationToolbar2Wx
 
 import thellier_consistency_test
 
@@ -56,7 +56,7 @@ class Arai_GUI():
     title = "PmagPy Thellier GUI %s"%CURRENT_VRSION
     
     def __init__(self, magic_file = "magic_measurements.txt"):
-        print "__init__ Arai_gui instance"
+        print " calling __init__ Arai_gui instance"
         self.redo_specimens={}
         self.currentDirectory = "/Users/nebula/Python/SPD_project"
         self.WD = "/Users/nebula/Python/SPD_project"
@@ -102,7 +102,7 @@ class Arai_GUI():
         return a full list of acceptance criteria
         If cant read file rerurn the default values 
         """
-
+        print "calling read_criteria_from_file"
         # initialize Null and Default 
         default_acceptance_criteria,null_acceptance_criteria=self.get_default_criteria()        # Replace with new parametrs
         replace_acceptance_criteria={}
@@ -179,12 +179,13 @@ class Arai_GUI():
 
 
     def calculate_anistropy_tensors(self):
-
+        print "calling calculate_anistropy_tensors()"
 
         def tauV(T):
             """
             gets the eigenvalues (tau) and eigenvectors (V) from matrix T
             """
+            print "calling tauV()"
             t,V,tr=[],[],0.
             ind1,ind2,ind3=0,1,2
             evalues,evectmps=linalg.eig(T)
@@ -218,7 +219,7 @@ class Arai_GUI():
 
             
         def calculate_aniso_parameters(B,K):
-
+            print "calling calculate aniso_parameters()"
             aniso_parameters={}
             S_bs=dot(B,K)
             
@@ -720,7 +721,7 @@ class Arai_GUI():
 
 
         def find_sample_min_max_interpretation (Intensities,acceptance_criteria):
-
+          print "calling find_sample_min_max_interpretation()"
           # Find the minimum and maximum acceptable sample mean.
 
           # make a new dictionary named "tmp_Intensities" with all grade A interpretation sorted. 
@@ -912,7 +913,7 @@ class Arai_GUI():
                
                                   
 
-        
+    
         #------------------------------------------------
 
         busy_frame=wx.BusyInfo("Running Thellier auto interpreter\n It may take several minutes depending on the number of specimens ...", self)
@@ -945,7 +946,7 @@ class Arai_GUI():
                     tmin=temperatures[tmin_i]
                     tmax=temperatures[tmax_i]
                     pars=self.get_PI_parameters(s,tmin,tmax)
-    
+
                     #-------------------------------------------------            
                     # check if pass the criteria
                     #-------------------------------------------------
@@ -1463,6 +1464,7 @@ class Arai_GUI():
         Read previous interpretation from a redo file
         and update gui with the new interpretation
         """
+        print "calling read_redo_file()"
         print ("-I- read redo file and processing new temperature bounds")
         self.redo_specimens={}
         # first delete all previous interpretation
@@ -1511,6 +1513,7 @@ class Arai_GUI():
     #----------------------------------------------------------------------            
 
     def write_acceptance_criteria_to_file(self):
+        print "calling write_acceptance_criteria_to_file()"
         import copy
         """
         Write new acceptance criteria to pmag_criteria.txt
@@ -1619,7 +1622,7 @@ class Arai_GUI():
     #----------------------------------------------------------------------            
 
 
-    def on_menu_results_data (self, event):
+    ignore="""def on_menu_results_data (self, event):
 
         # Results of all the samples that passed the criteria
         
@@ -1761,14 +1764,14 @@ class Arai_GUI():
             dlg1.Destroy()
             
         return
-
+    """
     #----------------------------------------------------------------------            
+    
         
-        
-                
+
     def read_magic_model (self):
         # Read MagIC Data model:
-
+        print "calling read_magic_model()"
         self.MagIC_model={}
         self.MagIC_model["specimens"]={}
         self.MagIC_model["er_samples"]={}
@@ -1812,7 +1815,7 @@ class Arai_GUI():
         
                           
     def read_magic_file(self,path,ignore_lines_n,sort_by_this_name):
-        print "doing read magic file in thellier_gui_spd_lj.py"
+        print "calling read magic file in thellier_gui_spd_lj.py"
         print path
         DATA={}
         fin=open(path,'rU')
@@ -1851,7 +1854,7 @@ class Arai_GUI():
         """
         calcualte statisics when temperatures are selected
         """
-
+        print "calling get_new_T_PI_parameters"
         #remember the last saved interpretation
 
         if "saved" in self.pars.keys():
@@ -1884,7 +1887,7 @@ class Arai_GUI():
             self.update_GUI_with_new_interpretation()
 
     def get_PI_parameters(self,s,tmin,tmax):
-        print "Doing get_PI_parameters from thellier_gui_spd_lj.py"
+        print "calling get_PI_parameters() from thellier_gui_spd_lj.py"
 #        print "self", self, str(self.Data)[:500] + "..."
 
 
@@ -1892,7 +1895,7 @@ class Arai_GUI():
             """
             converts a direction to cartesian coordinates
             """
-            print "doing cart2dir in get_PI_parameters"
+            print "calling cart2dir in get_PI_parameters"
             Dir=[] # establish a list to put directions in
             rad=pi/180. # constant to convert degrees to radians
             R=sqrt(cart[0]**2+cart[1]**2+cart[2]**2) # calculate resultant vector length
@@ -1911,7 +1914,7 @@ class Arai_GUI():
 
 
         def dir2cart(d):
-            print "doing dir2cart in get_PI_parameters"
+            print "calling dir2cart in get_PI_parameters"
            # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
             ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
             d=array(d)
@@ -1927,8 +1930,9 @@ class Arai_GUI():
                     ints=array([1.])
             cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
             return cart
-
+    
         def calculate_ftest(s,sigma,nf):
+            print "calling calculate_ftest() in get_PI_parameters()"
             chibar=(s[0][0]+s[1][1]+s[2][2])/3.
             t=array(linalg.eigvals(s))
             F=0.4*(t[0]**2+t[1]**2+t[2]**2 - 3*chibar**2)/(float(sigma)**2)
@@ -2666,7 +2670,7 @@ class Arai_GUI():
 
     
     def  draw_interpretation(self):
-
+        print "calling draw_interpretation()"
         if "measurement_step_min" not in self.pars.keys() or "measurement_step_max" not in self.pars.keys():
             return()
 
@@ -2802,7 +2806,7 @@ class Arai_GUI():
 
     
     def  draw_sample_mean(self):
-
+        print "calling draw_simple_mean()"
         self.sampleplot.clear()
         specimens_id=[]
         specimens_B=[]
@@ -2873,7 +2877,7 @@ class Arai_GUI():
       # read criteria file
       # Format is as pmag_criteria.txt
       #------------------------------------------------
-
+      print "calling get_default_criteria()"
 
       self.criteria_list=['specimen_int_n','specimen_int_ptrm_n','specimen_f','specimen_fvds','specimen_frac','specimen_gmax','specimen_b_beta',
                      'specimen_dang','specimen_drats','specimen_int_mad','specimen_md','specimen_g','specimen_q']
