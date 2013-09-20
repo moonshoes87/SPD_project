@@ -1,6 +1,3 @@
-Need to figure out where the Data library comes from.  Do I need to write a program parsing magic_measurements.txt?  I kind of doubt it, but I'm not sure.  
-
-
 def magic_read(self,infile):  # called from  self.get_data.  reads magic file and returns a dictionary
 
 This is how the data gets parsed and whatever within thellier_GUI:
@@ -24,7 +21,6 @@ I probably want to use def get_PI_parameters().  However, it appears (possibly) 
 
 
 
-
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']                           
         # for some reason missing any magic_method_codes.  possibly these would have been incorporated into the data from rmag_anisotr
 opy or something                                                                                                                     
@@ -41,10 +37,7 @@ But nowhere do the magic_method codes get pulled out and organized
                                                                              
         # also, fix the weirdness of having to set the precise number for tmin and tmax    
 
-next:  
-       experiment with get_PI_parameters.  try running it in the console (using lj version), see what happens
        
-
 sequence to get Data to feed into spd.py:
 	 >>> import lj_thellier_gui_spd as tgs
 	 >>> tgs
@@ -60,7 +53,7 @@ or:
 	import new_lj_thellier_gui_spd as tgs
 	gui = tgs.Arai_GUI()
 	data = gui.Data
-	specimen = gui.Data.keys()[0]
+	specimen = gui.s
 	import spd
 	thing = spd.PintPars(data, specimen, 273, 798)
 	thing.calculate_all_statistics()
@@ -81,9 +74,11 @@ Current statistics are all correct between self.Data[self.s]['pars'] and self.pa
 
 
 Next steps:
-It would be nice to take Data out of the PintPars object.  Figure out what is needed, and embed that more directly into the object.  
+It would be nice to take Data out of the PintPars object.  Figure out what is needed, and embed that more directly into the object.  DONE
 Walk through get PI parameters....
 Walk through get data
+fix the thing between dir2cart, cart2dir, etc.
+remove needless functions
 
 
 

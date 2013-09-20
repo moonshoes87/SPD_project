@@ -59,22 +59,22 @@ from scipy import *
 
 class PintPars(object):
     def __init__(self, Data,specimen_name,tmin,tmax):
-        print "OSTRICH making PintPars object"
-        self.Data=Data
+        print "calling __init__ PintPars object"
         self.s=specimen_name
+        self.specimen_Data=Data[self.s]
         print self.s
-        self.datablock = Data[self.s]['datablock']
+        self.datablock = self.specimen_Data['datablock']
 
-        self.x_Arai=Data[self.s]['x_Arai']
-        self.y_Arai=Data[self.s]['y_Arai']
-        self.t_Arai=Data[self.s]['t_Arai']
-        print self.t_Arai 
+        self.x_Arai=self.specimen_Data['x_Arai']
+        self.y_Arai=self.specimen_Data['y_Arai']
+        self.t_Arai=self.specimen_Data['t_Arai']
+#        print self.t_Arai 
 
-        self.x_tail_check=Data[self.s]['x_tail_check']
-        self.y_tail_check=Data[self.s]['y_tail_check']
+        self.x_tail_check=self.specimen_Data['x_tail_check']
+        self.y_tail_check=self.specimen_Data['y_tail_check']
 
-        self.zijdblock=Data[self.s]['zijdblock']        
-        self.z_temperatures=Data[self.s]['z_temp']
+        self.zijdblock=self.specimen_Data['zijdblock']        
+        self.z_temperatures=self.specimen_Data['z_temp']
 
         self.start=self.t_Arai.index(tmin)
         self.end=self.t_Arai.index(tmax)
@@ -83,8 +83,8 @@ class PintPars(object):
 
         self.pars={}
         print "pars"
-        print Data[self.s]['pars']
-        self.pars['lab_dc_field']=Data[self.s]['pars']['lab_dc_field']
+        print self.specimen_Data['pars']
+        self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         # for some reason missing any magic_method_codes.  possibly these would have been incorporated into the data from rmag_anisotropy or something
         # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
@@ -136,15 +136,15 @@ class PintPars(object):
 
         f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)
 
-        f_vds=abs((y_prime[0]-y_prime[-1])/self.Data[self.s]['vds'])
+        f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds'])
 
         g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )
 
         q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
 
 
-        count_IZ= self.Data[self.s]['steps_Arai'].count('IZ')
-        count_ZI= self.Data[self.s]['steps_Arai'].count('ZI')
+        count_IZ= self.specimen_Data['steps_Arai'].count('IZ')
+        count_ZI= self.specimen_Data['steps_Arai'].count('ZI')
         if count_IZ >1 and count_ZI >1:
             self.pars['magic_method_codes']="LP-PI-BT-IZZI"
         elif count_IZ <1 and count_ZI >1:
@@ -164,11 +164,11 @@ class PintPars(object):
         self.pars["specimen_g"]=g_Coe
         self.pars["specimen_q"]=q_Coe
         self.pars['magic_method_codes']+=":IE-TT"
-        if 'x_ptrm_check' in self.Data[self.s].keys():
-            if len(self.Data[self.s]['x_ptrm_check'])>0:
+        if 'x_ptrm_check' in self.specimen_Data.keys():
+            if len(self.specimen_Data['x_ptrm_check'])>0:
                 self.pars['magic_method_codes']+=":LP-PI-ALT-PTRM"
-        if 'x_tail_check' in self.Data[self.s].keys():
-            if len(self.Data[self.s]['x_tail_check'])>0:
+        if 'x_tail_check' in self.specimen_Data.keys():
+            if len(self.specimen_Data['x_tail_check'])>0:
                 self.pars['magic_method_codes']+=":LP-PI-BT-MD"
         print "PintPars object, self.pars after york regression: "
         print self.pars
