@@ -1821,7 +1821,7 @@ class Arai_GUI():
         return (fail)"""
 
                           
-    def read_magic_file(self,path,ignore_lines_n,sort_by_this_name): # 
+    def classy_read_magic_file(self,path,ignore_lines_n,sort_by_this_name): # only called for 'pmag_specimens.txt'
         print "calling read_magic_file() in thellier_gui_spd_lj.py"
         print path
         DATA={}
@@ -3518,8 +3518,10 @@ class Arai_GUI():
 
     
         # samples
+        # read_magic_file takes 2 args
+        # other_read_magic_file takes 4 args (including self) 
         def read_magic_file(path,sort_by_this_name):
-            # er_ages, 
+            # called for er_ages, er_sites, er_samples
             print "Calling read_magic_file() in get_data_info"
             print path
             DATA={}
@@ -3572,8 +3574,10 @@ class Arai_GUI():
         print "calling get_previous_interpretation()"
         try:
             print ("-I- Read pmag_specimens.txt for previouse interpretation")
-            prev_pmag_specimen=self.read_magic_file(self.WD+"/pmag_specimens.txt",1,'er_specimen_name')
+            print "about to call self.read_magic_file()"
+            prev_pmag_specimen=self.classy_read_magic_file(self.WD+"/pmag_specimens.txt",1,'er_specimen_name')
             #f
+            print "successfully read pmag_specimens"
             # first delete all previous interpretation
             for sp in self.Data.keys():
                 del self.Data[sp]['pars']
@@ -3583,7 +3587,7 @@ class Arai_GUI():
                 self.Data[sp]['pars']['er_sample_name']=self.Data[sp]['er_sample_name']
 
             self.Data_samples={}
-
+        
             for specimen in prev_pmag_specimen.keys():
               tmin_kelvin=float(prev_pmag_specimen[specimen]['measurement_step_min'])
               tmax_kelvin=float(prev_pmag_specimen[specimen]['measurement_step_max'])
@@ -3607,7 +3611,7 @@ class Arai_GUI():
                           print ("-E- ERROR. Cant calculate PI paremeters for specimen %s using redo file. Check!"%(specimen))
               else:
                   print ("-W- WARNING: Cant find specimen %s from redo file in measurement file!\n"%specimen)
-
+        
             try:
                 self.s
             except:
@@ -3617,7 +3621,8 @@ class Arai_GUI():
             self.clear_boxes()
             self.draw_figure(self.s)
             self.update_GUI_with_new_interpretation()
-        except:
+        except Exception as ex:
+            print "exception: ", ex
             return
                     
 

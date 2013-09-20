@@ -61,8 +61,6 @@ or:
 
 don't forget array behavior options (linspace, arange, etc.)
 
-
-
 in lj_thellier_gui_spd
 
 added this into get_data()
@@ -77,11 +75,21 @@ Next steps:
 It would be nice to take Data out of the PintPars object.  Figure out what is needed, and embed that more directly into the object.  DONE
 Walk through get PI parameters....
 Walk through get data
-fix the thing between dir2cart, cart2dir, etc.
+fix the thing between dir2cart, cart2dir, etc. DONE
 remove needless functions
 figure out if need er_ages, etc.
 figure out version of EPD
+figure out difference betwixt read_magic_file()
 
+
+
+read_magic_file()
+  Neither does anything for me currently.  
+
+  # read_magic_file takes 2 args.  not a class method.  
+      currently called for: er_ages, er_specimens, and er_samples
+  # (renamed) classy_read_magic_file takes 4 args (including self).  is class method.
+      currently called only for pmag_specimens
 
 
 
@@ -147,7 +155,6 @@ calling magic_read(self, infile) /Users/nebula/Python/SPD_project/rmag_results.t
 -I- Anisotropy data read  /Users/nebula/Python/SPD_project/from rmag_anisotropy.txt
 
 -I- Done calculating non linear TRM parameters for all specimens
-
 calling sortarai()
 calling sortarai()
 calling sortarai()
