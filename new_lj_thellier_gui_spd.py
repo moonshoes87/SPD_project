@@ -2963,18 +2963,20 @@ class Arai_GUI():
 
       
     def get_data(self):
-      print "doing get_data"
+      print "calling get_data()"
       print "self", self
       print "self.Data", self.Data
       print "magic file:", self.magic_file
 
       def tan_h(x, a, b):
-            return a*tanh(b*x)
-
+          print "calling tan_h in get_data()"
+          return a*tanh(b*x)
+    
       def cart2dir(cart): # OLD ONE
             """
             converts a direction to cartesian coordinates
             """
+            print "calling cart2dir() in get_data()"
             Dir=[] # establish a list to put directions in
             rad=pi/180. # constant to convert degrees to radians
             R=sqrt(cart[0]**2+cart[1]**2+cart[2]**2) # calculate resultant vector length
@@ -2991,9 +2993,10 @@ class Arai_GUI():
             Dir.append(R) # append vector length to Dir list
             return Dir # return the directions list
 
-
+    
       def dir2cart(d):
        # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
+        print "calling dir2cart() in get_data()"
         ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
         d=array(d)
         rad=pi/180.
@@ -3781,16 +3784,16 @@ class Arai_GUI():
     # Read all information file (er_locations, er_samples, er_sites, er_ages)
     #--------------------------------------------------------------
     def get_data_info(self):
-        print "doing get_data_info"
+        print "calling get_data_info()"
         Data_info={}
         data_er_samples={}
         data_er_ages={}
         data_er_sites={}
 
-
+    
         # samples
         def read_magic_file(path,sort_by_this_name):
-            print "Doing a read_magic_file in thellier_gui"
+            print "Calling read_magic_file() in get_data_info"
             print path
             DATA={}
             fin=open(path,'rU')
@@ -3837,6 +3840,7 @@ class Arai_GUI():
     #--------------------------------------------------------------
     
     def get_previous_interpretation(self):
+        print "calling get_previous_interpretation()"
         try:
             print ("-I- Read pmag_specimens.txt for previouse interpretation")
             prev_pmag_specimen=self.read_magic_file(self.WD+"/pmag_specimens.txt",1,'er_specimen_name')
@@ -3898,6 +3902,7 @@ class Arai_GUI():
         """
         converts a direction to cartesian coordinates
         """
+        print "calling cart2dir(), not in anything"
         cart=array(cart)
         rad=pi/180. # constant to convert degrees to radians
         if len(cart.shape)>1:
@@ -3916,6 +3921,7 @@ class Arai_GUI():
 
 
     def dir2cart(self,d):
+        print "calling dir2cart(), not in anything"
        # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
         ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
         d=array(d)
@@ -3937,6 +3943,7 @@ class Arai_GUI():
         """ 
         Converts field values in tesla to v(a)dm in Am^2
         """
+        print "calling b_vdm()"
         rad=pi/180.
         fact=((6.371e6)**3)*1e7 # changed radius of the earth from 3.367e6 3/12/2010
         colat=(90.-lat) * rad
@@ -3946,7 +3953,8 @@ class Arai_GUI():
         """
         calculates hext parameters for nf, sigma and s
         """
-    #
+        #
+        print "calling dohext()"
         if nf==-1:return hextpars 
         f=sqrt(2.*self.fcalc(2,nf))
         t2sum=0
@@ -3978,6 +3986,7 @@ class Arai_GUI():
         convert s format for eigenvalues and eigenvectors
         """
     #
+        print "calling doseigs()"
         A=self.s2a(s) # convert s to a (see Tauxe 1998)
         tau,V=self.tauV(A) # convert to eigenvalues (t), eigenvectors (V)
         Vdirs=[]
@@ -3994,6 +4003,7 @@ class Arai_GUI():
         """
         gets the eigenvalues (tau) and eigenvectors (V) from matrix T
         """
+        print "calling tauV()"
         t,V,tr=[],[],0.
         ind1,ind2,ind3=0,1,2
         evalues,evectmps=linalg.eig(T)
@@ -4028,6 +4038,7 @@ class Arai_GUI():
         """
          convert 6 element "s" list to 3,3 a matrix (see Tauxe 1998)
         """
+        print "calling s2a()"
         a=zeros((3,3,),'f') # make the a matrix
         for i in range(3):
             a[i][i]=s[i]
@@ -4042,6 +4053,7 @@ class Arai_GUI():
       looks up f from ftables F(row,col), where row is number of degrees of freedom - this is 95% confidence (p=0.05)
         """
     #
+        print "calling fcalc()"
         if row>200:row=200
         if col>20:col=20
         ftest=array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
@@ -4310,6 +4322,7 @@ class Arai_GUI():
         """
     # sort the specimen names
     #
+        print "calling get_specs()"
         speclist=[]
         for rec in data:
           spec=rec["er_specimen_name"]
@@ -4323,6 +4336,7 @@ class Arai_GUI():
         """
          sorts data block in to first_Z, first_I, etc.
         """
+        print "calling sortarai()"
         first_Z,first_I,zptrm_check,ptrm_check,ptrm_tail=[],[],[],[],[]
         field,phi,theta="","",""
         starthere=0
