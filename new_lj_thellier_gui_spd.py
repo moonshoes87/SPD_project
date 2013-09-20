@@ -86,6 +86,7 @@ class Arai_GUI():
 
         self.get_previous_interpretation() # get interpretations from pmag_specimens.txt
         print "data info: ", self.Data_info
+    
 
     #----------------------------------------------------------------------
     #----------------------------------------------------------------------        
@@ -180,11 +181,12 @@ class Arai_GUI():
 
     def calculate_anistropy_tensors(self):
         print "calling calculate_anistropy_tensors()"
+        variable = """
 
         def tauV(T):
-            """
-            gets the eigenvalues (tau) and eigenvectors (V) from matrix T
-            """
+         
+         #   gets the eigenvalues (tau) and eigenvectors (V) from matrix T
+         
             print "calling tauV()"
             t,V,tr=[],[],0.
             ind1,ind2,ind3=0,1,2
@@ -671,7 +673,7 @@ class Arai_GUI():
                 Data_anisotropy[specimen]['AARM']['magic_method_codes']="LP-AN-ARM:AE-H"
                 Data_anisotropy[specimen]['AARM']['rmag_anisotropy_name']=specimen
                 
-
+    
         #-----------------------------------   
 
         specimens=Data_anisotropy.keys()
@@ -718,7 +720,7 @@ class Arai_GUI():
 
     #==================================================        
 
-
+    
 
         def find_sample_min_max_interpretation (Intensities,acceptance_criteria):
           print "calling find_sample_min_max_interpretation()"
@@ -796,7 +798,7 @@ class Arai_GUI():
             shutil.rmtree(self.WD+"/thellier_interpreter")
         except:
             pass
-
+    
         try:
             os.mkdir(self.WD+"/thellier_interpreter")
         except:
@@ -915,7 +917,7 @@ class Arai_GUI():
 
     
         #------------------------------------------------
-
+    
         busy_frame=wx.BusyInfo("Running Thellier auto interpreter\n It may take several minutes depending on the number of specimens ...", self)
 
         specimens_list=self.Data.keys()
@@ -1454,8 +1456,9 @@ class Arai_GUI():
         dlg1.ShowModal()
         dlg1.Destroy()
         busy_frame.Destroy()
+        """
     #----------------------------------------------------------------------
-
+    # END OF  calculate anisotropy_tensors()
 
     #----------------------------------------------------------------------
         
@@ -1464,8 +1467,8 @@ class Arai_GUI():
         Read previous interpretation from a redo file
         and update gui with the new interpretation
         """
-        print "calling read_redo_file()"
         print ("-I- read redo file and processing new temperature bounds")
+        not_called = """print "calling read_redo_file()"
         self.redo_specimens={}
         # first delete all previous interpretation
         for sp in self.Data.keys():
@@ -1508,18 +1511,18 @@ class Arai_GUI():
         self.pars=self.Data[self.s]['pars']
         self.clear_boxes()
         self.draw_figure(self.s)
-        self.update_GUI_with_new_interpretation()
+        self.update_GUI_with_new_interpretation()"""
 
     #----------------------------------------------------------------------            
 
     def write_acceptance_criteria_to_file(self):
         print "calling write_acceptance_criteria_to_file()"
-        import copy
+ #       import copy
         """
         Write new acceptance criteria to pmag_criteria.txt
         """
         # check if an old pmag_criteria.txt exist:
-        other_criteria={}
+        not_called = """other_criteria={}
         try:
             fin=open(self.WD+"/"+"pmag_criteria.txt",'rU')
             lines=""
@@ -1540,7 +1543,7 @@ class Arai_GUI():
                             other_criteria[code][header[i]]=float(line[i])
         except:
              pass
-            
+    
                 
             
         fout=open(self.WD+"/"+"pmag_criteria.txt",'w')
@@ -1620,13 +1623,16 @@ class Arai_GUI():
         fout.close()
             
     #----------------------------------------------------------------------            
+      """
+    
 
-
-    ignore="""def on_menu_results_data (self, event):
+    def on_menu_results_data (self, event):
 
         # Results of all the samples that passed the criteria
         
         # search for ages and Latitudes
+        print "calling on_menu_results_data()"
+        not_called="""
         samples_list=self.Data_samples.keys()
         samples_list.sort()
         Results_table_data={}
@@ -1772,6 +1778,7 @@ class Arai_GUI():
     def read_magic_model (self):
         # Read MagIC Data model:
         print "calling read_magic_model()"
+        not_called="""
         self.MagIC_model={}
         self.MagIC_model["specimens"]={}
         self.MagIC_model["er_samples"]={}
@@ -1811,11 +1818,11 @@ class Arai_GUI():
             print ("-W- Cant find er_ages.txt in project directory")
             pass
 
-        return (fail)
-        
+        return (fail)"""
+
                           
-    def read_magic_file(self,path,ignore_lines_n,sort_by_this_name):
-        print "calling read magic file in thellier_gui_spd_lj.py"
+    def read_magic_file(self,path,ignore_lines_n,sort_by_this_name): # 
+        print "calling read_magic_file() in thellier_gui_spd_lj.py"
         print path
         DATA={}
         fin=open(path,'rU')
@@ -1829,17 +1836,18 @@ class Arai_GUI():
         for line in fin.readlines():
             if line[0]=="#":
                 continue
+            else: print "line[0] != '#'"
             tmp_data={}
             tmp_line=line.strip('\n').split('\t')
             #print tmp_line
             for i in range(len(tmp_line)):
                 if i>= len(header):
                     continue
+                else: print "something tripped"
                 tmp_data[header[i]]=tmp_line[i]
             DATA[tmp_data[sort_by_this_name]]=tmp_data
         fin.close()        
-        print "done"
-        print DATA
+        print "Data from read_magic_file in nothing:  ", DATA
         return(DATA)
 
 
@@ -1856,7 +1864,7 @@ class Arai_GUI():
         """
         print "calling get_new_T_PI_parameters"
         #remember the last saved interpretation
-
+        not_called = """
         if "saved" in self.pars.keys():
             if self.pars['saved']:
                 self.last_saved_pars={}
@@ -1885,52 +1893,14 @@ class Arai_GUI():
                 self.pars=self.get_PI_parameters(self.s,float(t1),float(t2))
                 
             self.update_GUI_with_new_interpretation()
+      """
+    
 
     def get_PI_parameters(self,s,tmin,tmax):
         print "calling get_PI_parameters() from thellier_gui_spd_lj.py"
-#        print "self", self, str(self.Data)[:500] + "..."
+        print "self", self, str(self.Data)[:500] + "..."
 
 
-        def cart2dir(cart): # OLD ONE
-            """
-            converts a direction to cartesian coordinates
-            """
-            print "calling cart2dir in get_PI_parameters"
-            Dir=[] # establish a list to put directions in
-            rad=pi/180. # constant to convert degrees to radians
-            R=sqrt(cart[0]**2+cart[1]**2+cart[2]**2) # calculate resultant vector length
-            if R==0:
-               #print 'trouble in cart2dir'
-               #print cart
-               return [0.0,0.0,0.0]
-            D=arctan2(cart[1],cart[0])/rad  # calculate declination taking care of correct quadrants (arctan2)
-            if D<0:D=D+360. # put declination between 0 and 360.
-            if D>360.:D=D-360.
-            Dir.append(D)  # append declination to Dir list
-            I=arcsin(cart[2]/R)/rad # calculate inclination (converting to degrees)
-            Dir.append(I) # append inclination to Dir list
-            Dir.append(R) # append vector length to Dir list
-            return Dir # return the directions list
-
-
-        def dir2cart(d):
-            print "calling dir2cart in get_PI_parameters"
-           # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
-            ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
-            d=array(d)
-            rad=pi/180.
-            if len(d.shape)>1: # array of vectors
-                decs,incs=d[:,0]*rad,d[:,1]*rad
-                if d.shape[1]==3: ints=d[:,2] # take the given lengths
-            else: # single vector
-                decs,incs=array(d[0])*rad,array(d[1])*rad
-                if len(d)==3: 
-                    ints=array(d[2])
-                else:
-                    ints=array([1.])
-            cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
-            return cart
-    
         def calculate_ftest(s,sigma,nf):
             print "calling calculate_ftest() in get_PI_parameters()"
             chibar=(s[0][0]+s[1][1]+s[2][2])/3.
@@ -1942,6 +1912,7 @@ class Arai_GUI():
         """
         calcualte statisics 
         """
+        
         print "calculating statistics"
         pars=self.Data[s]['pars']
         datablock = self.Data[s]['datablock']
@@ -2665,212 +2636,6 @@ class Arai_GUI():
 #        return(pars) original
         return pint_pars
     
-    
-        
-
-    
-    def  draw_interpretation(self):
-        print "calling draw_interpretation()"
-        if "measurement_step_min" not in self.pars.keys() or "measurement_step_max" not in self.pars.keys():
-            return()
-
-        s=self.s
-        pars=self.Data[s]['pars']        
-        datablock = self.Data[s]['datablock']
-        pars=self.Data[s]['pars']
-
-        t_Arai=self.Data[s]['t_Arai']
-        x_Arai=self.Data[s]['x_Arai']
-        y_Arai=self.Data[s]['y_Arai']
-        x_tail_check=self.Data[s]['x_tail_check']
-        y_tail_check=self.Data[s]['y_tail_check']
-
-        zijdblock=self.Data[s]['zijdblock']        
-        z_temperatures=self.Data[s]['z_temp']
-
-
-
-        start=t_Arai.index(self.pars["measurement_step_min"])
-        end=t_Arai.index(self.pars["measurement_step_max"])
-        
-        x_Arai_segment= x_Arai[start:end+1]
-        y_Arai_segment= y_Arai[start:end+1]
-
-        self.araiplot.scatter([x_Arai_segment[0],x_Arai_segment[-1]],[y_Arai_segment[0],y_Arai_segment[-1]],marker='o',facecolor='g',edgecolor ='k',s=30)
-        b=pars["specimen_b"]
-        a=mean(y_Arai_segment) - b* mean(x_Arai_segment)
-        xx=array([x_Arai_segment[0],x_Arai_segment[-1]])
-        yy=b*xx+a
-        self.araiplot.plot(xx,yy,'g-',lw=2,alpha=0.5)
-        if self.accept_new_parameters['specimen_scat']==True:
-            yy1=xx*pars['specimen_scat_bounding_line_low'][1]+pars['specimen_scat_bounding_line_low'][0]
-            yy2=xx*pars['specimen_scat_bounding_line_high'][1]+pars['specimen_scat_bounding_line_high'][0]
-            self.araiplot.plot(xx,yy1,'--',lw=0.5,alpha=0.5)
-            self.araiplot.plot(xx,yy2,'--',lw=0.5,alpha=0.5)
-
-        self.araiplot.set_xlim(xmin=0)
-        self.araiplot.set_ylim(ymin=0)
-        
-        draw()
-        self.canvas1.draw()
-
-        # plot best fit direction on Equal Area plot
-        CART=array(pars["specimen_PCA_v1"])/sqrt(sum(array(pars["specimen_PCA_v1"])**2))
-        x=CART[0]
-        y=CART[1]
-        z=abs(CART[2])
-        R=array(sqrt(1-z)/sqrt(x**2+y**2))
-        eqarea_x=y*R
-        eqarea_y=x*R
-
-        if self.preferences['show_CR_plot'] ==False or 'crblock' not in self.Data[self.s].keys():
-            if z>0:
-              FC='green';EC='0.1'
-            else:
-              FC='yellow';EC='green'
-            self.eqplot.scatter([eqarea_x],[eqarea_y],marker='o',edgecolor=EC, facecolor=FC,s=30,lw=1)
-
-            self.canvas3.draw()
-
-        # plot Zijderveld
-
-        ymin, ymax = self.zijplot.get_ylim()
-        xmin, xmax = self.zijplot.get_xlim()
-        
-        #rotated zijderveld
-        NRM_dir=self.cart2dir(self.Data[self.s]['zdata'][0])         
-        NRM_dec=NRM_dir[0]
-
-        #PCA direction
-        PCA_dir_rotated=self.cart2dir(CART)         
-        PCA_dir_rotated[0]=PCA_dir_rotated[0]-NRM_dec      
-        PCA_CART_rotated=self.dir2cart(PCA_dir_rotated)
-
-        tmin_index=self.Data[self.s]['z_temp'].index(self.pars["measurement_step_min"])
-        tmax_index=self.Data[self.s]['z_temp'].index(self.pars["measurement_step_max"])
-        
-        PCA_dir_rotated=self.cart2dir(CART)         
-        PCA_dir_rotated[0]=PCA_dir_rotated[0]-NRM_dec      
-        PCA_CART_rotated=self.dir2cart(PCA_dir_rotated)
-        
-        slop_xy_PCA=-1*PCA_CART_rotated[1]/PCA_CART_rotated[0]
-        slop_xz_PCA=-1*PCA_CART_rotated[2]/PCA_CART_rotated[0]
-
-        # Center of mass rotated
-        
-        CM_x=mean(self.CART_rot[:,0][tmin_index:tmax_index+1])
-        CM_y=mean(self.CART_rot[:,1][tmin_index:tmax_index+1])
-        CM_z=mean(self.CART_rot[:,2][tmin_index:tmax_index+1])
-
-        # intercpet from the center of mass
-        intercept_xy_PCA=-1*CM_y - slop_xy_PCA*CM_x
-        intercept_xz_PCA=-1*CM_z - slop_xz_PCA*CM_x
-
-        xmin_zij, xmax_zij = xlim()
-        xx=array([0,self.CART_rot[:,0][tmin_index]])
-        yy=slop_xy_PCA*xx+intercept_xy_PCA
-        self.zijplot.plot(xx,yy,'-',color='g',lw=1.5,alpha=0.5)
-        zz=slop_xz_PCA*xx+intercept_xz_PCA
-        self.zijplot.plot(xx,zz,'-',color='g',lw=1.5,alpha=0.5)
-
-    
-        self.zijplot.scatter([self.CART_rot[:,0][tmin_index]],[-1* self.CART_rot[:,1][tmin_index]],marker='o',s=40,facecolor='g',edgecolor ='k',zorder=100)
-        self.zijplot.scatter([self.CART_rot[:,0][tmax_index]],[-1* self.CART_rot[:,1][tmax_index]],marker='o',s=40,facecolor='g',edgecolor ='k',zorder=100)
-        self.zijplot.scatter([self.CART_rot[:,0][tmin_index]],[-1* self.CART_rot[:,2][tmin_index]],marker='s',s=50,facecolor='g',edgecolor ='k',zorder=100)
-        self.zijplot.scatter([self.CART_rot[:,0][tmax_index]],[-1* self.CART_rot[:,2][tmax_index]],marker='s',s=50,facecolor='g',edgecolor ='k',zorder=100)
-
-
-
-
-        self.zijplot.set_xlim(xmin, xmax)
-        self.zijplot.set_ylim(ymin, ymax)
-  
-        self.canvas2.draw()
-
-        # NLT plot
-        if self.preferences['show_NLT_plot'] ==True and 'NLT_parameters' in self.Data[self.s].keys():
-           alpha=self.Data[self.s]['NLT_parameters']['tanh_parameters'][0][0]
-           beta=self.Data[self.s]['NLT_parameters']['tanh_parameters'][0][1]
-           #labfiled=self.Data[self.s]['lab_dc_field']
-           Banc=self.pars["specimen_int_uT"]
-           self.mplot.scatter([Banc],[alpha*(tanh(beta*Banc*1e-6))],marker='o',s=30,facecolor='g',edgecolor ='k')
-
-        self.canvas5.draw()
-        draw()
-
-        #------
-        # Drow sample mean
-        #------
-
-        self.draw_sample_mean()
-
-    
-    def  draw_sample_mean(self):
-        print "calling draw_simple_mean()"
-        self.sampleplot.clear()
-        specimens_id=[]
-        specimens_B=[]
-        sample=self.Data_hierarchy['specimens'][self.s]
-        if sample in self.Data_samples.keys():
-            for spec in self.Data_samples[sample].keys():
-                specimens_id.append(spec)
-            if self.s not in specimens_id and 'specimen_int_uT' in self.pars.keys():
-                specimens_id.append(self.s)
-            specimens_id.sort()
-            for spec in specimens_id:
-                if spec==self.s and 'specimen_int_uT' in self.pars.keys():
-                   specimens_B.append(self.pars['specimen_int_uT'])
-                else:
-                   specimens_B.append(self.Data_samples[sample][spec])
-        else:
-            if 'specimen_int_uT' in self.pars.keys():
-                specimens_id=[self.s]
-                specimens_B=[self.pars['specimen_int_uT']]
-        if len(specimens_id)>=1:
-            self.sampleplot.scatter(arange(len(specimens_id)),specimens_B ,marker='s',edgecolor='0.2', facecolor='b',s=40*self.GUI_RESOLUTION,lw=1)
-            self.sampleplot.axhline(y=mean(specimens_B)+std(specimens_B,ddof=1),color='0.2',ls="--",lw=0.75)
-            self.sampleplot.axhline(y=mean(specimens_B)-std(specimens_B,ddof=1),color='0.2',ls="--",lw=0.75)
-            self.sampleplot.axhline(y=mean(specimens_B),color='0.2',ls="-",lw=0.75,alpha=0.5)
-            
-            if self.s in specimens_id:
-                self.sampleplot.scatter([specimens_id.index(self.s)],[specimens_B[specimens_id.index(self.s)]] ,marker='s',edgecolor='0.2', facecolor='g',s=40*self.GUI_RESOLUTION,lw=1)
-
-            self.sampleplot.set_xticks(arange(len(specimens_id)))
-            self.sampleplot.set_xlim(-0.5,len(specimens_id)-0.5)
-            self.sampleplot.set_xticklabels(specimens_id,rotation=90,fontsize=8)
-            #ymin,ymax=self.sampleplot.ylim()
-            
-            if "sample_int_sigma_uT" in self.accept_new_parameters.keys() and "sample_int_sigma_perc" in self.accept_new_parameters.keys():                
-                sigma_threshold_for_plot=max(self.accept_new_parameters["sample_int_sigma_uT"],0.01*self.accept_new_parameters["sample_int_sigma_perc"]*mean(specimens_B))
-            elif "sample_int_sigma_uT" in self.accept_new_parameters.keys() :
-                sigma_threshold_for_plot=self.accept_new_parameters["sample_int_sigma_uT"]                
-            elif "sample_int_sigma_perc" in self.accept_new_parameters.keys() :
-                sigma_threshold_for_plot=mean(specimens_B)*0.01*self.accept_new_parameters["sample_int_sigma_perc"]
-            else:
-                sigma_threshold_for_plot =100000
-            if sigma_threshold_for_plot < 20:
-                self.sampleplot.axhline(y=mean(specimens_B)+sigma_threshold_for_plot,color='r',ls="--",lw=0.75)
-                self.sampleplot.axhline(y=mean(specimens_B)-sigma_threshold_for_plot,color='r',ls="--",lw=0.75)
-                y_axis_limit=max(sigma_threshold_for_plot,std(specimens_B,ddof=1),abs(max(specimens_B)-mean(specimens_B)),abs((min(specimens_B)-mean(specimens_B))))
-            else:
-                y_axis_limit=max(std(specimens_B,ddof=1),abs(max(specimens_B)-mean(specimens_B)),abs((min(specimens_B)-mean(specimens_B))))
-                
-            self.sampleplot.set_ylim(mean(specimens_B)-y_axis_limit-1,mean(specimens_B)+y_axis_limit+1)
-            self.sampleplot.set_ylabel(r'$\mu$ T',fontsize=8)
-            try:
-                self.sampleplot.tick_params(axis='both', which='major', labelsize=8)
-            except:
-                pass
-            try:
-                self.sampleplot.tick_params(axis='y', which='minor', labelsize=0)
-            except:
-                pass
-
-        self.canvas4.draw()
-        #start_time_5=time.time() 
-        #runtime_sec5 = start_time_5 - start_time_4
-
-
 
     def get_default_criteria(self):
       #------------------------------------------------
@@ -2960,7 +2725,7 @@ class Arai_GUI():
       return(accept_new_parameters_default,accept_new_parameters_null)
       #print accept_new_parameters_default
       #print "yes"
-
+    
       
     def get_data(self):
       print "calling get_data()"
@@ -2972,45 +2737,6 @@ class Arai_GUI():
           print "calling tan_h in get_data()"
           return a*tanh(b*x)
     
-      def cart2dir(cart): # OLD ONE
-            """
-            converts a direction to cartesian coordinates
-            """
-            print "calling cart2dir() in get_data()"
-            Dir=[] # establish a list to put directions in
-            rad=pi/180. # constant to convert degrees to radians
-            R=sqrt(cart[0]**2+cart[1]**2+cart[2]**2) # calculate resultant vector length
-            if R==0:
-               #print 'trouble in cart2dir'
-               #print cart
-               return [0.0,0.0,0.0]
-            D=arctan2(cart[1],cart[0])/rad  # calculate declination taking care of correct quadrants (arctan2)
-            if D<0:D=D+360. # put declination between 0 and 360.
-            if D>360.:D=D-360.
-            Dir.append(D)  # append declination to Dir list
-            I=arcsin(cart[2]/R)/rad # calculate inclination (converting to degrees)
-            Dir.append(I) # append inclination to Dir list
-            Dir.append(R) # append vector length to Dir list
-            return Dir # return the directions list
-
-    
-      def dir2cart(d):
-       # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
-        print "calling dir2cart() in get_data()"
-        ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
-        d=array(d)
-        rad=pi/180.
-        if len(d.shape)>1: # array of vectors
-            decs,incs=d[:,0]*rad,d[:,1]*rad
-            if d.shape[1]==3: ints=d[:,2] # take the given lengths
-        else: # single vector
-            decs,incs=array(d[0])*rad,array(d[1])*rad
-            if len(d)==3: 
-                ints=array(d[2])
-            else:
-                ints=array([1.])
-        cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
-        return cart
 
       #self.dir_pathes=self.WD
 
@@ -3304,7 +3030,7 @@ class Arai_GUI():
               
 
           ####  Ron dont delete it ### print "-I- Found %i NLT datapoints for specimen %s: B="%(len(B_NLT),s),array(B_NLT)*1e6
-
+    
           #substitute baseline
           M_NLT=array(M_NLT)-M_baseline
           B_NLT=array(B_NLT)  
@@ -3793,6 +3519,7 @@ class Arai_GUI():
     
         # samples
         def read_magic_file(path,sort_by_this_name):
+            # er_ages, 
             print "Calling read_magic_file() in get_data_info"
             print path
             DATA={}
@@ -3807,12 +3534,14 @@ class Arai_GUI():
                     tmp_data[header[i]]=tmp_line[i]
                 DATA[tmp_data[sort_by_this_name]]=tmp_data
             fin.close()        
+            print "Data from read_magic_file in get_data info:  ", DATA
             return(DATA)
+        
         try:
             data_er_samples=read_magic_file(self.WD+"/er_samples.txt",'er_sample_name')
         except:
             print "-W- Cant find er_sample.txt in project directory\n"
-
+    
         try:
             data_er_sites=read_magic_file(self.WD+"/er_sites.txt",'er_site_name')
         except:
@@ -3825,7 +3554,7 @@ class Arai_GUI():
                 data_er_ages=read_magic_file(self.WD+"/er_ages.txt",'er_site_name')
             except:    
                 print ("-W- Cant find er_ages in project directory\n")
-
+    
 
         Data_info["er_samples"]=data_er_samples
         Data_info["er_sites"]=data_er_sites
@@ -3902,7 +3631,7 @@ class Arai_GUI():
         """
         converts a direction to cartesian coordinates
         """
-        print "calling cart2dir(), not in anything"
+#        print "calling cart2dir(), not in anything"
         cart=array(cart)
         rad=pi/180. # constant to convert degrees to radians
         if len(cart.shape)>1:
@@ -3921,7 +3650,7 @@ class Arai_GUI():
 
 
     def dir2cart(self,d):
-        print "calling dir2cart(), not in anything"
+#        print "calling dir2cart(), not in anything"
        # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
         ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
         d=array(d)
@@ -3944,10 +3673,11 @@ class Arai_GUI():
         Converts field values in tesla to v(a)dm in Am^2
         """
         print "calling b_vdm()"
+        not_called = """
         rad=pi/180.
         fact=((6.371e6)**3)*1e7 # changed radius of the earth from 3.367e6 3/12/2010
         colat=(90.-lat) * rad
-        return fact*B/(sqrt(1+3*(cos(colat)**2)))
+        return fact*B/(sqrt(1+3*(cos(colat)**2)))"""
 
     def dohext(self,nf,sigma,s):
         """
@@ -3955,6 +3685,7 @@ class Arai_GUI():
         """
         #
         print "calling dohext()"
+        not_called="""
         if nf==-1:return hextpars 
         f=sqrt(2.*self.fcalc(2,nf))
         t2sum=0
@@ -3979,7 +3710,7 @@ class Arai_GUI():
         hpars["e12"]=arctan((f*sigma)/(2*abs(tau[0]-tau[1])))*180./pi
         hpars["e23"]=arctan((f*sigma)/(2*abs(tau[1]-tau[2])))*180./pi
         hpars["e13"]=arctan((f*sigma)/(2*abs(tau[0]-tau[2])))*180./pi
-        return hpars
+        return hpars"""
 
     def doseigs(self,s):
         """
@@ -3987,6 +3718,7 @@ class Arai_GUI():
         """
     #
         print "calling doseigs()"
+        not_called="""
         A=self.s2a(s) # convert s to a (see Tauxe 1998)
         tau,V=self.tauV(A) # convert to eigenvalues (t), eigenvectors (V)
         Vdirs=[]
@@ -3996,7 +3728,7 @@ class Arai_GUI():
                 Vdir[1]=-Vdir[1]
                 Vdir[0]=(Vdir[0]+180.)%360.
             Vdirs.append([Vdir[0],Vdir[1]])
-        return tau,Vdirs
+        return tau,Vdirs"""
 
 
     def tauV(self,T):
@@ -4004,6 +3736,7 @@ class Arai_GUI():
         gets the eigenvalues (tau) and eigenvectors (V) from matrix T
         """
         print "calling tauV()"
+        not_called="""
         t,V,tr=[],[],0.
         ind1,ind2,ind3=0,1,2
         evalues,evectmps=linalg.eig(T)
@@ -4031,7 +3764,7 @@ class Arai_GUI():
         t.append(t1)
         t.append(t2)
         t.append(t3)
-        return t,V
+        return t,V"""
     
 
     def s2a(self,s):
@@ -4039,13 +3772,14 @@ class Arai_GUI():
          convert 6 element "s" list to 3,3 a matrix (see Tauxe 1998)
         """
         print "calling s2a()"
+        not_called="""
         a=zeros((3,3,),'f') # make the a matrix
         for i in range(3):
             a[i][i]=s[i]
         a[0][1],a[1][0]=s[3],s[3]
         a[1][2],a[2][1]=s[4],s[4]
         a[0][2],a[2][0]=s[5],s[5]
-        return a
+        return a"""
 
     
     def fcalc(self,col,row):
@@ -4054,6 +3788,7 @@ class Arai_GUI():
         """
     #
         print "calling fcalc()"
+        not_called = """
         if row>200:row=200
         if col>20:col=20
         ftest=array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
@@ -4257,7 +3992,7 @@ class Arai_GUI():
     [198, 3.8889, 3.0415, 2.6502, 2.4173, 2.2597, 2.1446, 2.0561, 1.9854, 1.9274, 1.8788, 1.8373, 1.8013, 1.7699, 1.742, 1.7172, 1.6948, 1.6746, 1.6562, 1.6393, 1.6238],
     [199, 3.8886, 3.0413, 2.65, 2.417, 2.2595, 2.1444, 2.0558, 1.9852, 1.9272, 1.8785, 1.837, 1.8011, 1.7696, 1.7418, 1.7169, 1.6946, 1.6743, 1.6559, 1.6391, 1.6236],
     [200, 3.8883, 3.041, 2.6497, 2.4168, 2.2592, 2.1441, 2.0556, 1.9849, 1.9269, 1.8783, 1.8368, 1.8008, 1.7694, 1.7415, 1.7166, 1.6943, 1.6741, 1.6557, 1.6388, 1.62]])
-        return ftest[row][col]
+        return ftest[row][col]"""
 
 
     def magic_read(self,infile):
@@ -4487,7 +4222,7 @@ class Arai_GUI():
 
                         first_Z.append([temp,DIR_zerofield[0],DIR_zerofield[1],DIR_zerofield[2],0])
                         first_I.append([temp,DIR_infield[0],DIR_infield[1],DIR_infield[2],0])
-                
+    
 
         #---------------------
         # find  pTRM checks

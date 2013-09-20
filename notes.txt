@@ -79,6 +79,8 @@ Walk through get PI parameters....
 Walk through get data
 fix the thing between dir2cart, cart2dir, etc.
 remove needless functions
+figure out if need er_ages, etc.
+figure out version of EPD
 
 
 
@@ -102,3 +104,66 @@ def get_specs(self,data):
         """                                                                                                                            
          takes a magic format file and returns a list of unique specimen names                                                         
         """
+
+
+
+
+
+
+>>> import new_lj_thellier_gui_spd as tgs
+>>> gui = tgs.Arai_GUI()
+ calling __init__ Arai_gui instance
+calling get_default_criteria()
+calling read_criteria_from_file
+calling get_default_criteria()
+calling get_data_info()
+Calling read_magic_file() in get_data_info
+/Users/nebula/Python/SPD_project/er_samples.txt
+-W- Cant find er_sample.txt in project directory
+
+Calling read_magic_file() in get_data_info
+/Users/nebula/Python/SPD_project/er_sites.txt
+-W- Cant find er_sites.txt in project directory
+
+Calling read_magic_file() in get_data_info
+/Users/nebula/Python/SPD_project/er_ages.txt
+Calling read_magic_file() in get_data_info
+/Users/nebula/Python/SPD_project/er_ages.txt
+-W- Cant find er_ages in project directory
+
+arai_GUI initialization calling self.get_data()
+calling get_data()
+calling magic_read(self, infile) /Users/nebula/Python/SPD_project/magic_measurements.txt
+magic data:
+[{'treatment_ac_field': '0', 'treatment_dc_field_theta': '90', 'measurement_temp': '273', 'er_citation_names': 'This study', 'measurement_magn_moment': '2.01e-09', 'treatment_temp': '273', 'measurement_number': '1', 'measurement_standard': 'u', 'er_site_name': '0238x', 'er_sample_name': '0238x601104', 'treatment_dc_field_phi': '0', 'measurement_inc': '-8.8', 'er_location_name': '238', 'measurement_dec': '257.6', 'magic_experiment_name': '0238x6011043:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT...
+file_type magic_measurements
+-I- Read magic file  /Users/nebula/Python/SPD_project/magic_measurements.txt
+
+calling get_specs()
+calling magic_read(self, infile) /Users/nebula/Python/SPD_project/rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/from rmag_anisotropy.txt
+
+calling magic_read(self, infile) /Users/nebula/Python/SPD_project/rmag_results.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/from rmag_anisotropy.txt
+
+-I- Done calculating non linear TRM parameters for all specimens
+
+calling sortarai()
+calling sortarai()
+calling sortarai()
+calling sortarai()
+calling sortarai()
+calling sortarai()
+-I- number of specimens in this project directory: 6
+
+-I- number of samples in this project directory: 2
+
+returning Data, data_hierarchy.  This is the completion of self.get_data().  printing Data['0238x5721062']
+{'x_ptrm_check_starting_point': .....
+done with get_data
+calling get_previous_interpretation()
+-I- Read pmag_specimens.txt for previouse interpretation
+calling read magic file in thellier_gui_spd_lj.py
+/Users/nebula/Python/SPD_project/pmag_specimens.txt
+data info:  {'er_sites': {}, 'er_samples': {}, 'er_ages': {}} # last print call in gui __init__
+>>>
