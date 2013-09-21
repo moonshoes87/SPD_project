@@ -82,6 +82,7 @@ class PintPars(object):
         # name of object at end is p
 
         self.pars={}
+
         print "pars"
         print self.specimen_Data['pars']
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
@@ -90,8 +91,15 @@ class PintPars(object):
         # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
         # also, fix the weirdness of having to set the precise number for tmin and tmax
         self.pars['specimen_int_n']=self.end-self.start+1
-
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data"]
  
+        #LJ ADDING stats:
+        self.n_max = len(self.t_Arai)  # gets total number of temperatures taken.  (p. 4, top)
+        self.tmin = tmin # self-explanatory
+        self.tmax = tmax
+
+    # eventually add a function to change tmax and/or tmin.  must also change start, end, 
+
 
     def York_Regression(self):
         #-------------------------------------------------
@@ -112,10 +120,11 @@ class PintPars(object):
         y_err=y_Arai_segment-y_Arai_mean
 
         # York b
-        york_b=-1* sqrt( sum(y_err**2) / sum(x_err**2) )
-
+        york_b=-1* sqrt( sum(y_err**2) / sum(x_err**2) ) # averaged slope
+        
+        # could we not use self.n_max instead of n here?
         # york sigma
-        york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b*sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
+        york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
 
         # beta  parameter                
         beta_Coe=abs(york_sigma/york_b)  # absolute value of york sigma/york_b
@@ -123,6 +132,10 @@ class PintPars(object):
         # y_T is the intercept of the extrepolated line
         # through the center of mass (see figure 7 in Coe (1978))
         y_T = y_Arai_mean - york_b* x_Arai_mean
+
+        #LJ x_T is x intercept
+        x_T = (-1 * y_T) / york_b
+
 
         # calculate the extarplated data points for f and fvds
         # (see figure 7 in Coe (1978))
@@ -157,6 +170,7 @@ class PintPars(object):
         self.pars["specimen_b"]=york_b
         self.pars["specimen_int"]=-1*self.pars['lab_dc_field']*self.pars["specimen_b"]
         self.pars["specimen_YT"]=y_T       
+        self.pars["specimen_XT"] = x_T # LJ added
         self.pars["specimen_b_sigma"]=york_sigma
         self.pars["specimen_b_beta"]=beta_Coe
         self.pars["specimen_f"]=f_Coe

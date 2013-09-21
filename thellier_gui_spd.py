@@ -99,11 +99,8 @@ class Arai_GUI(wx.Frame):
     """
     title = "PmagPy Thellier GUI %s"%CURRENT_VRSION
     
-    def print_me(self):
-        print "Successful printing"
+    def __init__(self):
 
-    def __init__(self, magic_file):
-        print "__init__ Arai_gui instance"
         global FIRST_RUN
         FIRST_RUN=True
         wx.Frame.__init__(self, None, wx.ID_ANY, self.title)
@@ -116,7 +113,7 @@ class Arai_GUI(wx.Frame):
         #self.accept_new_parameters=copy.deepcopy(accept_new_parameters_default)
         preferences=self.get_preferences()
         self.dpi = 100
-
+        
         self.preferences=preferences
         # inialize selecting criteria
         accept_new_parameters=self.read_criteria_from_file(self.WD+"/pmag_criteria.txt")          
@@ -126,7 +123,6 @@ class Arai_GUI(wx.Frame):
         self.MagIC_directories_list=[]
 
         self.Data_info=self.get_data_info() # get all ages, locations etc. (from er_ages, er_sites, er_locations)
-        print "arai_GUI initialization calling self.get_data()"
         self.Data,self.Data_hierarchy=self.get_data() # Get data from magic_measurements and rmag_anistropy if exist.
 
         if  "-tree" in sys.argv and FIRST_RUN:
@@ -2056,7 +2052,6 @@ class Arai_GUI(wx.Frame):
     #----------------------------------------------------------------------
 
     def on_menu_open_magic_file(self, event):
-        print "doing on_menu_open_magic_file"
         dlg = wx.FileDialog(
             self, message="choose a MagIC format measurement file",
             defaultDir=self.currentDirectory, 
@@ -2073,9 +2068,6 @@ class Arai_GUI(wx.Frame):
         self.WD=new_magic_file.strip(path[-1])
                                                                 
         self.Data,self.Data_hierarchy=self.get_data()
-        print "self.Data"
-#        print self.Data
-        print str(self.Data['0238x5721062']['x_ptrm_check_starting_point'])[:500]
         self.Data_info=self.get_data_info() 
 
         self.redo_specimens={}
@@ -2221,7 +2213,6 @@ class Arai_GUI(wx.Frame):
         self.recaclulate_satistics()
         
     def recaclulate_satistics(self):
-        print "recalculating statistics"
         gframe=wx.BusyInfo("Re-calculating statsictics for all specimens\n Please wait..", self)
 
         for specimen in self.Data.keys():
@@ -3366,7 +3357,7 @@ class Arai_GUI(wx.Frame):
                     tmin=temperatures[tmin_i]
                     tmax=temperatures[tmax_i]
                     pars=self.get_PI_parameters(s,tmin,tmax)
-    
+
                     #-------------------------------------------------            
                     # check if pass the criteria
                     #-------------------------------------------------
@@ -4603,8 +4594,6 @@ class Arai_GUI(wx.Frame):
         
                           
     def read_magic_file(self,path,ignore_lines_n,sort_by_this_name):
-        print "doing read magic file in thellier_gui_spd_lj.py"
-        print path
         DATA={}
         fin=open(path,'rU')
         #ignore first lines
@@ -4626,8 +4615,6 @@ class Arai_GUI(wx.Frame):
                 tmp_data[header[i]]=tmp_line[i]
             DATA[tmp_data[sort_by_this_name]]=tmp_data
         fin.close()        
-        print "done"
-        print DATA
         return(DATA)
                 
 
@@ -5695,11 +5682,9 @@ class Arai_GUI(wx.Frame):
                 self.pars=self.get_PI_parameters(self.s,float(t1),float(t2))
                 
             self.update_GUI_with_new_interpretation()
-
+      
     def get_PI_parameters(self,s,tmin,tmax):
-        print "Doing get_PI_parameters from thellier_gui_spd_lj.py"
-        print "self", self, str(self.Data)[:500] + "..."
-
+        print "calling get_PI_parameters"
 
         def cart2dir(cart): # OLD ONE
             """
@@ -6285,7 +6270,7 @@ class Arai_GUI(wx.Frame):
             if pars["specimen_mad_scat"]=="Fail":
                 pars['specimen_fail_criteria'].append('specimen_mad_scat')
 
-    
+
         #-------------------------------------------------                     
         # Calculate the direction of pTMRMS
         #-------------------------------------------------                     
@@ -6408,6 +6393,7 @@ class Arai_GUI(wx.Frame):
            if ((abs(b)*Fa)/alpha) <1.0:
                Banc_NLT=math.atanh( ((abs(b)*Fa)/alpha) ) / beta
                pars["NLTC_specimen_int"]=Banc_NLT
+               # cuckoo
                pars["specimen_int_uT"]=Banc_NLT*1e6
 
                if "AC_specimen_int" in pars.keys():
@@ -6452,14 +6438,11 @@ class Arai_GUI(wx.Frame):
 
 
         import spd
-        print "imported spd"
+
         PintPars = spd.PintPars(self.Data,self.s,tmin,tmax)   
         print PintPars.calculate_all_statistics()
         #dog.noise()
-        print "giraffes are awesome"
         return(pars)
-    
-    
         
 
         
@@ -6828,10 +6811,7 @@ class Arai_GUI(wx.Frame):
 
       
     def get_data(self):
-      print "doing get_data"
-      print "self", self
-      print "self.Data", self.Data
-      print "magic file:", self.magic_file
+      print "calling get_data()"
 
       def tan_h(x, a, b):
             return a*tanh(b*x)
@@ -7230,7 +7210,7 @@ class Arai_GUI(wx.Frame):
       #print "done searching NLT data"
               
       self.GUI_log.write("-I- Done calculating non linear TRM parameters for all specimens\n")
-
+    
 
       #------------------------------------------------
       # Calculate cooling rate experiments
@@ -7632,32 +7612,22 @@ class Arai_GUI(wx.Frame):
       self.GUI_log.write("-I- number of samples in this project directory: %i\n"%len(Data_hierarchy['samples'].keys()))
 
       #print "done sort blocks to arai, zij. etc."
-      print "returning Data, data_hierarchy.  This is the completion of self.get_data().  printing Data['0238x5721062']"
-      print str(Data["0238x5721062"]['datablock'])#[:500] + "...."
-      print "Data[s]['pars']:"
-      print str(Data["0238x5721062"]['pars'])
-      print "done with get_data"
+      print "finished get_data()"
       return(Data,Data_hierarchy)
 
-
       
- # zebra.  end of get_data()
 
     #--------------------------------------------------------------    
     # Read all information file (er_locations, er_samples, er_sites, er_ages)
     #--------------------------------------------------------------
     def get_data_info(self):
-        print "doing get_data_info"
         Data_info={}
         data_er_samples={}
         data_er_ages={}
         data_er_sites={}
 
-
         # samples
         def read_magic_file(path,sort_by_this_name):
-            print "Doing a read_magic_file in thellier_gui"
-            print path
             DATA={}
             fin=open(path,'rU')
             fin.readline()
@@ -7694,8 +7664,7 @@ class Arai_GUI(wx.Frame):
         Data_info["er_sites"]=data_er_sites
         Data_info["er_ages"]=data_er_ages
         
-        print "data_info"
-        print str(Data_info)[:500]
+        
         return(Data_info)
 
     #--------------------------------------------------------------    
@@ -8118,7 +8087,6 @@ class Arai_GUI(wx.Frame):
         """ 
         reads  a Magic template file, puts data in a list of dictionaries
         """
-        print "calling magic_read(self, infile)", infile
         hold,magic_data,magic_record,magic_keys=[],[],{},[]
         try:
             f=open(infile,"rU")
@@ -8164,9 +8132,6 @@ class Arai_GUI(wx.Frame):
         magictype=file_type.lower().split("_")
         Types=['er','magic','pmag','rmag']
         if magictype in Types:file_type=file_type.lower()
-        print "magic data:"
-        print str(magic_data)[:500] + "..."
-        print "file_type", file_type
         return magic_data,file_type
 
 
@@ -9882,7 +9847,6 @@ class MagIC_model_builder(wx.Frame):
         self.Destroy()
       
     def read_magic_file(self,path,sort_by_this_name):
-        print "doing read_magic_file 1"
         DATA={}
         fin=open(path,'rU')
         fin.readline()
@@ -9904,7 +9868,6 @@ class MagIC_model_builder(wx.Frame):
 
 
     def read_MagIC_info(self):
-        print "reading magic info"
         Data_info={}
         #print "-I- read existing MagIC model files"
         self.data_er_specimens,self.data_er_samples,self.data_er_sites,self.data_er_locations,self.data_er_ages={},{},{},{},{}
