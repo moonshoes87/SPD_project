@@ -47,7 +47,7 @@ sequence to get Data to feed into spd.py:
 	 .....	 
 	>>> gui.Data
 	.... (necessary Data for spd.py)
-	gui.get_PI_parameters(gui.s, 273, 798)
+	thing = gui.get_PI_parameters(gui.s, 273, 798)
 
 or:
 	import new_lj_thellier_gui_spd as tgs
@@ -58,6 +58,9 @@ or:
 	thing = spd.PintPars(data, specimen, 273, 798)
 	thing.calculate_all_statistics()
 
+In these two examples, thing appears to be the same
+
+The temperature selector bar thing is in kelvin, but tmin, tmax are in C.  hahahahaha.  
 
 don't forget array behavior options (linspace, arange, etc.)
 

@@ -4308,3 +4308,33 @@ class Arai_GUI():
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
     
         return araiblock,field
+
+
+#if __name__ == '__main__':
+gui = Arai_GUI()
+specimens = gui.Data.keys()
+import spd
+print specimens
+#thing1_tmax = gui.Data[specimens[0]]['t_Arai'][0]
+#thing1_tmin = gui.Data[specimens[-1]]['t_Arai'][-1]
+#print thing1_tmax, thing1_tmin
+#thing1 = spd.PintPars(gui.Data, gui.specimens[0], thing1_tmin, thing1_tmax)
+things = []
+for n, s in enumerate(specimens):
+    print "looping: "
+    print s
+    print gui.Data[s]['t_Arai']
+    tmin = gui.Data[s]['t_Arai'][0]
+    tmax = gui.Data[s]['t_Arai'][-1]
+    print "tmin is: %s" %(tmin)
+    print "tmax is: %s" %(tmax)
+    thing = spd.PintPars(gui.Data, s, tmin, tmax)
+    things.append(thing)
+
+print things
+thing = things[0]
+thing1 = things[1]
+thing2 = things[2]
+thing3 = things[3]
+thing4 = things[4]
+thing5 = things[5]

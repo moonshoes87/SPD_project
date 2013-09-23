@@ -76,9 +76,16 @@ class PintPars(object):
         self.zijdblock=self.specimen_Data['zijdblock']        
         self.z_temperatures=self.specimen_Data['z_temp']
 
+        # tmax, tmin, start, and end -- inclusive, or exclusive???
+        print "self.t_Arai:"
+        print self.t_Arai
         self.start=self.t_Arai.index(tmin)
         self.end=self.t_Arai.index(tmax)
 
+        print "tmin, tmax"
+        print tmin, tmax
+        print "start", "end"
+        print self.start, self.end
         # name of object at end is p
 
         self.pars={}
@@ -91,7 +98,7 @@ class PintPars(object):
         # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
         # also, fix the weirdness of having to set the precise number for tmin and tmax
         self.pars['specimen_int_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data"]
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data"] # needs to be updated
  
         #LJ ADDING stats:
         self.n_max = len(self.t_Arai)  # gets total number of temperatures taken.  (p. 4, top)
@@ -168,9 +175,11 @@ class PintPars(object):
             self.pars['magic_method_codes']=""
             
         self.pars["specimen_b"]=york_b
-        self.pars["specimen_int"]=-1*self.pars['lab_dc_field']*self.pars["specimen_b"]
+        self.pars["specimen_int"]=-1*self.pars['lab_dc_field']*self.pars["specimen_b"] # possibly this is B_anc??
         self.pars["specimen_YT"]=y_T       
         self.pars["specimen_XT"] = x_T # LJ added
+        self.pars['B_lab']=(float(self.specimen_Data['lab_dc_field'])*1e6) 
+        #  * abs(york_b) # LJ added
         self.pars["specimen_b_sigma"]=york_sigma
         self.pars["specimen_b_beta"]=beta_Coe
         self.pars["specimen_f"]=f_Coe
@@ -187,6 +196,7 @@ class PintPars(object):
         print "PintPars object, self.pars after york regression: "
         print self.pars
         print "finished with York_regression()"
+        print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
 
 
     def calculate_all_statistics(self):
