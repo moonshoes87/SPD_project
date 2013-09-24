@@ -104,6 +104,7 @@ class Arai_GUI():
         If cant read file rerurn the default values 
         """
         print "calling read_criteria_from_file"
+        not_needed = """
         # initialize Null and Default 
         default_acceptance_criteria,null_acceptance_criteria=self.get_default_criteria()        # Replace with new parametrs
         replace_acceptance_criteria={}
@@ -171,7 +172,7 @@ class Arai_GUI():
         #    print("-I- using default criteria\n")
         except:
             return(default_acceptance_criteria)
-
+"""
     #----------------------------------------------------------------------
 
     #========================================================
@@ -1468,7 +1469,8 @@ class Arai_GUI():
         and update gui with the new interpretation
         """
         print ("-I- read redo file and processing new temperature bounds")
-        not_called = """print "calling read_redo_file()"
+        print "calling read_redo_file()"
+        not_called = """
         self.redo_specimens={}
         # first delete all previous interpretation
         for sp in self.Data.keys():
@@ -1516,11 +1518,12 @@ class Arai_GUI():
     #----------------------------------------------------------------------            
 
     def write_acceptance_criteria_to_file(self):
-        print "calling write_acceptance_criteria_to_file()"
+
  #       import copy
         """
         Write new acceptance criteria to pmag_criteria.txt
         """
+        print "calling write_acceptance_criteria_to_file()"
         # check if an old pmag_criteria.txt exist:
         not_called = """other_criteria={}
         try:
@@ -4310,19 +4313,16 @@ class Arai_GUI():
     
         return araiblock,field
 
-
+#def automate():
 #if __name__ == '__main__':
-def automate():
+if True:
+#if False:
     gui = Arai_GUI()
     specimens = gui.Data.keys()
     print specimens.sort()
     print "SPECIMENS"
     import spd
     print specimens
-#thing1_tmax = gui.Data[specimens[0]]['t_Arai'][0]
-#thing1_tmin = gui.Data[specimens[-1]]['t_Arai'][-1]
-#print thing1_tmax, thing1_tmin
-#thing1 = spd.PintPars(gui.Data, gui.specimens[0], thing1_tmin, thing1_tmax)
     things = []
     for n, s in enumerate(specimens):
         print "looping: "
@@ -4334,17 +4334,18 @@ def automate():
         print "tmax is: %s" %(tmax)
         thing = spd.PintPars(gui.Data, s, tmin, tmax)
         things.append(thing)
-        thing = things[0]
-        thing1 = things[1]
-        thing2 = things[2]
-        thing3 = things[3]
-        thing4 = things[4]
-        thing5 = things[5]
-        thing.calculate_all_statistics()
-        thing1.calculate_all_statistics()
-        thing2.calculate_all_statistics()
-        thing3.calculate_all_statistics()
-        thing4.calculate_all_statistics()
-        thing5.calculate_all_statistics()
+    thing = things[0]
+    thing1 = things[1]
+    thing2 = things[2]
+    thing3 = things[3]
+    thing4 = things[4]
+    thing5 = things[5]
+    thing.calculate_all_statistics()
+    thing1.calculate_all_statistics()
+    thing2.calculate_all_statistics()
+    thing3.calculate_all_statistics()
+    thing4.calculate_all_statistics()
+    thing5.calculate_all_statistics()
+
 
 #automate()

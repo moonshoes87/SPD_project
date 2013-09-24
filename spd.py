@@ -145,14 +145,24 @@ class PintPars(object):
         # calculate the extarplated data points for f and fvds
         # (see figure 7 in Coe (1978))
 
-        x_tag=(y_Arai_segment - y_T ) / york_b
+        x_tag=(y_Arai_segment - y_T ) / york_b # returns array of y points minus the y intercept, divided by slope
         y_tag=york_b*x_Arai_segment + y_T
+
+#        self.pars['x_tag'] = x_tag # LJ add
 
         # intersect of the dashed square and the horizontal dahed line  next to delta-y-5 in figure 7, Coe (1978)
         x_prime=(x_Arai_segment+x_tag) / 2
         y_prime=(y_Arai_segment+y_tag) / 2
+        self.pars['x_prime'] = x_prime #LJ add
+        self.pars['y_prime'] = y_prime # LJ add
 
-        f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)
+        delta_x_prime = abs(x_prime[-1] - x_prime[0]) #Lj add.  this is the TRM length of the best fit line
+        delta_y_prime = abs(y_prime[-1] - y_prime[0]) # LJ add.  this is the NRM length of the best fit line
+        self.pars['delta_x_prime'] = delta_x_prime
+        self.pars['delta_y_prime'] = delta_y_prime
+
+        f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
+        other_f_Coe = delta_y_prime / y_T  # LJ added
 
         f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds'])
 
@@ -187,6 +197,7 @@ class PintPars(object):
 
         self.pars["specimen_b_beta"]=beta_Coe
         self.pars["specimen_f"]=f_Coe
+        self.pars["other_specimen_f"] = other_f_Coe
         self.pars["specimen_fvds"]=f_vds
         self.pars["specimen_g"]=g_Coe
         self.pars["specimen_q"]=q_Coe
