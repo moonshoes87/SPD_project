@@ -21,12 +21,6 @@ import random
 import copy
 from pylab import *
 from scipy.optimize import curve_fit
-#try:
-#    from mpl_toolkits.basemap import Basemap, shiftgrid
-#except:
-#    print "did not import: from mpl_toolkits.basemap import Basemap, shiftgrid"
-#    pass
-
 
 import thellier_consistency_test
 
@@ -1302,7 +1296,8 @@ class Arai_GUI():
 #def automate():
 #if __name__ == '__main__':
 if True:
-#if False:
+    gui = Arai_GUI()
+if False:
     gui = Arai_GUI()
     specimens = gui.Data.keys()
     print specimens.sort()

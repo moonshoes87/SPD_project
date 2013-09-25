@@ -164,6 +164,9 @@ class PintPars(object):
         f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
         other_f_Coe = delta_y_prime / y_T  # LJ added
 
+        vds = self.specimen_Data['vds'] # LJ added
+        self.pars['vds'] = vds # lj added
+
         f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds'])
 
         g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )
@@ -213,10 +216,52 @@ class PintPars(object):
         print "finished with York_regression()"
         print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
 
+    def dir2cart(self, d):
+#        print "calling dir2cart(), not in anything"                                                             
+       # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z    
+        ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs                
+        d=array(d)
+        rad=pi/180.
+        if len(d.shape)>1: # array of vectors
+            decs,incs=d[:,0]*rad,d[:,1]*rad
+            if d.shape[1]==3: ints=d[:,2] # take the given lengths
+        else: # single vector
+            decs,incs=array(d[0])*rad,array(d[1])*rad
+            if len(d)==3:
+                ints=array(d[2])
+            else:
+                ints=array([1.])
+        cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
+        return cart
+    
+    def get_vds(self): # stolen from tgs
+        """vector difference sum"""
+        zijdblock = self.zijdblock
+        print "zijdblock", zijdblock
+        z_temperatures=[row[0] for row in zijdblock]
+        print "z_temperatures", z_temperatures
+        zdata=[]
+        vector_diffs=[]
+        NRM=zijdblock[0][3]
+        print "NRM", NRM
+        for k in range(len(zijdblock)):
+            DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]
+            cart=self.dir2cart(DIR)
+            zdata.append(array([cart[0],cart[1],cart[2]]))
+            if k>0:
+                vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
+        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds                                            
+        vds=sum(vector_diffs)  # vds calculation                                                                                         
+        print "vds ", vds
+        zdata=array(zdata)
+        self.pars['vds_new'] = vds
+
+
 
     def calculate_all_statistics(self):
         print "self.pars before York regression:"
         print self.pars
         print "calling calculate_all_statistics in spd.py"
         self.York_Regression()
+        self.get_vds()
         print "done with calculate_all_statistics"
