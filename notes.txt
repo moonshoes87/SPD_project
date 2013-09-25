@@ -76,13 +76,14 @@ Current statistics are all correct between self.Data[self.s]['pars'] and self.pa
 
 Next steps:
 It would be nice to take Data out of the PintPars object.  Figure out what is needed, and embed that more directly into the object.  DONE
-Walk through get PI parameters....
+Walk through get PI parameters....DONE
 Walk through get data
 fix the thing between dir2cart, cart2dir, etc. DONE
-remove needless functions
+remove needless functions DONE
 figure out if need er_ages, etc.
 figure out version of EPD
 figure out difference betwixt read_magic_file()
+how does dec., inc., etc., get turned into x, y Arai coordinates??  this is probs done in sortarai()
 
 
 
@@ -186,3 +187,27 @@ METHODS ['LT-PTRM-MD', 'LP-PI-TRM', 'LP-PI-ALT-PTRM', 'LP-PI-BT-MD', 'LP-PI-BT-I
 
 tgs.thing1.pars['magic_method_codes'], tgs.thing2.pars['magic_method_codes']
 ('LP-PI-BT-IZZI:IE-TT:LP-PI-ALT-PTRM:LP-PI-BT-MD', 'LP-PI-ZI:IE-TT:LP-PI-ALT-PTRM')
+
+
+
+magic method codes:
+
+LT-T-I	     Lab Treatment	Specimen cooling: In laboratory field
+
+LP-PI-TRM    Lab Protocol		  	  Paleointensity experiment: Using a laboratory TRM. Any paleointensity experiment that uses a TRM produced in a lab controlled field. Includes all variants of the Thellier method, including the Shaw method. More details on alteration and reciprocity checks can be added using the special LP-PI-ALT and LP-PI-BT method codes. Thellier 1938.
+
+LP-TRM	     Lab Protocol			 TRM acquisition.
+
+LT-M-I	     Lab Treatment			Using microwave radiation: In laboratory field. Walton et al. 1993.
+
+LP-PI-M	     Lab Protocol		       	Paleointensity experiment: Microwave demagnetization. 
+
+LT-NO	     Lab Treatment			No treatments applied before measurement.
+
+LT-T-Z	     Lab Treatment			Specimen cooling: In zero field. Heating the specimen to the desired temperature step and then cooling in zero ambient magnetic field. Wilson 1961, Collinson 1983.
+
+LT-M-Z	     Lab Treatment			Using microwave radiation: In zero field. Walton et al. 1992.
+
+LT-PTRM-Z    Lab Treatment			pTRM tail check After in laboratory field step, perform a zero field cooling at a lower temperature. After heating to a particular temperature step and cooling in field. The specimen is heated to a lower temperature step and cooled in zero field. This checks for low temperature pTRM tails. Harcombe-Smee et al. 1996.
+
+LT-PTRM-I    Lab Treatment			 pTRM check: After zero field step, perform an in field cooling. After treatment at a particular temperature step, the specimen is then reheated to a lower temperature and cooled with the laboratory field on thus reapplying a pTRM. Coe 1967.

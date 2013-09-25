@@ -1084,6 +1084,7 @@ class Arai_GUI():
                 methcodes.append(meth.strip())
             # for thellier-thellier
             if 'LT-T-I' in methcodes and 'LP-PI-TRM' in methcodes and 'LP-TRM' not in methcodes :
+                # IF specimen cooling AND using a laboratory trm AND NOT trm acquisition
                 Treat_I.append(temp)
                 ISteps.append(k)
                 if field=="":field=float(rec["treatment_dc_field"])
@@ -1093,6 +1094,7 @@ class Arai_GUI():
                     
             # for Microwave
             if 'LT-M-I' in methcodes and 'LP-PI-M' in methcodes :
+                # if using microwave radiation in lab field AND using microwave demagnetisation 
                 Treat_I.append(temp)
                 ISteps.append(k)
                 if field=="":field=float(rec["treatment_dc_field"])
@@ -1102,25 +1104,32 @@ class Arai_GUI():
 
     # stick  first zero field stuff into first_Z 
             if 'LT-NO' in methcodes:
+                # if no treatments applied before measurements
                 Treat_Z.append(temp)
                 ZSteps.append(k)
             if 'LT-T-Z' in methcodes or 'LT-M-Z' in methcodes: 
+                # if specimen cooling in zero field OR using microwave radiation: In zero field
                 Treat_Z.append(temp)
                 ZSteps.append(k)
-            if 'LT-PTRM-Z' :
+            if 'LT-PTRM-Z' : # maybe this should be in methcodes ATTEND
+                # if pTRM tail check
                 Treat_PZ.append(temp)
                 PZSteps.append(k)
             if 'LT-PTRM-I' in methcodes or 'LT-PMRM-I' in methcodes:
+                # if pTRM check
                 Treat_PI.append(temp)
                 PISteps.append(k)
             if 'LT-PTRM-MD' in methcodes:
+                # if pTRM tail check
                 Treat_M.append(temp)
                 MSteps.append(k)
             if 'LT-NO' in methcodes:
+                # if no treatments applied before measurement
                 dec=float(rec["measurement_dec"])
                 inc=float(rec["measurement_inc"])
                 str=float(rec[momkey])
                 if 'LP-PI-M'  not in methcodes:
+                    # if not using microwave demagnetisation
                     first_I.append([273,0.,0.,0.,1])
                     first_Z.append([273,dec,inc,str,1])  # NRM step
                 else:
@@ -1289,6 +1298,7 @@ class Arai_GUI():
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
         print "done with sortarai()"
         print "araiblock[0]: "
+        #  [[273, 277.5, 79.6, 1.66e-09, 1], .....]
         print araiblock[0]
         print "field ", field
         return araiblock,field

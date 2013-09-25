@@ -240,9 +240,14 @@ class PintPars(object):
         vector_diffs=[]
         NRM=zijdblock[0][3]
         print "NRM", NRM
+# each zijdblock list item:  [treatment (temperature),declination,inclination,intensity,ZI,measurement_flag,magic_instrument_codes]
         for k in range(len(zijdblock)):
             DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]
+            print "treatment", zijdblock[k][0]
+            print "ZI", zijdblock[k][4]
+            print "DIR (vectors). dec, inc, intensity ", DIR
             cart=self.dir2cart(DIR)
+            print "cartesian coordinates, " , cart
             zdata.append(array([cart[0],cart[1],cart[2]]))
             if k>0:
                 vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
@@ -258,7 +263,7 @@ class PintPars(object):
         self.pars['specimen_vds_new'] = vds
 #        f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds']) # old code, not encapsulated in spd.py
  #       self.pars["specimen_fvds"]=f_vds
-        self.pars["specimen_fvds_new"]=f_vds # possible that this number may be wrong..... when compared with gui.  but barely.  
+        self.pars["specimen_fvds_new"]=f_vds 
 
 
     def calculate_all_statistics(self):
@@ -268,3 +273,10 @@ class PintPars(object):
         self.York_Regression()
         self.get_vds()
         print "done with calculate_all_statistics"
+
+
+if True:
+    import new_lj_thellier_gui_spd as tgs
+    gui = tgs.Arai_GUI()
+    thing = PintPars(gui.Data, gui.s, 273, 798)
+    thing.York_Regression()
