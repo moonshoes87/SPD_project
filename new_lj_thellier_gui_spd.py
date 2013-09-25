@@ -21,11 +21,11 @@ import random
 import copy
 from pylab import *
 from scipy.optimize import curve_fit
-try:
-    from mpl_toolkits.basemap import Basemap, shiftgrid
-except:
-    print "did not import: from mpl_toolkits.basemap import Basemap, shiftgrid"
-    pass
+#try:
+#    from mpl_toolkits.basemap import Basemap, shiftgrid
+#except:
+#    print "did not import: from mpl_toolkits.basemap import Basemap, shiftgrid"
+#    pass
 
 
 import thellier_consistency_test
@@ -38,7 +38,7 @@ class Arai_GUI():
     
     def __init__(self, magic_file = "magic_measurements.txt"):
         print " calling __init__ Arai_gui instance"
-        self.redo_specimens={}
+#        self.redo_specimens={}
         self.currentDirectory = "/Users/nebula/Python/SPD_project"
         self.WD = "/Users/nebula/Python/SPD_project"
  #       accept_new_parameters_default,accept_new_parameters_null=self.get_default_criteria()    # inialize Null selecting criteria
@@ -54,7 +54,6 @@ class Arai_GUI():
 #        self.accept_new_parameters=accept_new_parameters
         #self.accept_new_parameters=accept_new_parameters
         self.Data,self.Data_hierarchy,self.Data_info={},{},{}
-        self.MagIC_directories_list=[]
 
         self.Data_info=self.get_data_info() # get all ages, locations etc. (from er_ages, er_sites, er_locations)
         print "arai_GUI initialization calling self.get_data()"
@@ -113,13 +112,12 @@ class Arai_GUI():
       Data_hierarchy['samples']={}
       Data_hierarchy['specimens']={}
 
-      # add dir to dir pathes for interpterer:
-      if self.WD not in self.MagIC_directories_list:
-          self.MagIC_directories_list.append(self.WD)
-      #for dir_path in self.dir_pathes:
-      #print "start Magic read %s " %self.magic_file
       try:
-          meas_data,file_type=self.magic_read(self.magic_file) # returns 
+          meas_data,file_type=self.magic_read(self.magic_file) # returns a tuple of lists of dictionaries.  seems like same stuff as in magic_measurements.txt, but in a different order
+# len(read) == 2
+# len(read[0] == 287
+#len(read[1] == 18
+# read[0][0] looks like:  {'treatment_ac_field': '0', 'treatment_dc_field_theta': '90', 'measurement_temp': '273', 'er_citation_names': 'This study', 'measurement_magn_moment': '2.01e-09', 'treatment_temp': '273', 'measurement_number': '1', 'measurement_standard': 'u', 'er_site_name': '0238x', 'er_sample_name': '0238x601104', 'treatment_dc_field_phi': '0', 'measurement_inc': '-8.8', 'er_location_name': '238', 'measurement_dec': '257.6', 'magic_experiment_name': '0238x6011043:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI', 'measurement_flag': 'g', 'er_specimen_name': '0238x6011043', 'measurement_csd': '0.7', 'treatment_dc_field': '0', 'magic_method_codes': 'LT-NO:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI'}
       except:
           print "-E- ERROR: Cant read magic_measurement.txt file. File is corrupted."
           return {},{}
@@ -132,7 +130,8 @@ class Arai_GUI():
       
       CurrRec=[]
       #print "get sids"
-      sids=self.get_specs(meas_data) # samples ID's
+      sids=self.get_specs(meas_data) # samples ID's.  for rec in data: spec=rec["er_specimen_name"]
+
       #print "done get sids"
 
       #print "initialize blocks"
@@ -1041,7 +1040,7 @@ class Arai_GUI():
         print str(magic_data)[:500] + "..."
         print "file_type", file_type
         return magic_data,file_type
-    
+
 
     def get_specs(self,data):
         """

@@ -177,3 +177,12 @@ calling read magic file in thellier_gui_spd_lj.py
 /Users/nebula/Python/SPD_project/pmag_specimens.txt
 data info:  {'er_sites': {}, 'er_samples': {}, 'er_ages': {}} # last print call in gui __init__
 >>>
+
+
+
+methods had by the average specimen:
+METHODS ['LT-T-I', 'LP-PI-TRM-ZI', 'LP-PI-TRM', 'LP-PI-ALT-PTRM', 'LP-PI-BT-MD', 'LP-PI-BT-IZZI']
+METHODS ['LT-PTRM-MD', 'LP-PI-TRM', 'LP-PI-ALT-PTRM', 'LP-PI-BT-MD', 'LP-PI-BT-IZZI']
+
+tgs.thing1.pars['magic_method_codes'], tgs.thing2.pars['magic_method_codes']
+('LP-PI-BT-IZZI:IE-TT:LP-PI-ALT-PTRM:LP-PI-BT-MD', 'LP-PI-ZI:IE-TT:LP-PI-ALT-PTRM')
