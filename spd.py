@@ -164,10 +164,6 @@ class PintPars(object):
         f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
         other_f_Coe = delta_y_prime / y_T  # LJ added
 
-        vds = self.specimen_Data['vds'] # LJ added
-        self.pars['vds'] = vds # lj added
-
-        f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds'])
 
         g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )
 
@@ -201,7 +197,7 @@ class PintPars(object):
         self.pars["specimen_b_beta"]=beta_Coe
         self.pars["specimen_f"]=f_Coe
         self.pars["other_specimen_f"] = other_f_Coe
-        self.pars["specimen_fvds"]=f_vds
+
         self.pars["specimen_g"]=g_Coe
         self.pars["specimen_q"]=q_Coe
         self.pars['magic_method_codes']+=":IE-TT"
@@ -254,8 +250,15 @@ class PintPars(object):
         vds=sum(vector_diffs)  # vds calculation                                                                                         
         print "vds ", vds
         zdata=array(zdata)
-        self.pars['vds_new'] = vds
 
+        y_prime = self.pars['y_prime']
+        f_vds=abs((y_prime[0]-y_prime[-1])/vds)
+#        vds = self.specimen_Data['vds'] # LJ added
+#        self.pars['vds'] = vds # lj added
+        self.pars['specimen_vds_new'] = vds
+#        f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds']) # old code, not encapsulated in spd.py
+ #       self.pars["specimen_fvds"]=f_vds
+        self.pars["specimen_fvds_new"]=f_vds # possible that this number may be wrong..... when compared with gui.  but barely.  
 
 
     def calculate_all_statistics(self):
