@@ -181,6 +181,13 @@ data info:  {'er_sites': {}, 'er_samples': {}, 'er_ages': {}} # last print call 
 
 
 
+
+pTRM check -- going back to a cooler temperature to see if specimen still has the same capacity to take on pTRM, or if it has been altered
+pTRM tail check -- ?? assess if pTRM gained at x temp is completely removed by reheating to the same temperature.  why does this one matter??
+
+
+
+
 methods had by the average specimen:
 METHODS ['LT-T-I', 'LP-PI-TRM-ZI', 'LP-PI-TRM', 'LP-PI-ALT-PTRM', 'LP-PI-BT-MD', 'LP-PI-BT-IZZI']
 METHODS ['LT-PTRM-MD', 'LP-PI-TRM', 'LP-PI-ALT-PTRM', 'LP-PI-BT-MD', 'LP-PI-BT-IZZI']
@@ -211,3 +218,5 @@ LT-M-Z	     Lab Treatment			Using microwave radiation: In zero field. Walton et 
 LT-PTRM-Z    Lab Treatment			pTRM tail check After in laboratory field step, perform a zero field cooling at a lower temperature. After heating to a particular temperature step and cooling in field. The specimen is heated to a lower temperature step and cooled in zero field. This checks for low temperature pTRM tails. Harcombe-Smee et al. 1996.
 
 LT-PTRM-I    Lab Treatment			 pTRM check: After zero field step, perform an in field cooling. After treatment at a particular temperature step, the specimen is then reheated to a lower temperature and cooled with the laboratory field on thus reapplying a pTRM. Coe 1967.
+
+LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory field step, perform a zero field cooling at same temperature. A check carried out during Thellier procedures to detect multidomain grains. Additional zero field heating steps are used to remove a previously placed pTRM. The ability to remove a prior pTRM step at the same temperature imparted is used as an indicator of reversal. Riisager & Riisager 2001, Scherbakov et al. 1993.

@@ -108,10 +108,13 @@ class Arai_GUI():
 
       try:
           meas_data,file_type=self.magic_read(self.magic_file) # returns a tuple of lists of dictionaries.  seems like same stuff as in magic_measurements.txt, but in a different order
-# len(read) == 2
-# len(read[0] == 287
-#len(read[1] == 18
+# read[1] == file type, i.e. "magic_measurements"
+# len(read[0]) == 287
 # read[0][0] looks like:  {'treatment_ac_field': '0', 'treatment_dc_field_theta': '90', 'measurement_temp': '273', 'er_citation_names': 'This study', 'measurement_magn_moment': '2.01e-09', 'treatment_temp': '273', 'measurement_number': '1', 'measurement_standard': 'u', 'er_site_name': '0238x', 'er_sample_name': '0238x601104', 'treatment_dc_field_phi': '0', 'measurement_inc': '-8.8', 'er_location_name': '238', 'measurement_dec': '257.6', 'magic_experiment_name': '0238x6011043:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI', 'measurement_flag': 'g', 'er_specimen_name': '0238x6011043', 'measurement_csd': '0.7', 'treatment_dc_field': '0', 'magic_method_codes': 'LT-NO:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI'}
+# read[0][1]:
+#{'treatment_ac_field': '0', 'treatment_dc_field_theta': '90', 'measurement_temp': '273', 'er_citation_names': 'This study', 'measurement_magn_moment': '1.98e-09', 'treatment_temp': '373', 'measurement_number': '1', 'measurement_standard': 'u', 'er_site_name': '0238x', 'er_sample_name': '0238x601104', 'treatment_dc_field_phi': '0', 'measurement_inc': '-8.1', 'er_location_name': '238', 'measurement_dec': '255.7', 'magic_experiment_name': '0238x6011043:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI', 'measurement_flag': 'g', 'er_specimen_name': '0238x6011043', 'measurement_csd': '0.7', 'treatment_dc_field': '4e-05', 'magic_method_codes': 'LT-T-I:LP-PI-TRM-IZ:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI'}
+# so, first is a zero field, heated to 273 and measured at 273.  second is infield, heated to 373 but measured at 373.  
+# actual measurements: measurement_magn_moment, measurement_inc, measurement_dec, and measurement_csd.  inc == inclination (how a compass would want to point down through the earth to get to the N pole, at least while in northern hemisphere)  magn_moment = "The product of the pole strength of a magnet and the distance between the poles."  dec == declination.  
       except:
           print "-E- ERROR: Cant read magic_measurement.txt file. File is corrupted."
           return {},{}
@@ -132,7 +135,7 @@ class Arai_GUI():
       
       for s in sids:
 
-          if s not in Data.keys():
+          if s not in Data.keys(): # if a record doesn't already exist for this specimen
               Data[s]={}
               Data[s]['datablock']=[]
               Data[s]['trmblock']=[]
@@ -145,7 +148,7 @@ class Arai_GUI():
 
       #print "sorting meas data"
           
-      for rec in meas_data:
+      for rec in meas_data:  # iterates through RECORDS, not specimens
           s=rec["er_specimen_name"]
           Data[s]['T_or_MW']="T"
           sample=rec["er_sample_name"]
@@ -160,9 +163,11 @@ class Arai_GUI():
           methods=rec["magic_method_codes"].split(":") # LJ UNCOMMENTED THIS, NOT SURE IF IT WORKS!!!
           print "METHODS", methods
           if "LP-PI-TRM" in rec["magic_method_codes"] or "LP-PI-M" in rec["magic_method_codes"]:
+              # if using a lab trm field or Microwave demagnetization:
               Data[s]['datablock'].append(rec)
               # identify the lab DC field
               if ("LT-PTRM-I" in rec["magic_method_codes"] and 'LP-TRM' not in rec["magic_method_codes"] ) or "LT-PMRM-I" in rec["magic_method_codes"]:
+                  # if (pTRM check(After zero field step, perform an in field cooling) and NOT TRM acquisition) or pMRM check (After zero field step, perform an in field cooling after heating to lower T with microwave radiation)
                   Data[s]['Thellier_dc_field_uT']=float(rec["treatment_dc_field"])
                   Data[s]['Thellier_dc_field_phi']=float(rec['treatment_dc_field_phi'])
                   Data[s]['Thellier_dc_field_theta']=float(rec['treatment_dc_field_theta'])
@@ -170,20 +175,24 @@ class Arai_GUI():
                   
                 
           if "LP-TRM" in rec["magic_method_codes"]:
+              # if TRM acquisition:
               Data[s]['trmblock'].append(rec)
 
           if "LP-AN-TRM" in rec["magic_method_codes"]:
+              # if Anisotropy measurement (TRM acquisition):
               if 'atrmblock' not in Data[s].keys():
                 Data[s]['atrmblock']=[]
               Data[s]['atrmblock'].append(rec)
 
 
           if "LP-AN-ARM" in rec["magic_method_codes"]:
+              # if Anisotropy measurement(ARM acquisition. Measure of anisotropy of anhysteretic susceptibility (AAS) via ARM acquisition (AARM)):
               if 'aarmblock' not in Data[s].keys():
                 Data[s]['aarmblock']=[]
               Data[s]['aarmblock'].append(rec)
 
           if "LP-CR-TRM" in rec["magic_method_codes"]:
+              # could not find this code on earthref.org
               if 'crblock' not in Data[s].keys():
                 Data[s]['crblock']=[]
               Data[s]['crblock'].append(rec)
@@ -191,8 +200,10 @@ class Arai_GUI():
           #---- Zijderveld block
 
           EX=["LP-AN-ARM","LP-AN-TRM","LP-ARM-AFD","LP-ARM2-AFD","LP-TRM-AFD","LP-TRM","LP-TRM-TD","LP-X"] # list of excluded lab protocols
+          # Anisotropy measurement(ARM acquisition), Anisotropy measurement: TRM acquisition, ARM Acquisition: AF demagnetization, No ARM2, TRM acquisition: AF demagnitization, TRM acquisition, TRM acquisition: Thermal demagnitization, Susceptibility measurement.
           #INC=["LT-NO","LT-AF-Z","LT-T-Z", "LT-M-Z", "LP-PI-TRM-IZ", "LP-PI-M-IZ"]
           INC=["LT-NO","LT-T-Z","LT-M-Z"]
+          # No treatments applied before measurement, Specimen cooling: In zero field, Using microwave radiation: In zero field.
           methods=rec["magic_method_codes"].split(":")
           for i in range (len(methods)):
                methods[i]=methods[i].strip()
@@ -210,6 +221,7 @@ class Arai_GUI():
                  tr = float(rec["treatment_mw_power"])
                  
              if "LP-PI-TRM-IZ" in methods or "LP-PI-M-IZ" in methods:  # looking for in-field first thellier or microwave data - otherwise, just ignore this
+                 # if using a laboratory TRM with in-field step then zero-field step or using a microwave TRM with a zero-field step then in-field step. 
                  ZI=0
              else:
                  ZI=1
@@ -242,7 +254,7 @@ class Arai_GUI():
       #print "done sorting meas data"
       
       self.specimens=Data.keys()
-      self.s = self.specimens[0]  # LORI WEIRD ADDITION
+      self.s = self.specimens[0]  # LORI convenience ADDITION
       self.specimens.sort()
 
       
@@ -1065,7 +1077,7 @@ class Arai_GUI():
         ISteps,ZSteps,PISteps,PZSteps,MSteps=[],[],[],[],[]
         GammaChecks=[] # comparison of pTRM direction acquired and lab field
         Mkeys=['measurement_magn_moment','measurement_magn_volume','measurement_magn_mass','measurement_magnitude']
-        rec=datablock[0]
+        rec=datablock[0]  # finds which key is present in magic_measurements.txt, then assigns momkey to that value
         for key in Mkeys:
             if key in rec.keys() and rec[key]!="":
                 momkey=key
@@ -1082,6 +1094,7 @@ class Arai_GUI():
             tmp=rec["magic_method_codes"].split(":")
             for meth in tmp:
                 methcodes.append(meth.strip())
+                # methchodes contains all codes for a particular record
             # for thellier-thellier
             if 'LT-T-I' in methcodes and 'LP-PI-TRM' in methcodes and 'LP-TRM' not in methcodes :
                 # IF specimen cooling AND using a laboratory trm AND NOT trm acquisition
@@ -1297,9 +1310,21 @@ class Arai_GUI():
                    raw_input(" press return to acknowledge message")
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
         print "done with sortarai()"
-        print "araiblock[0]: "
+        print "araiblock[0] (first_Z) "
         #  [[273, 277.5, 79.6, 1.66e-09, 1], .....]
         print araiblock[0]
+        print "araiblock[0][0]:"
+        print araiblock[0][0]
+        print "araiblock[1] (first_I)"
+        print araiblock[1]
+        print "araiblock[2] (ptrm_check)"
+        print araiblock[2]
+        print "araiblock[3] (ptrm_tail)"
+        print araiblock[3]
+        print "araiblock[4] (zptrm_check)"
+        print araiblock[4]
+        print "araiblock[5] (GammaChecks) "
+        print araiblock[5]
         print "field ", field
         return araiblock,field
 
