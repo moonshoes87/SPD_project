@@ -113,7 +113,7 @@ class Arai_GUI():
 # read[0][0] looks like:  {'treatment_ac_field': '0', 'treatment_dc_field_theta': '90', 'measurement_temp': '273', 'er_citation_names': 'This study', 'measurement_magn_moment': '2.01e-09', 'treatment_temp': '273', 'measurement_number': '1', 'measurement_standard': 'u', 'er_site_name': '0238x', 'er_sample_name': '0238x601104', 'treatment_dc_field_phi': '0', 'measurement_inc': '-8.8', 'er_location_name': '238', 'measurement_dec': '257.6', 'magic_experiment_name': '0238x6011043:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI', 'measurement_flag': 'g', 'er_specimen_name': '0238x6011043', 'measurement_csd': '0.7', 'treatment_dc_field': '0', 'magic_method_codes': 'LT-NO:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI'}
 # read[0][1]:
 #{'treatment_ac_field': '0', 'treatment_dc_field_theta': '90', 'measurement_temp': '273', 'er_citation_names': 'This study', 'measurement_magn_moment': '1.98e-09', 'treatment_temp': '373', 'measurement_number': '1', 'measurement_standard': 'u', 'er_site_name': '0238x', 'er_sample_name': '0238x601104', 'treatment_dc_field_phi': '0', 'measurement_inc': '-8.1', 'er_location_name': '238', 'measurement_dec': '255.7', 'magic_experiment_name': '0238x6011043:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI', 'measurement_flag': 'g', 'er_specimen_name': '0238x6011043', 'measurement_csd': '0.7', 'treatment_dc_field': '4e-05', 'magic_method_codes': 'LT-T-I:LP-PI-TRM-IZ:LP-PI-TRM:LP-PI-ALT-PTRM:LP-PI-BT-MD:LP-PI-BT-IZZI'}
-# so, first is a zero field, heated to 273 and measured at 273.  second is infield, heated to 373 but measured at 373.  
+# so, first is a zero field, heated to 273 and measured at 273.  second is infield, heated to 373 but measured at 273.  
 # actual measurements: measurement_magn_moment, measurement_inc, measurement_dec, and measurement_csd.  inc == inclination (how a compass would want to point down through the earth to get to the N pole, at least while in northern hemisphere)  magn_moment = "The product of the pole strength of a magnet and the distance between the poles."  dec == declination.  
       except:
           print "-E- ERROR: Cant read magic_measurement.txt file. File is corrupted."
@@ -148,12 +148,13 @@ class Arai_GUI():
 
       #print "sorting meas data"
           
-      for rec in meas_data:  # iterates through RECORDS, not specimens
+      for rec in meas_data:  # iterates through RECORDS, not specimens.  puts records into appropriate blocks
           s=rec["er_specimen_name"]
           Data[s]['T_or_MW']="T"
           sample=rec["er_sample_name"]
 
           if  "LP-PI-M" in rec["magic_method_codes"]:
+              # if Paleointensity experiment: Microwave demagnetization. 
              Data[s]['T_or_MW']="MW"
           else:
              Data[s]['T_or_MW']="T"
@@ -172,7 +173,6 @@ class Arai_GUI():
                   Data[s]['Thellier_dc_field_phi']=float(rec['treatment_dc_field_phi'])
                   Data[s]['Thellier_dc_field_theta']=float(rec['treatment_dc_field_theta'])
 
-                  
                 
           if "LP-TRM" in rec["magic_method_codes"]:
               # if TRM acquisition:
@@ -192,7 +192,7 @@ class Arai_GUI():
               Data[s]['aarmblock'].append(rec)
 
           if "LP-CR-TRM" in rec["magic_method_codes"]:
-              # could not find this code on earthref.org
+              # could not find this code on earthref.org.  must relate to cooling rate, though.
               if 'crblock' not in Data[s].keys():
                 Data[s]['crblock']=[]
               Data[s]['crblock'].append(rec)
@@ -214,7 +214,7 @@ class Arai_GUI():
                    skip=0
           for meth in EX:
                if meth in methods:skip=1
-          if skip==0:
+          if skip==0:                      # control flow verifies that an IN method was used, and no EX methods were.  if this is fulfilled, then tr (treatment temperature, or microwave power) is set
              if  'treatment_temp' in rec.keys():
                  tr = float(rec["treatment_temp"])
              elif "treatment_mw_power" in rec.keys():
@@ -232,12 +232,12 @@ class Arai_GUI():
                      dec=float(rec["measurement_dec"])
                  if "measurement_inc" in rec.keys() and rec["measurement_inc"] != "":
                      inc=float(rec["measurement_inc"])
-                 for key in Mkeys:
+                 for key in Mkeys: # grabs whichever magnetic measurement is present in the file
                      if key in rec.keys() and rec[key]!="":int=float(rec[key])
                  if 'magic_instrument_codes' not in rec.keys():rec['magic_instrument_codes']=''
                  #datablock.append([tr,dec,inc,int,ZI,rec['measurement_flag'],rec['magic_instrument_codes']])
-                 if Data[s]['T_or_MW']=="T":
-                     if tr==0.: tr=273.
+                 if Data[s]['T_or_MW']=="T":  
+                     if tr==0.: tr=273.  # if thermal, and treatment temp has not been set, set it to 273
                  Data[s]['zijdblock'].append([tr,dec,inc,int,ZI,rec['measurement_flag'],rec['magic_instrument_codes']])
                  #print methods
 
@@ -249,7 +249,7 @@ class Arai_GUI():
 
           Data_hierarchy['specimens'][s]=sample
 
-
+#          ?? specimens vs. samples
           
       #print "done sorting meas data"
       
@@ -261,7 +261,7 @@ class Arai_GUI():
       #------------------------------------------------
       # Read anisotropy file from rmag_anisotropy.txt
       #------------------------------------------------
-
+      # not doing any of this right now: no rmag_anisotropy.txt
       #if self.WD != "":
       rmag_anis_data=[]
       results_anis_data=[]
@@ -341,16 +341,19 @@ class Arai_GUI():
 
 
       # Searching and sorting NLT Data 
-      #print "searching NLT data"
+      #print "searching NLT data" (Non Linear TRM data)
+      # may not be important for now.... since my data don't have a trmblock
 
       for s in self.specimens:
           datablock = Data[s]['datablock']
-          trmblock = Data[s]['trmblock']
+          trmblock = Data[s]['trmblock']  # if "LP-TRM" in rec["magic_method_codes"]: add to trmblock, but this never happens with my samples
+          Data[s]['trmblock'].append(rec)
+
 
           if len(trmblock)<2:
               continue
 
-          B_NLT,M_NLT=[],[]
+          B_NLT,M_NLT=[],[]  # ?? what are these?
 
           # find temperature of NLT acquisition
           NLT_temperature=float(trmblock[0]['treatment_temp'])
@@ -407,7 +410,7 @@ class Arai_GUI():
           # > 5% : WARNING
           # > 10%: ERROR           
 
-          slopes=M_NLT/B_NLT
+          slopes=M_NLT/B_NLT #  B = B_anc / B_lab ??
 
           if len(trmblock)==2:
               if max(slopes)/min(slopes)<1.05:
@@ -467,7 +470,7 @@ class Arai_GUI():
 
       #------------------------------------------------
       # Calculate cooling rate experiments
-      #
+      #  may not be important...
       #
       #
       #
@@ -505,6 +508,7 @@ class Arai_GUI():
                   magic_method_codes=rec['magic_method_codes'].strip(' ').strip('\n').split(":")
                   measurement_description=rec['measurement_description'].strip(' ').strip('\n').split(":")
                   if "LT-T-Z" in magic_method_codes:
+                      # if Specimen cooling: In zero field
                       cooling_rate_data['baseline']=float(rec['measurement_magn_moment'])
                       continue
                 
@@ -513,8 +517,10 @@ class Arai_GUI():
                   cooling_rates_list.append(cooling_rate)
                   moment=float(rec['measurement_magn_moment'])
                   if "LT-T-I" in magic_method_codes:
+                      # if Specimen cooling: In laboratory field
                       cooling_rate_data['pairs'].append([cooling_rate,moment])
                   if "LT-PTRM-I" in magic_method_codes:
+                      #if pTRM check: After zero field step, perform an in field cooling. 
                       cooling_rate_data['alteration_check']=[cooling_rate,moment]
               lab_cooling_rate=max(cooling_rates_list) 
               cooling_rate_data['lab_cooling_rate']= lab_cooling_rate                  
@@ -563,7 +569,7 @@ class Arai_GUI():
                   cooling_rate_data['CR_correction_factor']=1/(y0)
                   
               Data[s]['cooling_rate_data']= cooling_rate_data     
-
+              # at present not generated for my particular specimens
               
                
       # go over all specimens. if there is a specimen with no cooling rate data
@@ -600,7 +606,7 @@ class Arai_GUI():
       for s in self.specimens:
         # collected the data
         datablock = Data[s]['datablock']
-        zijdblock=Data[s]['zijdblock']
+        zijdblock=Data[s]['zijdblock']  # seems like zijdblock only includes steps done in zero field
 
         if len(datablock) <4:
            print("-E- ERROR: skipping specimen %s, not enough measurements - moving forward \n"%s)
@@ -612,8 +618,7 @@ class Arai_GUI():
         araiblock,field=self.sortarai(datablock,s,0)
     
 
-
-        Data[s]['araiblock']=araiblock
+        Data[s]['araiblock']=araiblock  # temp, declination, inclination, magnetic moment, ?.  
         Data[s]['pars']={}
         Data[s]['pars']['lab_dc_field']=field
         Data[s]['pars']['er_specimen_name']=s
@@ -623,7 +628,7 @@ class Arai_GUI():
         Data[s]['er_specimen_name']=s   
         Data[s]['er_sample_name']=Data_hierarchy['specimens'][s]
         
-        first_Z=araiblock[0]
+        first_Z=araiblock[0]  # all the specimen's zerofield measurements
         #if len(first_Z)<3:
             #continue
 
@@ -649,7 +654,7 @@ class Arai_GUI():
         z_temperatures=[row[0] for row in zijdblock]
         zdata=[]
         vector_diffs=[]
-        NRM=zijdblock[0][3]
+        NRM=zijdblock[0][3]  ## ?? why is this the NRM?
 
         for k in range(len(zijdblock)):
             DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]
@@ -691,9 +696,9 @@ class Arai_GUI():
         #--------------------------------------------------------------
         # collect all Arai plot data points to array 
         #--------------------------------------------------------------
-
+    
         # collect Arai data points
-        zerofields,infields=araiblock[0],araiblock[1]
+        zerofields,infields=araiblock[0],araiblock[1]  # first_Z, first_I
 
         Data[s]['NRMS']=zerofields
         Data[s]['PTRMS']=infields
@@ -702,15 +707,15 @@ class Arai_GUI():
         t_Arai=[]
         steps_Arai=[]              
 
-        #NRM=zerofields[0][3]
+        #NRM=zerofields[0][3]   ??  #  this is the first measurement of NRM, before anything has been done to the sample
         infield_temperatures=[row[0] for row in infields]
 
         for k in range(len(zerofields)):                  
           index_infield=infield_temperatures.index(zerofields[k][0])
-          x_Arai.append(infields[index_infield][3]/NRM)
-          y_Arai.append(zerofields[k][3]/NRM)
-          t_Arai.append(zerofields[k][0])
-          if zerofields[k][4]==1:
+          x_Arai.append(infields[index_infield][3]/NRM)   #  from infields point: x = magnetic strength / NRM
+          y_Arai.append(zerofields[k][3]/NRM)  # from corresponding zerofield point: y = magnetic strength / NRM
+          t_Arai.append(zerofields[k][0])  # temperature.  the division / NRM is to normalize and make the graph readable.
+          if zerofields[k][4]==1:   
             steps_Arai.append('ZI')
           else:
             steps_Arai.append('IZ')        
@@ -1077,13 +1082,13 @@ class Arai_GUI():
         ISteps,ZSteps,PISteps,PZSteps,MSteps=[],[],[],[],[]
         GammaChecks=[] # comparison of pTRM direction acquired and lab field
         Mkeys=['measurement_magn_moment','measurement_magn_volume','measurement_magn_mass','measurement_magnitude']
-        rec=datablock[0]  # finds which key is present in magic_measurements.txt, then assigns momkey to that value
+        rec=datablock[0]  # finds which type of magnetic measurement is present in magic_measurements.txt, then assigns momkey to that value
         for key in Mkeys:
             if key in rec.keys() and rec[key]!="":
                 momkey=key
                 break
     # first find all the steps
-        for k in range(len(datablock)):
+        for k in range(len(datablock)):  # iterates through records.  
             rec=datablock[k]
             if "treatment_temp" in rec.keys():
                 temp=float(rec["treatment_temp"])
@@ -1124,7 +1129,7 @@ class Arai_GUI():
                 # if specimen cooling in zero field OR using microwave radiation: In zero field
                 Treat_Z.append(temp)
                 ZSteps.append(k)
-            if 'LT-PTRM-Z' : # maybe this should be in methcodes ATTEND
+            if 'LT-PTRM-Z' : # maybe this should be in methcodes ??  note I no longer understand
                 # if pTRM tail check
                 Treat_PZ.append(temp)
                 PZSteps.append(k)
@@ -1149,10 +1154,11 @@ class Arai_GUI():
                     first_I.append([0,0.,0.,0.,1])
                     first_Z.append([0,dec,inc,str,1])  # NRM step
                     
+                    # the block above seems to be sorting out into wheter it is Treat_Z (zero field), Treat_I (infield), a ptrm check, or a ptrm tail check. so, each record has been appended to whichever of those it belongs in. 
         #---------------------
         # find  IZ and ZI
         #---------------------
-                    
+        
                 
         for temp in Treat_I: # look through infield steps and find matching Z step
             if temp in Treat_Z: # found a match

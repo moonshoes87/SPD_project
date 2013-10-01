@@ -34,8 +34,7 @@ from scipy import *
 #         Data[s]['y_ptrm_check']=[] # a list of y coordinates of pTRM checks      
 #         Data[s]['ptrm_checks_temperatures']=[] # a list of pTRM checks temperature 
 #         Data[s]['x_ptrm_check_starting_point'] # a list of x coordinates of the point ehere the pTRM checks started from
-#         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from             
-#         Data[s]['ptrm_checks_starting_temperatures']=[] # a list of temperatures from which the pTRM checks started from 
+#         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from            #         Data[s]['ptrm_checks_starting_temperatures']=[] # a list of temperatures from which the pTRM checks started from 
 
 # pTRM tail checks ("squares")
 #        Data[s]['x_tail_check']
@@ -54,7 +53,7 @@ from scipy import *
 #
 # Data[s]['zij_rotated']=[[x,y,z], [x,y,z] ,[x,y,z] ]: a list of the x,y,z coordinates of the rotated Zijderveld plot
 #                                                      the rotated zijderveld plot is what is plotted in Thellier Gui.
-
+# Data[s]['zdata'] -- same as zij_rotated, but not rotated
 
 
 class PintPars(object):
@@ -242,28 +241,57 @@ class PintPars(object):
         print "NRM", NRM
 # each zijdblock list item:  [treatment (temperature),declination,inclination,intensity,ZI,measurement_flag,magic_instrument_codes]
         for k in range(len(zijdblock)):
-            DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]
-            print "treatment", zijdblock[k][0]
-            print "ZI", zijdblock[k][4]
-            print "DIR (vectors). dec, inc, intensity ", DIR
+            DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]  # translation dec, inc, magnetic measurement into x, y, z
+           # print "treatment", zijdblock[k][0]
+  #          print "ZI", zijdblock[k][4]
+   #         print "DIR (vectors). dec, inc, intensity ", DIR
             cart=self.dir2cart(DIR)
-            print "cartesian coordinates, " , cart
+#            print "cartesian coordinates, " , cart
             zdata.append(array([cart[0],cart[1],cart[2]]))
             if k>0:
+                vector_diff = (sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
+                print "vector_diff: ", vector_diff
                 vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
-        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds                                            
-        vds=sum(vector_diffs)  # vds calculation                                                                                         
+        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of th
+        last_vector = sqrt(sum(array(zdata[-1])**2)) # last vector of th
+        print "last_vector", last_vector
+        vds=sum(vector_diffs)  # vds calculation                    
+        print "vector_diffs", vector_diffs
+        print "correct vds", self.specimen_Data['vds']
         print "vds ", vds
+#        print "zdata[0]", zdata[0]
         zdata=array(zdata)
+ #       print "zdata", zdata
 
-        y_prime = self.pars['y_prime']
-        f_vds=abs((y_prime[0]-y_prime[-1])/vds)
+        delta_y_prime = self.pars['delta_y_prime']   # this is definitely correct
+        f_vds=abs( delta_y_prime / vds)
 #        vds = self.specimen_Data['vds'] # LJ added
 #        self.pars['vds'] = vds # lj added
         self.pars['specimen_vds_new'] = vds
 #        f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds']) # old code, not encapsulated in spd.py
  #       self.pars["specimen_fvds"]=f_vds
         self.pars["specimen_fvds_new"]=f_vds 
+        return vector_diffs, vds
+
+
+    def new_get_vds(self):  # appears now to be working.  fetches vector difference sum
+        print "calling new_get_vds()"
+        zdata = self.specimen_Data['zdata']
+        vector_diffs = []
+        for k in range(len(zdata) -1 ):  
+            vector_diff = (sqrt(sum((array(zdata[k + 1])-array(zdata[k]))**2)))  
+            print "vector diff: ", vector_diff
+            vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
+        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
+        last_vector = sqrt(sum(array(zdata[-1])**2)) 
+        vds = sum(vector_diffs)
+        print "vds", vds
+        delta_y_prime = self.pars['delta_y_prime']
+        f_vds = abs(delta_y_prime / vds)
+        print "f_vds", f_vds
+        print "done with new_get_vds()"
+        return vector_diffs, vds
+        
 
 
     def calculate_all_statistics(self):
