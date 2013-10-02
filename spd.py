@@ -67,7 +67,8 @@ class PintPars(object):
         self.x_Arai=self.specimen_Data['x_Arai']
         self.y_Arai=self.specimen_Data['y_Arai']
         self.t_Arai=self.specimen_Data['t_Arai']
-#        print self.t_Arai 
+
+        self.zdata = self.specimen_Data['zdata'] # LJ add
 
         self.x_tail_check=self.specimen_Data['x_tail_check']
         self.y_tail_check=self.specimen_Data['y_tail_check']
@@ -78,6 +79,8 @@ class PintPars(object):
         # tmax, tmin, start, and end -- inclusive, or exclusive???
         self.start=self.t_Arai.index(tmin)
         self.end=self.t_Arai.index(tmax)
+
+        self.length = abs(self.end - self.start) + 1  # plus one because of indexing -- starts at 0
 
         print "tmin, tmax"
         print tmin, tmax
@@ -95,12 +98,14 @@ class PintPars(object):
         # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
         # also, fix the weirdness of having to set the precise number for tmin and tmax
         self.pars['specimen_int_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data"] # needs to be updated
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
  
         #LJ ADDING stats:
         self.n_max = len(self.t_Arai)  # gets total number of temperatures taken.  (p. 4, top)
         self.tmin = tmin # self-explanatory
         self.tmax = tmax
+        self.tmin_K = tmin - 273.15
+        self.tmax_K = tmax - 273.15
 
     # eventually add a function to change tmax and/or tmin.  must also change start, end, 
 
@@ -135,7 +140,7 @@ class PintPars(object):
 
         # y_T is the intercept of the extrepolated line
         # through the center of mass (see figure 7 in Coe (1978))
-        y_T = y_Arai_mean - york_b* x_Arai_mean
+        y_T = y_Arai_mean - (york_b* x_Arai_mean)
 
         #LJ x_T is x intercept
         x_T = (-1 * y_T) / york_b # LJ added
@@ -160,14 +165,12 @@ class PintPars(object):
         self.pars['delta_x_prime'] = delta_x_prime
         self.pars['delta_y_prime'] = delta_y_prime
 
-        f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
-        other_f_Coe = delta_y_prime / y_T  # LJ added
-
+  #      f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
+        f_Coe = delta_y_prime / y_T  # LJ added
 
         g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )
 
         q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
-
 
         count_IZ= self.specimen_Data['steps_Arai'].count('IZ')
         count_ZI= self.specimen_Data['steps_Arai'].count('ZI')
@@ -181,7 +184,7 @@ class PintPars(object):
             self.pars['magic_method_codes']=""
             
         self.pars["specimen_b"]=york_b
-        self.pars["specimen_int"]=-1*self.pars['lab_dc_field']*self.pars["specimen_b"] # possibly this is B_anc??
+        self.pars["specimen_int"]=-1*self.pars['lab_dc_field']*self.pars["specimen_b"] # same as B_anc
         self.pars["specimen_YT"]=y_T       
 
         self.pars["specimen_XT"] = x_T # LJ added
@@ -195,7 +198,6 @@ class PintPars(object):
 
         self.pars["specimen_b_beta"]=beta_Coe
         self.pars["specimen_f"]=f_Coe
-        self.pars["other_specimen_f"] = other_f_Coe
 
         self.pars["specimen_g"]=g_Coe
         self.pars["specimen_q"]=q_Coe
@@ -211,25 +213,80 @@ class PintPars(object):
         print "finished with York_regression()"
         print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
 
-    def dir2cart(self, d):
-#        print "calling dir2cart(), not in anything"                                                             
-       # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z    
-        ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs                
-        d=array(d)
-        rad=pi/180.
-        if len(d.shape)>1: # array of vectors
-            decs,incs=d[:,0]*rad,d[:,1]*rad
-            if d.shape[1]==3: ints=d[:,2] # take the given lengths
-        else: # single vector
-            decs,incs=array(d[0])*rad,array(d[1])*rad
-            if len(d)==3:
-                ints=array(d[2])
-            else:
-                ints=array([1.])
-        cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
-        return cart
-    
-    def get_vds(self): # stolen from tgs
+
+    def get_vds(self):  # appears now to be working.  fetches vector difference sum.  unless it needs to use start and end instead of using all the points
+        """gets vds and f_vds"""
+        print "calling new_get_vds()"
+        zdata = self.specimen_Data['zdata']
+        vector_diffs = []
+        for k in range(len(zdata)-1): # (self.length -1): # but should it be this??
+          #  vector_diff = (sqrt(sum((array(zdata[k + 1])-array(zdata[k]))**2)))  
+           # print "vector diff: ", vector_diff
+            vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
+        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
+        last_vector = sqrt(sum(array(zdata[-1])**2)) 
+        vds = sum(vector_diffs)
+        print "correct vds: ", self.specimen_Data['vds']
+        print "vds", vds
+        delta_y_prime = self.pars['delta_y_prime']   # this is definitely correct
+        f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
+
+# should be either vector_diffs is always all inclusive, and then you pick your range: vector_diffs[1:10], OR you calculate the VDS using start and end and then never need a vector_diffs_segment.  email Ron about this.
+
+        self.pars['vector_diffs'] = vector_diffs
+        self.pars['specimen_vds'] = vds
+        self.pars["specimen_fvds"]=f_vds 
+
+    def get_FRAC(self):   # seems to work
+        vds = self.pars['specimen_vds']
+        vector_diffs = self.pars['vector_diffs']
+        vector_diffs_segment = vector_diffs[self.start:self.end]
+        print "vector diffs_segment:", vector_diffs_segment
+        FRAC=sum(vector_diffs_segment)/ vds
+        print "FRAC: ", FRAC
+        self.pars['FRAC'] = FRAC
+
+# stolen from thellier_gui:
+#        vector_diffs=self.Data[s]['vector_diffs']
+#        vector_diffs_segment=vector_diffs[zstart:zend]
+#        FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
+#        max_FRAC_gap=max(vector_diffs_segment/sum(vector_diffs_segment))
+
+
+
+    def calculate_all_statistics(self):
+        print "self.pars before York regression:"
+        print self.pars
+        print "calling calculate_all_statistics in spd.py"
+        self.York_Regression()
+        self.get_vds()
+        self.get_FRAC()
+        print "done with calculate_all_statistics"
+
+
+# C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
+if True:
+    import new_lj_thellier_gui_spd as tgs
+    gui = tgs.Arai_GUI()
+    thing = PintPars(gui.Data, '0238x5721063', 273., 823.)
+    thing.calculate_all_statistics()
+    thing.get_FRAC()
+    thing1 = PintPars(gui.Data, '0238x5721063', 598., 698.)
+    thing1.calculate_all_statistics()
+    thing1.get_FRAC()
+    print "thing f_vds: ", thing.pars['specimen_fvds']
+    print thing.specimen_Data['vds']
+    print "thing1 f_vds: ", thing1.pars['specimen_fvds']
+    print thing1.specimen_Data['vds']
+    print "thing FRAC: ", thing.pars['FRAC']
+    print "thing1 FRAC: ", thing1.pars['FRAC']
+    print "thing1 temps: ", thing1.tmin_K, thing1.tmax_K
+
+
+
+if False:
+    # old code that uses zijdblock instead of zdata to get vds/fvds
+    def old_get_vds(self): # stolen from tgs
         """vector difference sum"""
         zijdblock = self.zijdblock
         print "zijdblock", zijdblock
@@ -274,37 +331,22 @@ class PintPars(object):
         return vector_diffs, vds
 
 
-    def new_get_vds(self):  # appears now to be working.  fetches vector difference sum
-        print "calling new_get_vds()"
-        zdata = self.specimen_Data['zdata']
-        vector_diffs = []
-        for k in range(len(zdata) -1 ):  
-            vector_diff = (sqrt(sum((array(zdata[k + 1])-array(zdata[k]))**2)))  
-            print "vector diff: ", vector_diff
-            vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
-        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
-        last_vector = sqrt(sum(array(zdata[-1])**2)) 
-        vds = sum(vector_diffs)
-        print "vds", vds
-        delta_y_prime = self.pars['delta_y_prime']
-        f_vds = abs(delta_y_prime / vds)
-        print "f_vds", f_vds
-        print "done with new_get_vds()"
-        return vector_diffs, vds
-        
 
-
-    def calculate_all_statistics(self):
-        print "self.pars before York regression:"
-        print self.pars
-        print "calling calculate_all_statistics in spd.py"
-        self.York_Regression()
-        self.get_vds()
-        print "done with calculate_all_statistics"
-
-
-if True:
-    import new_lj_thellier_gui_spd as tgs
-    gui = tgs.Arai_GUI()
-    thing = PintPars(gui.Data, gui.s, 273, 798)
-    thing.York_Regression()
+    def dir2cart(self, d):
+#        print "calling dir2cart(), not in anything"                                                             
+       # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z    
+        ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs                
+        d=array(d)
+        rad=pi/180.
+        if len(d.shape)>1: # array of vectors
+            decs,incs=d[:,0]*rad,d[:,1]*rad
+            if d.shape[1]==3: ints=d[:,2] # take the given lengths
+        else: # single vector
+            decs,incs=array(d[0])*rad,array(d[1])*rad
+            if len(d)==3:
+                ints=array(d[2])
+            else:
+                ints=array([1.])
+        cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
+        return cart
+    

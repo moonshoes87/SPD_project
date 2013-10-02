@@ -714,7 +714,7 @@ class Arai_GUI():
           index_infield=infield_temperatures.index(zerofields[k][0])
           x_Arai.append(infields[index_infield][3]/NRM)   #  from infields point: x = magnetic strength / NRM
           y_Arai.append(zerofields[k][3]/NRM)  # from corresponding zerofield point: y = magnetic strength / NRM
-          t_Arai.append(zerofields[k][0])  # temperature.  the division / NRM is to normalize and make the graph readable.
+          t_Arai.append(zerofields[k][0])  # temperature.  .
           if zerofields[k][4]==1:   
             steps_Arai.append('ZI')
           else:
