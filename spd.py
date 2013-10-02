@@ -101,6 +101,7 @@ class PintPars(object):
         self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
  
         #LJ ADDING stats:
+        self.n = float(self.end-self.start+1)  # n is the number of points involved
         self.n_max = len(self.t_Arai)  # gets total number of temperatures taken.  (p. 4, top)
         self.tmin = tmin # self-explanatory
         self.tmax = tmax
@@ -168,7 +169,11 @@ class PintPars(object):
   #      f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
         f_Coe = delta_y_prime / y_T  # LJ added
 
-        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )
+#        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )  # old version
+        g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
+        g_lim = (float(n) - 2) / (float(n) - 1)  # NOT SURE ABOUT THIS ONE
+
+
 
         q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
 
@@ -200,6 +205,7 @@ class PintPars(object):
         self.pars["specimen_f"]=f_Coe
 
         self.pars["specimen_g"]=g_Coe
+        self.pars["specimen_g_lim"] = g_lim
         self.pars["specimen_q"]=q_Coe
         self.pars['magic_method_codes']+=":IE-TT"
         if 'x_ptrm_check' in self.specimen_Data.keys():
@@ -230,12 +236,35 @@ class PintPars(object):
         print "vds", vds
         delta_y_prime = self.pars['delta_y_prime']   # this is definitely correct
         f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
+        relevant_vector_diffs = vector_diffs[self.start:self.end]
+        # 
+        diffs = []
+        print self.s, self.tmin_K, self.tmax_K
+        for num, x in enumerate(zdata[self.start:self.end]):
+            print num, x
+            diffs.append(sum(abs(array(zdata[num + 1]) - array(x))))
+#            diffs.append(abs(sum(zdata[num+1]) - sum(x)))
+            print diffs
+        max_diff = max(diffs)
+        a_GAP_MAX = max_diff / vds
+        print "diffs: ", diffs
+        print "max_diff: ", max_diff
+        print "a_GAP_MAX: ", a_GAP_MAX  # this one is not correct
+        print (len(diffs) == len(relevant_vector_diffs)), (diffs == relevant_vector_diffs)  # this is true.  but diffs != relevant_vector_diffs
+        #
+        print "diffs: ", diffs
+        print "relevant_vector_diffs: ", relevant_vector_diffs
+        GAP_MAX = (max(relevant_vector_diffs)) / vds  # LJ add
+        print "(max(relevant_vector_diffs): ", max(relevant_vector_diffs)
+        print "GAP_MAX: ", GAP_MAX  # this one is correct.  
 
 # should be either vector_diffs is always all inclusive, and then you pick your range: vector_diffs[1:10], OR you calculate the VDS using start and end and then never need a vector_diffs_segment.  email Ron about this.
-
+        self.pars['GAP-MAX'] = GAP_MAX
         self.pars['vector_diffs'] = vector_diffs
         self.pars['specimen_vds'] = vds
         self.pars["specimen_fvds"]=f_vds 
+        return diffs, relevant_vector_diffs
+    
 
     def get_FRAC(self):   # seems to work
         vds = self.pars['specimen_vds']
@@ -270,17 +299,21 @@ if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x5721063', 273., 823.)
     thing.calculate_all_statistics()
-    thing.get_FRAC()
     thing1 = PintPars(gui.Data, '0238x5721063', 598., 698.)
     thing1.calculate_all_statistics()
-    thing1.get_FRAC()
+    thing2 = PintPars(gui.Data, gui.s, 273., 823.)
+    thing2.calculate_all_statistics()
+#    thing3 = PintPars(gui.Data, gui.s, 598, 698)
+  #  thing3.calculate_all_statistics()
     print "thing f_vds: ", thing.pars['specimen_fvds']
     print thing.specimen_Data['vds']
     print "thing1 f_vds: ", thing1.pars['specimen_fvds']
     print thing1.specimen_Data['vds']
-    print "thing FRAC: ", thing.pars['FRAC']
-    print "thing1 FRAC: ", thing1.pars['FRAC']
     print "thing1 temps: ", thing1.tmin_K, thing1.tmax_K
+    print "thing2 f_vds: ", thing2.pars['specimen_fvds']
+    print "thing2 GAP-MAX: ", thing2.pars['GAP-MAX'] 
+ #   print "thing3 f_vds: ", thing3.pars['specimen_fvds']
+#    print "thing3 GAP-MAX: ", thing3.pars['GAP-MAX'] 
 
 
 
