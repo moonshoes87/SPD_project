@@ -177,6 +177,8 @@ class PintPars(object):
 
         q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
 
+        w_Coe = q_Coe / sqrt(self.n - 2)
+
         count_IZ= self.specimen_Data['steps_Arai'].count('IZ')
         count_ZI= self.specimen_Data['steps_Arai'].count('ZI')
         if count_IZ >1 and count_ZI >1:
@@ -207,6 +209,10 @@ class PintPars(object):
         self.pars["specimen_g"]=g_Coe
         self.pars["specimen_g_lim"] = g_lim
         self.pars["specimen_q"]=q_Coe
+        self.pars["specimen_w"]= w_Coe # LJ add. untested, but it should work
+
+        
+
         self.pars['magic_method_codes']+=":IE-TT"
         if 'x_ptrm_check' in self.specimen_Data.keys():
             if len(self.specimen_Data['x_ptrm_check'])>0:
@@ -225,54 +231,58 @@ class PintPars(object):
         print "calling new_get_vds()"
         zdata = self.specimen_Data['zdata']
         vector_diffs = []
+        print "starting to get vector diffs WORKS"
         for k in range(len(zdata)-1): # (self.length -1): # but should it be this??
           #  vector_diff = (sqrt(sum((array(zdata[k + 1])-array(zdata[k]))**2)))  
            # print "vector diff: ", vector_diff
+            print zdata[k + 1], " - ", zdata[k]
+            print               sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2))
             vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
         vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
         last_vector = sqrt(sum(array(zdata[-1])**2)) 
+        print "last vector: ", last_vector
         vds = sum(vector_diffs)
-        print "correct vds: ", self.specimen_Data['vds']
-        print "vds", vds
         delta_y_prime = self.pars['delta_y_prime']   # this is definitely correct
         f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
         relevant_vector_diffs = vector_diffs[self.start:self.end]
+#        print "relevant_vector_diffs:", relevant_vector_diffs
         # 
         diffs = []
         print self.s, self.tmin_K, self.tmax_K
+        print "starting to get_vector_diffs FAILS"
         for num, x in enumerate(zdata[self.start:self.end]):
-            print num, x
-            diffs.append(sum(abs(array(zdata[num + 1]) - array(x))))
-#            diffs.append(abs(sum(zdata[num+1]) - sum(x)))
-            print diffs
+            print zdata[num + 1], " - ", x
+            print        sqrt(sum((array(zdata[num + 1]) - array(x))**2))
+            diffs.append(sqrt(sum((array(zdata[num + 1]) - array(x))**2)))
+#            diffs.append(sum(abs(array(zdata[num + 1]) - array(x))))
+#            print diffs
+        diffs.append(last_vector)
         max_diff = max(diffs)
-        a_GAP_MAX = max_diff / vds
-        print "diffs: ", diffs
-        print "max_diff: ", max_diff
-        print "a_GAP_MAX: ", a_GAP_MAX  # this one is not correct
-        print (len(diffs) == len(relevant_vector_diffs)), (diffs == relevant_vector_diffs)  # this is true.  but diffs != relevant_vector_diffs
+        partial_vds = sum(diffs)
+        a_GAP_MAX = max_diff / partial_vds
+        print "a max_diff:", max_diff
+        print "a_GAP_MAX", a_GAP_MAX # this one is wrong, but close
         #
-        print "diffs: ", diffs
-        print "relevant_vector_diffs: ", relevant_vector_diffs
+        print "max diff: ", max(relevant_vector_diffs)
         GAP_MAX = (max(relevant_vector_diffs)) / vds  # LJ add
-        print "(max(relevant_vector_diffs): ", max(relevant_vector_diffs)
-        print "GAP_MAX: ", GAP_MAX  # this one is correct.  
+
+        print "GAP_MAX: ", GAP_MAX  # this one is correct, when all temp steps in, but wrong when fewer.  
 
 # should be either vector_diffs is always all inclusive, and then you pick your range: vector_diffs[1:10], OR you calculate the VDS using start and end and then never need a vector_diffs_segment.  email Ron about this.
         self.pars['GAP-MAX'] = GAP_MAX
         self.pars['vector_diffs'] = vector_diffs
         self.pars['specimen_vds'] = vds
         self.pars["specimen_fvds"]=f_vds 
-        return diffs, relevant_vector_diffs
+        return relevant_vector_diffs, diffs
     
 
     def get_FRAC(self):   # seems to work
         vds = self.pars['specimen_vds']
         vector_diffs = self.pars['vector_diffs']
         vector_diffs_segment = vector_diffs[self.start:self.end]
-        print "vector diffs_segment:", vector_diffs_segment
+#        print "vector diffs_segment:", vector_diffs_segment
         FRAC=sum(vector_diffs_segment)/ vds
-        print "FRAC: ", FRAC
+#        print "FRAC: ", FRAC
         self.pars['FRAC'] = FRAC
 
 # stolen from thellier_gui:
@@ -299,19 +309,19 @@ if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x5721063', 273., 823.)
     thing.calculate_all_statistics()
-    thing1 = PintPars(gui.Data, '0238x5721063', 598., 698.)
+    thing1 = PintPars(gui.Data, '0238x5721063', 498., 698.)
     thing1.calculate_all_statistics()
-    thing2 = PintPars(gui.Data, gui.s, 273., 823.)
-    thing2.calculate_all_statistics()
+#    thing2 = PintPars(gui.Data, gui.s, 273., 823.)
+#    thing2.calculate_all_statistics()
 #    thing3 = PintPars(gui.Data, gui.s, 598, 698)
   #  thing3.calculate_all_statistics()
-    print "thing f_vds: ", thing.pars['specimen_fvds']
-    print thing.specimen_Data['vds']
-    print "thing1 f_vds: ", thing1.pars['specimen_fvds']
-    print thing1.specimen_Data['vds']
-    print "thing1 temps: ", thing1.tmin_K, thing1.tmax_K
-    print "thing2 f_vds: ", thing2.pars['specimen_fvds']
-    print "thing2 GAP-MAX: ", thing2.pars['GAP-MAX'] 
+##    print "thing f_vds: ", thing.pars['specimen_fvds']
+ #   print thing.specimen_Data['vds']
+#    print "thing1 f_vds: ", thing1.pars['specimen_fvds']
+#    print thing1.specimen_Data['vds']
+ #   print "thing1 temps: ", thing1.tmin_K, thing1.tmax_K
+  #  print "thing2 f_vds: ", thing2.pars['specimen_fvds']
+#    print "thing2 GAP-MAX: ", thing2.pars['GAP-MAX'] 
  #   print "thing3 f_vds: ", thing3.pars['specimen_fvds']
 #    print "thing3 GAP-MAX: ", thing3.pars['GAP-MAX'] 
 
