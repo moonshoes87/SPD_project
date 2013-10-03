@@ -6233,6 +6233,9 @@ class Arai_GUI(wx.Frame):
         #
         #-------------------------------------------------  
 
+#        zstart=z_temperatures.index(tmin)
+ #       zend=z_temperatures.index(tmax)
+
         vector_diffs=self.Data[s]['vector_diffs']
         vector_diffs_segment=vector_diffs[zstart:zend]
         FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
@@ -7404,7 +7407,9 @@ class Arai_GUI(wx.Frame):
             if k>0:
                 vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
         vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
-        vds=sum(vector_diffs)  # vds calculation       
+        vds=sum(vector_diffs)  # vds calculation
+        print "s is: ", s
+        print "VDS is: ", vds
         zdata=array(zdata)
 
         Data[s]['vector_diffs']=array(vector_diffs)

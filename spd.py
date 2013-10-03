@@ -226,7 +226,7 @@ class PintPars(object):
         print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
 
 
-    def get_vds(self):  # appears now to be working.  fetches vector difference sum.  unless it needs to use start and end instead of using all the points
+    def get_vds(self):  # appears now to be working.  fetches vector difference sum.  vds and fvds are correct.  
         """gets vds and f_vds"""
         print "calling new_get_vds()"
         zdata = self.specimen_Data['zdata']
@@ -242,7 +242,7 @@ class PintPars(object):
         last_vector = sqrt(sum(array(zdata[-1])**2)) 
         print "last vector: ", last_vector
         vds = sum(vector_diffs)
-        delta_y_prime = self.pars['delta_y_prime']   # this is definitely correct
+        delta_y_prime = self.pars['delta_y_prime']  
         f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
         relevant_vector_diffs = vector_diffs[self.start:self.end]
 #        print "relevant_vector_diffs:", relevant_vector_diffs
@@ -250,16 +250,15 @@ class PintPars(object):
         diffs = []
         print self.s, self.tmin_K, self.tmax_K
         print "starting to get_vector_diffs FAILS"
-        for num, x in enumerate(zdata[self.start:self.end]):
-            print zdata[num + 1], " - ", x
+        # problem: are we trusting zdata to be ordered???
+        for num, x in enumerate(zdata[self.start:self.end]):  # should be self.end -1 ???
+            print num, zdata[num + 1], " - ", x
             print        sqrt(sum((array(zdata[num + 1]) - array(x))**2))
             diffs.append(sqrt(sum((array(zdata[num + 1]) - array(x))**2)))
-#            diffs.append(sum(abs(array(zdata[num + 1]) - array(x))))
-#            print diffs
+        last_vector = sqrt(sum(array(zdata[self.end])**2)) 
         diffs.append(last_vector)
         max_diff = max(diffs)
-        partial_vds = sum(diffs)
-        a_GAP_MAX = max_diff / partial_vds
+        a_GAP_MAX = max_diff / vds
         print "a max_diff:", max_diff
         print "a_GAP_MAX", a_GAP_MAX # this one is wrong, but close
         #
@@ -270,13 +269,21 @@ class PintPars(object):
 
 # should be either vector_diffs is always all inclusive, and then you pick your range: vector_diffs[1:10], OR you calculate the VDS using start and end and then never need a vector_diffs_segment.  email Ron about this.
         self.pars['GAP-MAX'] = GAP_MAX
+        self.pars['alt_GAP-MAX'] = a_GAP_MAX
         self.pars['vector_diffs'] = vector_diffs
         self.pars['specimen_vds'] = vds
         self.pars["specimen_fvds"]=f_vds 
+
+        zdata_segment = self.zdata[self.start:self.end]
+        v_diffs = []
+
+        # the issue is: when do things properly get summed, and when do they properly get absolute valued??
+            
+        
         return relevant_vector_diffs, diffs
     
 
-    def get_FRAC(self):   # seems to work
+    def get_FRAC(self):   # works
         vds = self.pars['specimen_vds']
         vector_diffs = self.pars['vector_diffs']
         vector_diffs_segment = vector_diffs[self.start:self.end]
@@ -311,19 +318,23 @@ if True:
     thing.calculate_all_statistics()
     thing1 = PintPars(gui.Data, '0238x5721063', 498., 698.)
     thing1.calculate_all_statistics()
-#    thing2 = PintPars(gui.Data, gui.s, 273., 823.)
-#    thing2.calculate_all_statistics()
-#    thing3 = PintPars(gui.Data, gui.s, 598, 698)
-  #  thing3.calculate_all_statistics()
+    thing2 = PintPars(gui.Data, gui.s, 273., 823.)
+    thing2.calculate_all_statistics()
+    thing3 = PintPars(gui.Data, gui.s, 598, 698)
+    thing3.calculate_all_statistics()
 ##    print "thing f_vds: ", thing.pars['specimen_fvds']
  #   print thing.specimen_Data['vds']
 #    print "thing1 f_vds: ", thing1.pars['specimen_fvds']
 #    print thing1.specimen_Data['vds']
  #   print "thing1 temps: ", thing1.tmin_K, thing1.tmax_K
   #  print "thing2 f_vds: ", thing2.pars['specimen_fvds']
-#    print "thing2 GAP-MAX: ", thing2.pars['GAP-MAX'] 
+    print "thing2.s: ", thing2.s
+    print "thing2 tmin and tmax: ", thing2.tmin_K, thing2.tmax_K
+    print "thing2 GAP-MAX: ", thing2.pars['alt_GAP-MAX'] 
  #   print "thing3 f_vds: ", thing3.pars['specimen_fvds']
-#    print "thing3 GAP-MAX: ", thing3.pars['GAP-MAX'] 
+    print "thing3.s: ", thing3.s
+    print "thing3 tmin and tmax: ", thing3.tmin_K, thing3.tmax_K
+    print "thing3 GAP-MAX: ", thing3.pars['alt_GAP-MAX'] 
 
 
 
