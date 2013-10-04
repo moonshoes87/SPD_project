@@ -313,7 +313,6 @@ class PintPars(object):
             return a*tanh(b*x)
 
 #        def scipy.optimize.curve_fit(f, xdata, ydata)
-
         def f(x, r, a, b): # circle function
             y = abs(sqrt(r**2-(x-a)**2)) + b
             return y
@@ -328,42 +327,66 @@ class PintPars(object):
         # get data centroid
         centroid = []
         for n in range(len(self.x_Arai)):
-            thing = [self.x_Arai[n], self.y_Arai[n]]
-            centroid.append(thing)
-        centroid = numpy.array(centroid)
+            x = [self.x_Arai[n], self.y_Arai[n]]
+            print "x", x
+            centroid.append(x)
+        print "centroid in curve, pre-array: ", centroid
+        centroid = numpy.array(centroid)   
+        print "centroid in curve, post_array:", centroid
         v = len(self.x_Arai)
+        print "length in curve: ", v
         centroid_x_sum = centroid[:,0].sum()
         centroid_y_sum = centroid[:,1].sum()
-#        print centroid
-#        print centroid_x_sum, centroid_y_sum
+        print "x_sum, y_sum in curve", centroid_x_sum, centroid_y_sum
         centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v
         C_x = centroid[0]
         C_y = centroid[1]
         print "circle radius: ", r
         print "circle center: ", a, b
-        print "centroid?", centroid
+#        print "centroid?", centroid
         if C_x < a and C_y < b:
             k = k
         if a < C_x and b < C_y:
             k = -k
         if a == C_x and b == C_y:
             k = 0
-        print k
         
         SSE = 0
-        print range(len(self.x_Arai))
         for i in range(len(self.x_Arai)):
             x = self.x_Arai
             y = self.y_Arai
             v = (sqrt( (x[i] -a)**2 + (y[i] - b)**2 ) - r )**2
-            print v
+#            print v
             SSE += v
-        print SSE
+#        print SSE
         self.pars['centroid'] = centroid
         self.pars['specimen_k'] = k
         self.pars['best_fit_circle'] = { "a": a, "b" : b, "radius": r }
         self.pars['SSE'] = SSE
         return k, a, b, centroid
+
+    def get_SCAT(self):
+        slope, slope_err, beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
+# need beta_threshold.  default in thellier_gui is .1
+        beta_threshold = .1
+        slope_err_threshold = abs(slope) * beta_threshold
+        segment_length = self.pars['specimen_int_n']
+        print "length in SCAT", segment_length
+        print "SCAT x_Arai:", self.x_Arai
+        x_sum = sum(self.x_Arai[self.start:self.end + 1])# fucking fencepost!!
+        y_sum = sum(self.y_Arai[self.start:self.end + 1]) # ditto
+        print "(SCAT) x_sum, y_sum", x_sum, y_sum
+        x_avg = x_sum  / segment_length
+        y_avg = y_sum / segment_length
+        mass_center = (x_avg, y_avg)
+        # mass center CAN be different from centroid previously calculated, because SCAT allows for a smaller subset and best fit circle or whatever does not
+
+#        print "n", self.pars['specimen_int_n']
+        print "mass center", mass_center
+        print "centroid", self.pars['centroid']
+        # those should be the same.....
+
+
             
         
         
