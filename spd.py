@@ -72,6 +72,21 @@ class PintPars(object):
 
         self.x_tail_check=self.specimen_Data['x_tail_check']
         self.y_tail_check=self.specimen_Data['y_tail_check']
+        self.tail_check_temperatures = self.specimen_Data['tail_check_temperatures']
+#        self.x_tail_check_starting_point = self.specimen_Data['x_tail_check_starting_point']
+#        self.y_tail_check_starting_point = self.specimen_Data['y_tail_check_starting_point']
+        self.tail_checks_starting_temperatures = self.specimen_Data['tail_checks_starting_temperatures']
+
+# pTRM checks ("triangles")
+        self.x_ptrm_check = self.specimen_Data['x_ptrm_check'] # a list of x coordinates of pTRM checks
+        self.y_ptrm_check = self.specimen_Data['y_ptrm_check'] # a list of y coordinates of pTRM checks      
+        self.ptrm_checks_temperatures= self.specimen_Data['ptrm_checks_temperatures'] # a list of pTRM checks temperature 
+#        Data[s]['x_ptrm_check_starting_point'] # a list of x coordinates of the point ehere the pTRM checks started from
+#         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from     
+        self.ptrm_checks_starting_temperatures = self.specimen_Data['ptrm_checks_starting_temperatures'] # a list of temperatures from which the pTRM checks started from 
+
+
+
 
         self.zijdblock=self.specimen_Data['zijdblock']        
         self.z_temperatures=self.specimen_Data['z_temp']
@@ -368,7 +383,8 @@ class PintPars(object):
     def get_SCAT(self):
         slope, slope_err, beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
 # need beta_threshold.  default in thellier_gui is .1
-        beta_threshold = .1
+        x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
+        beta_threshold = 0.1
         slope_err_threshold = abs(slope) * beta_threshold
         segment_length = self.pars['specimen_int_n']
         print "length in SCAT", segment_length
@@ -380,11 +396,36 @@ class PintPars(object):
         y_avg = y_sum / segment_length
         mass_center = (x_avg, y_avg)
         # mass center CAN be different from centroid previously calculated, because SCAT allows for a smaller subset and best fit circle or whatever does not
-
-#        print "n", self.pars['specimen_int_n']
         print "mass center", mass_center
         print "centroid", self.pars['centroid']
-        # those should be the same.....
+        # getting lines passing through mass_center
+        x = mass_center[0]
+        y = mass_center[1]
+        print "beta_threshold", beta_threshold
+        print "slope_err_threshold", slope_err_threshold
+        slope_1 = slope + (2 * slope_err_threshold)
+        print "slope_1", slope_1
+        l1_y_int = y - (slope_1 * x)
+        # b = y - mx
+        l1_x_int = -1 * (l1_y_int / slope_1)
+        slope_2 = slope - 2 * slope_err_threshold
+        print "slope_2", slope_2
+        l2_y_int = y - (slope_2 * x)
+        l2_x_int = -1 * (l2_y_int / slope_2)
+        # l1_y_int and l2_x_int form the bottom line of the box
+        # l2_y_int and l1_x_int form the top line of the box
+        print "center of mass: ", mass_center
+        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
+        print "top line:", [(0, l2_y_int), (l1_x_int)]
+        
+
+#        line1 -- passes through mass center with slope of: slope + 2(beta_threshold)
+        # line 2 -- passes through mass center with slope of: slope - 2(beta_threshold)
+        # forms SCAT box with x and y intercepts
+        
+        # first: figure out which points to include (slightly complex regarding pTRM checks)
+        # figure out how to determine if they are "within the box"
+        # if all are in box, then SCAT is "TRUE"
 
 
             
