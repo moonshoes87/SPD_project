@@ -293,20 +293,86 @@ class PintPars(object):
         self.pars['FRAC'] = FRAC
 
 # stolen from thellier_gui:
+
+#        zstart=z_temperatures.index(tmin)                                                                                                      #       zend=z_temperatures.index(tmax)                                                                                                       
 #        vector_diffs=self.Data[s]['vector_diffs']
 #        vector_diffs_segment=vector_diffs[zstart:zend]
 #        FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
 #        max_FRAC_gap=max(vector_diffs_segment/sum(vector_diffs_segment))
 
+ #       pars['specimen_frac']=FRAC
+#        pars['specimen_gmax']=max_FRAC_gap
 
 
+
+    def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
+        # a, b == x, y coordinates of the circle center
+        # x is the x coordinate of some point
+        # so x coordinate of the circle center * hyperbolic tangent of (y coordinate of center * x)
+        def tan_h(x, a, b):
+            return a*tanh(b*x)
+
+#        def scipy.optimize.curve_fit(f, xdata, ydata)
+
+        def f(x, r, a, b): # circle function
+            y = abs(sqrt(r**2-(x-a)**2)) + b
+            return y
+
+        import scipy
+        import numpy
+        curve = scipy.optimize.curve_fit(f, self.x_Arai, self.y_Arai)
+        r = curve[0][0]
+        a = curve[0][1] # x coordinate of circle
+        b = curve[0][2] # y coordinate of circle
+        k = 1/r
+        # get data centroid
+        centroid = []
+        for n in range(len(self.x_Arai)):
+            thing = [self.x_Arai[n], self.y_Arai[n]]
+            centroid.append(thing)
+        centroid = numpy.array(centroid)
+        v = len(self.x_Arai)
+        centroid_x_sum = centroid[:,0].sum()
+        centroid_y_sum = centroid[:,1].sum()
+#        print centroid
+#        print centroid_x_sum, centroid_y_sum
+        centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v
+        C_x = centroid[0]
+        C_y = centroid[1]
+        print "circle radius: ", r
+        print "circle center: ", a, b
+        print "centroid?", centroid
+        if C_x < a and C_y < b:
+            k = k
+        if a < C_x and b < C_y:
+            k = -k
+        if a == C_x and b == C_y:
+            k = 0
+        print k
+        
+        SSE = 0
+        print range(len(self.x_Arai))
+        for i in range(len(self.x_Arai)):
+            x = self.x_Arai
+            y = self.y_Arai
+            v = (sqrt( (x[i] -a)**2 + (y[i] - b)**2 ) - r )**2
+            print v
+            SSE += v
+        print SSE
+        self.pars['centroid'] = centroid
+        self.pars['specimen_k'] = k
+        self.pars['best_fit_circle'] = { "a": a, "b" : b, "radius": r }
+        self.pars['SSE'] = SSE
+        return k, a, b, centroid
+            
+        
+        
     def calculate_all_statistics(self):
-        print "self.pars before York regression:"
-        print self.pars
         print "calling calculate_all_statistics in spd.py"
         self.York_Regression()
         self.get_vds()
         self.get_FRAC()
+        self.get_curve()
         print "done with calculate_all_statistics"
 
 
@@ -322,6 +388,7 @@ if True:
     thing2.calculate_all_statistics()
     thing3 = PintPars(gui.Data, gui.s, 598, 698)
     thing3.calculate_all_statistics()
+
 ##    print "thing f_vds: ", thing.pars['specimen_fvds']
  #   print thing.specimen_Data['vds']
 #    print "thing1 f_vds: ", thing1.pars['specimen_fvds']
@@ -335,6 +402,8 @@ if True:
     print "thing3.s: ", thing3.s
     print "thing3 tmin and tmax: ", thing3.tmin_K, thing3.tmax_K
     print "thing3 GAP-MAX: ", thing3.pars['alt_GAP-MAX'] 
+    thing3.get_curve()
+
 
 
 
