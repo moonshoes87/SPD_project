@@ -61,7 +61,6 @@ class PintPars(object):
         print "calling __init__ PintPars object"
         self.s=specimen_name
         self.specimen_Data=Data[self.s]
-        print self.s
         self.datablock = self.specimen_Data['datablock']
 
         self.x_Arai=self.specimen_Data['x_Arai']
@@ -86,8 +85,6 @@ class PintPars(object):
         self.ptrm_checks_starting_temperatures = self.specimen_Data['ptrm_checks_starting_temperatures'] # a list of temperatures from which the pTRM checks started from 
 
 
-
-
         self.zijdblock=self.specimen_Data['zijdblock']        
         self.z_temperatures=self.specimen_Data['z_temp']
 
@@ -97,16 +94,13 @@ class PintPars(object):
 
         self.length = abs(self.end - self.start) + 1  # plus one because of indexing -- starts at 0
 
-        print "tmin, tmax"
-        print tmin, tmax
-        print "start", "end"
-        print self.start, self.end
-        # name of object at end is p
+#        print "tmin, tmax"
+#        print tmin, tmax
+#        print "start", "end"
+#        print self.start, self.end
 
         self.pars={}
 
-        print "pars"
-        print self.specimen_Data['pars']
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         # for some reason missing any magic_method_codes.  possibly these would have been incorporated into the data from rmag_anisotropy or something
@@ -124,7 +118,6 @@ class PintPars(object):
         self.tmax_K = tmax - 273.15
 
     # eventually add a function to change tmax and/or tmin.  must also change start, end, 
-
 
     def York_Regression(self):
         #-------------------------------------------------
@@ -161,7 +154,6 @@ class PintPars(object):
         #LJ x_T is x intercept
         x_T = (-1 * y_T) / york_b # LJ added
 
-
         # calculate the extarplated data points for f and fvds
         # (see figure 7 in Coe (1978))
 
@@ -187,8 +179,6 @@ class PintPars(object):
 #        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )  # old version
         g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
         g_lim = (float(n) - 2) / (float(n) - 1)  # NOT SURE ABOUT THIS ONE
-
-
 
         q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
 
@@ -235,89 +225,45 @@ class PintPars(object):
         if 'x_tail_check' in self.specimen_Data.keys():
             if len(self.specimen_Data['x_tail_check'])>0:
                 self.pars['magic_method_codes']+=":LP-PI-BT-MD"
-        print "PintPars object, self.pars after york regression: "
-        print self.pars
-        print "finished with York_regression()"
-        print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
+#        print "PintPars object, self.pars after york regression: "
+#        print self.pars
+#        print "finished with York_regression()"
+#        print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
 
 
     def get_vds(self):  # appears now to be working.  fetches vector difference sum.  vds and fvds are correct.  
         """gets vds and f_vds"""
-        print "calling new_get_vds()"
+        print "calling get_vds()"
         zdata = self.specimen_Data['zdata']
         vector_diffs = []
-        print "starting to get vector diffs WORKS"
-        for k in range(len(zdata)-1): # (self.length -1): # but should it be this??
-          #  vector_diff = (sqrt(sum((array(zdata[k + 1])-array(zdata[k]))**2)))  
-           # print "vector diff: ", vector_diff
-            print zdata[k + 1], " - ", zdata[k]
-            print               sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2))
+        for k in range(len(zdata)-1): 
+            # gets diff between two vectors
             vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
         vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
         last_vector = sqrt(sum(array(zdata[-1])**2)) 
-        print "last vector: ", last_vector
         vds = sum(vector_diffs)
         delta_y_prime = self.pars['delta_y_prime']  
         f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
-        relevant_vector_diffs = vector_diffs[self.start:self.end]
-#        print "relevant_vector_diffs:", relevant_vector_diffs
-        # 
-        diffs = []
-        print self.s, self.tmin_K, self.tmax_K
-        print "starting to get_vector_diffs FAILS"
-        # problem: are we trusting zdata to be ordered???
-        for num, x in enumerate(zdata[self.start:self.end]):  # should be self.end -1 ???
-            print num, zdata[num + 1], " - ", x
-            print        sqrt(sum((array(zdata[num + 1]) - array(x))**2))
-            diffs.append(sqrt(sum((array(zdata[num + 1]) - array(x))**2)))
-        last_vector = sqrt(sum(array(zdata[self.end])**2)) 
-        diffs.append(last_vector)
-        max_diff = max(diffs)
-        a_GAP_MAX = max_diff / vds
-        print "a max_diff:", max_diff
-        print "a_GAP_MAX", a_GAP_MAX # this one is wrong, but close
-        #
-        print "max diff: ", max(relevant_vector_diffs)
-        GAP_MAX = (max(relevant_vector_diffs)) / vds  # LJ add
-
-        print "GAP_MAX: ", GAP_MAX  # this one is correct, when all temp steps in, but wrong when fewer.  
-
-# should be either vector_diffs is always all inclusive, and then you pick your range: vector_diffs[1:10], OR you calculate the VDS using start and end and then never need a vector_diffs_segment.  email Ron about this.
-        self.pars['GAP-MAX'] = GAP_MAX
-        self.pars['alt_GAP-MAX'] = a_GAP_MAX
+        vector_diffs_segment = vector_diffs[self.start:self.end]
+        partial_vds = sum(vector_diffs_segment)
+        max_diff = max(vector_diffs_segment)
+        GAP_MAX = max_diff / partial_vds
+        self.pars['max_diff'] = max_diff
         self.pars['vector_diffs'] = vector_diffs
         self.pars['specimen_vds'] = vds
         self.pars["specimen_fvds"]=f_vds 
+        self.pars['vector_diffs_segment'] = vector_diffs_segment
+        self.pars['partial_vds'] = partial_vds
+        self.pars['GAP-MAX'] = GAP_MAX
 
-        zdata_segment = self.zdata[self.start:self.end]
-        v_diffs = []
-
-        # the issue is: when do things properly get summed, and when do they properly get absolute valued??
-            
-        
-        return relevant_vector_diffs, diffs
-    
 
     def get_FRAC(self):   # works
         vds = self.pars['specimen_vds']
-        vector_diffs = self.pars['vector_diffs']
-        vector_diffs_segment = vector_diffs[self.start:self.end]
-#        print "vector diffs_segment:", vector_diffs_segment
+#        vector_diffs = self.pars['vector_diffs']
+#        vector_diffs_segment = vector_diffs[self.start:self.end]
+        vector_diffs_segment = self.pars['vector_diffs_segment']  # could use this instead
         FRAC=sum(vector_diffs_segment)/ vds
-#        print "FRAC: ", FRAC
         self.pars['FRAC'] = FRAC
-
-# stolen from thellier_gui:
-
-#        zstart=z_temperatures.index(tmin)                                                                                                      #       zend=z_temperatures.index(tmax)                                                                                                       
-#        vector_diffs=self.Data[s]['vector_diffs']
-#        vector_diffs_segment=vector_diffs[zstart:zend]
-#        FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
-#        max_FRAC_gap=max(vector_diffs_segment/sum(vector_diffs_segment))
-
- #       pars['specimen_frac']=FRAC
-#        pars['specimen_gmax']=max_FRAC_gap
-
 
 
     def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
@@ -343,21 +289,21 @@ class PintPars(object):
         centroid = []
         for n in range(len(self.x_Arai)):
             x = [self.x_Arai[n], self.y_Arai[n]]
-            print "x", x
+           # print "x", x
             centroid.append(x)
-        print "centroid in curve, pre-array: ", centroid
+#        print "centroid in curve, pre-array: ", centroid
         centroid = numpy.array(centroid)   
-        print "centroid in curve, post_array:", centroid
+#        print "centroid in curve, post_array:", centroid
         v = len(self.x_Arai)
-        print "length in curve: ", v
+#        print "length in curve: ", v
         centroid_x_sum = centroid[:,0].sum()
         centroid_y_sum = centroid[:,1].sum()
-        print "x_sum, y_sum in curve", centroid_x_sum, centroid_y_sum
+#        print "x_sum, y_sum in curve", centroid_x_sum, centroid_y_sum
         centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v
         C_x = centroid[0]
         C_y = centroid[1]
-        print "circle radius: ", r
-        print "circle center: ", a, b
+#        print "circle radius: ", r
+#        print "circle center: ", a, b
 #        print "centroid?", centroid
         if C_x < a and C_y < b:
             k = k
@@ -387,36 +333,36 @@ class PintPars(object):
         beta_threshold = 0.1
         slope_err_threshold = abs(slope) * beta_threshold
         segment_length = self.pars['specimen_int_n']
-        print "length in SCAT", segment_length
-        print "SCAT x_Arai:", self.x_Arai
+#        print "length in SCAT", segment_length
+#        print "SCAT x_Arai:", self.x_Arai
         x_sum = sum(self.x_Arai[self.start:self.end + 1])# fucking fencepost!!
         y_sum = sum(self.y_Arai[self.start:self.end + 1]) # ditto
-        print "(SCAT) x_sum, y_sum", x_sum, y_sum
+#        print "(SCAT) x_sum, y_sum", x_sum, y_sum
         x_avg = x_sum  / segment_length
         y_avg = y_sum / segment_length
         mass_center = (x_avg, y_avg)
         # mass center CAN be different from centroid previously calculated, because SCAT allows for a smaller subset and best fit circle or whatever does not
-        print "mass center", mass_center
-        print "centroid", self.pars['centroid']
+#        print "mass center", mass_center
+#        print "centroid", self.pars['centroid']
         # getting lines passing through mass_center
         x = mass_center[0]
         y = mass_center[1]
-        print "beta_threshold", beta_threshold
-        print "slope_err_threshold", slope_err_threshold
+#        print "beta_threshold", beta_threshold
+#        print "slope_err_threshold", slope_err_threshold
         slope_1 = slope + (2 * slope_err_threshold)
-        print "slope_1", slope_1
+#        print "slope_1", slope_1
         l1_y_int = y - (slope_1 * x)
         # b = y - mx
         l1_x_int = -1 * (l1_y_int / slope_1)
         slope_2 = slope - 2 * slope_err_threshold
-        print "slope_2", slope_2
+#        print "slope_2", slope_2
         l2_y_int = y - (slope_2 * x)
         l2_x_int = -1 * (l2_y_int / slope_2)
         # l1_y_int and l2_x_int form the bottom line of the box
         # l2_y_int and l1_x_int form the top line of the box
-        print "center of mass: ", mass_center
-        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
-        print "top line:", [(0, l2_y_int), (l1_x_int)]
+#        print "center of mass: ", mass_center
+#        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
+#        print "top line:", [(0, l2_y_int), (l1_x_int)]
         
 
 #        line1 -- passes through mass center with slope of: slope + 2(beta_threshold)
@@ -444,13 +390,13 @@ class PintPars(object):
 if True:
     import new_lj_thellier_gui_spd as tgs
     gui = tgs.Arai_GUI()
-    thing = PintPars(gui.Data, '0238x5721063', 273., 823.)
+    thing = PintPars(gui.Data, '0238x5721062', 598., 698.)
     thing.calculate_all_statistics()
-    thing1 = PintPars(gui.Data, '0238x5721063', 498., 698.)
+    thing1 = PintPars(gui.Data, '0238x5721062', 523., 773.)
     thing1.calculate_all_statistics()
-    thing2 = PintPars(gui.Data, gui.s, 273., 823.)
+    thing2 = PintPars(gui.Data, '0238x5721063', 273., 823.)
     thing2.calculate_all_statistics()
-    thing3 = PintPars(gui.Data, gui.s, 598, 698)
+    thing3 = PintPars(gui.Data, '0238x5721063', 598, 698)
     thing3.calculate_all_statistics()
 
 ##    print "thing f_vds: ", thing.pars['specimen_fvds']
@@ -459,14 +405,14 @@ if True:
 #    print thing1.specimen_Data['vds']
  #   print "thing1 temps: ", thing1.tmin_K, thing1.tmax_K
   #  print "thing2 f_vds: ", thing2.pars['specimen_fvds']
-    print "thing2.s: ", thing2.s
-    print "thing2 tmin and tmax: ", thing2.tmin_K, thing2.tmax_K
-    print "thing2 GAP-MAX: ", thing2.pars['alt_GAP-MAX'] 
+#    print "thing2.s: ", thing2.s
+#    print "thing2 tmin and tmax: ", thing2.tmin_K, thing2.tmax_K
+#    print "thing2 GAP-MAX: ", thing2.pars['alt_GAP-MAX'] 
  #   print "thing3 f_vds: ", thing3.pars['specimen_fvds']
-    print "thing3.s: ", thing3.s
-    print "thing3 tmin and tmax: ", thing3.tmin_K, thing3.tmax_K
-    print "thing3 GAP-MAX: ", thing3.pars['alt_GAP-MAX'] 
-    thing3.get_curve()
+#    print "thing3.s: ", thing3.s
+#    print "thing3 tmin and tmax: ", thing3.tmin_K, thing3.tmax_K
+#    print "thing3 GAP-MAX: ", thing3.pars['alt_GAP-MAX'] 
+ 
 
 
 

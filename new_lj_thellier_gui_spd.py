@@ -87,9 +87,9 @@ class Arai_GUI():
       
     def get_data(self):
       print "calling get_data()"
-      print "self", self
-      print "self.Data", self.Data
-      print "magic file:", self.magic_file
+#      print "self", self
+#      print "self.Data", self.Data
+#      print "magic file:", self.magic_file
 
       def tan_h(x, a, b): # not called....
           print "calling tan_h in get_data()"
@@ -162,7 +162,7 @@ class Arai_GUI():
           if "magic_method_codes" not in rec.keys():
               rec["magic_method_codes"]=""
           methods=rec["magic_method_codes"].split(":") # LJ UNCOMMENTED THIS, NOT SURE IF IT WORKS!!!
-          print "METHODS", methods
+#          print "METHODS", methods
           if "LP-PI-TRM" in rec["magic_method_codes"] or "LP-PI-M" in rec["magic_method_codes"]:
               # if using a lab trm field or Microwave demagnetization:
               Data[s]['datablock'].append(rec)
@@ -1316,22 +1316,22 @@ class Arai_GUI():
                    raw_input(" press return to acknowledge message")
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
         print "done with sortarai()"
-        print "araiblock[0] (first_Z) "
+#        print "araiblock[0] (first_Z) "
         #  [[273, 277.5, 79.6, 1.66e-09, 1], .....]
-        print araiblock[0]
-        print "araiblock[0][0]:"
-        print araiblock[0][0]
-        print "araiblock[1] (first_I)"
-        print araiblock[1]
-        print "araiblock[2] (ptrm_check)"
-        print araiblock[2]
-        print "araiblock[3] (ptrm_tail)"
-        print araiblock[3]
-        print "araiblock[4] (zptrm_check)"
-        print araiblock[4]
-        print "araiblock[5] (GammaChecks) "
-        print araiblock[5]
-        print "field ", field
+#        print araiblock[0]
+#        print "araiblock[0][0]:"
+#        print araiblock[0][0]
+#        print "araiblock[1] (first_I)"
+#        print araiblock[1]
+#        print "araiblock[2] (ptrm_check)"
+#        print araiblock[2]
+#        print "araiblock[3] (ptrm_tail)"
+#        print araiblock[3]
+#        print "araiblock[4] (zptrm_check)"
+#        print araiblock[4]
+#        print "araiblock[5] (GammaChecks) "
+#        print araiblock[5]
+#        print "field ", field
         return araiblock,field
 
 #def automate():

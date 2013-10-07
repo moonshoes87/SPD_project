@@ -5686,6 +5686,7 @@ class Arai_GUI(wx.Frame):
     def get_PI_parameters(self,s,tmin,tmax):
         print "calling get_PI_parameters"
 
+
         def cart2dir(cart): # OLD ONE
             """
             converts a direction to cartesian coordinates
@@ -6238,8 +6239,18 @@ class Arai_GUI(wx.Frame):
 
         vector_diffs=self.Data[s]['vector_diffs']
         vector_diffs_segment=vector_diffs[zstart:zend]
+        print "----"
+        print "----"
+        print "vector_diffs:", vector_diffs
+        print "start, end: *", zstart, zend
+        print "specimen: ", self.s, tmin - 273., tmax - 273
+        print "segment*:", vector_diffs_segment
+        print "segment max:", max(vector_diffs_segment)
+        print "segment vds: ", sum(vector_diffs_segment)
+        
         FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
         max_FRAC_gap=max(vector_diffs_segment/sum(vector_diffs_segment))
+        print "GAP-MAX: ", max_FRAC_gap
 
         pars['specimen_frac']=FRAC
         pars['specimen_gmax']=max_FRAC_gap
@@ -7407,6 +7418,8 @@ class Arai_GUI(wx.Frame):
             if k>0:
                 vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
         vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
+        print "vector_diffs*:", vector_diffs
+        print "zdata zebra:", zdata
         vds=sum(vector_diffs)  # vds calculation
         print "s is: ", s
         print "VDS is: ", vds
