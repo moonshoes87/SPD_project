@@ -7418,11 +7418,7 @@ class Arai_GUI(wx.Frame):
             if k>0:
                 vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
         vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
-        print "vector_diffs*:", vector_diffs
-        print "zdata zebra:", zdata
         vds=sum(vector_diffs)  # vds calculation
-        print "s is: ", s
-        print "VDS is: ", vds
         zdata=array(zdata)
 
         Data[s]['vector_diffs']=array(vector_diffs)

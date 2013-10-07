@@ -270,67 +270,64 @@ class PintPars(object):
         # a, b == x, y coordinates of the circle center
         # x is the x coordinate of some point
         # so x coordinate of the circle center * hyperbolic tangent of (y coordinate of center * x)
-        def tan_h(x, a, b):
-            return a*tanh(b*x)
+#        def tan_h(x, a, b):
+#            return a*tanh(b*x)
 
 #        def scipy.optimize.curve_fit(f, xdata, ydata)
         def f(x, r, a, b): # circle function
             y = abs(sqrt(r**2-(x-a)**2)) + b
             return y
-
         import scipy
         import numpy
         curve = scipy.optimize.curve_fit(f, self.x_Arai, self.y_Arai)
-        r = curve[0][0]
-        a = curve[0][1] # x coordinate of circle
-        b = curve[0][2] # y coordinate of circle
+        r = curve[0][0] # radius of circle
+        a = curve[0][1] # x coordinate of circle center
+        b = curve[0][2] # y coordinate of circle center
         k = 1/r
         # get data centroid
-        centroid = []
-        for n in range(len(self.x_Arai)):
-            x = [self.x_Arai[n], self.y_Arai[n]]
-           # print "x", x
-            centroid.append(x)
-#        print "centroid in curve, pre-array: ", centroid
-        centroid = numpy.array(centroid)   
-#        print "centroid in curve, post_array:", centroid
-        v = len(self.x_Arai)
-#        print "length in curve: ", v
-        centroid_x_sum = centroid[:,0].sum()
-        centroid_y_sum = centroid[:,1].sum()
-#        print "x_sum, y_sum in curve", centroid_x_sum, centroid_y_sum
-        centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v
-        C_x = centroid[0]
-        C_y = centroid[1]
-#        print "circle radius: ", r
-#        print "circle center: ", a, b
-#        print "centroid?", centroid
+#        centroid = []
+#        for n in range(len(self.x_Arai)): # possibly this needs to be a smaller segment, i.e. using self.start:self.end
+#            point = [self.x_Arai[n], self.y_Arai[n]]
+#           # print "x", x
+#            centroid.append(point)
+#        centroid = numpy.array(centroid)   
+#        print "centroid of data points:", centroid
+        v = len(self.x_Arai)  # would have to change this to reflect the proper length, also
+#        centroid_x_sum = centroid[:,0].sum()  # sums x values
+#        centroid_y_sum = centroid[:,1].sum()  # sums y values
+#        centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v  # divides by the number of data points to find the "average" poitn
+#        C_x = centroid[0] # x coordinate of centroid
+#        C_y = centroid[1] # y coordinate of centroid
+        # possibly simpler:  # but this too might need self.start:self.end
+        C_x = sum(self.x_Arai) / v # x coordinate of centroid
+        C_y = sum(self.y_Arai) / v # y coordinate of centroid
+        # done getting centroid
+        # get "direction" of the curvature
         if C_x < a and C_y < b:
             k = k
         if a < C_x and b < C_y:
             k = -k
         if a == C_x and b == C_y:
             k = 0
-        
-        SSE = 0
+        SSE = 0 # quality of best_fit circle
         for i in range(len(self.x_Arai)):
-            x = self.x_Arai
-            y = self.y_Arai
-            v = (sqrt( (x[i] -a)**2 + (y[i] - b)**2 ) - r )**2
+            x = self.x_Arai[i]
+            y = self.y_Arai[i]
+            v = (sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
 #            print v
             SSE += v
 #        print SSE
-        self.pars['centroid'] = centroid
+        self.pars['centroid'] = (C_x, C_y)
         self.pars['specimen_k'] = k
         self.pars['best_fit_circle'] = { "a": a, "b" : b, "radius": r }
         self.pars['SSE'] = SSE
-        return k, a, b, centroid
+        return k, a, b
 
     def get_SCAT(self):
         slope, slope_err, beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
 # need beta_threshold.  default in thellier_gui is .1
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
-        beta_threshold = 0.1
+        beta_threshold = 0.1 
         slope_err_threshold = abs(slope) * beta_threshold
         segment_length = self.pars['specimen_int_n']
 #        print "length in SCAT", segment_length
@@ -342,28 +339,81 @@ class PintPars(object):
         y_avg = y_sum / segment_length
         mass_center = (x_avg, y_avg)
         # mass center CAN be different from centroid previously calculated, because SCAT allows for a smaller subset and best fit circle or whatever does not
-#        print "mass center", mass_center
-#        print "centroid", self.pars['centroid']
+        # possibly the above is incorrect.  possibly you should readjust centroid in get_curve to allow for a subset of the data.  not sure.
+
         # getting lines passing through mass_center
         x = mass_center[0]
         y = mass_center[1]
 #        print "beta_threshold", beta_threshold
 #        print "slope_err_threshold", slope_err_threshold
         slope_1 = slope + (2 * slope_err_threshold)
-#        print "slope_1", slope_1
         l1_y_int = y - (slope_1 * x)
-        # b = y - mx
         l1_x_int = -1 * (l1_y_int / slope_1)
         slope_2 = slope - 2 * slope_err_threshold
-#        print "slope_2", slope_2
         l2_y_int = y - (slope_2 * x)
         l2_x_int = -1 * (l2_y_int / slope_2)
         # l1_y_int and l2_x_int form the bottom line of the box
         # l2_y_int and l1_x_int form the top line of the box
-#        print "center of mass: ", mass_center
-#        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
-#        print "top line:", [(0, l2_y_int), (l1_x_int)]
+        print "diagonal line1:", (0, l2_y_int), (l2_x_int, 0), (x, y)
+        print "diagonal line2:", (0, l1_y_int), (l1_x_int, 0), (x, y)
+        print "center of mass: ", mass_center
+        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
+        print "top line:", [(0, l2_y_int), (l1_x_int, 0)]
+        low_line = [(0, l1_y_int), (l2_x_int, 0)]
+        high_line = [(0, l2_y_int), (l1_x_int, 0)]
+        x_max = high_line[1][0]# 
+        y_max = high_line[0][1]
+        print "Max x, y: ", x_max, y_max
         
+#        function for bottom line:
+        low_slope = (low_line[0][1] - low_line[1][1]) / (low_line[0][0] - low_line[1][0]) # y_0 - y_1 / x_0 - x_1
+        low_y_int = low_line[0][1]
+#        y = mx + b
+        def low_line(x): # appears correct
+            y = low_slope * x + low_y_int
+            return y
+
+        # function for top line
+        high_slope = (high_line[0][1] - high_line[1][1]) / (high_line[0][0] - high_line[1][0]) # y_0 - y_1 / x_0 - x_1
+        high_y_int = high_line[0][1]
+        def high_line(x):
+            y = high_slope * x + high_y_int
+            return y
+        print "High:"
+        print "x = 1", high_line(1.)
+        print "x =2", high_line(2.)
+        print "x=3", high_line(3.)
+        print "low"
+        print "x=.5", low_line(.5)
+        print "x=1.5", low_line(1.5)
+        print "x=3", low_line(3.)
+        print "-"
+
+        def in_SCAT(x, y):
+            print "x, y", x, y
+            passing = True
+            if x > x_max or y > y_max: 
+                print "x or y greater than x or y_max"
+                passing = False
+            if x < 0 or y < 0: # all data must be in upper right quadrant of graph
+                print "x or y smaller than 0"
+                passing = False
+            upper_limit = high_line(x)
+            lower_limit = low_line(x)
+            print "upper limit, lower limit for y: ", upper_limit, lower_limit
+            if y > upper_limit:
+                print "y > upper limit"
+                passing = False
+            if y < lower_limit:
+                print "y < lower limit"
+                passing = False
+            print passing
+            print "---"
+        
+        in_SCAT(1., .8)
+        in_SCAT(4.5, .1)
+        in_SCAT(.4, .2)
+        in_SCAT(3., .7)
 
 #        line1 -- passes through mass center with slope of: slope + 2(beta_threshold)
         # line 2 -- passes through mass center with slope of: slope - 2(beta_threshold)
@@ -398,6 +448,7 @@ if True:
     thing2.calculate_all_statistics()
     thing3 = PintPars(gui.Data, '0238x5721063', 598, 698)
     thing3.calculate_all_statistics()
+
 
 ##    print "thing f_vds: ", thing.pars['specimen_fvds']
  #   print thing.specimen_Data['vds']
