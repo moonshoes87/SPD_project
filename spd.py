@@ -326,18 +326,10 @@ class PintPars(object):
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
         beta_threshold = 0.1 
         slope_err_threshold = abs(slope) * beta_threshold
-        x_mean=mean(array(self.x_Arai_segment))
-        y_mean=mean(array(self.y_Arai_segment))
-        mass_center = (x_mean, y_mean)
-        print "center of mass:", mass_center # 
-        # mass center CAN be different from centroid previously calculated, because SCAT allows for a smaller subset and best fit circle or whatever does not
-        # possibly the above is incorrect.  possibly you should readjust centroid in get_curve to allow for a subset of the data.  not sure.
-
+        x=mean(array(self.x_Arai_segment))
+        y=mean(array(self.y_Arai_segment))
+        mass_center = (x, y)
         # getting lines passing through mass_center
-        x = mass_center[0]
-        y = mass_center[1]
-#        print "beta_threshold", beta_threshold
-#        print "slope_err_threshold", slope_err_threshold
         slope_1 = slope + (2 * slope_err_threshold)
         l1_y_int = y - (slope_1 * x)
         l1_x_int = -1 * (l1_y_int / slope_1)
@@ -348,19 +340,17 @@ class PintPars(object):
         # l2_y_int and l1_x_int form the top line of the box
 #        print "diagonal line1:", (0, l2_y_int), (l2_x_int, 0), (x, y)
 #        print "diagonal line2:", (0, l1_y_int), (l1_x_int, 0), (x, y)
-#        print "center of mass: ", mass_center
 #        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
 #        print "top line:", [(0, l2_y_int), (l1_x_int, 0)]
         low_line = [(0, l1_y_int), (l2_x_int, 0)]
         high_line = [(0, l2_y_int), (l1_x_int, 0)]
         x_max = high_line[1][0]# 
         y_max = high_line[0][1]
-        print "Max x, y: ", x_max, y_max
+       # print "Max x, y: ", x_max, y_max
         
-#        function for bottom line:
+        # function for bottom line
         low_slope = (low_line[0][1] - low_line[1][1]) / (low_line[0][0] - low_line[1][0]) # y_0 - y_1 / x_0 - x_1
         low_y_int = low_line[0][1]
-#        y = mx + b
         def low_line(x): # appears correct
             y = low_slope * x + low_y_int
             return y
@@ -371,18 +361,10 @@ class PintPars(object):
         def high_line(x): # appears correct
             y = high_slope * x + high_y_int
             return y
-#        print "High:"
-#        print "x = 1", high_line(1.)
-#        print "x =2", high_line(2.)
-#        print "x=3", high_line(3.)
-#        print "low"
-#        print "x=.5", low_line(.5)
-#        print "x=1.5", low_line(1.5)
-#        print "x=3", low_line(3.)
-#        print "-"
 
+        # function to find if a particular point is in the box
         def in_SCAT(x, y):
-            print "x, y", x, y
+           # print "x, y", x, y
             passing = True
             if x > x_max or y > y_max: 
                 print "x or y greater than x or y_max"
@@ -392,55 +374,46 @@ class PintPars(object):
                 passing = False
             upper_limit = high_line(x)
             lower_limit = low_line(x)
-            print "upper limit, lower limit for y: ", upper_limit, lower_limit
+           # print "upper limit, lower limit for y: ", upper_limit, lower_limit
             if y > upper_limit:
                 print "y > upper limit"
                 passing = False
             if y < lower_limit:
                 print "y < lower limit"
                 passing = False
-           # print "SCAT pass is: ", passing
             return passing # boolean
     
-
-#        line1 -- passes through mass center with slope of: slope + 2(beta_threshold)
-        # line 2 -- passes through mass center with slope of: slope - 2(beta_threshold)
-        # forms SCAT box with x and y intercepts
+        def get_SCAT_points():
+            points = []
         
-        # first: figure out which points to include (slightly complex regarding pTRM checks)
-        # figure out how to determine if they are "within the box"
-        # if all are in box, then SCAT is "TRUE"
-        points = []
-        # add these together:
+            for i in range(self.start, self.end + 1):
+                x = self.x_Arai[i]
+                y = self.y_Arai[i]
+                points.append((x, y))
         
-#        for i in range(len(self.x_Arai[self.start:self.end+1])):
-        for i in range(self.start, self.end + 1):
-            x = self.x_Arai[i]
-            y = self.y_Arai[i]
-            points.append((x, y))
-        
-        # for loop that appends proper, relevant ptrm checks
+        # adding relevant ptrm checks
+           # print "points (x and y Arai added)", points
+            for num, temp in enumerate(self.ptrm_checks_temperatures): # seems to work
+                if temp >= self.tmin and temp <= self.tmax: # if temp is within selected range
+                    if self.ptrm_checks_starting_temperatures[num] >= self.tmin and self.ptrm_checks_starting_temperatures[num] <= self.tmax: # and also if it was not done after an out-of-range temperature
+                        x = self.x_ptrm_check[num]
+                        y = self.y_ptrm_check[num]
+                        points.append((x, y))
 
-        print "points (x and y Arai added)", points
+           # print "points (ptrm checks added)", points
+        # adding relevant tail checks
+            for num, temp in enumerate(self.tail_checks_temperatures):  # check this one
+                if temp >= self.tmin and temp <= self.tmax:
+                    if self.tail_checks_starting_temperatures[num] >= self.tmin and self.tail_checks_starting_temperatures[num] <= self.tmax:
+                        x = self.x_tail_check[num]
+                        y = self.y_tail_check[num]
+                        points.append((x, y))
+           # print "points (tail checks added)", points
+            return points
 
-        for num, temp in enumerate(self.ptrm_checks_temperatures): # seems to work
-            if temp >= self.tmin and temp <= self.tmax: # if temp is within selected range
-                if self.ptrm_checks_starting_temperatures[num] >= self.tmin and self.ptrm_checks_starting_temperatures[num] <= self.tmax: # and also if it was not done after an out-of-range temperature
-                    x = self.x_ptrm_check[num]
-                    y = self.y_ptrm_check[num]
-                    points.append((x, y))
-
-        print "points (ptrm checks added)", points
-        # for loop that appends proper, relevant tail checks
-        for num, temp in enumerate(self.tail_checks_temperatures):  # check this one
-            if temp >= self.tmin and temp <= self.tmax:
-                if self.tail_checks_starting_temperatures[num] >= self.tmin and self.tail_checks_starting_temperatures[num] <= self.tmax:
-                    x = self.x_tail_check[num]
-                    y = self.y_tail_check[num]
-                    points.append((x, y))
-        print "points (tail checks added)", points
-
-        # iterate through points and see if any of them are outside of your SCAT box
+        points = get_SCAT_points()
+        # iterate through all relevant points and see if any of them are outside of your SCAT box
+            
         p = True
         for point in points:
             result = in_SCAT(point[0], point[1])
@@ -449,12 +422,13 @@ class PintPars(object):
                 p = False
         if p:
             print "SCAT TEST PASSED"
+            self.pars['SCAT'] = True
         else:
             print "SCAT TEST FAILED"
-        print "---------"
+            self.pars['SCAT'] = False
+        print "-----"
+
         
-        
-                            
 
 # pTRM checks ("triangles")
 #         Data[s]['x_ptrm_check']=[] # a list of x coordinates of pTRM checks
@@ -478,6 +452,7 @@ class PintPars(object):
         self.get_vds()
         self.get_FRAC()
         self.get_curve()
+        self.get_SCAT()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
@@ -486,43 +461,23 @@ if True:
     import new_lj_thellier_gui_spd as tgs
     gui = tgs.Arai_GUI()
     specimens = gui.Data.keys()
-    thing = PintPars(gui.Data, '0238x6011044', 473., 648.)  # this one only gets incorrect results
+    thing = PintPars(gui.Data, '0238x6011044', 473., 623.)  # this one only gets incorrect results
     thing.calculate_all_statistics()
-#    thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
-#    thing1.calculate_all_statistics()
-#    thing2 = PintPars(gui.Data, specimens[4], 273., 798.)
-#    thing2.calculate_all_statistics()
-#    thing3 = PintPars(gui.Data, specimens[5], 598, 698)
-#    thing3.calculate_all_statistics()
+    thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
+    thing1.calculate_all_statistics()
+    thing2 = PintPars(gui.Data, specimens[4], 273., 798.)
+    thing2.calculate_all_statistics()
+    thing3 = PintPars(gui.Data, specimens[5], 598, 698)
+    thing3.calculate_all_statistics()
     print "---"
-    print thing.s, thing.tmin_K, thing.tmax_K  # incorrect
+    print thing.s, thing.tmin_K, thing.tmax_K  
     thing.get_SCAT()
-#    print thing1.s, thing1.tmin_K, thing1.tmax_K
-#    thing1.get_SCAT()
-#    print thing2.s, thing2.tmin_K, thing2.tmax_K
-#    thing2.get_SCAT()
-#    print thing3.s, thing3.tmin_K, thing3.tmax_K
-#    thing3.get_SCAT()
-    
-    
-
-
-##    print "thing f_vds: ", thing.pars['specimen_fvds']
- #   print thing.specimen_Data['vds']
-#    print "thing1 f_vds: ", thing1.pars['specimen_fvds']
-#    print thing1.specimen_Data['vds']
- #   print "thing1 temps: ", thing1.tmin_K, thing1.tmax_K
-  #  print "thing2 f_vds: ", thing2.pars['specimen_fvds']
-#    print "thing2.s: ", thing2.s
-#    print "thing2 tmin and tmax: ", thing2.tmin_K, thing2.tmax_K
-#    print "thing2 GAP-MAX: ", thing2.pars['alt_GAP-MAX'] 
- #   print "thing3 f_vds: ", thing3.pars['specimen_fvds']
-#    print "thing3.s: ", thing3.s
-#    print "thing3 tmin and tmax: ", thing3.tmin_K, thing3.tmax_K
-#    print "thing3 GAP-MAX: ", thing3.pars['alt_GAP-MAX'] 
- 
-
-
+    print thing1.s, thing1.tmin_K, thing1.tmax_K
+    thing1.get_SCAT()
+    print thing2.s, thing2.tmin_K, thing2.tmax_K
+    thing2.get_SCAT()
+    print thing3.s, thing3.tmin_K, thing3.tmax_K
+    thing3.get_SCAT()
 
 
 if False:
