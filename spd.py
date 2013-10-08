@@ -71,7 +71,7 @@ class PintPars(object):
 
         self.x_tail_check=self.specimen_Data['x_tail_check']
         self.y_tail_check=self.specimen_Data['y_tail_check']
-        self.tail_check_temperatures = self.specimen_Data['tail_check_temperatures']
+        self.tail_checks_temperatures = self.specimen_Data['tail_check_temperatures']
 #        self.x_tail_check_starting_point = self.specimen_Data['x_tail_check_starting_point']
 #        self.y_tail_check_starting_point = self.specimen_Data['y_tail_check_starting_point']
         self.tail_checks_starting_temperatures = self.specimen_Data['tail_checks_starting_temperatures']
@@ -84,7 +84,6 @@ class PintPars(object):
 #         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from     
         self.ptrm_checks_starting_temperatures = self.specimen_Data['ptrm_checks_starting_temperatures'] # a list of temperatures from which the pTRM checks started from 
 
-
         self.zijdblock=self.specimen_Data['zijdblock']        
         self.z_temperatures=self.specimen_Data['z_temp']
 
@@ -94,11 +93,6 @@ class PintPars(object):
 
         self.length = abs(self.end - self.start) + 1  # plus one because of indexing -- starts at 0
 
-#        print "tmin, tmax"
-#        print tmin, tmax
-#        print "start", "end"
-#        print self.start, self.end
-
         self.pars={}
 
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
@@ -107,7 +101,7 @@ class PintPars(object):
         # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
         # also, fix the weirdness of having to set the precise number for tmin and tmax
         self.pars['specimen_int_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
  
         #LJ ADDING stats:
         self.n = float(self.end-self.start+1)  # n is the number of points involved
@@ -116,6 +110,9 @@ class PintPars(object):
         self.tmax = tmax
         self.tmin_K = tmin - 273.15
         self.tmax_K = tmax - 273.15
+        self.x_Arai_segment = self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
+        self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
+
 
     # eventually add a function to change tmax and/or tmin.  must also change start, end, 
 
@@ -126,8 +123,8 @@ class PintPars(object):
         # modified from pmag.py
         #-------------------------------------------------               
 
-        x_Arai_segment= self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
-        y_Arai_segment= self.y_Arai[self.start:self.end+1]
+        x_Arai_segment= self.x_Arai_segment #self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
+        y_Arai_segment= self.y_Arai_segment #self.y_Arai[self.start:self.end+1]
 
         x_Arai_mean=mean(x_Arai_segment) # uses scipy mean function to get the mean of the x points
         y_Arai_mean=mean(y_Arai_segment)
@@ -329,15 +326,10 @@ class PintPars(object):
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
         beta_threshold = 0.1 
         slope_err_threshold = abs(slope) * beta_threshold
-        segment_length = self.pars['specimen_int_n']
-#        print "length in SCAT", segment_length
-#        print "SCAT x_Arai:", self.x_Arai
-        x_sum = sum(self.x_Arai[self.start:self.end + 1])# fucking fencepost!!
-        y_sum = sum(self.y_Arai[self.start:self.end + 1]) # ditto
-#        print "(SCAT) x_sum, y_sum", x_sum, y_sum
-        x_avg = x_sum  / segment_length
-        y_avg = y_sum / segment_length
-        mass_center = (x_avg, y_avg)
+        x_mean=mean(array(self.x_Arai_segment))
+        y_mean=mean(array(self.y_Arai_segment))
+        mass_center = (x_mean, y_mean)
+        print "center of mass:", mass_center # 
         # mass center CAN be different from centroid previously calculated, because SCAT allows for a smaller subset and best fit circle or whatever does not
         # possibly the above is incorrect.  possibly you should readjust centroid in get_curve to allow for a subset of the data.  not sure.
 
@@ -354,11 +346,11 @@ class PintPars(object):
         l2_x_int = -1 * (l2_y_int / slope_2)
         # l1_y_int and l2_x_int form the bottom line of the box
         # l2_y_int and l1_x_int form the top line of the box
-        print "diagonal line1:", (0, l2_y_int), (l2_x_int, 0), (x, y)
-        print "diagonal line2:", (0, l1_y_int), (l1_x_int, 0), (x, y)
-        print "center of mass: ", mass_center
-        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
-        print "top line:", [(0, l2_y_int), (l1_x_int, 0)]
+#        print "diagonal line1:", (0, l2_y_int), (l2_x_int, 0), (x, y)
+#        print "diagonal line2:", (0, l1_y_int), (l1_x_int, 0), (x, y)
+#        print "center of mass: ", mass_center
+#        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
+#        print "top line:", [(0, l2_y_int), (l1_x_int, 0)]
         low_line = [(0, l1_y_int), (l2_x_int, 0)]
         high_line = [(0, l2_y_int), (l1_x_int, 0)]
         x_max = high_line[1][0]# 
@@ -376,18 +368,18 @@ class PintPars(object):
         # function for top line
         high_slope = (high_line[0][1] - high_line[1][1]) / (high_line[0][0] - high_line[1][0]) # y_0 - y_1 / x_0 - x_1
         high_y_int = high_line[0][1]
-        def high_line(x):
+        def high_line(x): # appears correct
             y = high_slope * x + high_y_int
             return y
-        print "High:"
-        print "x = 1", high_line(1.)
-        print "x =2", high_line(2.)
-        print "x=3", high_line(3.)
-        print "low"
-        print "x=.5", low_line(.5)
-        print "x=1.5", low_line(1.5)
-        print "x=3", low_line(3.)
-        print "-"
+#        print "High:"
+#        print "x = 1", high_line(1.)
+#        print "x =2", high_line(2.)
+#        print "x=3", high_line(3.)
+#        print "low"
+#        print "x=.5", low_line(.5)
+#        print "x=1.5", low_line(1.5)
+#        print "x=3", low_line(3.)
+#        print "-"
 
         def in_SCAT(x, y):
             print "x, y", x, y
@@ -407,13 +399,9 @@ class PintPars(object):
             if y < lower_limit:
                 print "y < lower limit"
                 passing = False
-            print passing
-            print "---"
-        
-        in_SCAT(1., .8)
-        in_SCAT(4.5, .1)
-        in_SCAT(.4, .2)
-        in_SCAT(3., .7)
+           # print "SCAT pass is: ", passing
+            return passing # boolean
+    
 
 #        line1 -- passes through mass center with slope of: slope + 2(beta_threshold)
         # line 2 -- passes through mass center with slope of: slope - 2(beta_threshold)
@@ -422,7 +410,64 @@ class PintPars(object):
         # first: figure out which points to include (slightly complex regarding pTRM checks)
         # figure out how to determine if they are "within the box"
         # if all are in box, then SCAT is "TRUE"
+        points = []
+        # add these together:
+        
+#        for i in range(len(self.x_Arai[self.start:self.end+1])):
+        for i in range(self.start, self.end + 1):
+            x = self.x_Arai[i]
+            y = self.y_Arai[i]
+            points.append((x, y))
+        
+        # for loop that appends proper, relevant ptrm checks
 
+        print "points (x and y Arai added)", points
+
+        for num, temp in enumerate(self.ptrm_checks_temperatures): # seems to work
+            if temp >= self.tmin and temp <= self.tmax: # if temp is within selected range
+                if self.ptrm_checks_starting_temperatures[num] >= self.tmin and self.ptrm_checks_starting_temperatures[num] <= self.tmax: # and also if it was not done after an out-of-range temperature
+                    x = self.x_ptrm_check[num]
+                    y = self.y_ptrm_check[num]
+                    points.append((x, y))
+
+        print "points (ptrm checks added)", points
+        # for loop that appends proper, relevant tail checks
+        for num, temp in enumerate(self.tail_checks_temperatures):  # check this one
+            if temp >= self.tmin and temp <= self.tmax:
+                if self.tail_checks_starting_temperatures[num] >= self.tmin and self.tail_checks_starting_temperatures[num] <= self.tmax:
+                    x = self.x_tail_check[num]
+                    y = self.y_tail_check[num]
+                    points.append((x, y))
+        print "points (tail checks added)", points
+
+        # iterate through points and see if any of them are outside of your SCAT box
+        p = True
+        for point in points:
+            result = in_SCAT(point[0], point[1])
+            if result == False:
+                print "SCAT TEST FAILED"
+                p = False
+        if p:
+            print "SCAT TEST PASSED"
+        else:
+            print "SCAT TEST FAILED"
+        print "---------"
+        
+        
+                            
+
+# pTRM checks ("triangles")
+#         Data[s]['x_ptrm_check']=[] # a list of x coordinates of pTRM checks
+#         Data[s]['y_ptrm_check']=[] # a list of y coordinates of pTRM checks      
+#         Data[s]['ptrm_checks_temperatures']=[] # a list of pTRM checks temperature 
+#         Data[s]['x_ptrm_check_starting_point'] # a list of x coordinates of the point ehere the pTRM checks started from
+#         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from            #         Data[s]['ptrm_checks_starting_temperatures']=[] # a list of temperatures from which the pTRM checks started from 
+
+
+        # for loop that appends ptrm tail checks
+        
+
+        # make a function that puts together x_Arai and y_Arai points, since you use that multiple times
 
             
         
@@ -435,19 +480,31 @@ class PintPars(object):
         self.get_curve()
         print "done with calculate_all_statistics"
 
-
+# K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 if True:
     import new_lj_thellier_gui_spd as tgs
     gui = tgs.Arai_GUI()
-    thing = PintPars(gui.Data, '0238x5721062', 598., 698.)
+    specimens = gui.Data.keys()
+    thing = PintPars(gui.Data, '0238x6011044', 473., 648.)  # this one only gets incorrect results
     thing.calculate_all_statistics()
-    thing1 = PintPars(gui.Data, '0238x5721062', 523., 773.)
-    thing1.calculate_all_statistics()
-    thing2 = PintPars(gui.Data, '0238x5721063', 273., 823.)
-    thing2.calculate_all_statistics()
-    thing3 = PintPars(gui.Data, '0238x5721063', 598, 698)
-    thing3.calculate_all_statistics()
+#    thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
+#    thing1.calculate_all_statistics()
+#    thing2 = PintPars(gui.Data, specimens[4], 273., 798.)
+#    thing2.calculate_all_statistics()
+#    thing3 = PintPars(gui.Data, specimens[5], 598, 698)
+#    thing3.calculate_all_statistics()
+    print "---"
+    print thing.s, thing.tmin_K, thing.tmax_K  # incorrect
+    thing.get_SCAT()
+#    print thing1.s, thing1.tmin_K, thing1.tmax_K
+#    thing1.get_SCAT()
+#    print thing2.s, thing2.tmin_K, thing2.tmax_K
+#    thing2.get_SCAT()
+#    print thing3.s, thing3.tmin_K, thing3.tmax_K
+#    thing3.get_SCAT()
+    
+    
 
 
 ##    print "thing f_vds: ", thing.pars['specimen_fvds']
