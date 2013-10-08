@@ -10,6 +10,7 @@ import spd
 #        self.assertRaises(roman.OutOfRangeError, roman.toRoman, 4000)
 
 
+print spd.thing.s
 
 class TestSpecimenValues(unittest.TestCase):
 
