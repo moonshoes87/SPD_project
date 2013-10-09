@@ -31,7 +31,7 @@ class Arai_GUI():
     title = "PmagPy Thellier GUI %s"%CURRENT_VRSION
     
     def __init__(self, magic_file = "magic_measurements.txt"):
-        print " calling __init__ Arai_gui instance"
+#        print " calling __init__ Arai_gui instance"
 #        self.redo_specimens={}
         self.currentDirectory = "/Users/nebula/Python/SPD_project"
         self.WD = "/Users/nebula/Python/SPD_project"
@@ -50,7 +50,7 @@ class Arai_GUI():
         self.Data,self.Data_hierarchy,self.Data_info={},{},{}
 
         self.Data_info=self.get_data_info() # get all ages, locations etc. (from er_ages, er_sites, er_locations)
-        print "arai_GUI initialization calling self.get_data()"
+#        print "arai_GUI initialization calling self.get_data()"
         self.Data,self.Data_hierarchy=self.get_data() # Get data from magic_measurements and rmag_anistropy if exist.
 
         self.Data_samples={}
@@ -59,7 +59,7 @@ class Arai_GUI():
         self.specimens.sort()                   # get list of specimens
 
 #        self.get_previous_interpretation() # get interpretations from pmag_specimens.txt.  don't even have pmag_specimens.txt
-        print "data info: ", self.Data_info
+#        print "data info: ", self.Data_info
     
     
         # def get_PI_parameters() should be here (moved to end of file)
@@ -86,13 +86,13 @@ class Arai_GUI():
 
       
     def get_data(self):
-      print "calling get_data()"
+#      print "calling get_data()"
 #      print "self", self
 #      print "self.Data", self.Data
 #      print "magic file:", self.magic_file
 
       def tan_h(x, a, b): # not called....
-          print "calling tan_h in get_data()"
+#          print "calling tan_h in get_data()"
           return a*tanh(b*x)
     
 
@@ -871,9 +871,9 @@ class Arai_GUI():
       print("-I- number of samples in this project directory: %i\n"%len(Data_hierarchy['samples'].keys()))
 
       #print "done sort blocks to arai, zij. etc."
-      print "returning Data, data_hierarchy.  This is the completion of self.get_data().  printing Data['0238x5721062']"
-      print str(Data["0238x5721062"])[:500] + "...."
-      print "done with get_data"
+#      print "returning Data, data_hierarchy.  This is the completion of self.get_data().  printing Data['0238x5721062']"
+#      print str(Data["0238x5721062"])[:500] + "...."
+#      print "done with get_data"
       return(Data,Data_hierarchy)
 
 
@@ -884,7 +884,7 @@ class Arai_GUI():
     # Read all information file (er_locations, er_samples, er_sites, er_ages)
     #--------------------------------------------------------------
     def get_data_info(self):
-        print "calling get_data_info()"
+#        print "calling get_data_info()"
         Data_info={}
         data_er_samples={}
         data_er_ages={}
@@ -896,8 +896,8 @@ class Arai_GUI():
         # other_read_magic_file takes 4 args (including self) 
         def read_magic_file(path,sort_by_this_name):
             # called for er_ages, er_sites, er_samples
-            print "Calling read_magic_file() in get_data_info"
-            print path
+#            print "Calling read_magic_file() in get_data_info"
+ #           print path
             DATA={}
             fin=open(path,'rU')
             fin.readline()
@@ -910,7 +910,7 @@ class Arai_GUI():
                     tmp_data[header[i]]=tmp_line[i]
                 DATA[tmp_data[sort_by_this_name]]=tmp_data
             fin.close()        
-            print "Data from read_magic_file in get_data info:  ", DATA
+ #           print "Data from read_magic_file in get_data info:  ", DATA
             return(DATA)
         
         try:
@@ -936,8 +936,8 @@ class Arai_GUI():
         Data_info["er_sites"]=data_er_sites
         Data_info["er_ages"]=data_er_ages
         
-        print "data_info"
-        print str(Data_info)[:500]
+#        print "data_info"
+#        print str(Data_info)[:500]
         return(Data_info)
 
     #--------------------------------------------------------------    
@@ -1001,7 +1001,7 @@ class Arai_GUI():
         """ 
         reads  a Magic template file, puts data in a list of dictionaries
         """
-        print "calling magic_read(self, infile)", infile
+#        print "calling magic_read(self, infile)", infile
         hold,magic_data,magic_record,magic_keys=[],[],{},[]
         try:
             f=open(infile,"rU")
@@ -1047,9 +1047,9 @@ class Arai_GUI():
         magictype=file_type.lower().split("_")
         Types=['er','magic','pmag','rmag']
         if magictype in Types:file_type=file_type.lower()
-        print "magic data from magic_read:"
-        print str(magic_data)[:500] + "..."
-        print "file_type", file_type
+#        print "magic data from magic_read:"
+#        print str(magic_data)[:500] + "..."
+#        print "file_type", file_type
         return magic_data,file_type
 
 
@@ -1059,7 +1059,7 @@ class Arai_GUI():
         """
     # sort the specimen names
     #
-        print "calling get_specs()"
+#        print "calling get_specs()"
         speclist=[]
         for rec in data:
           spec=rec["er_specimen_name"]
@@ -1074,7 +1074,7 @@ class Arai_GUI():
         """
          sorts data block in to first_Z, first_I, etc.
         """
-        print "calling sortarai()"
+#        print "calling sortarai()"
         first_Z,first_I,zptrm_check,ptrm_check,ptrm_tail=[],[],[],[],[]
         field,phi,theta="","",""
         starthere=0
@@ -1315,7 +1315,7 @@ class Arai_GUI():
                    print " Something wrong with this specimen! Better fix it or delete it "
                    raw_input(" press return to acknowledge message")
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
-        print "done with sortarai()"
+#        print "done with sortarai()"
 #        print "araiblock[0] (first_Z) "
         #  [[273, 277.5, 79.6, 1.66e-09, 1], .....]
 #        print araiblock[0]

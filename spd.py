@@ -320,6 +320,12 @@ class PintPars(object):
         self.pars['SSE'] = SSE
         return k, a, b
 
+    
+#    def get_SCAT(self):
+#        import other_SCAT
+#        other_SCAT(self.pars['specimen_b'], self.pars['specimen_b_sigma']).run()  # as an object
+#        other_SCAT.other_get_SCAT(params) # as a function
+
     def get_SCAT(self):
         slope, slope_err, beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
 # need beta_threshold.  default in thellier_gui is .1
@@ -442,7 +448,6 @@ class PintPars(object):
         
 
         # make a function that puts together x_Arai and y_Arai points, since you use that multiple times
-
             
         
         
@@ -459,9 +464,11 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
-thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
-def do_stuff():
+thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
+def do_stuff():
+    gui = tgs.Arai_GUI()
+    thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
     specimens = gui.Data.keys()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
@@ -481,6 +488,7 @@ def do_stuff():
     thing2.get_SCAT()
     print thing3.s, thing3.tmin_K, thing3.tmax_K
     thing3.get_SCAT()
+    return thing, thing1, thing2, thing3
 
 
 if False:
