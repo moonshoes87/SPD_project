@@ -54,8 +54,11 @@ class CheckInitialValues(unittest.TestCase):
         self.assertEqual(self.obj.s, '0238x6011044')
 
     def test_known_values(self):
-        for key, value in self.known_values.iteritems():  # not in order
-            if value != None and type(value) != dict:
+        for key, value in self.known_values.iteritems():  # goes through all values
+            if type(value) == int or type(value) == float: # can't iterate over int type or float
+                print type(value)
+                self.assertEqual(value, self.obj_attributes[key])
+            elif value != None and type(value) != dict:
                 print type(value)
                 for num, item in enumerate(value):
                     message = "%s: known value = %s; obj_attribute = %s" %(key, value[:150], self.obj_attributes[key][:150])
@@ -65,24 +68,7 @@ class CheckInitialValues(unittest.TestCase):
                         self.assertEqual(self.obj_attributes[key][num], item, message)
 
 
-#                    self.assertEqual(
-#n                print str(value)[:50], "......", str(self.obj_attributes[key])[:50]
-#                self.assertEqual(value, self.obj_attributes[key])
 
-
-
-# this is not syntactically correct, but you get the idea
-#    def test_known_values(self):
-#        for key, val in known_values:
-#            self.assertEqual(self.obj.key == val)
-
-
-
-#    def test_name_length(self):
-#        print self.obj.pars
-#        print unittest
-#        self.assertEqual(10, 10)
-#        self.assertEqual(len(self.obj.s), 12) 
         
 #    def test_thing_is_pie(self):
 #        self.assertRaises(ValueError, self.obj.York_Regression)
