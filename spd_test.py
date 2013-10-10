@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
+import numpy
 import spd
 import known_values
 
@@ -45,18 +46,29 @@ class CheckParams(unittest.TestCase):
             
 class CheckInitialValues(unittest.TestCase):
     obj = spd.thing
-    stuff = [obj.s, obj.datablock, obj.x_Arai, obj.y_Arai, obj.t_Arai, obj.x_Arai_segment, obj.y_Arai_segment, obj.x_tail_check, obj.y_tail_check, obj.tail_checks_temperatures, obj.tail_checks_starting_temperatures, obj.x_ptrm_check, obj.y_ptrm_check, obj.ptrm_checks_temperatures, obj.ptrm_checks_starting_temperatures, obj.zijdblock, obj.z_temperatures, obj.start, obj.end, obj.pars, obj.specimen_Data, obj.tmin, obj.tmax, obj.tmin_K, obj.tmax_K] 
+    obj_attributes = {'s':obj.s, 'datablock': obj.datablock, 'x_Arai': obj.x_Arai, 'y_Arai': obj.y_Arai, 't_Arai': obj.t_Arai, 'x_Arai_segment': obj.x_Arai_segment, 'y_Arai_segment': obj.y_Arai_segment, "x_tail_check": obj.x_tail_check, 'y_tail_check': obj.y_tail_check, 'tail_checks_temperatures': obj.tail_checks_temperatures, 'tail_checks_starting_temperatures': obj.tail_checks_starting_temperatures, 'x_ptrm_check': obj.x_ptrm_check, 'y_ptrm_check': obj.y_ptrm_check, 'ptrm_checks_temperatures': obj.ptrm_checks_temperatures, 'ptrm_checks_starting_temperatures': obj.ptrm_checks_starting_temperatures, 'zijdblock': obj.zijdblock, 'z_temperatures': obj.z_temperatures, 'start': obj.start, 'end': obj.end, 'pars': obj.pars, 'specimen_Data': obj.specimen_Data, 'tmin': obj.tmin, 'tmax': obj.tmax, 'tmin_K': obj.tmin_K, 'tmax_K': obj.tmax_K} 
     known_values = known_values.values
 
     # test a bunch of the initial values against known expected values.  this indirectly tests get_data and such.  I don't know, maybe that will be enough.  Then I can do more thorough tests for the other stuff. 
-
     def test_name(self):
         self.assertEqual(self.obj.s, '0238x6011044')
 
     def test_known_values(self):
-        n = 0
-        for k, v in self.known_values.iteritems():  # not in order
-            print k, v
+        for key, value in self.known_values.iteritems():  # not in order
+            if value != None and type(value) != dict:
+                print type(value)
+                for num, item in enumerate(value):
+                    message = "%s: known value = %s; obj_attribute = %s" %(key, value[:150], self.obj_attributes[key][:150])
+                    if type(item) == float or type(item) == numpy.float64:
+                        self.assertEqual(round(self.obj_attributes[key][num], 8), round(item, 8), message)
+                    else:
+                        self.assertEqual(self.obj_attributes[key][num], item, message)
+
+
+#                    self.assertEqual(
+#n                print str(value)[:50], "......", str(self.obj_attributes[key])[:50]
+#                self.assertEqual(value, self.obj_attributes[key])
+
 
 
 # this is not syntactically correct, but you get the idea

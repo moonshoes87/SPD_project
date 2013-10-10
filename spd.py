@@ -108,8 +108,8 @@ class PintPars(object):
         self.n_max = len(self.t_Arai)  # gets total number of temperatures taken.  (p. 4, top)
         self.tmin = tmin # self-explanatory
         self.tmax = tmax
-        self.tmin_K = tmin - 273.15
-        self.tmax_K = tmax - 273.15
+        self.tmin_K = tmin - 273. #273.15
+        self.tmax_K = tmax - 273 #273.15
         self.x_Arai_segment = self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
         self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
 
