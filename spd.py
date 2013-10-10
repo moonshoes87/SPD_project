@@ -136,7 +136,7 @@ class PintPars(object):
 
         # York b
         york_b=-1* sqrt( sum(y_err**2) / sum(x_err**2) ) # averaged slope
-        
+
         # could we not use self.n_max instead of n here?
         # york sigma
         york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
@@ -197,9 +197,10 @@ class PintPars(object):
         self.pars["specimen_YT"]=y_T       
 
         self.pars["specimen_XT"] = x_T # LJ added
+        B_lab = (float(self.specimen_Data['lab_dc_field'])) #*1e6) # LJ added.  possibly should be raw, not multiplied 1e6
         self.pars['B_lab']=(float(self.specimen_Data['lab_dc_field'])) #*1e6) # LJ added.  possibly should be raw, not multiplied 1e6
+        B_anc = abs(york_b) * self.pars["B_lab"] #self.pars["specimen_int"] # LJ added
         self.pars["B_anc"]= abs(york_b) * self.pars["B_lab"] #self.pars["specimen_int"] # LJ added
-
 
         self.pars["specimen_b_sigma"]=york_sigma
 
@@ -213,7 +214,6 @@ class PintPars(object):
         self.pars["specimen_q"]=q_Coe
         self.pars["specimen_w"]= w_Coe # LJ add. untested, but it should work
 
-        
 
         self.pars['magic_method_codes']+=":IE-TT"
         if 'x_ptrm_check' in self.specimen_Data.keys():
@@ -222,6 +222,9 @@ class PintPars(object):
         if 'x_tail_check' in self.specimen_Data.keys():
             if len(self.specimen_Data['x_tail_check'])>0:
                 self.pars['magic_method_codes']+=":LP-PI-BT-MD"
+
+        result =  {'x_Arai_mean': x_Arai_mean, 'y_Arai_mean': y_Arai_mean, 'n': n, 'x_err': x_err, 'y_err': y_err, 'york_b': york_b, 'york_sigma': york_sigma, 'beta_Coe': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'f_Coe': f_Coe, 'g_Coe': g_Coe, 'g_lim': g_lim, 'q_Coe': q_Coe, 'w_Coe': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
+        return result
 #        print "PintPars object, self.pars after york regression: "
 #        print self.pars
 #        print "finished with York_regression()"
@@ -252,6 +255,7 @@ class PintPars(object):
         self.pars['vector_diffs_segment'] = vector_diffs_segment
         self.pars['partial_vds'] = partial_vds
         self.pars['GAP-MAX'] = GAP_MAX
+        return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 
     def get_FRAC(self):   # works
@@ -261,6 +265,7 @@ class PintPars(object):
         vector_diffs_segment = self.pars['vector_diffs_segment']  # could use this instead
         FRAC=sum(vector_diffs_segment)/ vds
         self.pars['FRAC'] = FRAC
+        return FRAC
 
 
     def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
@@ -281,6 +286,7 @@ class PintPars(object):
         a = curve[0][1] # x coordinate of circle center
         b = curve[0][2] # y coordinate of circle center
         k = 1/r
+        best_fit_circle = { "a": a, "b" : b, "radius": r }
         # get data centroid
 #        centroid = []
 #        for n in range(len(self.x_Arai)): # possibly this needs to be a smaller segment, i.e. using self.start:self.end
@@ -298,6 +304,7 @@ class PintPars(object):
         # possibly simpler:  # but this too might need self.start:self.end
         C_x = sum(self.x_Arai) / v # x coordinate of centroid
         C_y = sum(self.y_Arai) / v # y coordinate of centroid
+        centroid = (C_x, C_y)
         # done getting centroid
         # get "direction" of the curvature
         if C_x < a and C_y < b:
@@ -314,11 +321,11 @@ class PintPars(object):
 #            print v
             SSE += v
 #        print SSE
-        self.pars['centroid'] = (C_x, C_y)
+        self.pars['centroid'] = centroid
         self.pars['specimen_k'] = k
-        self.pars['best_fit_circle'] = { "a": a, "b" : b, "radius": r }
+        self.pars['best_fit_circle'] = best_fit_circle
         self.pars['SSE'] = SSE
-        return k, a, b
+        return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
 
     
 #    def get_SCAT(self):
@@ -433,6 +440,7 @@ class PintPars(object):
             print "SCAT TEST FAILED"
             self.pars['SCAT'] = False
         print "-----"
+        return {'SCAT': self.pars['SCAT'] }
 
         
 
