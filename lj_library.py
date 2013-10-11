@@ -24,6 +24,105 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 
+def get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean, beta_threshold = .1):
+    slope_err_threshold = abs(slope) * beta_threshold
+    x, y = x_mean, y_mean
+    # get lines that pass through mass center
+    slope1 =  slope + (2* slope_err_threshold)
+    line1_y_int = y - (slope1 * x)
+    line1_x_int = -1 * (line1_y_int / slope1)
+    slope2 = slope - (2 * slope_err_threshold)
+    line2_y_int = y - (slope2 * x)
+    line2_x_int = -1 * (line2_y_int / slope2)
+        # l1_y_int and l2_x_int form the bottom line of the box       
+        # l2_y_int and l1_x_int form the top line of the box              
+#    print "_diagonal line1:", (0, line2_y_int), (line2_x_int, 0), (x, y)     
+#    print "_diagonal line2:", (0, line1_y_int), (line1_x_int, 0), (x, y)
+#    print "_bottom line:", [(0, line1_y_int), (line2_x_int, 0)]    
+#    print "_top line:", [(0, line2_y_int), (line1_x_int, 0)]     
+    low_bound = [(0, line1_y_int), (line2_x_int, 0)]
+    high_bound = [(0, line2_y_int), (line1_x_int, 0)]
+    x_max = high_bound[1][0]#              
+    y_max = high_bound[0][1]
+    # function for low_bound
+    low_slope = (low_bound[0][1] - low_bound[1][1]) / (low_bound[0][0] - low_bound[1][0]) # y_0 - y_1 / x_0 - x_1     
+    low_y_int = low_bound[0][1]
+    def low_bound(x): # appears 
+        y = low_slope * x + low_y_int
+        return y
+    # function for high_bound
+    high_slope = (high_bound[0][1] - high_bound[1][1]) / (high_bound[0][0] - high_bound[1][0]) # y_0 - y_1 / x_0 - x_1     
+    high_y_int = high_bound[0][1]
+    def high_bound(x): 
+        y = high_slope * x + high_y_int
+        return y
+    return low_bound, high_bound, x_max, y_max
+
+def in_SCAT_box(x, y, low_bound, high_bound, x_max, y_max):
+    """determines if a particular point falls within a box"""
+    passing = True
+    upper_limit = high_bound(x)
+    lower_limit = low_bound(x)
+    if x > x_max or y > y_max:
+        print "x or y greater than x or y_max"
+        passing = False
+    if x < 0 or y < 0:
+        print "x or y smaller than zero: all data should be positive"
+        passing = False
+    if y > upper_limit:
+        print "y > upper limit"
+        passing = False
+    if y < lower_limit:
+        print "y < lower_limit"
+        passing = False
+    return passing
+
+
+def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temperatures, ptrm_checks_starting_temperatures, x_ptrm_check, y_ptrm_check, tail_checks_temperatures, tail_checks_starting_temperatures, x_tail_check, y_tail_check):
+    """returns relevant points for a SCAT test"""
+    points = []
+    for i in range(len(x_Arai_segment)):
+        x = x_Arai_segment[i]
+        y = y_Arai_segment[i]
+        points.append((x, y))
+
+    for num, temp in enumerate(ptrm_checks_temperatures): # seems to 
+        if temp >= tmin and temp <= tmax: # if temp is within selected range
+            if ptrm_checks_starting_temperatures[num] >= tmin and ptrm_checks_starting_temperatures[num] <= tmax: # and also if it was not done after an out-of-range temp
+                x = x_ptrm_check[num]
+                y = y_ptrm_check[num]
+                points.append((x, y))
+
+    for num, temp in enumerate(tail_checks_temperatures):  # check this one   
+        if temp >= tmin and temp <= tmax:
+            if tail_checks_starting_temperatures[num] >= tmin and tail_checks_starting_temperatures[num] <= tmax:
+                x = x_tail_check[num]
+                y = y_tail_check[num]
+                points.append((x, y))
+           # print "points (tail checks added)", points
+    return points
+
+def get_SCAT(points, low_bound, high_bound, x_max, y_max):
+    """
+    runs SCAT test and returns boolean
+    """
+    print "hi"
+    print points
+    # iterate through all relevant points and see if any of them fall outside of your SCAT box
+    p = True
+    for point in points:
+        result = in_SCAT_box(point[0], point[1], low_bound, high_bound, x_max, y_max)
+        if result == False:
+            print "SCAT TEST FAILED"
+            p = False
+    if p:
+        print "SCAT TEST PASSED"
+        SCAT = True
+    else:
+        print "SCAT TEST FAILED"
+        SCAT = False
+    return SCAT
+
 
 def get_curve(x_Arai, y_Arai):
     
@@ -58,7 +157,6 @@ def get_curve(x_Arai, y_Arai):
 #            print v                                                                                                  
         SSE += v
     return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
-    
 
 
 def get_FRAC(vds, vector_diffs_segment):   

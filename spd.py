@@ -102,7 +102,7 @@ class PintPars(object):
         # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
         # also, fix the weirdness of having to set the precise number for tmin and tmax
         self.pars['specimen_int_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
  
         #LJ ADDING stats:
         self.n = float(self.end-self.start+1)  # n is the number of points involved
@@ -368,6 +368,25 @@ class PintPars(object):
 #        return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
 
     
+    def other_get_SCAT(self):
+        slope, slope_err, slope_beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
+        x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
+#        beta_threshold = .1                                                                                  
+        x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
+        x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
+        box = lib.get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean)
+        print "SCAT-box", box
+        low_bound, high_bound, x_max, y_max = box[0], box[1], box[2], box[3]
+        # getting SCAT points
+        x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
+        tmin, tmax = self.tmin, self.tmax
+        ptrm_checks_temps, ptrm_checks_starting_temps, x_ptrm_check, y_ptrm_check = self.ptrm_checks_temperatures, self.ptrm_checks_starting_temperatures, self.x_ptrm_check, self.y_ptrm_check
+        tail_checks_temps, tail_checks_starting_temps, x_tail_check, y_tail_check = self.tail_checks_temperatures, self.tail_checks_starting_temperatures, self.x_tail_check, self.y_tail_check
+        points = lib.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temps, ptrm_checks_starting_temps, x_ptrm_check, y_ptrm_check, tail_checks_temps, tail_checks_starting_temps, x_tail_check, y_tail_check)
+        # checking each point
+        SCAT = lib.get_SCAT(points, low_bound, high_bound, x_max, y_max)
+        self.pars['_SCAT'] = SCAT
+        
 
     def get_SCAT(self):
         slope, slope_err, beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
@@ -432,14 +451,14 @@ class PintPars(object):
                 passing = False
             return passing # boolean
     
-        def get_SCAT_points():
+        def get_points():
             points = []
         
             for i in range(self.start, self.end + 1):
                 x = self.x_Arai[i]
                 y = self.y_Arai[i]
                 points.append((x, y))
-        
+
         # adding relevant ptrm checks
            # print "points (x and y Arai added)", points
             for num, temp in enumerate(self.ptrm_checks_temperatures): # seems to work
@@ -460,7 +479,8 @@ class PintPars(object):
            # print "points (tail checks added)", points
             return points
 
-        points = get_SCAT_points()
+        points = get_points()
+        print points
         # iterate through all relevant points and see if any of them are outside of your SCAT box
             
         p = True
@@ -543,6 +563,7 @@ class PintPars(object):
         self.get_FRAC()
         self.get_curve()
         self.get_SCAT()
+        self.other_get_SCAT()
         self.get_R_corr2()
         self.get_R_det2()
         print "done with calculate_all_statistics"
