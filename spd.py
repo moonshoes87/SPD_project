@@ -232,10 +232,7 @@ class PintPars(object):
 
         result =  {'x_Arai_mean': x_Arai_mean, 'y_Arai_mean': y_Arai_mean, 'n': n, 'x_err': x_err, 'y_err': y_err, 'york_b': york_b, 'york_sigma': york_sigma, 'beta_Coe': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'f_Coe': f_Coe, 'g_Coe': g_Coe, 'g_lim': g_lim, 'q_Coe': q_Coe, 'w_Coe': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
         return result
-#        print "PintPars object, self.pars after york regression: "
-#        print self.pars
-#        print "finished with York_regression()"
-#        print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
+
 
 
 
@@ -281,6 +278,7 @@ class PintPars(object):
         self.pars['vector_diffs_segment'] = data['vector_diffs_segment']
         self.pars['partial_vds'] = data['partial_vds']
         self.pars['GAP-MAX'] = data['GAP-MAX']
+        return {'max_diff': data['max_diff'], 'vector_diffs': data['vector_diffs'], 'specimen_vds': data['specimen_vds'], 'f_vds': data['f_vds'], 'vector_diffs_segment': data['vector_diffs_segment'], 'partial_vds': data['partial_vds'], 'GAP-MAX': data['GAP-MAX']}
 
 
 #    def get_FRAC(self):   # works
@@ -298,6 +296,7 @@ class PintPars(object):
         vector_diffs_segment = self.pars['vector_diffs_segment']
         FRAC = lib.get_FRAC(vds, vector_diffs_segment)
         self.pars['FRAC'] = FRAC
+        return FRAC
 
 
     def get_curve(self):
@@ -528,6 +527,7 @@ class PintPars(object):
         y_segment =self.y_Arai_segment
         R_corr2 = lib.get_R_corr2(x_avg, y_avg, x_segment, y_segment)
         self.pars['R_corr2'] = R_corr2
+        return R_corr2
 
 
 #    def get_R_det2(self):

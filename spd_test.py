@@ -31,7 +31,7 @@ class CheckParams(unittest.TestCase):
     obj.calculate_all_statistics()
     obj_new_pars = obj.pars
     pre_calculation_pars = ['specimen_int_n', 'lab_dc_field']
-    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'magic_method_codes', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_2corr']  # remember to update this as you add stats
+    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'magic_method_codes', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2']  # remember to update this as you add stats
 
     def test_for_params_before(self):
         for par in self.pre_calculation_pars:
@@ -113,19 +113,18 @@ class CheckVDSsequence(unittest.TestCase):
             self.assertGreaterEqual(v, 0) # none of these stats can possibly be negative numbers
 
 
-class CheckR_2corr(unittest.TestCase):
-    
+class CheckR_corr2(unittest.TestCase):
     obj = copy.deepcopy(spd.thing)
-    R_2corr = obj.get_R_2corr()
+    R_corr2 = obj.get_R_corr2()
 
     def testPositiveOutput(self):
-        self.assertGreater(self.R_2corr, 0)
+        self.assertGreater(self.R_corr2, 0)
 
     def testSizeOutput(self): # not absolutely sure this is true.  but it seems like it has to be.  
-        self.assertLess(self.R_2corr, 1)
+        self.assertLess(self.R_corr2, 1)
 
-class CheckR_det2(self):
-    
+class CheckR_det2(unittest.TestCase):
+    pass  
     
 
     # make super simple test cases for these functions.  do it by hand.  i.e., y = [1, 2] y_prime = [1.5, 1.5]
