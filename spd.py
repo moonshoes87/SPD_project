@@ -300,7 +300,15 @@ class PintPars(object):
         self.pars['FRAC'] = FRAC
 
 
-    def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
+    def get_curve(self):
+        x_Arai, y_Arai = self.x_Arai, self.y_Arai
+        data = lib.get_curve(x_Arai, y_Arai)
+        self.pars['centroid'] = data['centroid']
+        self.pars['specimen_k'] = data['k']
+        self.pars['best_fit_circle'] = data['best_fit_circle']
+        self.pars['SSE'] = data['SSE']
+
+#    def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
         # a, b == x, y coordinates of the circle center
         # x is the x coordinate of some point
         # so x coordinate of the circle center * hyperbolic tangent of (y coordinate of center * x)
@@ -308,17 +316,17 @@ class PintPars(object):
 #            return a*tanh(b*x)
 
 #        def scipy.optimize.curve_fit(f, xdata, ydata)
-        def f(x, r, a, b): # circle function
-            y = abs(sqrt(r**2-(x-a)**2)) + b
-            return y
-        import scipy
-        import numpy
-        curve = scipy.optimize.curve_fit(f, self.x_Arai, self.y_Arai)
-        r = curve[0][0] # radius of circle
-        a = curve[0][1] # x coordinate of circle center
-        b = curve[0][2] # y coordinate of circle center
-        k = 1/r
-        best_fit_circle = { "a": a, "b" : b, "radius": r }
+#        def f(x, r, a, b): # circle function
+#            y = abs(sqrt(r**2-(x-a)**2)) + b
+#            return y
+#        import scipy
+#        import numpy
+#        curve = scipy.optimize.curve_fit(f, self.x_Arai, self.y_Arai)
+#        r = curve[0][0] # radius of circle
+#        a = curve[0][1] # x coordinate of circle center
+#        b = curve[0][2] # y coordinate of circle center
+#        k = 1/r
+#        best_fit_circle = { "a": a, "b" : b, "radius": r }
         # get data centroid
 #        centroid = []
 #        for n in range(len(self.x_Arai)): # possibly this needs to be a smaller segment, i.e. using self.start:self.end
@@ -327,43 +335,39 @@ class PintPars(object):
 #            centroid.append(point)
 #        centroid = numpy.array(centroid)   
 #        print "centroid of data points:", centroid
-        v = len(self.x_Arai)  # would have to change this to reflect the proper length, also
+#        v = len(self.x_Arai)  # would have to change this to reflect the proper length, also
 #        centroid_x_sum = centroid[:,0].sum()  # sums x values
 #        centroid_y_sum = centroid[:,1].sum()  # sums y values
 #        centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v  # divides by the number of data points to find the "average" poitn
 #        C_x = centroid[0] # x coordinate of centroid
 #        C_y = centroid[1] # y coordinate of centroid
         # possibly simpler:  # but this too might need self.start:self.end
-        C_x = sum(self.x_Arai) / v # x coordinate of centroid
-        C_y = sum(self.y_Arai) / v # y coordinate of centroid
-        centroid = (C_x, C_y)
-        # done getting centroid
+#        C_x = sum(self.x_Arai) / v # x coordinate of centroid
+#        C_y = sum(self.y_Arai) / v # y coordinate of centroid
+#        centroid = (C_x, C_y)
+#        # done getting centroid
         # get "direction" of the curvature
-        if C_x < a and C_y < b:
-            k = k
-        if a < C_x and b < C_y:
-            k = -k
-        if a == C_x and b == C_y:
-            k = 0
-        SSE = 0 # quality of best_fit circle
-        for i in range(len(self.x_Arai)):
-            x = self.x_Arai[i]
-            y = self.y_Arai[i]
-            v = (sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
+#        if C_x < a and C_y < b:
+#            k = k
+#        if a < C_x and b < C_y:
+#            k = -k
+#        if a == C_x and b == C_y:
+#            k = 0
+#        SSE = 0 # quality of best_fit circle
+#        for i in range(len(self.x_Arai)):
+#            x = self.x_Arai[i]
+#            y = self.y_Arai[i]
+#            v = (sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
 #            print v
-            SSE += v
+#            SSE += v
 #        print SSE
-        self.pars['centroid'] = centroid
-        self.pars['specimen_k'] = k
-        self.pars['best_fit_circle'] = best_fit_circle
-        self.pars['SSE'] = SSE
-        return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
+ #       self.pars['centroid'] = centroid
+#        self.pars['specimen_k'] = k
+#        self.pars['best_fit_circle'] = best_fit_circle
+#        self.pars['SSE'] = SSE
+#        return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
 
     
-#    def get_SCAT(self):
-#        import other_SCAT
-#        other_SCAT(self.pars['specimen_b'], self.pars['specimen_b_sigma']).run()  # as an object
-#        other_SCAT.other_get_SCAT(params) # as a function
 
     def get_SCAT(self):
         slope, slope_err, beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']

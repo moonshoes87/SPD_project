@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 from scipy import *
+from scipy.optimize import curve_fit
 #import numpy
 
 
@@ -23,6 +24,41 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 
+
+def get_curve(x_Arai, y_Arai):
+    
+    def f(x, r, a, b):
+        y = abs(sqrt(r**2-(x-a)**2)) + b
+        return y
+    # get best fit circle
+    curve = curve_fit(f, x_Arai, y_Arai)
+    r = curve[0][0] # radius of best fit circle
+    a = curve[0][1] # x coordinate of circle center
+    b = curve[0][2] # y coordinate of circle center
+    best_fit_circle = {'a': a, 'b': b, 'radius': r}
+    k = 1 /r
+    # get centroid
+    v = len(x_Arai)
+    C_x = sum(x_Arai) / v  # x coordinate of centroid
+    C_y = sum(y_Arai) / v  # y coordinate of centroid
+    centroid = (C_x, C_y)
+    # get direction of curvature
+    if C_x < a and C_y < b:
+        k = k
+    if a < C_x and b < C_y:
+        k = -k
+    if a == C_x and b == C_y:
+        k = 0
+    # get SSE -- quality of best fit circle
+    SSE = 0
+    for i in range(len(x_Arai)):
+        x = x_Arai[i]
+        y = y_Arai[i]
+        v = (sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
+#            print v                                                                                                  
+        SSE += v
+    return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
+    
 
 
 def get_FRAC(vds, vector_diffs_segment):   
