@@ -16,6 +16,7 @@
 #============================================================================================
 
 import sys,pylab,scipy,os
+import lj_library as lib
 from scipy import * 
 
 
@@ -237,42 +238,66 @@ class PintPars(object):
 #        print "tmin is %s, tmax is %s" %(self.tmin, self.tmax)
 
 
-    def get_vds(self):  # appears now to be working.  fetches vector difference sum.  vds and fvds are correct.  
-        """gets vds and f_vds"""
-        print "calling get_vds()"
-        zdata = self.specimen_Data['zdata']
-        vector_diffs = []
-        for k in range(len(zdata)-1): 
-            # gets diff between two vectors
-            vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
-        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
-        last_vector = sqrt(sum(array(zdata[-1])**2)) 
-        vds = sum(vector_diffs)
-        delta_y_prime = self.pars['delta_y_prime']  
-        f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
-        vector_diffs_segment = vector_diffs[self.start:self.end]
-        partial_vds = sum(vector_diffs_segment)
-        max_diff = max(vector_diffs_segment)
-        GAP_MAX = max_diff / partial_vds
-        self.pars['max_diff'] = max_diff
-        self.pars['vector_diffs'] = vector_diffs
-        self.pars['specimen_vds'] = vds
-        self.pars["specimen_fvds"]=f_vds 
-        self.pars['vector_diffs_segment'] = vector_diffs_segment
-        self.pars['partial_vds'] = partial_vds
-        self.pars['GAP-MAX'] = GAP_MAX
-        return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 
-    def get_FRAC(self):   # works
+
+
+#    def get_vds(self):  # appears now to be working.  fetches vector difference sum.  vds and fvds are correct.
+#        """gets vds and f_vds"""
+#        print "calling get_vds()"
+#        zdata = self.specimen_Data['zdata']
+#        vector_diffs = []
+#        for k in range(len(zdata)-1): 
+#            # gets diff between two vectors
+#            vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
+#        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
+#        last_vector = sqrt(sum(array(zdata[-1])**2)) 
+#        vds = sum(vector_diffs)
+#        delta_y_prime = self.pars['delta_y_prime']  
+#        f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
+#        vector_diffs_segment = vector_diffs[self.start:self.end]
+#        partial_vds = sum(vector_diffs_segment)
+#        max_diff = max(vector_diffs_segment)
+#        GAP_MAX = max_diff / partial_vds
+#        self.pars['max_diff'] = max_diff
+#        self.pars['vector_diffs'] = vector_diffs
+#        self.pars['specimen_vds'] = vds
+#        self.pars["specimen_fvds"]=f_vds 
+#        self.pars['vector_diffs_segment'] = vector_diffs_segment
+#        self.pars['partial_vds'] = partial_vds
+#        self.pars['GAP-MAX'] = GAP_MAX
+#        return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
+
+
+    def get_vds(self):
+        zdata = self.zdata
+        delta_y_prime = self.pars['delta_y_prime']
+        start, end = self.start, self.end
+        data = lib.get_vds(zdata, delta_y_prime, start, end)
+        self.pars['max_diff'] = data['max_diff']
+        self.pars['vector_diffs'] = data['vector_diffs']
+        self.pars['specimen_vds'] = data['specimen_vds']
+        self.pars['specimen_fvds']= data['f_vds']
+        self.pars['vector_diffs_segment'] = data['vector_diffs_segment']
+        self.pars['partial_vds'] = data['partial_vds']
+        self.pars['GAP-MAX'] = data['GAP-MAX']
+
+
+#    def get_FRAC(self):   # works
+#        vds = self.pars['specimen_vds']
+#        vector_diffs_segment = self.pars['vector_diffs_segment']  # could use this instead
+#        for num in vector_diffs_segment:
+#            if num < 0:
+#                raise ValueError
+#        FRAC=sum(vector_diffs_segment)/ vds
+#        self.pars['FRAC'] = FRAC
+#        return FRAC
+
+    def get_FRAC(self):
         vds = self.pars['specimen_vds']
-        vector_diffs_segment = self.pars['vector_diffs_segment']  # could use this instead
-        for num in vector_diffs_segment:
-            if num < 0:
-                raise ValueError
-        FRAC=sum(vector_diffs_segment)/ vds
+        vector_diffs_segment = self.pars['vector_diffs_segment']
+        FRAC = lib.get_FRAC(vds, vector_diffs_segment)
         self.pars['FRAC'] = FRAC
-        return FRAC
 
 
     def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
@@ -451,47 +476,61 @@ class PintPars(object):
 
         
 
-    def get_R_2corr(self): # probably wrong
-        numerator = 0
-        denominator_x = 0
-        denominator_y = 0
+#    def get_R_corr2(self): # probably wrong
+#        numerator = 0
+#        denominator_x = 0
+#        denominator_y = 0
+#        x_avg = self.x_Arai_mean
+#        y_avg = self.y_Arai_mean
+#        for num, x in enumerate(self.x_Arai_segment):
+#            r = ((x - x_avg) **2 ) * ((self.y_Arai_segment[num] - y_avg) **2 )
+#            numerator += r
+#        print "numerator", numerator
+#        for x in self.x_Arai_segment:
+#            denominator_x += ((x - x_avg) ** 2)
+#        print "den_x", denominator_x
+#        for y in self.y_Arai_segment:
+#            denominator_y += ((y - y_avg) ** 2)
+#        print "den_y", denominator_y
+#        R_corr2 = numerator / (denominator_x * denominator_y)
+#        self.pars['R_corr2'] = R_corr2
+#        print R_corr2
+#        return R_corr2
+
+    def get_R_corr2(self):
         x_avg = self.x_Arai_mean
         y_avg = self.y_Arai_mean
-        for num, x in enumerate(self.x_Arai_segment):
-            r = ((x - x_avg) **2 ) * ((self.y_Arai_segment[num] - y_avg) **2 )
-            numerator += r
-        print "numerator", numerator
-        for x in self.x_Arai_segment:
-            denominator_x += ((x - x_avg) ** 2)
-        print "den_x", denominator_x
-        for y in self.y_Arai_segment:
-            denominator_y += ((y - y_avg) ** 2)
-        print "den_y", denominator_y
-        R_2corr = numerator / (denominator_x * denominator_y)
-        self.pars['R_2corr'] = R_2corr
-        print R_2corr
-        return R_2corr
+        x_segment =self.x_Arai_segment
+        y_segment =self.y_Arai_segment
+        R_corr2 = lib.get_R_corr2(x_avg, y_avg, x_segment, y_segment)
+        self.pars['R_corr2'] = R_corr2
 
-    def get_R_2det(self): # or else this is
-        y_Arai_segment = self.y_Arai_segment
+
+#    def get_R_det2(self):
+#        y_Arai_segment = self.y_Arai_segment
+#        y_avg = self.y_Arai_mean
+#        y_prime = self.pars['y_prime']
+#        top = 0
+#        for num, y in enumerate(y_Arai_segment):
+#            result = (y - y_prime[num]) ** 2
+#            top += result
+#        bottom = 0
+#        for num, y in enumerate(y_Arai_segment):
+#            result = (y - y_avg) **2
+#            bottom += result
+#        print "top, bottom", top, bottom
+#        R_det2 = 1 - (top / bottom)
+#        self.pars['R_det2'] = R_det2
+#        print R_det2
+#        return R_det2
+
+    def get_R_det2(self):
+        y_segment = self.y_Arai_segment
         y_avg = self.y_Arai_mean
         y_prime = self.pars['y_prime']
-        top = 0
-        for num, y in enumerate(y_Arai_segment):
-            result = (y - y_prime[num]) ** 2
-            top += result
-        bottom = 0
-        for num, y in enumerate(y_Arai_segment):
-            result = (y - y_avg) **2
-            bottom += result
-        print "top, bottom", top, bottom
-        R_2det = 1 - (top / bottom)
-        self.pars['R_2det'] = R_2det
-        print R_2det
-        return R_2det
-
+        R_det2 = lib.get_R_det2(y_segment, y_avg, y_prime)
+        self.pars['R_det2'] = R_det2
             
-        
         
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
@@ -500,7 +539,8 @@ class PintPars(object):
         self.get_FRAC()
         self.get_curve()
         self.get_SCAT()
-        self.get_R_2corr()
+        self.get_R_corr2()
+        self.get_R_det2()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
@@ -509,7 +549,8 @@ import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
-def do_stuff():
+#def do_stuff():
+if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
@@ -531,72 +572,6 @@ def do_stuff():
     thing2.get_SCAT()
     print thing3.s, thing3.tmin_K, thing3.tmax_K
     thing3.get_SCAT()
-    return thing, thing1, thing2, thing3
+#    return thing, thing1, thing2, thing3
 
 
-if False:
-    # old code that uses zijdblock instead of zdata to get vds/fvds
-    def old_get_vds(self): # stolen from tgs
-        """vector difference sum"""
-        zijdblock = self.zijdblock
-        print "zijdblock", zijdblock
-        z_temperatures=[row[0] for row in zijdblock]
-        print "z_temperatures", z_temperatures
-        zdata=[]
-        vector_diffs=[]
-        NRM=zijdblock[0][3]
-        print "NRM", NRM
-# each zijdblock list item:  [treatment (temperature),declination,inclination,intensity,ZI,measurement_flag,magic_instrument_codes]
-        for k in range(len(zijdblock)):
-            DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]  # translation dec, inc, magnetic measurement into x, y, z
-           # print "treatment", zijdblock[k][0]
-  #          print "ZI", zijdblock[k][4]
-   #         print "DIR (vectors). dec, inc, intensity ", DIR
-            cart=self.dir2cart(DIR)
-#            print "cartesian coordinates, " , cart
-            zdata.append(array([cart[0],cart[1],cart[2]]))
-            if k>0:
-                vector_diff = (sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
-                print "vector_diff: ", vector_diff
-                vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
-        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of th
-        last_vector = sqrt(sum(array(zdata[-1])**2)) # last vector of th
-        print "last_vector", last_vector
-        vds=sum(vector_diffs)  # vds calculation                    
-        print "vector_diffs", vector_diffs
-        print "correct vds", self.specimen_Data['vds']
-        print "vds ", vds
-#        print "zdata[0]", zdata[0]
-        zdata=array(zdata)
- #       print "zdata", zdata
-
-        delta_y_prime = self.pars['delta_y_prime']   # this is definitely correct
-        f_vds=abs( delta_y_prime / vds)
-#        vds = self.specimen_Data['vds'] # LJ added
-#        self.pars['vds'] = vds # lj added
-        self.pars['specimen_vds_new'] = vds
-#        f_vds=abs((y_prime[0]-y_prime[-1])/self.specimen_Data['vds']) # old code, not encapsulated in spd.py
- #       self.pars["specimen_fvds"]=f_vds
-        self.pars["specimen_fvds_new"]=f_vds 
-        return vector_diffs, vds
-
-
-
-    def dir2cart(self, d):
-#        print "calling dir2cart(), not in anything"                                                             
-       # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z    
-        ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs                
-        d=array(d)
-        rad=pi/180.
-        if len(d.shape)>1: # array of vectors
-            decs,incs=d[:,0]*rad,d[:,1]*rad
-            if d.shape[1]==3: ints=d[:,2] # take the given lengths
-        else: # single vector
-            decs,incs=array(d[0])*rad,array(d[1])*rad
-            if len(d)==3:
-                ints=array(d[2])
-            else:
-                ints=array([1.])
-        cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
-        return cart
-    

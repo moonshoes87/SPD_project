@@ -132,6 +132,7 @@ class CheckR_det2(self):
     # also make test that it does raise an error when dividing by zero
     # put in checks to make sure you aren't dividing by zero (in several functions)
 
+    # consider architecture.  possibility of a math library that is then imported into spd.  makes testing easier.  
 
 
 if __name__ == "__main__":
