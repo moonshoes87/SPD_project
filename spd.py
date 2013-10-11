@@ -113,6 +113,12 @@ class PintPars(object):
         self.x_Arai_segment = self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
         self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
 
+        x_Arai_mean=mean(self.x_Arai_segment) # uses scipy mean function to get the mean of the x points
+        y_Arai_mean=mean(self.y_Arai_segment)
+        self.x_Arai_mean = x_Arai_mean
+        self.y_Arai_mean = y_Arai_mean
+
+
 
     # eventually add a function to change tmax and/or tmin.  must also change start, end, 
 
@@ -126,8 +132,8 @@ class PintPars(object):
         x_Arai_segment= self.x_Arai_segment #self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
         y_Arai_segment= self.y_Arai_segment #self.y_Arai[self.start:self.end+1]
 
-        x_Arai_mean=mean(x_Arai_segment) # uses scipy mean function to get the mean of the x points
-        y_Arai_mean=mean(y_Arai_segment)
+        x_Arai_mean= self.x_Arai_mean
+        y_Arai_mean= self.y_Arai_mean
 
         # equations (2),(3) in Coe (1978) for b, sigma
         n=self.end-self.start+1  # n is the number of points involved
@@ -260,9 +266,10 @@ class PintPars(object):
 
     def get_FRAC(self):   # works
         vds = self.pars['specimen_vds']
-#        vector_diffs = self.pars['vector_diffs']
-#        vector_diffs_segment = vector_diffs[self.start:self.end]
         vector_diffs_segment = self.pars['vector_diffs_segment']  # could use this instead
+        for num in vector_diffs_segment:
+            if num < 0:
+                raise ValueError
         FRAC=sum(vector_diffs_segment)/ vds
         self.pars['FRAC'] = FRAC
         return FRAC
@@ -444,18 +451,45 @@ class PintPars(object):
 
         
 
-# pTRM checks ("triangles")
-#         Data[s]['x_ptrm_check']=[] # a list of x coordinates of pTRM checks
-#         Data[s]['y_ptrm_check']=[] # a list of y coordinates of pTRM checks      
-#         Data[s]['ptrm_checks_temperatures']=[] # a list of pTRM checks temperature 
-#         Data[s]['x_ptrm_check_starting_point'] # a list of x coordinates of the point ehere the pTRM checks started from
-#         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from            #         Data[s]['ptrm_checks_starting_temperatures']=[] # a list of temperatures from which the pTRM checks started from 
+    def get_R_2corr(self): # probably wrong
+        numerator = 0
+        denominator_x = 0
+        denominator_y = 0
+        x_avg = self.x_Arai_mean
+        y_avg = self.y_Arai_mean
+        for num, x in enumerate(self.x_Arai_segment):
+            r = ((x - x_avg) **2 ) * ((self.y_Arai_segment[num] - y_avg) **2 )
+            numerator += r
+        print "numerator", numerator
+        for x in self.x_Arai_segment:
+            denominator_x += ((x - x_avg) ** 2)
+        print "den_x", denominator_x
+        for y in self.y_Arai_segment:
+            denominator_y += ((y - y_avg) ** 2)
+        print "den_y", denominator_y
+        R_2corr = numerator / (denominator_x * denominator_y)
+        self.pars['R_2corr'] = R_2corr
+        print R_2corr
+        return R_2corr
 
+    def get_R_2det(self): # or else this is
+        y_Arai_segment = self.y_Arai_segment
+        y_avg = self.y_Arai_mean
+        y_prime = self.pars['y_prime']
+        top = 0
+        for num, y in enumerate(y_Arai_segment):
+            result = (y - y_prime[num]) ** 2
+            top += result
+        bottom = 0
+        for num, y in enumerate(y_Arai_segment):
+            result = (y - y_avg) **2
+            bottom += result
+        print "top, bottom", top, bottom
+        R_2det = 1 - (top / bottom)
+        self.pars['R_2det'] = R_2det
+        print R_2det
+        return R_2det
 
-        # for loop that appends ptrm tail checks
-        
-
-        # make a function that puts together x_Arai and y_Arai points, since you use that multiple times
             
         
         
@@ -466,6 +500,7 @@ class PintPars(object):
         self.get_FRAC()
         self.get_curve()
         self.get_SCAT()
+        self.get_R_2corr()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
