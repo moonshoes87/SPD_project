@@ -121,6 +121,38 @@ class PintPars(object):
 
 
 
+
+    def other_York_Regression(self):
+        x_segment, y_segment = self.x_Arai_segment, self.y_Arai_segment
+        x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
+        n = self.n
+        lab_dc_field = float(self.specimen_Data['lab_dc_field'])
+        steps_Arai = self.specimen_Data['steps_Arai']
+        data = lib.York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps_Arai)
+        self.pars['x_err'] = data['x_err']
+        self.pars['y_err'] = data['y_err']
+        self.pars['x_tag'] = data['x_tag']
+        self.pars['y_tag'] = data['y_tag']
+        self.pars['specimen_b'] = data['specimen_b']
+        self.pars['specimen_b_sigma'] = data['specimen_b_sigma']
+        self.pars['specimen_b_beta'] = data['specimen_b_beta']
+        self.pars['specimen_YT'] = data['y_int']
+        self.pars['specimen_XT'] = data['x_int']
+        self.pars['x_prime'] = data['x_prime']
+        self.pars['y_prime'] = data['y_prime']
+        self.pars['delta_x_prime'] = data['delta_x_prime']
+        self.pars['delta_y_prime'] = data['delta_y_prime']
+        self.pars['specimen_f'] = data['specimen_f']
+        self.pars['specimen_g'] = data['specimen_g']
+        self.pars['specimen_g_lim'] = data['specimen_g_lim']
+        self.pars['specimen_q'] = data['specimen_q']
+        self.pars['specimen_w'] = data['specimen_w']
+        self.pars['count_IZ'] = data['count_IZ']
+        self.pars['count_ZI'] = data['count_ZI']
+        self.pars['B_lab'] = data['B_lab']
+        self.pars['B_anc'] = data['B_anc']
+        return data
+
     # eventually add a function to change tmax and/or tmin.  must also change start, end, 
 
     def York_Regression(self):
@@ -230,7 +262,7 @@ class PintPars(object):
             if len(self.specimen_Data['x_tail_check'])>0:
                 self.pars['magic_method_codes']+=":LP-PI-BT-MD"
 
-        result =  {'x_Arai_mean': x_Arai_mean, 'y_Arai_mean': y_Arai_mean, 'n': n, 'x_err': x_err, 'y_err': y_err, 'york_b': york_b, 'york_sigma': york_sigma, 'beta_Coe': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'f_Coe': f_Coe, 'g_Coe': g_Coe, 'g_lim': g_lim, 'q_Coe': q_Coe, 'w_Coe': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
+        result =  {'x_err': x_err, 'y_err': y_err, 'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'specimen_f': f_Coe, 'specimen_g': g_Coe, 'g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
         return result
 
 

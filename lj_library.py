@@ -6,6 +6,37 @@ from scipy.optimize import curve_fit
 
 
 
+def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps_Arai):
+    x_err = x_segment - x_mean
+    y_err = y_segment - y_mean
+    york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope
+    york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
+    beta_Coe=abs(york_sigma/york_b) 
+    # y_T is the intercept of the extrepolated line
+    # through the center of mass (see figure 7 in Coe (1978))  
+    y_T = y_mean - (york_b* x_mean)
+    x_T = (-1 * y_T) / york_b  # x intercept
+    # # calculate the extarplated data points for f and fvds
+    x_tag=(y_segment - y_T ) / york_b # returns array of y points minus the y intercept, divided by slope
+    y_tag=york_b*x_segment + y_T
+    # intersect of the dashed square and the horizontal dahed line  next to delta-y-5 in figure 7, Coe (1978)
+    x_prime=(x_segment+x_tag) / 2
+    y_prime=(y_segment+y_tag) / 2
+    delta_x_prime = abs(x_prime[-1] - x_prime[0]) #Lj add.  this is the TRM length of the best fit line
+    delta_y_prime = abs(y_prime[-1] - y_prime[0]) # LJ add.  this is the NRM length of the best fit line 
+    f_Coe = delta_y_prime / y_T  # LJ added 
+#        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )  # old version 
+    g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
+    g_lim = (float(n) - 2) / (float(n) - 1)  # NOT SURE ABOUT THIS ONE 
+    q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
+    w_Coe = q_Coe / sqrt(n - 2)
+    count_IZ= steps_Arai.count('IZ')
+    count_ZI= steps_Arai.count('ZI')
+    B_lab = lab_dc_field
+    B_anc = abs(york_b) * B_lab
+    return {'x_err': x_err, 'y_err': y_err, 'x_tag': x_tag, 'y_tag': y_tag, 'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 'y_int': y_T, 'x_int': x_T, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': x_prime, 'delta_y_prime': y_prime, 'specimen_f': f_Coe, 'specimen_g': g_Coe, 'specimen_g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
+    
+
 def get_vds(zdata, delta_y_prime, start, end):  # 
     """takes zdata array: [[1, 2, 3], [3, 4, 5]], delta_y_prime: 1, start value and end value.  gets vds and f_vds, etc. """
     print "calling get_vds()"
