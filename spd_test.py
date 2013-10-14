@@ -60,7 +60,7 @@ class CheckParams(unittest.TestCase):
 class CheckInitialAttributeValues(unittest.TestCase):
     obj = copy.deepcopy(spd.thing)
     obj_attributes = {'s':obj.s, 'datablock': obj.datablock, 'x_Arai': obj.x_Arai, 'y_Arai': obj.y_Arai, 't_Arai': obj.t_Arai, 'x_Arai_segment': obj.x_Arai_segment, 'y_Arai_segment': obj.y_Arai_segment, "x_Arai_mean": obj.x_Arai_mean, "y_Arai_mean": obj.y_Arai_mean, "x_tail_check": obj.x_tail_check, 'y_tail_check': obj.y_tail_check, 'tail_checks_temperatures': obj.tail_checks_temperatures, 'tail_checks_starting_temperatures': obj.tail_checks_starting_temperatures, 'x_ptrm_check': obj.x_ptrm_check, 'y_ptrm_check': obj.y_ptrm_check, 'ptrm_checks_temperatures': obj.ptrm_checks_temperatures, 'ptrm_checks_starting_temperatures': obj.ptrm_checks_starting_temperatures, 'zijdblock': obj.zijdblock, 'z_temperatures': obj.z_temperatures, 'start': obj.start, 'end': obj.end, 'pars': obj.pars, 'specimen_Data': obj.specimen_Data, 'tmin': obj.tmin, 'tmax': obj.tmax, 'tmin_K': obj.tmin_K, 'tmax_K': obj.tmax_K} 
-    known_values = known_values.values
+    known_values = known_values.initial_values
 
     # test a bunch of the initial values against known expected values.  this indirectly tests get_data and such.  I don't know, maybe that will be enough.  Then I can do more thorough tests for the other stuff. 
     def test_name(self):
@@ -79,6 +79,29 @@ class CheckInitialAttributeValues(unittest.TestCase):
                         self.assertEqual(round(self.obj_attributes[key][num], 8), round(item, 8), message)
                     else:
                         self.assertEqual(self.obj_attributes[key][num], item, message)
+
+
+class CheckYorkRegression(unittest.TestCase):
+    
+    obj = copy.deepcopy(spd.thing)
+    obj.other_York_Regression()
+    known_values = known_values.York_Regression_values
+    obj_pars = obj.pars
+    
+    def test_York_Regression(self):
+        for key, value in self.known_values.iteritems():  # goes through all values
+            if type(value) == int or type(value) == float: # can't iterate over int type or float
+               # print type(value)
+                self.assertEqual(value, self.obj_pars[key])
+            elif value != None and type(value) != dict:
+               # print type(value)
+                for num, item in enumerate(value):
+                    message = "%s: known value = %s; obj_attribute = %s" %(key, value[:150], self.obj_pars[key][:150])
+                    if type(item) == float or type(item) == numpy.float64:
+                        self.assertEqual(round(self.obj_pars[key][num], 8), round(item, 8), message)
+                    else:
+                        self.assertEqual(self.obj_pars[key][num], item, message)
+        
 
 
 class CheckFrac(unittest.TestCase):

@@ -2,7 +2,7 @@
 
 import numpy
 
-values = { "s": '0238x6011044',
+initial_values = { "s": '0238x6011044',
            "datablock": None , # ignoring for now because it's so fucking long
            "x_Arai": numpy.array([ 0.,  0.03917767,  0.06612789,  0.1218238 ,  0.18767432, 0.21711849,  0.32091412,  0.48291503,  0.72423703,  1.03139876, 1.27786578,  1.62771574,  1.96549027,  2.50849607,  3.22408793, 3.99894094,  4.38250182]),
            "y_Arai": numpy.array([ 1.,  1.01807229,  1.,  0.98795181,  0.95783133, 0.96987952,  0.98192771,  0.93373494,  0.90361446,  0.81325301, 0.81927711,  0.70481928,  0.70481928,  0.50542169,  0.42168675, 0.13012048,  0.08253012]) ,
@@ -31,4 +31,29 @@ values = { "s": '0238x6011044',
            "tmax_K": 350.
            }
 
-#self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"]  
+#self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] 
+ 
+York_Regression_values = {
+    'specimen_YT': 1.0168795878275072, 
+    'delta_x_prime': 0.9277422683265637, 
+    'B_anc': 7.3875474081300247e-06, 
+    'count_IZ': 9, 
+    'count_ZI': 8, 
+    'x_err': numpy.array([-0.31904499, -0.25319447, -0.22375031, -0.11995467,  0.04204624, 0.28336824,  0.59052997]), 
+    'specimen_b_sigma': 0.02400030575533443, 
+    'specimen_XT': 5.5059116735192921, 
+    'specimen_g_lim': 0.8333333333333334, 
+    'y_prime': numpy.array([ 0.99116596,  0.9700248 ,  0.97332989,  0.96976905,  0.93071279, 0.89336783,  0.81982246]), 
+    'delta_y_prime': 0.17134349974471441, 
+    'x_tag': numpy.array([ 0.15662996,  0.31971781,  0.25448267,  0.18924753,  0.4501881 , 0.61327596,  1.10253953]), 
+    'B_lab': 4e-05, 
+    'specimen_b_beta': 0.12995006017245725, 
+    'specimen_b': -0.1846886852032506, 
+    'specimen_g': 0.70027479782853574, 
+    'specimen_f': 0.16849930099470078, 
+    'y_tag': numpy.array([ 0.99438011,  0.98221826,  0.97678026,  0.95761038,  0.92769065, 0.8831212 ,  0.82639191]), 
+    'specimen_q': 0.90800892113263332, 
+    'specimen_w': 0.40607393436576267, 
+    'x_prime': numpy.array([ 0.13922688,  0.25369607,  0.23580058,  0.25508082,  0.46655157, 0.66875649,  1.06696915]), 
+    'y_err': numpy.array([ 0.0524957 ,  0.02237522,  0.03442341,  0.0464716 , -0.00172117, -0.03184165, -0.1222031 ])
+    }

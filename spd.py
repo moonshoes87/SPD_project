@@ -151,6 +151,10 @@ class PintPars(object):
         self.pars['count_ZI'] = data['count_ZI']
         self.pars['B_lab'] = data['B_lab']
         self.pars['B_anc'] = data['B_anc']
+        self.pars['B_anc_sigma'] = data['B_anc_sigma']
+        self.pars['specimen_int'] = data['specimen_int']
+
+        
         return data
 
     # eventually add a function to change tmax and/or tmin.  must also change start, end, 
@@ -262,7 +266,7 @@ class PintPars(object):
             if len(self.specimen_Data['x_tail_check'])>0:
                 self.pars['magic_method_codes']+=":LP-PI-BT-MD"
 
-        result =  {'x_err': x_err, 'y_err': y_err, 'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'specimen_f': f_Coe, 'specimen_g': g_Coe, 'g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
+        result =  {'x_err': x_err, 'y_err': y_err, 'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'specimen_f': f_Coe, 'specimen_g': g_Coe, 'specimen_g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
         return result
 
 
