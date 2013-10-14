@@ -31,7 +31,7 @@ class CheckParams(unittest.TestCase):
     obj.calculate_all_statistics()
     obj_new_pars = obj.pars
     pre_calculation_pars = ['specimen_int_n', 'lab_dc_field']
-    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'magic_method_codes', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2']  # remember to update this as you add stats
+    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2', 'count_IZ', 'count_ZI', 'x_err', 'y_err', 'x_tag', 'y_tag', '_SCAT']  # remember to update this as you add stats.  removed magic_method_codes...
 
     def test_for_params_before(self):
         for par in self.pre_calculation_pars:
@@ -84,7 +84,7 @@ class CheckInitialAttributeValues(unittest.TestCase):
 class CheckYorkRegression(unittest.TestCase):
     
     obj = copy.deepcopy(spd.thing)
-    obj.other_York_Regression()
+    obj.York_Regression()
     known_values = known_values.York_Regression_values
     obj_pars = obj.pars
     

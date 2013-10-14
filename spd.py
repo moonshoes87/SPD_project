@@ -92,15 +92,10 @@ class PintPars(object):
         self.start=self.t_Arai.index(tmin)
         self.end=self.t_Arai.index(tmax)
 
-        self.length = abs(self.end - self.start) + 1  # plus one because of indexing -- starts at 0
-
         self.pars={}
 
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
-        # for some reason missing any magic_method_codes.  possibly these would have been incorporated into the data from rmag_anisotropy or something
-        # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_gui or not
-        # also, fix the weirdness of having to set the precise number for tmin and tmax
         self.pars['specimen_int_n']=self.end-self.start+1
         self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
  
@@ -113,16 +108,11 @@ class PintPars(object):
         self.tmax_K = tmax - 273 #273.15
         self.x_Arai_segment = self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
         self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
-
-        x_Arai_mean=mean(self.x_Arai_segment) # uses scipy mean function to get the mean of the x points
-        y_Arai_mean=mean(self.y_Arai_segment)
-        self.x_Arai_mean = x_Arai_mean
-        self.y_Arai_mean = y_Arai_mean
+        self.x_Arai_mean = mean(self.x_Arai_segment) # uses scipy mean function to get the mean of the x points
+        self.y_Arai_mean = mean(self.y_Arai_segment)
 
 
-
-
-    def other_York_Regression(self):
+    def York_Regression(self):
         x_segment, y_segment = self.x_Arai_segment, self.y_Arai_segment
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
         n = self.n
@@ -153,154 +143,9 @@ class PintPars(object):
         self.pars['B_anc'] = data['B_anc']
         self.pars['B_anc_sigma'] = data['B_anc_sigma']
         self.pars['specimen_int'] = data['specimen_int']
-
-        
         return data
 
     # eventually add a function to change tmax and/or tmin.  must also change start, end, 
-
-    def York_Regression(self):
-        #-------------------------------------------------
-        # York regresssion (York, 1967) following Coe et al.(1978)
-        # calculate statsitics: n,b,b_sigma_,f,fvds,specimen_int,g,q
-        # modified from pmag.py
-        #-------------------------------------------------               
-
-        x_Arai_segment= self.x_Arai_segment #self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
-        y_Arai_segment= self.y_Arai_segment #self.y_Arai[self.start:self.end+1]
-
-        x_Arai_mean= self.x_Arai_mean
-        y_Arai_mean= self.y_Arai_mean
-
-        # equations (2),(3) in Coe (1978) for b, sigma
-        n=self.end-self.start+1  # n is the number of points involved
-        x_err=x_Arai_segment-x_Arai_mean  # seems to subtract the mean from each number in the x array (???).  it is a scipy array
-        y_err=y_Arai_segment-y_Arai_mean
-
-        # York b
-        york_b=-1* sqrt( sum(y_err**2) / sum(x_err**2) ) # averaged slope
-
-        # could we not use self.n_max instead of n here?
-        # york sigma
-        york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
-
-        # beta  parameter                
-        beta_Coe=abs(york_sigma/york_b)  # absolute value of york sigma/york_b
-
-        # y_T is the intercept of the extrepolated line
-        # through the center of mass (see figure 7 in Coe (1978))
-        y_T = y_Arai_mean - (york_b* x_Arai_mean)
-
-        #LJ x_T is x intercept
-        x_T = (-1 * y_T) / york_b # LJ added
-
-        # calculate the extarplated data points for f and fvds
-        # (see figure 7 in Coe (1978))
-
-        x_tag=(y_Arai_segment - y_T ) / york_b # returns array of y points minus the y intercept, divided by slope
-        y_tag=york_b*x_Arai_segment + y_T
-
-#        self.pars['x_tag'] = x_tag # LJ add
-
-        # intersect of the dashed square and the horizontal dahed line  next to delta-y-5 in figure 7, Coe (1978)
-        x_prime=(x_Arai_segment+x_tag) / 2
-        y_prime=(y_Arai_segment+y_tag) / 2
-        self.pars['x_prime'] = x_prime #LJ add
-        self.pars['y_prime'] = y_prime # LJ add
-
-        delta_x_prime = abs(x_prime[-1] - x_prime[0]) #Lj add.  this is the TRM length of the best fit line
-        delta_y_prime = abs(y_prime[-1] - y_prime[0]) # LJ add.  this is the NRM length of the best fit line
-        self.pars['delta_x_prime'] = delta_x_prime
-        self.pars['delta_y_prime'] = delta_y_prime
-
-  #      f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
-        f_Coe = delta_y_prime / y_T  # LJ added
-
-#        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )  # old version
-        g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
-        g_lim = (float(n) - 2) / (float(n) - 1)  # NOT SURE ABOUT THIS ONE
-
-        q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
-
-        w_Coe = q_Coe / sqrt(self.n - 2)
-
-        count_IZ= self.specimen_Data['steps_Arai'].count('IZ')
-        count_ZI= self.specimen_Data['steps_Arai'].count('ZI')
-        if count_IZ >1 and count_ZI >1:
-            self.pars['magic_method_codes']="LP-PI-BT-IZZI"
-        elif count_IZ <1 and count_ZI >1:
-            self.pars['magic_method_codes']="LP-PI-ZI"
-        elif count_IZ >1 and count_ZI <1:
-            self.pars['magic_method_codes']="LP-PI-IZ"            
-        else:
-            self.pars['magic_method_codes']=""
-            
-        self.pars["specimen_b"]=york_b
-        self.pars["specimen_int"]=-1*self.pars['lab_dc_field']*self.pars["specimen_b"] # same as B_anc
-        self.pars["specimen_YT"]=y_T       
-
-        self.pars["specimen_XT"] = x_T # LJ added
-        B_lab = (float(self.specimen_Data['lab_dc_field'])) #*1e6) # LJ added.  possibly should be raw, not multiplied 1e6
-        self.pars['B_lab']=(float(self.specimen_Data['lab_dc_field'])) #*1e6) # LJ added.  possibly should be raw, not multiplied 1e6
-        B_anc = abs(york_b) * self.pars["B_lab"] #self.pars["specimen_int"] # LJ added
-        self.pars["B_anc"]= abs(york_b) * self.pars["B_lab"] #self.pars["specimen_int"] # LJ added
-
-        self.pars["specimen_b_sigma"]=york_sigma
-
-        self.pars["B_anc_sigma"] = york_sigma * self.pars["B_lab"]# LJ added
-
-        self.pars["specimen_b_beta"]=beta_Coe
-        self.pars["specimen_f"]=f_Coe
-
-        self.pars["specimen_g"]=g_Coe
-        self.pars["specimen_g_lim"] = g_lim
-        self.pars["specimen_q"]=q_Coe
-        self.pars["specimen_w"]= w_Coe # LJ add. untested, but it should work
-
-
-        self.pars['magic_method_codes']+=":IE-TT"
-        if 'x_ptrm_check' in self.specimen_Data.keys():
-            if len(self.specimen_Data['x_ptrm_check'])>0:
-                self.pars['magic_method_codes']+=":LP-PI-ALT-PTRM"
-        if 'x_tail_check' in self.specimen_Data.keys():
-            if len(self.specimen_Data['x_tail_check'])>0:
-                self.pars['magic_method_codes']+=":LP-PI-BT-MD"
-
-        result =  {'x_err': x_err, 'y_err': y_err, 'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'specimen_f': f_Coe, 'specimen_g': g_Coe, 'specimen_g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
-        return result
-
-
-
-
-
-
-
-#    def get_vds(self):  # appears now to be working.  fetches vector difference sum.  vds and fvds are correct.
-#        """gets vds and f_vds"""
-#        print "calling get_vds()"
-#        zdata = self.specimen_Data['zdata']
-#        vector_diffs = []
-#        for k in range(len(zdata)-1): 
-#            # gets diff between two vectors
-#            vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
-#        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
-#        last_vector = sqrt(sum(array(zdata[-1])**2)) 
-#        vds = sum(vector_diffs)
-#        delta_y_prime = self.pars['delta_y_prime']  
-#        f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
-#        vector_diffs_segment = vector_diffs[self.start:self.end]
-#        partial_vds = sum(vector_diffs_segment)
-#        max_diff = max(vector_diffs_segment)
-#        GAP_MAX = max_diff / partial_vds
-#        self.pars['max_diff'] = max_diff
-#        self.pars['vector_diffs'] = vector_diffs
-#        self.pars['specimen_vds'] = vds
-#        self.pars["specimen_fvds"]=f_vds 
-#        self.pars['vector_diffs_segment'] = vector_diffs_segment
-#        self.pars['partial_vds'] = partial_vds
-#        self.pars['GAP-MAX'] = GAP_MAX
-#        return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
-
 
     def get_vds(self):
         zdata = self.zdata
@@ -316,16 +161,6 @@ class PintPars(object):
         self.pars['GAP-MAX'] = data['GAP-MAX']
         return {'max_diff': data['max_diff'], 'vector_diffs': data['vector_diffs'], 'specimen_vds': data['specimen_vds'], 'f_vds': data['f_vds'], 'vector_diffs_segment': data['vector_diffs_segment'], 'partial_vds': data['partial_vds'], 'GAP-MAX': data['GAP-MAX']}
 
-
-#    def get_FRAC(self):   # works
-#        vds = self.pars['specimen_vds']
-#        vector_diffs_segment = self.pars['vector_diffs_segment']  # could use this instead
-#        for num in vector_diffs_segment:
-#            if num < 0:
-#                raise ValueError
-#        FRAC=sum(vector_diffs_segment)/ vds
-#        self.pars['FRAC'] = FRAC
-#        return FRAC
 
     def get_FRAC(self):
         vds = self.pars['specimen_vds']
@@ -343,66 +178,7 @@ class PintPars(object):
         self.pars['best_fit_circle'] = data['best_fit_circle']
         self.pars['SSE'] = data['SSE']
 
-#    def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
-        # a, b == x, y coordinates of the circle center
-        # x is the x coordinate of some point
-        # so x coordinate of the circle center * hyperbolic tangent of (y coordinate of center * x)
-#        def tan_h(x, a, b):
-#            return a*tanh(b*x)
 
-#        def scipy.optimize.curve_fit(f, xdata, ydata)
-#        def f(x, r, a, b): # circle function
-#            y = abs(sqrt(r**2-(x-a)**2)) + b
-#            return y
-#        import scipy
-#        import numpy
-#        curve = scipy.optimize.curve_fit(f, self.x_Arai, self.y_Arai)
-#        r = curve[0][0] # radius of circle
-#        a = curve[0][1] # x coordinate of circle center
-#        b = curve[0][2] # y coordinate of circle center
-#        k = 1/r
-#        best_fit_circle = { "a": a, "b" : b, "radius": r }
-        # get data centroid
-#        centroid = []
-#        for n in range(len(self.x_Arai)): # possibly this needs to be a smaller segment, i.e. using self.start:self.end
-#            point = [self.x_Arai[n], self.y_Arai[n]]
-#           # print "x", x
-#            centroid.append(point)
-#        centroid = numpy.array(centroid)   
-#        print "centroid of data points:", centroid
-#        v = len(self.x_Arai)  # would have to change this to reflect the proper length, also
-#        centroid_x_sum = centroid[:,0].sum()  # sums x values
-#        centroid_y_sum = centroid[:,1].sum()  # sums y values
-#        centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v  # divides by the number of data points to find the "average" poitn
-#        C_x = centroid[0] # x coordinate of centroid
-#        C_y = centroid[1] # y coordinate of centroid
-        # possibly simpler:  # but this too might need self.start:self.end
-#        C_x = sum(self.x_Arai) / v # x coordinate of centroid
-#        C_y = sum(self.y_Arai) / v # y coordinate of centroid
-#        centroid = (C_x, C_y)
-#        # done getting centroid
-        # get "direction" of the curvature
-#        if C_x < a and C_y < b:
-#            k = k
-#        if a < C_x and b < C_y:
-#            k = -k
-#        if a == C_x and b == C_y:
-#            k = 0
-#        SSE = 0 # quality of best_fit circle
-#        for i in range(len(self.x_Arai)):
-#            x = self.x_Arai[i]
-#            y = self.y_Arai[i]
-#            v = (sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
-#            print v
-#            SSE += v
-#        print SSE
- #       self.pars['centroid'] = centroid
-#        self.pars['specimen_k'] = k
-#        self.pars['best_fit_circle'] = best_fit_circle
-#        self.pars['SSE'] = SSE
-#        return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
-
-    
     def other_get_SCAT(self):
         slope, slope_err, slope_beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
@@ -533,28 +309,6 @@ class PintPars(object):
         print "-----"
         return {'SCAT': self.pars['SCAT'] }
 
-        
-
-#    def get_R_corr2(self): # probably wrong
-#        numerator = 0
-#        denominator_x = 0
-#        denominator_y = 0
-#        x_avg = self.x_Arai_mean
-#        y_avg = self.y_Arai_mean
-#        for num, x in enumerate(self.x_Arai_segment):
-#            r = ((x - x_avg) **2 ) * ((self.y_Arai_segment[num] - y_avg) **2 )
-#            numerator += r
-#        print "numerator", numerator
-#        for x in self.x_Arai_segment:
-#            denominator_x += ((x - x_avg) ** 2)
-#        print "den_x", denominator_x
-#        for y in self.y_Arai_segment:
-#            denominator_y += ((y - y_avg) ** 2)
-#        print "den_y", denominator_y
-#        R_corr2 = numerator / (denominator_x * denominator_y)
-#        self.pars['R_corr2'] = R_corr2
-#        print R_corr2
-#        return R_corr2
 
     def get_R_corr2(self):
         x_avg = self.x_Arai_mean
@@ -565,24 +319,6 @@ class PintPars(object):
         self.pars['R_corr2'] = R_corr2
         return R_corr2
 
-
-#    def get_R_det2(self):
-#        y_Arai_segment = self.y_Arai_segment
-#        y_avg = self.y_Arai_mean
-#        y_prime = self.pars['y_prime']
-#        top = 0
-#        for num, y in enumerate(y_Arai_segment):
-#            result = (y - y_prime[num]) ** 2
-#            top += result
-#        bottom = 0
-#        for num, y in enumerate(y_Arai_segment):
-#            result = (y - y_avg) **2
-#            bottom += result
-#        print "top, bottom", top, bottom
-#        R_det2 = 1 - (top / bottom)
-#        self.pars['R_det2'] = R_det2
-#        print R_det2
-#        return R_det2
 
     def get_R_det2(self):
         y_segment = self.y_Arai_segment
@@ -610,7 +346,7 @@ import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
-#def do_stuff():
+
 if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
@@ -633,6 +369,204 @@ if True:
     thing2.get_SCAT()
     print thing3.s, thing3.tmin_K, thing3.tmax_K
     thing3.get_SCAT()
-#    return thing, thing1, thing2, thing3
 
 
+
+# not using:
+#    def York_Regression(self):
+        #-------------------------------------------------
+        # York regresssion (York, 1967) following Coe et al.(1978)
+        # calculate statsitics: n,b,b_sigma_,f,fvds,specimen_int,g,q
+        # modified from pmag.py
+        #-------------------------------------------------               
+
+#        x_Arai_segment= self.x_Arai_segment #self.x_Arai[self.start:self.end+1]  # returns array of relevant x points
+#        y_Arai_segment= self.y_Arai_segment #self.y_Arai[self.start:self.end+1]
+
+#        x_Arai_mean= self.x_Arai_mean
+#        y_Arai_mean= self.y_Arai_mean
+
+        # equations (2),(3) in Coe (1978) for b, sigma
+#        n=self.end-self.start+1  # n is the number of points involved
+##        x_err=x_Arai_segment-x_Arai_mean  # seems to subtract the mean from each number in the x array (???).  it is a scipy array
+#        y_err=y_Arai_segment-y_Arai_mean
+
+        # York b
+#        york_b=-1* sqrt( sum(y_err**2) / sum(x_err**2) ) # averaged slope
+
+        # could we not use self.n_max instead of n here?
+        # york sigma
+#        york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
+
+        # beta  parameter                
+#        beta_Coe=abs(york_sigma/york_b)  # absolute value of york sigma/york_b
+
+        # y_T is the intercept of the extrepolated line
+        # through the center of mass (see figure 7 in Coe (1978))
+#        y_T = y_Arai_mean - (york_b* x_Arai_mean)
+
+        #LJ x_T is x intercept
+#        x_T = (-1 * y_T) / york_b # LJ added
+
+        # calculate the extarplated data points for f and fvds
+        # (see figure 7 in Coe (1978))
+
+#        x_tag=(y_Arai_segment - y_T ) / york_b # returns array of y points minus the y intercept, divided by slope
+#        y_tag=york_b*x_Arai_segment + y_T
+
+#        self.pars['x_tag'] = x_tag # LJ add
+
+        # intersect of the dashed square and the horizontal dahed line  next to delta-y-5 in figure 7, Coe (1978)
+#        x_prime=(x_Arai_segment+x_tag) / 2
+#        y_prime=(y_Arai_segment+y_tag) / 2
+#        self.pars['x_prime'] = x_prime #LJ add
+#        self.pars['y_prime'] = y_prime # LJ add
+
+#        delta_x_prime = abs(x_prime[-1] - x_prime[0]) #Lj add.  this is the TRM length of the best fit line
+#        delta_y_prime = abs(y_prime[-1] - y_prime[0]) # LJ add.  this is the NRM length of the best fit line
+#        self.pars['delta_x_prime'] = delta_x_prime
+#        self.pars['delta_y_prime'] = delta_y_prime
+
+  #      f_Coe=abs((y_prime[0]-y_prime[-1])/y_T)  # same as 'f' in spd
+#        f_Coe = delta_y_prime / y_T  # LJ added
+
+#        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )  # old version
+#        g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
+#        g_lim = (float(n) - 2) / (float(n) - 1)  # NOT SURE ABOUT THIS ONE
+
+#        q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
+
+#        w_Coe = q_Coe / sqrt(self.n - 2)
+
+#        count_IZ= self.specimen_Data['steps_Arai'].count('IZ')
+#        count_ZI= self.specimen_Data['steps_Arai'].count('ZI')
+#        if count_IZ >1 and count_ZI >1:
+#            self.pars['magic_method_codes']="LP-PI-BT-IZZI"
+#        elif count_IZ <1 and count_ZI >1:
+#            self.pars['magic_method_codes']="LP-PI-ZI"
+#        elif count_IZ >1 and count_ZI <1:
+#            self.pars['magic_method_codes']="LP-PI-IZ"            
+#        else:
+#            self.pars['magic_method_codes']=""
+            
+#        self.pars["specimen_b"]=york_b
+#        self.pars["specimen_int"]=-1*self.pars['lab_dc_field']*self.pars["specimen_b"] # same as B_anc
+#        self.pars["specimen_YT"]=y_T       
+
+#        self.pars["specimen_XT"] = x_T # LJ added
+#        B_lab = (float(self.specimen_Data['lab_dc_field'])) #*1e6) # LJ added.  possibly should be raw, not multiplied 1e6
+#        self.pars['B_lab']=(float(self.specimen_Data['lab_dc_field'])) #*1e6) # LJ added.  possibly should be raw, not multiplied 1e6
+#        B_anc = abs(york_b) * self.pars["B_lab"] #self.pars["specimen_int"] # LJ added
+#        self.pars["B_anc"]= abs(york_b) * self.pars["B_lab"] #self.pars["specimen_int"] # LJ added
+
+#        self.pars["specimen_b_sigma"]=york_sigma
+
+#        self.pars["B_anc_sigma"] = york_sigma * self.pars["B_lab"]# LJ added
+
+#        self.pars["specimen_b_beta"]=beta_Coe
+#        self.pars["specimen_f"]=f_Coe
+
+#        self.pars["specimen_g"]=g_Coe
+#        self.pars["specimen_g_lim"] = g_lim
+#        self.pars["specimen_q"]=q_Coe
+#        self.pars["specimen_w"]= w_Coe # LJ add. untested, but it should work
+
+
+#        self.pars['magic_method_codes']+=":IE-TT"
+#        if 'x_ptrm_check' in self.specimen_Data.keys():
+#            if len(self.specimen_Data['x_ptrm_check'])>0:
+#                self.pars['magic_method_codes']+=":LP-PI-ALT-PTRM"
+#        if 'x_tail_check' in self.specimen_Data.keys():
+#            if len(self.specimen_Data['x_tail_check'])>0:
+#                self.pars['magic_method_codes']+=":LP-PI-BT-MD"
+
+#        result =  {'x_err': x_err, 'y_err': y_err, 'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 'y_T': y_T, 'x_T': x_T, 'x_tag': x_tag, 'y_tag': y_tag, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'specimen_f': f_Coe, 'specimen_g': g_Coe, 'specimen_g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc}
+#        return result
+
+
+
+
+#    def get_vds(self):  # appears now to be working.  fetches vector difference sum.  vds and fvds are correct.
+#        """gets vds and f_vds"""
+#        print "calling get_vds()"
+#        zdata = self.specimen_Data['zdata']
+#        vector_diffs = []
+#        for k in range(len(zdata)-1): 
+#            # gets diff between two vectors
+#            vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
+#        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
+#        last_vector = sqrt(sum(array(zdata[-1])**2)) 
+#        vds = sum(vector_diffs)
+#        delta_y_prime = self.pars['delta_y_prime']  
+#        f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.  
+#        vector_diffs_segment = vector_diffs[self.start:self.end]
+#        partial_vds = sum(vector_diffs_segment)
+#        max_diff = max(vector_diffs_segment)
+#        GAP_MAX = max_diff / partial_vds
+#        self.pars['max_diff'] = max_diff
+#        self.pars['vector_diffs'] = vector_diffs
+#        self.pars['specimen_vds'] = vds
+#        self.pars["specimen_fvds"]=f_vds 
+#        self.pars['vector_diffs_segment'] = vector_diffs_segment
+#        self.pars['partial_vds'] = partial_vds
+#        self.pars['GAP-MAX'] = GAP_MAX
+#        return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
+
+#    def get_curve(self):  # need to check this shit with Alex.  also, see about somewebsite.com/code
+        # a, b == x, y coordinates of the circle center
+        # x is the x coordinate of some point
+        # so x coordinate of the circle center * hyperbolic tangent of (y coordinate of center * x)
+#        def tan_h(x, a, b):
+#            return a*tanh(b*x)
+
+#        def scipy.optimize.curve_fit(f, xdata, ydata)
+#        def f(x, r, a, b): # circle function
+#            y = abs(sqrt(r**2-(x-a)**2)) + b
+#            return y
+#        import scipy
+#        import numpy
+#        curve = scipy.optimize.curve_fit(f, self.x_Arai, self.y_Arai)
+#        r = curve[0][0] # radius of circle
+#        a = curve[0][1] # x coordinate of circle center
+#        b = curve[0][2] # y coordinate of circle center
+#        k = 1/r
+#        best_fit_circle = { "a": a, "b" : b, "radius": r }
+        # get data centroid
+#        centroid = []
+#        for n in range(len(self.x_Arai)): # possibly this needs to be a smaller segment, i.e. using self.start:self.end
+#            point = [self.x_Arai[n], self.y_Arai[n]]
+#           # print "x", x
+#            centroid.append(point)
+#        centroid = numpy.array(centroid)   
+#        print "centroid of data points:", centroid
+#        v = len(self.x_Arai)  # would have to change this to reflect the proper length, also
+#        centroid_x_sum = centroid[:,0].sum()  # sums x values
+#        centroid_y_sum = centroid[:,1].sum()  # sums y values
+#        centroid = numpy.array([centroid_x_sum, centroid_y_sum]) / v  # divides by the number of data points to find the "average" poitn
+#        C_x = centroid[0] # x coordinate of centroid
+#        C_y = centroid[1] # y coordinate of centroid
+        # possibly simpler:  # but this too might need self.start:self.end
+#        C_x = sum(self.x_Arai) / v # x coordinate of centroid
+#        C_y = sum(self.y_Arai) / v # y coordinate of centroid
+#        centroid = (C_x, C_y)
+#        # done getting centroid
+        # get "direction" of the curvature
+#        if C_x < a and C_y < b:
+#            k = k
+#        if a < C_x and b < C_y:
+#            k = -k
+#        if a == C_x and b == C_y:
+#            k = 0
+#        SSE = 0 # quality of best_fit circle
+#        for i in range(len(self.x_Arai)):
+#            x = self.x_Arai[i]
+#            y = self.y_Arai[i]
+#            v = (sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
+#            print v
+#            SSE += v
+#        print SSE
+ #       self.pars['centroid'] = centroid
+#        self.pars['specimen_k'] = k
+#        self.pars['best_fit_circle'] = best_fit_circle
+#        self.pars['SSE'] = SSE
+#        return {'centroid': centroid, 'k': k, 'best_fit_circle': best_fit_circle, 'SSE': SSE }
