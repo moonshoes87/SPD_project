@@ -112,6 +112,10 @@ class PintPars(object):
         self.y_Arai_mean = mean(self.y_Arai_segment)
 
 
+    def get_segments_and_means(self):
+        pass # consider making this a real deal thing.  
+        
+
     def York_Regression(self):
         x_segment, y_segment = self.x_Arai_segment, self.y_Arai_segment
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
@@ -326,6 +330,24 @@ class PintPars(object):
         y_prime = self.pars['y_prime']
         R_det2 = lib.get_R_det2(y_segment, y_avg, y_prime)
         self.pars['R_det2'] = R_det2
+
+    def get_Z(self):
+        x_segment, y_segment = self.x_Arai, self.y_Arai
+        x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
+        slope = self.pars['specimen_b']
+        Z = lib.get_Z(x_segment, y_segment, x_int, y_int, slope)
+        self.pars['Z'] = Z
+        return Z
+
+
+    def get_Zstar(self):
+        x_segment, y_segment = self.x_Arai, self.y_Arai
+        x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
+        slope, n = self.pars['specimen_b'], self.n
+        Zstar = lib.get_Zstar(x_segment, y_segment, x_int, y_int, slope, n)
+        self.pars['Zstar'] = Zstar
+        return Zstar
+                             
             
         
     def calculate_all_statistics(self):
@@ -338,6 +360,7 @@ class PintPars(object):
         self.other_get_SCAT()
         self.get_R_corr2()
         self.get_R_det2()
+        self.get_Z()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]

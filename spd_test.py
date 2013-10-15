@@ -32,7 +32,7 @@ class CheckParams(unittest.TestCase):
     obj.calculate_all_statistics()
     obj_new_pars = obj.pars
     pre_calculation_pars = ['specimen_int_n', 'lab_dc_field']
-    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2', 'count_IZ', 'count_ZI', 'x_err', 'y_err', 'x_tag', 'y_tag', '_SCAT']  # remember to update this as you add stats.  removed magic_method_codes...
+    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2', 'count_IZ', 'count_ZI', 'x_err', 'y_err', 'x_tag', 'y_tag', '_SCAT', 'Z']  # remember to update this as you add stats.  removed magic_method_codes...
 
     def test_for_params_before(self):
         for par in self.pre_calculation_pars:
@@ -106,7 +106,7 @@ class CheckYorkRegression(unittest.TestCase):
 
 
 
-class CheckVDSsequence(unittest.TestCase): # come back to this
+class CheckVDSsequence(unittest.TestCase): # NOT DONE come back to this
 
     obj = copy.deepcopy(spd.thing)
     obj.York_Regression()
@@ -152,24 +152,25 @@ class CheckFrac(unittest.TestCase): # basically good to go
 class CheckR_corr2(unittest.TestCase):
     obj = copy.deepcopy(spd.thing)
     R_corr2 = obj.get_R_corr2()
-#    (x_avg, y_avg, x_segment, y_segment)
     x_segment, y_segment = numpy.array([1., 5.]), numpy.array([0., 2.])
     x_avg = sum(x_segment) / len(x_segment)
     y_avg = sum(y_segment) / len(y_segment)
 
     def testPositiveOutput(self):
+        """should produce positive output"""
         self.assertGreater(self.R_corr2, 0)
 
     def testSizeOutput(self): # not absolutely sure this is true.  but it seems like it has to be.  
+        """output should be less than 1"""
         self.assertLess(self.R_corr2, 1)
 
-    def testthing(self): # this is wrong.  or get_R_corr2 is.  ah, there's a dividing by zero problem.  fix it!
+    def testSimpleInput(self):
+        """should produce expected output with simple input"""
         r = lib.get_R_corr2(self.x_avg, self.y_avg, self.x_segment, self.y_segment)
         self.assertEqual(.5, r)
         
-    def test_other(self):
-#      get_R_corr2(x_avg, y_avg, x_segment, y_segment):
-#        r = lib.get_R_corr2(1., 1., numpy.array([1.]), numpy.array([1.]))
+    def testDivideByZero(self):
+        """should raise ValueError when attempting to divide by zero"""
         self.assertRaises(ValueError, lib.get_R_corr2, 1., 1., numpy.array([1.]), numpy.array([1.]))
 
 class CheckR_det2(unittest.TestCase): # acceptable working test
@@ -182,12 +183,43 @@ class CheckR_det2(unittest.TestCase): # acceptable working test
         self.assertEqual((1 - .25/2.25), result)
     
 
-    # make super simple test cases for these functions.  do it by hand.  i.e., y = [1, 2] y_prime = [1.5, 1.5]
-    # also make test that it does raise an error when dividing by zero
-    # put in checks to make sure you aren't dividing by zero (in several functions)
 
-    # consider architecture.  possibility of a math library that is then imported into spd.  makes testing easier.  
+class CheckZigzag(unittest.TestCase):
+    x = [1., 2., 3.]
+    y = [0., 4., 5.]
+    y_int = 5.
+    x_int = 1.
+    n = len(x)
+    reference_b_wiggle = [5., .5, 0.]
+    slope = 1.2
+    Z = 8.8
+    Z_star = 88.
+    obj = copy.deepcopy(spd.thing)
+    obj.x_Arai, obj.y_Arai = x, y
+    obj.pars['specimen_YT'], obj.pars['specimen_XT'] = y_int, x_int
+    obj.pars['specimen_b'], obj.n = slope, n
+    
+    def testWiggleB(self):
+        for num, b in enumerate(self.reference_b_wiggle):
+            result = lib.get_b_wiggle(self.x[num], self.y[num], self.y_int)
+            self.assertAlmostEqual(result, b)
 
+    def testZ(self):
+        # x_segment, y_segment, x_int, y_int, slope
+        result = lib.get_Z(self.x, self.y, self.x_int, self.y_int, self.slope)
+        self.assertAlmostEqual(self.Z, result)
+
+    def testPintParsZ(self):
+        result = self.obj.get_Z()
+        self.assertAlmostEqual(self.Z, result)
+
+    def testZStar(self):
+        result = lib.get_Zstar(self.x, self.y, self.x_int, self.y_int, self.slope, self.n)
+        self.assertAlmostEqual(self.Z_star, result)
+
+    def testPintParsZstar(self):
+        result = self.obj.get_Zstar()
+        self.assertAlmostEqual(self.Z_star, result)
 
 if __name__ == "__main__":
     unittest.main()
