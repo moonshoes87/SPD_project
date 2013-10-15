@@ -5,6 +5,7 @@ import numpy
 import copy
 import spd
 import known_values
+import lj_library as lib
 
 
 # could use this directly in here:
@@ -104,26 +105,8 @@ class CheckYorkRegression(unittest.TestCase):
         
 
 
-class CheckFrac(unittest.TestCase):
 
-    print spd.thing.pars
-    obj = copy.deepcopy(spd.thing)
-    obj.pars['specimen_vds'] = 1
-    obj.pars['vector_diffs_segment'] = [0.031295984827684566, 0.024151118628312387, 0.036482667142194579, 0.059128016249387697, 0.034082675643388412, 0.090581343759213978]
-    
-    def test_Frac_known_value(self):
-        frac = self.obj.get_FRAC()
-        print "frac", frac
-        self.assertEqual(round(frac, 12), .27572180625)
-
-    def test_Frac_with_negative_input(self): # this one is silly, but I was making a point.  so, whatever
-        self.obj.pars['specimen_vds'] = 2
-        self.obj.pars['vector_diffs_segment'] = [3., 5., -.1, 8.]
-#        print "negative FRAC", self.obj.get_FRAC()
-        self.assertRaises(ValueError, self.obj.get_FRAC)
-
-
-class CheckVDSsequence(unittest.TestCase):
+class CheckVDSsequence(unittest.TestCase): # come back to this
 
     obj = copy.deepcopy(spd.thing)
     obj.York_Regression()
@@ -136,9 +119,43 @@ class CheckVDSsequence(unittest.TestCase):
             self.assertGreaterEqual(v, 0) # none of these stats can possibly be negative numbers
 
 
+
+class CheckFrac(unittest.TestCase): # basically good to go
+
+    print spd.thing.pars
+    obj = copy.deepcopy(spd.thing)
+    obj.pars['specimen_vds'] = 2
+    obj.pars['vector_diffs_segment'] = [1., 1.5, 3.]
+    # trying it a little differently:
+    vds = 2
+    vector_diffs_segment = [1., 1.5, 3.]
+
+    def test_FRAC(self):
+        frac = lib.get_FRAC(self.vds, self.vector_diffs_segment)
+        self.assertEqual(frac, 2.75)
+
+    def test_FRAC_with_zero_vds(self):
+        self.assertRaises(ValueError, lib.get_FRAC, 0, self.vector_diffs_segment)
+
+    def test_FRAC_with_negative_input(self):
+        self.assertRaises(ValueError, lib.get_FRAC, 1, [1., -.1, 2.])
+
+    def test_lib_vs_actual(self): # checks that it is calculated the same in lib and in practice
+        self.obj.pars['vds'] = 2
+        self.obj.pars['vector_diffs_segment'] = [1., 1.5, 3.]
+        frac = lib.get_FRAC(self.vds, self.vector_diffs_segment)
+        obj_frac = self.obj.get_FRAC()
+        self.assertEqual(frac, obj_frac)
+
+    
+
 class CheckR_corr2(unittest.TestCase):
     obj = copy.deepcopy(spd.thing)
     R_corr2 = obj.get_R_corr2()
+#    (x_avg, y_avg, x_segment, y_segment)
+    x_segment, y_segment = numpy.array([1., 5.]), numpy.array([0., 2.])
+    x_avg = sum(x_segment) / len(x_segment)
+    y_avg = sum(y_segment) / len(y_segment)
 
     def testPositiveOutput(self):
         self.assertGreater(self.R_corr2, 0)
@@ -146,8 +163,23 @@ class CheckR_corr2(unittest.TestCase):
     def testSizeOutput(self): # not absolutely sure this is true.  but it seems like it has to be.  
         self.assertLess(self.R_corr2, 1)
 
-class CheckR_det2(unittest.TestCase):
-    pass  
+    def testthing(self): # this is wrong.  or get_R_corr2 is.  ah, there's a dividing by zero problem.  fix it!
+        r = lib.get_R_corr2(self.x_avg, self.y_avg, self.x_segment, self.y_segment)
+        self.assertEqual(.5, r)
+        
+    def test_other(self):
+#      get_R_corr2(x_avg, y_avg, x_segment, y_segment):
+#        r = lib.get_R_corr2(1., 1., numpy.array([1.]), numpy.array([1.]))
+        self.assertRaises(ValueError, lib.get_R_corr2, 1., 1., numpy.array([1.]), numpy.array([1.]))
+
+class CheckR_det2(unittest.TestCase): # acceptable working test
+    y_segment = [1., 2.5, 3]
+    y_avg = 2.
+    y_prime = [1., 2., 3.]
+    
+    def test_simple_input(self):
+        result = lib.get_R_det2(self.y_segment, self.y_avg, self.y_prime)
+        self.assertEqual((1 - .25/2.25), result)
     
 
     # make super simple test cases for these functions.  do it by hand.  i.e., y = [1, 2] y_prime = [1.5, 1.5]

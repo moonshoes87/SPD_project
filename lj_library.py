@@ -195,7 +195,9 @@ def get_curve(x_Arai, y_Arai):
 def get_FRAC(vds, vector_diffs_segment):   
     for num in vector_diffs_segment:
         if num < 0:
-            raise ValueError
+            raise ValueError('vector diffs should not be negative')
+    if vds == 0:
+        raise ValueError('attempting to divide by zero. vds should be a positive number')
     FRAC=sum(vector_diffs_segment)/ vds
     print FRAC
     return FRAC
@@ -214,7 +216,9 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
     for y in y_segment:
         denominator_y += ((y - y_avg) ** 2)
 #    print "den_y", denominator_y
-    R_corr2 = numerator / (denominator_x * denominator_y)
+    denominator = denominator_x * denominator_y
+    if denominator == 0: raise ValueError("get_R_corr2 attempted dividing by zero")
+    R_corr2 = numerator / denominator
     print R_corr2
     return R_corr2
 
@@ -230,7 +234,6 @@ def get_R_det2(y_segment, y_avg, y_prime):
     for num, y in enumerate(y_segment):
         result = (y - y_avg) **2
         bottom += result
-    print "top, bottom", top, bottom
     R_det2 = 1 - (top / bottom)
     print R_det2
     return R_det2
