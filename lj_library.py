@@ -262,21 +262,48 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
     return Zstar
 
 def get_normed_points(point_array, norm):
+    """takes a set of points and norms them"""
     points = point_array / norm
     return points
 
 def get_triangle_sides(x_segment, y_segment):
+    """finds the length of the sides of a triangle from three sets of x, y coordinates"""
     L1 = sqrt((x_segment[0] - x_segment[1])**2 + (y_segment[0] - y_segment[1])**2)
     L2 = sqrt((x_segment[1] - x_segment[2])**2 + (y_segment[1] - y_segment[2])**2)
     L3 = sqrt((x_segment[2] - x_segment[0])**2 + (y_segment[2] - y_segment[0])**2)
     return {'L1': L1, 'L2': L2, 'L3': L3}
 
 def get_triangle(line1, line2, line3):
+    """takes length of a triangle's lines and returns angle1, the triangle's height, and its area"""
     phi = arccos((line2**2 + line3**2 - line1**2) / (2 * line2 * line3))
     height = line3 * sin(phi)
     area = (line2 * line3 * sin(phi)) / 2
     return { 'triangle_phi': phi, 'triangle_H': height, 'triangle_A': area }
 
+
+def get_sign(x_segment, y_segment, midpoint): # possibly needs fixing.  initially misunderstood
+    first_line = [(x_segment[0], y_segment[0]), (x_segment[2], y_segment[2])]
+    first_slope = (first_line[1][1] - first_line[0][1]) / (first_line[1][0] - first_line[0][0])
+ # b = y - mx 
+    first_y_int = first_line[0][1] - (first_slope * first_line[0][0])
+    second_line = [(x_segment[1], y_segment[1])]
+    second_y_int = second_line[0][1] - (first_slope * second_line[0][0])
+    sign = ""
+    if midpoint == 'IZ':
+        if first_y_int > second_y_int:
+            sign = 1.
+        elif first_y_int < second_y_int:
+            sign = -1.
+        else:
+            sign = 0
+    if midpoint == 'ZI':
+        if first_y_int > second_y_int:
+            sign = -1.
+        elif first_y_int < second_y_int:
+            sign = 1.
+        else:
+            sign = 0
+    return { 'first_line': first_line, 'second_line': second_line, 'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
     
 
 

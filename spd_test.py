@@ -225,6 +225,7 @@ class IZZI_MD(unittest.TestCase):
     points = numpy.array([1., 2., 3.])
     norm = 4.
     ref_normed_points = numpy.array([.25, .5, .75])
+
     x = numpy.array([4, 6, 12])
     y = numpy.array([8, 4, 2])
     norm_x = lib.get_normed_points(x, norm)
@@ -238,6 +239,14 @@ class IZZI_MD(unittest.TestCase):
     H = 0.790569415
     A = .625
     triangle = {'triangle_phi': phi, 'triangle_H': H, 'triangle_A': A}
+
+    first_line = [(norm_x[0], norm_y[0]), (norm_x[2], norm_y[2])]
+    first_line_slope = -.75 # correct
+    # b = y - mx
+    first_y_int = 2.75
+    second_line = [(norm_x[1], norm_y[1])]
+    second_y_int = 2.125
+    sign = 1.
 
     def testPointNorming(self): # satisfactory
         result = lib.get_normed_points(self.points, self.norm)
@@ -262,12 +271,23 @@ class IZZI_MD(unittest.TestCase):
 #        results = {'triangle_phi': phi, 'triangle_H': H, 'triangle_A': A}
         for key, value in results.items():
             self.assertAlmostEqual(self.triangle[key], value)
+
+    def testSign(self):  # needs fixing.  ZI or IZ can be the solo point of the triangle
+        midpoint = 'IZ'
+        results = lib.get_sign(self.norm_x, self.norm_y, midpoint)
+        keys = 'first_line', 'second_line', 'slope', 'first_y_int', 'second_y_int', 'sign'
+        reference = { 'first_line': self.first_line, 'second_line': self.second_line, 'slope': self.first_line_slope, 'first_y_int': self.first_y_int, 'second_y_int': self.second_y_int, 'sign': self.sign }
+        for key in keys:
+            if type(reference[key]) == list:
+                #pass
+                for num, i in enumerate(reference[key]):
+                    self.assertAlmostEqual(results[key][num], i)
+            else:
+                self.assertEqual(results[key], reference[key])
         
-        
-#    get_triangle_coordinates  -- divide up points into appropriate ZI IZ ZI triangles
-#    get_triangle_sides -- get the sides
-#    get_triangle_area -- get the area
-#    get_triangle_sign -- find if it is negative or positive
+
+#  get actual points, make them triangles
+#  sum the areas, return IZZI_MD
 
 
 if __name__ == "__main__":
