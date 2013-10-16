@@ -122,7 +122,7 @@ class CheckVDSsequence(unittest.TestCase): # NOT DONE come back to this
 
 class CheckFrac(unittest.TestCase): # basically good to go
 
-    print spd.thing.pars
+    #print spd.thing.pars
     obj = copy.deepcopy(spd.thing)
     obj.pars['specimen_vds'] = 2
     obj.pars['vector_diffs_segment'] = [1., 1.5, 3.]
@@ -220,6 +220,37 @@ class CheckZigzag(unittest.TestCase):
     def testPintParsZstar(self):
         result = self.obj.get_Zstar()
         self.assertAlmostEqual(self.Z_star, result)
+
+class IZZI_MD(unittest.TestCase):
+    points = numpy.array([1., 2., 3.])
+    norm = 4.
+    ref_normed_points = numpy.array([.25, .5, .75])
+    x = numpy.array([4, 6, 12])
+    y = numpy.array([8, 4, 2])
+    norm_x = lib.get_normed_points(x, norm)
+    norm_y = lib.get_normed_points(y, norm)
+
+    L1 = numpy.sqrt(1.25)
+    L2 = numpy.sqrt(2.5)
+    L3 = numpy.sqrt(6.25)
+
+    def testPointNorming(self): # satisfactory
+        result = lib.get_normed_points(self.points, self.norm)
+        for num, point in enumerate(result):
+            self.assertAlmostEqual(self.ref_normed_points[num], point)
+
+    def testTriangleSides(self): #
+        result = lib.get_triangle_sides(self.norm_x, self.norm_y)
+        line1, line2, line3 = result['L1'], result['L2'], result['L3']
+        lines = [line1, line2, line3]
+        ref_lines = [self.L1, self.L2, self.L3]
+        for num, line in enumerate(lines):
+            self.assertAlmostEqual(line, ref_lines[num])
+#    get_triangle_coordinates  -- divide up points into appropriate ZI IZ ZI triangles
+#    get_triangle_sides -- get the sides
+#    get_triangle_area -- get the area
+#    get_triangle_sign -- find if it is negative or positive
+
 
 if __name__ == "__main__":
     unittest.main()

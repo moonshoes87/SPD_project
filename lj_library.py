@@ -27,7 +27,7 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     f_Coe = delta_y_prime / y_T  # LJ added 
 #        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )  # old version 
     g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
-    g_lim = (float(n) - 2) / (float(n) - 1)  # NOT SURE ABOUT THIS ONE 
+    g_lim = (float(n) - 2) / (float(n) - 1) 
     q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
     w_Coe = q_Coe / sqrt(n - 2)
     count_IZ= steps_Arai.count('IZ')
@@ -139,8 +139,6 @@ def get_SCAT(points, low_bound, high_bound, x_max, y_max):
     """
     runs SCAT test and returns boolean
     """
-    print "hi"
-    print points
     # iterate through all relevant points and see if any of them fall outside of your SCAT box
     p = True
     for point in points:
@@ -199,7 +197,7 @@ def get_FRAC(vds, vector_diffs_segment):
     if vds == 0:
         raise ValueError('attempting to divide by zero. vds should be a positive number')
     FRAC=sum(vector_diffs_segment)/ vds
-    print FRAC
+   # print FRAC
     return FRAC
 
 def get_R_corr2(x_avg, y_avg, x_segment, y_segment): # 
@@ -219,7 +217,7 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
     denominator = denominator_x * denominator_y
     if denominator == 0: raise ValueError("get_R_corr2 attempted dividing by zero")
     R_corr2 = numerator / denominator
-    print R_corr2
+#    print R_corr2
     return R_corr2
 
 def get_R_det2(y_segment, y_avg, y_prime):
@@ -262,3 +260,17 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
         total += result
     Zstar = (1. / (n - 1.)) * total
     return Zstar
+
+def get_normed_points(point_array, norm):
+    points = point_array / norm
+    return points
+
+def get_triangle_sides(x_segment, y_segment):
+    L1 = sqrt((x_segment[0] - x_segment[1])**2 + (y_segment[0] - y_segment[1])**2)
+    L2 = sqrt((x_segment[1] - x_segment[2])**2 + (y_segment[1] - y_segment[2])**2)
+    L3 = sqrt((x_segment[2] - x_segment[0])**2 + (y_segment[2] - y_segment[0])**2)
+    return {'L1': L1, 'L2': L2, 'L3': L3}
+
+    
+
+

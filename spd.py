@@ -97,9 +97,10 @@ class PintPars(object):
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         self.pars['specimen_int_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K"] # needs to be updated
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K", "steps_Arai"] # needs to be updated
  
         #LJ ADDING stats:
+        self.steps_Arai = self.specimen_Data['steps_Arai']
         self.n = float(self.end-self.start+1)  # n is the number of points involved
         self.n_max = len(self.t_Arai)  # gets total number of temperatures taken.  (p. 4, top)
         self.tmin = tmin # self-explanatory
@@ -190,7 +191,7 @@ class PintPars(object):
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
         box = lib.get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean)
-        print "SCAT-box", box
+    #    print "SCAT-box", box
         low_bound, high_bound, x_max, y_max = box[0], box[1], box[2], box[3]
         # getting SCAT points
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
@@ -295,7 +296,6 @@ class PintPars(object):
             return points
 
         points = get_points()
-        print points
         # iterate through all relevant points and see if any of them are outside of your SCAT box
             
         p = True
@@ -383,15 +383,10 @@ if True:
     thing2.calculate_all_statistics()
     thing3 = PintPars(gui.Data, specimens[5], 598, 698)
     thing3.calculate_all_statistics()
+    thing4 = PintPars(gui.Data, specimens[2], 273., 773.)
+    thing4.calculate_all_statistics()
     print "---"
-    print thing.s, thing.tmin_K, thing.tmax_K  
-    thing.get_SCAT()
-    print thing1.s, thing1.tmin_K, thing1.tmax_K
-    thing1.get_SCAT()
-    print thing2.s, thing2.tmin_K, thing2.tmax_K
-    thing2.get_SCAT()
-    print thing3.s, thing3.tmin_K, thing3.tmax_K
-    thing3.get_SCAT()
+
 
 
 
