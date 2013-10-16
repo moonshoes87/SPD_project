@@ -234,6 +234,11 @@ class IZZI_MD(unittest.TestCase):
     L2 = numpy.sqrt(2.5)
     L3 = numpy.sqrt(6.25)
 
+    phi = 0.321750554
+    H = 0.790569415
+    A = .625
+    triangle = {'triangle_phi': phi, 'triangle_H': H, 'triangle_A': A}
+
     def testPointNorming(self): # satisfactory
         result = lib.get_normed_points(self.points, self.norm)
         for num, point in enumerate(result):
@@ -246,6 +251,19 @@ class IZZI_MD(unittest.TestCase):
         ref_lines = [self.L1, self.L2, self.L3]
         for num, line in enumerate(lines):
             self.assertAlmostEqual(line, ref_lines[num])
+
+    def testTriangle(self):
+        results = lib.get_triangle(self.L1, self.L2, self.L3)
+        print "results", results
+        print "triangle", self.triangle
+#        phi = result['triangle_phi']
+#        H = result['triangle_height'] 
+#        A = result['triangle_area']
+#        results = {'triangle_phi': phi, 'triangle_H': H, 'triangle_A': A}
+        for key, value in results.items():
+            self.assertAlmostEqual(self.triangle[key], value)
+        
+        
 #    get_triangle_coordinates  -- divide up points into appropriate ZI IZ ZI triangles
 #    get_triangle_sides -- get the sides
 #    get_triangle_area -- get the area

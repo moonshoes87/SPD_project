@@ -271,6 +271,12 @@ def get_triangle_sides(x_segment, y_segment):
     L3 = sqrt((x_segment[2] - x_segment[0])**2 + (y_segment[2] - y_segment[0])**2)
     return {'L1': L1, 'L2': L2, 'L3': L3}
 
+def get_triangle(line1, line2, line3):
+    phi = arccos((line2**2 + line3**2 - line1**2) / (2 * line2 * line3))
+    height = line3 * sin(phi)
+    area = (line2 * line3 * sin(phi)) / 2
+    return { 'triangle_phi': phi, 'triangle_H': height, 'triangle_A': area }
+
     
 
 
