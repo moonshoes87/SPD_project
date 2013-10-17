@@ -2,7 +2,7 @@
 
 from scipy import *
 from scipy.optimize import curve_fit
-#import numpy
+import numpy
 
 
 
@@ -261,11 +261,42 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
     Zstar = (1. / (n - 1.)) * total
     return Zstar
 
+# IZZI_MD (mainly)
+
 def get_normed_points(point_array, norm):
     """takes a set of points and norms them"""
-    points = point_array / norm
+    norm = float(norm)
+    floated_array = []
+    for p in point_array:
+        floated_array.append(float(p))
+    points = numpy.array(floated_array) / norm
     return points
 
+
+def get_xy_array(x_segment, y_segment): # make a test for this
+    """takes lists of x and y coordiantes and combines them, returning: [(x, y), (x, y)]"""
+    xy_array = []
+    for num, x in enumerate(x_segment):
+        xy_array.append((x, y_segment[num]))
+    return xy_array
+
+    
+def get_triangles(xy_segment, Arai_steps):
+    starting_points = []
+    for i in xy_segment[2:-2 :2]: # there may be a fencepost problem here.  attend to it.  (it might be [2:-3:2]
+        starting_points.append(i)
+#    for point in x_segment[2: :2]:
+#        starting_points.append(point)
+    print starting_points
+    triangles = []
+    for start in starting_points:
+        index = xy_segment.index(start)
+        triangle = (start, xy_segment[index + 1], xy_segment[index +2])
+        triangles.append(triangle)
+    midpoint = Arai_steps[3] # starts at xy[2], so xy[3] will be midpoint, corresponding to Arai_steps[3]
+    return { 'triangles': array(triangles), 'midpoint': midpoint } # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoint: 'ZI'     return
+
+    
 def get_triangle_sides(x_segment, y_segment):
     """finds the length of the sides of a triangle from three sets of x, y coordinates"""
     L1 = sqrt((x_segment[0] - x_segment[1])**2 + (y_segment[0] - y_segment[1])**2)
@@ -279,6 +310,30 @@ def get_triangle(line1, line2, line3):
     height = line3 * sin(phi)
     area = (line2 * line3 * sin(phi)) / 2
     return { 'triangle_phi': phi, 'triangle_H': height, 'triangle_A': area }
+
+x = numpy.array(range(10))
+y = numpy.array(range(0, 20, 2))
+def get_triangle_area_sum(Arai_steps, norm, x_array = x, y_array = y):
+    x_norm = get_normed_points(x_array, norm)
+    y_norm = get_normed_points(y_array, norm)
+    xy = get_xy_array(x_norm, y_norm)
+    print "xy array", xy  # this is coming out wrong
+    result = get_triangles(xy, Arai_steps)
+    triangles = result['triangles']
+    midpoint = result['midpoint']
+    print "triangles", triangles # correct through here
+    A = 0
+    for triangle in triangles:
+        x_seg = [triangle[0][0], triangle[1][0], triangle[2][0]]
+        print "x_seg", x_seg  # these are coming out correct
+        y_seg = [triangle[0][1], triangle[1][1], triangle[2][1]]
+        lines = get_triangle_sides(x_seg, y_seg)  # PROBLEM IS HERE
+        t = get_triangle(lines['L1'], lines['L2'], lines['L3'])
+        print "triangle:", t
+        # get triangle side
+        # get triangle
+        # increment Area total
+        
 
 
 def get_sign(x_segment, y_segment, midpoint): # possibly needs fixing.  initially misunderstood
@@ -304,6 +359,25 @@ def get_sign(x_segment, y_segment, midpoint): # possibly needs fixing.  initiall
         else:
             sign = 0
     return { 'first_line': first_line, 'second_line': second_line, 'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
-    
 
 
+
+def get_ZI_line(xy_array, Arai_steps): # should this exclude the first two points, as does the rest of the calculation?
+    # get ZI points
+    # do sigma operation to get line
+    ZI_points = []
+    for num, point in enumerate(xy_array):
+        if Arai_steps[num] == 'ZI':
+            ZI_points.append(point)
+    print "ZI points:", ZI_points
+    ZI_line = 0.
+    for num, point in enumerate(ZI_points[:-1]): # iterating by one, instead of by two as in the spd document.  doing this because I have made a list of exclusively the ZI points, so I don't need to skip. 
+        print "point:", point
+        print "ZI_points[num]", ZI_points[num]
+        result = (numpy.sqrt( (point[0] - ZI_points[num + 1][0])**2 - (point[1] - ZI_points[num + 1][1])**2 ))
+        print result
+        ZI_line += result
+    print ZI_line
+    return { 'ZI_line': ZI_line, 'ZI_points': ZI_points }
+
+#def get_IZZI_MD(

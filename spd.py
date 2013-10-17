@@ -97,7 +97,7 @@ class PintPars(object):
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         self.pars['specimen_int_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K", "steps_Arai"] # needs to be updated
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K", "steps_Arai", "xy_Arai", "xy_Arai_segment"] # needs to be updated
  
         #LJ ADDING stats:
         self.steps_Arai = self.specimen_Data['steps_Arai']
@@ -111,6 +111,8 @@ class PintPars(object):
         self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
         self.x_Arai_mean = mean(self.x_Arai_segment) # uses scipy mean function to get the mean of the x points
         self.y_Arai_mean = mean(self.y_Arai_segment)
+        self.xy_Arai = lib.get_xy_array(self.x_Arai, self.y_Arai)
+        self.xy_Arai_segment = lib.get_xy_array(self.x_Arai_segment, self.y_Arai_segment)
 
 
     def get_segments_and_means(self):

@@ -5,7 +5,7 @@ import numpy
 import copy
 import spd
 import known_values
-import lj_library as lib
+import lib_arai_plot_statistics as lib_arai
 
 
 # could use this directly in here:
@@ -131,19 +131,19 @@ class CheckFrac(unittest.TestCase): # basically good to go
     vector_diffs_segment = [1., 1.5, 3.]
 
     def test_FRAC(self):
-        frac = lib.get_FRAC(self.vds, self.vector_diffs_segment)
+        frac = lib_arai.get_FRAC(self.vds, self.vector_diffs_segment)
         self.assertEqual(frac, 2.75)
 
     def test_FRAC_with_zero_vds(self):
-        self.assertRaises(ValueError, lib.get_FRAC, 0, self.vector_diffs_segment)
+        self.assertRaises(ValueError, lib_arai.get_FRAC, 0, self.vector_diffs_segment)
 
     def test_FRAC_with_negative_input(self):
-        self.assertRaises(ValueError, lib.get_FRAC, 1, [1., -.1, 2.])
+        self.assertRaises(ValueError, lib_arai.get_FRAC, 1, [1., -.1, 2.])
 
     def test_lib_vs_actual(self): # checks that it is calculated the same in lib and in practice
         self.obj.pars['vds'] = 2
         self.obj.pars['vector_diffs_segment'] = [1., 1.5, 3.]
-        frac = lib.get_FRAC(self.vds, self.vector_diffs_segment)
+        frac = lib_arai.get_FRAC(self.vds, self.vector_diffs_segment)
         obj_frac = self.obj.get_FRAC()
         self.assertEqual(frac, obj_frac)
 
@@ -166,12 +166,12 @@ class CheckR_corr2(unittest.TestCase):
 
     def testSimpleInput(self):
         """should produce expected output with simple input"""
-        r = lib.get_R_corr2(self.x_avg, self.y_avg, self.x_segment, self.y_segment)
+        r = lib_arai.get_R_corr2(self.x_avg, self.y_avg, self.x_segment, self.y_segment)
         self.assertEqual(.5, r)
         
     def testDivideByZero(self):
         """should raise ValueError when attempting to divide by zero"""
-        self.assertRaises(ValueError, lib.get_R_corr2, 1., 1., numpy.array([1.]), numpy.array([1.]))
+        self.assertRaises(ValueError, lib_arai.get_R_corr2, 1., 1., numpy.array([1.]), numpy.array([1.]))
 
 class CheckR_det2(unittest.TestCase): # acceptable working test
     y_segment = [1., 2.5, 3]
@@ -179,7 +179,7 @@ class CheckR_det2(unittest.TestCase): # acceptable working test
     y_prime = [1., 2., 3.]
     
     def test_simple_input(self):
-        result = lib.get_R_det2(self.y_segment, self.y_avg, self.y_prime)
+        result = lib_arai.get_R_det2(self.y_segment, self.y_avg, self.y_prime)
         self.assertEqual((1 - .25/2.25), result)
     
 
@@ -201,12 +201,12 @@ class CheckZigzag(unittest.TestCase):
     
     def testWiggleB(self):
         for num, b in enumerate(self.reference_b_wiggle):
-            result = lib.get_b_wiggle(self.x[num], self.y[num], self.y_int)
+            result = lib_arai.get_b_wiggle(self.x[num], self.y[num], self.y_int)
             self.assertAlmostEqual(result, b)
 
     def testZ(self):
         # x_segment, y_segment, x_int, y_int, slope
-        result = lib.get_Z(self.x, self.y, self.x_int, self.y_int, self.slope)
+        result = lib_arai.get_Z(self.x, self.y, self.x_int, self.y_int, self.slope)
         self.assertAlmostEqual(self.Z, result)
 
     def testPintParsZ(self):
@@ -214,7 +214,7 @@ class CheckZigzag(unittest.TestCase):
         self.assertAlmostEqual(self.Z, result)
 
     def testZStar(self):
-        result = lib.get_Zstar(self.x, self.y, self.x_int, self.y_int, self.slope, self.n)
+        result = lib_arai.get_Zstar(self.x, self.y, self.x_int, self.y_int, self.slope, self.n)
         self.assertAlmostEqual(self.Z_star, result)
 
     def testPintParsZstar(self):
@@ -228,8 +228,9 @@ class IZZI_MD(unittest.TestCase):
 
     x = numpy.array([4, 6, 12])
     y = numpy.array([8, 4, 2])
-    norm_x = lib.get_normed_points(x, norm)
-    norm_y = lib.get_normed_points(y, norm)
+    norm_x = lib_arai.get_normed_points(x, norm)
+    norm_y = lib_arai.get_normed_points(y, norm)
+    ref_xy = [(4, 8), (6, 4), (12, 2)] # not normed
 
     L1 = numpy.sqrt(1.25)
     L2 = numpy.sqrt(2.5)
@@ -249,12 +250,12 @@ class IZZI_MD(unittest.TestCase):
     sign = 1.
 
     def testPointNorming(self): # satisfactory
-        result = lib.get_normed_points(self.points, self.norm)
+        result = lib_arai.get_normed_points(self.points, self.norm)
         for num, point in enumerate(result):
             self.assertAlmostEqual(self.ref_normed_points[num], point)
 
     def testTriangleSides(self): #
-        result = lib.get_triangle_sides(self.norm_x, self.norm_y)
+        result = lib_arai.get_triangle_sides(self.norm_x, self.norm_y)
         line1, line2, line3 = result['L1'], result['L2'], result['L3']
         lines = [line1, line2, line3]
         ref_lines = [self.L1, self.L2, self.L3]
@@ -262,7 +263,7 @@ class IZZI_MD(unittest.TestCase):
             self.assertAlmostEqual(line, ref_lines[num])
 
     def testTriangle(self):
-        results = lib.get_triangle(self.L1, self.L2, self.L3)
+        results = lib_arai.get_triangle(self.L1, self.L2, self.L3)
         print "results", results
         print "triangle", self.triangle
 #        phi = result['triangle_phi']
@@ -274,7 +275,7 @@ class IZZI_MD(unittest.TestCase):
 
     def testSign(self):  # needs fixing.  ZI or IZ can be the solo point of the triangle
         midpoint = 'IZ'
-        results = lib.get_sign(self.norm_x, self.norm_y, midpoint)
+        results = lib_arai.get_sign(self.norm_x, self.norm_y, midpoint)
         keys = 'first_line', 'second_line', 'slope', 'first_y_int', 'second_y_int', 'sign'
         reference = { 'first_line': self.first_line, 'second_line': self.second_line, 'slope': self.first_line_slope, 'first_y_int': self.first_y_int, 'second_y_int': self.second_y_int, 'sign': self.sign }
         for key in keys:
@@ -286,6 +287,51 @@ class IZZI_MD(unittest.TestCase):
                 self.assertEqual(results[key], reference[key])
         
 
+    def testTriangles(self):
+        x = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        y = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+        triangles = [((2, 4), (3, 6), (4, 8)),( (4, 8), (5, 10), (6, 12) ), ( (6, 12), (7, 14), (8, 16)) ]
+        xy = lib_arai.get_xy_array(x, y)
+        print "xy", xy
+        reference = { 'midpoint': 'ZI', 'triangles': triangles }
+        steps_Arai = ['ZI', 'IZ', 'IZ', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI', 'IZ'] 
+        result = lib_arai.get_triangles(xy, steps_Arai)
+        # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoint: 'ZI'
+        for key, value in result.items():
+            if type(value) == numpy.ndarray:
+                v = numpy.allclose(value, reference[key]) # assesses two arrays for if they are approximately equal 
+                self.assertTrue(v)
+            else:
+                self.assertEqual(value, reference[key])
+ # IZ
+    def test_get_xy(self):
+        xy = lib_arai.get_xy_array(self.x, self.y)
+        self.assertEqual(xy, self.ref_xy)
+
+    def test_get_ZI_line(self):
+        arai_steps = ['IZ', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI']
+        xy = [(1., 2.), (2., 3.), (3., 4.), (5., 5.), (5., 6.), (6., 7.)]
+        ZI_points_ref = [(2., 3.), (5., 5.), (6., 7.)]
+        result = lib_arai.get_ZI_line(xy, arai_steps)
+        ZI_points = result['ZI_points']
+        ZI_line_ref = numpy.sqrt(5) + numpy.sqrt(1)  # unless you have misunderstood.  check this with Ron.  possibly there is an added exponent
+        ZI_line = result['ZI_line']
+        self.assertEqual(ZI_points, ZI_points_ref)
+        self.assertEqual(ZI_line, ZI_line_ref)
+
+    def test_get_IZZI_MD(self):
+        # inputs:  Area of each triangle with their signs.  L_ZI
+        # list of triangle areas, list of signs
+        A = '???'
+        L_ZI = 1.
+        ref_IZZI_MD = 0
+#        result = lib_arai.get_IZZI_MD(A, L_ZI)
+#        self.assertEqual(result, ref_IZZI_MD)
+        
+
+        
+        
+                                                                             
 #  get actual points, make them triangles
 #  sum the areas, return IZZI_MD
 
