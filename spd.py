@@ -16,7 +16,7 @@
 #============================================================================================
 
 import sys,pylab,scipy,os
-import lj_library as lib
+import lib_arai_plot_statistics as lib_arai
 from scipy import * 
 
 
@@ -111,8 +111,8 @@ class PintPars(object):
         self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
         self.x_Arai_mean = mean(self.x_Arai_segment) # uses scipy mean function to get the mean of the x points
         self.y_Arai_mean = mean(self.y_Arai_segment)
-        self.xy_Arai = lib.get_xy_array(self.x_Arai, self.y_Arai)
-        self.xy_Arai_segment = lib.get_xy_array(self.x_Arai_segment, self.y_Arai_segment)
+        self.xy_Arai = lib_arai.get_xy_array(self.x_Arai, self.y_Arai)
+        self.xy_Arai_segment = lib_arai.get_xy_array(self.x_Arai_segment, self.y_Arai_segment)
 
 
     def get_segments_and_means(self):
@@ -125,7 +125,7 @@ class PintPars(object):
         n = self.n
         lab_dc_field = float(self.specimen_Data['lab_dc_field'])
         steps_Arai = self.specimen_Data['steps_Arai']
-        data = lib.York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps_Arai)
+        data = lib_arai.York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps_Arai)
         self.pars['x_err'] = data['x_err']
         self.pars['y_err'] = data['y_err']
         self.pars['x_tag'] = data['x_tag']
@@ -158,7 +158,7 @@ class PintPars(object):
         zdata = self.zdata
         delta_y_prime = self.pars['delta_y_prime']
         start, end = self.start, self.end
-        data = lib.get_vds(zdata, delta_y_prime, start, end)
+        data = lib_arai.get_vds(zdata, delta_y_prime, start, end)
         self.pars['max_diff'] = data['max_diff']
         self.pars['vector_diffs'] = data['vector_diffs']
         self.pars['specimen_vds'] = data['specimen_vds']
@@ -172,14 +172,14 @@ class PintPars(object):
     def get_FRAC(self):
         vds = self.pars['specimen_vds']
         vector_diffs_segment = self.pars['vector_diffs_segment']
-        FRAC = lib.get_FRAC(vds, vector_diffs_segment)
+        FRAC = lib_arai.get_FRAC(vds, vector_diffs_segment)
         self.pars['FRAC'] = FRAC
         return FRAC
 
 
     def get_curve(self):
         x_Arai, y_Arai = self.x_Arai, self.y_Arai
-        data = lib.get_curve(x_Arai, y_Arai)
+        data = lib_arai.get_curve(x_Arai, y_Arai)
         self.pars['centroid'] = data['centroid']
         self.pars['specimen_k'] = data['k']
         self.pars['best_fit_circle'] = data['best_fit_circle']
@@ -192,7 +192,7 @@ class PintPars(object):
 #        beta_threshold = .1                                                                                  
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
-        box = lib.get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean)
+        box = lib_arai.get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean)
     #    print "SCAT-box", box
         low_bound, high_bound, x_max, y_max = box[0], box[1], box[2], box[3]
         # getting SCAT points
@@ -200,9 +200,9 @@ class PintPars(object):
         tmin, tmax = self.tmin, self.tmax
         ptrm_checks_temps, ptrm_checks_starting_temps, x_ptrm_check, y_ptrm_check = self.ptrm_checks_temperatures, self.ptrm_checks_starting_temperatures, self.x_ptrm_check, self.y_ptrm_check
         tail_checks_temps, tail_checks_starting_temps, x_tail_check, y_tail_check = self.tail_checks_temperatures, self.tail_checks_starting_temperatures, self.x_tail_check, self.y_tail_check
-        points = lib.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temps, ptrm_checks_starting_temps, x_ptrm_check, y_ptrm_check, tail_checks_temps, tail_checks_starting_temps, x_tail_check, y_tail_check)
+        points = lib_arai.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temps, ptrm_checks_starting_temps, x_ptrm_check, y_ptrm_check, tail_checks_temps, tail_checks_starting_temps, x_tail_check, y_tail_check)
         # checking each point
-        SCAT = lib.get_SCAT(points, low_bound, high_bound, x_max, y_max)
+        SCAT = lib_arai.get_SCAT(points, low_bound, high_bound, x_max, y_max)
         self.pars['_SCAT'] = SCAT
         
 
@@ -321,7 +321,7 @@ class PintPars(object):
         y_avg = self.y_Arai_mean
         x_segment =self.x_Arai_segment
         y_segment =self.y_Arai_segment
-        R_corr2 = lib.get_R_corr2(x_avg, y_avg, x_segment, y_segment)
+        R_corr2 = lib_arai.get_R_corr2(x_avg, y_avg, x_segment, y_segment)
         self.pars['R_corr2'] = R_corr2
         return R_corr2
 
@@ -330,14 +330,14 @@ class PintPars(object):
         y_segment = self.y_Arai_segment
         y_avg = self.y_Arai_mean
         y_prime = self.pars['y_prime']
-        R_det2 = lib.get_R_det2(y_segment, y_avg, y_prime)
+        R_det2 = lib_arai.get_R_det2(y_segment, y_avg, y_prime)
         self.pars['R_det2'] = R_det2
 
     def get_Z(self):
         x_segment, y_segment = self.x_Arai, self.y_Arai
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
         slope = self.pars['specimen_b']
-        Z = lib.get_Z(x_segment, y_segment, x_int, y_int, slope)
+        Z = lib_arai.get_Z(x_segment, y_segment, x_int, y_int, slope)
         self.pars['Z'] = Z
         return Z
 
@@ -346,7 +346,7 @@ class PintPars(object):
         x_segment, y_segment = self.x_Arai, self.y_Arai
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
         slope, n = self.pars['specimen_b'], self.n
-        Zstar = lib.get_Zstar(x_segment, y_segment, x_int, y_int, slope, n)
+        Zstar = lib_arai.get_Zstar(x_segment, y_segment, x_int, y_int, slope, n)
         self.pars['Zstar'] = Zstar
         return Zstar
                              
