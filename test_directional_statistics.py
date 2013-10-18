@@ -31,32 +31,27 @@ class CheckDecInc(unittest.TestCase):
     X3 = [ 1.,   3.,   4.5,  7.5]
 
 
-    def multiply_two(array1, array2):
-        return sum(array1 * array2)
-#        for num, i in enumerate(array1):
-
-
     X1_p = numpy.array(X1_prime)
     X2_p = numpy.array(X2_prime)
     X3_p = numpy.array(X3_prime)
+    # probably can write this more succintly, but good visualization
     orient_tensor = [[sum(X1_p * X1_p), sum(X1_p * X2_p), sum(X1_p * X3_p)],
                      [sum(X1_p * X2_p), sum(X2_p * X2_p), sum(X2_p * X3_p)],
                      [sum(X1_p * X3_p), sum(X2_p * X3_p), sum(X3_p * X3_p)]]
             
-
 
     def test_partial_zdata(self):
         result = lib_direct.get_partial_zdata(self.zdata, self.t_Arai, self.tmin, self.tmax)
         self.assertEqual(result, self.partial_zdata)
 
     def test_cart_averages(self):
-        result = lib_direct.get_cart_averages(self.partial_zdata)
-        self.assertEqual(result['X1'], self.X1_avg)
-        self.assertEqual(result['X2'], self.X2_avg)
-        self.assertEqual(result['X3'], self.X3_avg)
+        result = lib_direct.get_cart_primes_and_means(self.partial_zdata)
+        self.assertEqual(result['X1_mean'], self.X1_avg)
+        self.assertEqual(result['X2_mean'], self.X2_avg)
+        self.assertEqual(result['X3_mean'], self.X3_avg)
 
     def test_cart_primes(self):
-        result = lib_direct.get_cart_primes(self.partial_zdata, self.X1_avg, self.X2_avg, self.X3_avg)
+        result = lib_direct.get_cart_primes_and_means(self.partial_zdata)
         self.assertEqual(result['X1_prime'], self.X1_prime)
         self.assertEqual(result['X2_prime'], self.X2_prime)
         self.assertEqual(result['X3_prime'], self.X3_prime)
@@ -66,6 +61,9 @@ class CheckDecInc(unittest.TestCase):
        # result = lib_direct.get_orientation_tensor(self.X1_prime, self.X2_prime, self.X3_prime)
         
         
+
+# see L5772 in thellier_gui_spd
+
 
 #>>> for num, x in enumerate(X2):
 #...     t = x * X2_prime[num]
