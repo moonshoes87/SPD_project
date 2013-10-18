@@ -282,8 +282,8 @@ def get_xy_array(x_segment, y_segment): # make a test for this
 
     
 def get_triangles(xy_segment, Arai_steps):
-    starting_points = []
-    for i in xy_segment[2:-2 :2]: # there may be a fencepost problem here.  attend to it.  (it might be [2:-3:2]
+    starting_points = []  # old below was [2: -2:2]  but I think the new is more correct
+    for i in xy_segment[1:-2 :2]: # there may be a fencepost problem here.  attend to it.  (it might be [2:-3:2]
         starting_points.append(i)
 #    for point in x_segment[2: :2]:
 #        starting_points.append(point)
@@ -306,14 +306,21 @@ def get_triangle_sides(x_segment, y_segment):
 
 def get_triangle(line1, line2, line3):
     """takes length of a triangle's lines and returns angle1, the triangle's height, and its area"""
+    print "top of phi: ", (line2**2 + line3**2 - line1**2)
+    print "bottom of phi: ", 2 * line2 * line3
+    print "arccos of all that"
     phi = arccos((line2**2 + line3**2 - line1**2) / (2 * line2 * line3))
     height = line3 * sin(phi)
     area = (line2 * line3 * sin(phi)) / 2
     return { 'triangle_phi': phi, 'triangle_H': height, 'triangle_A': area }
 
-x = numpy.array(range(10))
-y = numpy.array(range(0, 20, 2))
-def get_triangle_area_sum(Arai_steps, norm, x_array = x, y_array = y):
+# you need to work through this one by hand and figure it out, make sure it's right
+
+x = numpy.array([1., 1.5, 2., 3., 6., 8., 8.5, 8.5])
+y = numpy.array([8., 4., 3.9, 3.5, 3., 2.5, 2., 1.5])
+norm = 2
+steps = ['ZI', 'IZ','ZI', 'IZ','ZI', 'IZ','ZI', 'IZ']
+def get_triangle_area_sum(Arai_steps = steps, norm = norm, x_array = x, y_array = y, ZI_line = 3.):
     x_norm = get_normed_points(x_array, norm)
     y_norm = get_normed_points(y_array, norm)
     xy = get_xy_array(x_norm, y_norm)
@@ -321,15 +328,22 @@ def get_triangle_area_sum(Arai_steps, norm, x_array = x, y_array = y):
     result = get_triangles(xy, Arai_steps)
     triangles = result['triangles']
     midpoint = result['midpoint']
-    print "triangles", triangles # correct through here
+    print "triangles", triangles # 
     A = 0
     for triangle in triangles:
         x_seg = [triangle[0][0], triangle[1][0], triangle[2][0]]
-        print "x_seg", x_seg  # these are coming out correct
+        print "x_seg", x_seg  
         y_seg = [triangle[0][1], triangle[1][1], triangle[2][1]]
-        lines = get_triangle_sides(x_seg, y_seg)  # PROBLEM IS HERE
-        t = get_triangle(lines['L1'], lines['L2'], lines['L3'])
-        print "triangle:", t
+        lines = get_triangle_sides(x_seg, y_seg)  
+        print "lines", lines
+        t = get_triangle(lines['L1'], lines['L2'], lines['L3']) # arccos of 1 is 0, so everything ends up zero.  ah, because my line was a straight line.  
+        sign = get_sign(x_seg, y_seg, midpoint)['sign']
+        print "triangle:", t, " sign: ", sign
+        t_area = t['triangle_A']
+        normed_signed_area = (t_area * sign) / ZI_line
+        A += normed_signed_area
+    print "Area", A
+    # then divide it by the ZI_line, which you don't presently have.  
         # get triangle side
         # get triangle
         # increment Area total
@@ -361,10 +375,9 @@ def get_sign(x_segment, y_segment, midpoint): # possibly needs fixing.  initiall
     return { 'first_line': first_line, 'second_line': second_line, 'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
 
 
-
 def get_ZI_line(xy_array, Arai_steps): # should this exclude the first two points, as does the rest of the calculation?
     # get ZI points
-    # do sigma operation to get line
+    # do sigma operation to get line.  FIX THIS IT DOESN't WORK
     ZI_points = []
     for num, point in enumerate(xy_array):
         if Arai_steps[num] == 'ZI':

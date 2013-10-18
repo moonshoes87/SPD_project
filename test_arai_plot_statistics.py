@@ -287,10 +287,11 @@ class IZZI_MD(unittest.TestCase):
                 self.assertEqual(results[key], reference[key])
         
 
-    def testTriangles(self):
-        x = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    def test_get_triangles(self):
+        x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         y = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
-        triangles = [((2, 4), (3, 6), (4, 8)),( (4, 8), (5, 10), (6, 12) ), ( (6, 12), (7, 14), (8, 16)) ]
+#  fenceposts, wrong: triangles = [((2, 4), (3, 6), (4, 8)),( (4, 8), (5, 10), (6, 12) ), ( (6, 12), (7, 14), (8, 16)) ]
+        triangles = [((1,2), (2,4), (3,6)), ((3,6), (4,8), (5, 10)), ((5, 10), (6, 12), (7, 14)), ((7, 14), (8, 16), (9, 18))]
         xy = lib_arai.get_xy_array(x, y)
         print "xy", xy
         reference = { 'midpoint': 'ZI', 'triangles': triangles }
@@ -300,7 +301,8 @@ class IZZI_MD(unittest.TestCase):
         for key, value in result.items():
             if type(value) == numpy.ndarray:
                 v = numpy.allclose(value, reference[key]) # assesses two arrays for if they are approximately equal 
-                self.assertTrue(v)
+                message = "%s is different from reference %s" %(value, reference[key])
+                self.assertTrue(v, message)
             else:
                 self.assertEqual(value, reference[key])
  # IZ
