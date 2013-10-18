@@ -320,7 +320,8 @@ x = numpy.array([1., 1.5, 2., 3., 6., 8., 8.5, 8.5])
 y = numpy.array([8., 4., 3.9, 3.5, 3., 2.5, 2., 1.5])
 norm = 2
 steps = ['ZI', 'IZ','ZI', 'IZ','ZI', 'IZ','ZI', 'IZ']
-def get_triangle_area_sum(Arai_steps = steps, norm = norm, x_array = x, y_array = y, ZI_line = 3.):
+# check this it may or may NOT work
+def get_triangle_area_sum(Arai_steps = steps, norm = norm, x_array = x, y_array = y, ZI_line = 3.): #
     x_norm = get_normed_points(x_array, norm)
     y_norm = get_normed_points(y_array, norm)
     xy = get_xy_array(x_norm, y_norm)
