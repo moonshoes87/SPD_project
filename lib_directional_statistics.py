@@ -32,7 +32,8 @@ def get_orientation_tensor(X1_p, X2_p, X3_p):
     orient_tensor = [[sum(X1_p * X1_p), sum(X1_p * X2_p), sum(X1_p * X3_p)],
                      [sum(X1_p * X2_p), sum(X2_p * X2_p), sum(X2_p * X3_p)],
                      [sum(X1_p * X3_p), sum(X2_p * X3_p), sum(X3_p * X3_p)]]
-    tau, V = numpy.linalg.eig(orient_tensor)
+    tau, V = numpy.linalg.eig(orient_tensor) 
+# ATTEND!!  POSSIBLY THIS SHOULD BE numpy.linalg.eig(numpy.cov(orient_tensor))  numpy.cov gets the covariance matrix of data
     return {'orient_tensor': orient_tensor, 'tau': tau, 'V': V}
 
 def get_eigenvectors_and_eigenvalues(orient_tensor):

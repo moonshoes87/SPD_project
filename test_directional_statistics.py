@@ -36,12 +36,10 @@ class CheckDecInc(unittest.TestCase):
     X3_p = numpy.array(X3_prime)
     # probably can write this more succintly, but good visualization
 
-    orientation_tensor = lib_direct.get_orientation_tensor(X1_prime, X2_prime, X3_prime)
+    orientation_tensor = lib_direct.get_orientation_tensor(X1_prime, X2_prime, X3_prime) # too complex to want to calculate by hand
 
     reference_vector = (-1., -2., -6.5)
     
-            
-
 
     def test_zdata_segment(self):
         result = lib_direct.get_zdata_segment(self.zdata, self.t_Arai, self.tmin, self.tmax)
@@ -72,6 +70,9 @@ class CheckDecInc(unittest.TestCase):
         print "orient_tensor", orient_tensor
         v = numpy.allclose(result['orient_tensor'], orient_tensor) # assesses two arrays for if they are approximately eq
         self.assertTrue(v)
+
+    def test_order_eigenvectors(self): # figure it out
+        pass
 
     def test_reference_vector(self):
         print "reference:", self.reference_vector
