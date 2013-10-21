@@ -394,4 +394,7 @@ def get_ZI_line(xy_array, Arai_steps): # should this exclude the first two point
     print ZI_line
     return { 'ZI_line': ZI_line, 'ZI_points': ZI_points }
 
+
+# YOU NEED TO USE X_ARAI, etc., for the xy
+
 #def get_IZZI_MD(
