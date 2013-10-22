@@ -262,7 +262,6 @@ class IZZI_MD(unittest.TestCase):
     def test_get_triangles_simple(self):
         x = [0, 1, 2, 3, 4, 5]
         y = [0, 2, 4, 6, 8, 10]
-#  fenceposts, wrong: triangles = [((2, 4), (3, 6), (4, 8)),( (4, 8), (5, 10), (6, 12) ), ( (6, 12), (7, 14), (8, 16)) ]
         ref_triangles = [((1, 2), (2, 4), (3, 6)), ((2, 4), (3, 6), (4, 8)), ((3,6), (4,8), (5, 10))]
         ref_midpoints = ['ZI', 'IZ', 'ZI']
         xy = lib_arai.get_xy_array(x, y)
@@ -280,8 +279,22 @@ class IZZI_MD(unittest.TestCase):
                 self.assertEqual(value, reference[key])
 
     def test_get_triangles_complex(self):
+        xy_segment = ((1, 2),(3, 4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18))
+        steps = ['ZI',  'ZI',  'IZ', 'IZ', 'IZ', 'ZI','IZ','ZI','ZI']
+        ref_midpoints = ['IZ', 'ZI', 'IZ']
+        ref_triangles = [((3,4),(5,6),(11, 12)),((5,6),(11,12),(13,14)),((11,12),(13,14),(15,16))]
         # make it the complicated kind
-        pass
+        reference = {'triangles': ref_triangles, 'midpoints': ref_midpoints}
+        result = lib_arai.get_triangles(xy_segment, steps)
+        for key, value in result.items():
+            if type(value) == numpy.ndarray:
+                v = numpy.allclose(value, reference[key]) # assesses two arrays for if they are approximately equal 
+                message = "%s is different from reference %s" %(value, reference[key])
+                self.assertTrue(v, message)
+            else:
+                self.assertEqual(value, reference[key])
+
+
 
 
     def testTriangleSides(self): #

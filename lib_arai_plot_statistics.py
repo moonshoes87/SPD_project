@@ -281,20 +281,53 @@ def get_xy_array(x_segment, y_segment):
     return xy_array
 
     
-def get_triangles(xy_segment, Arai_steps):
-    starting_points = []  # old below was [2: -2:2]  but I think the new is more correct
-    for i in xy_segment[1:-2 :1]: #  still not sure about this
-        starting_points.append(i)
-#    for point in x_segment[2: :2]:
-#        starting_points.append(point)
-    print starting_points
+#def get_triangles(xy_segment, Arai_steps): # succeeding, but only for simple ones without repeats
+#    starting_points = []  
+#    temp = []
+#    for i in xy_segment[1:-2 :1]: #  still not sure about this
+#        starting_points.append(i)
+#    print starting_points
+#    triangles = []
+#    midpoints = []
+#    for start in starting_points:
+#        index = xy_segment.index(start)
+#        midpoint = Arai_steps[index + 1]
+#        midpoints.append(midpoint) # finds if the midpoint is IZ or ZI
+#        triangle = (start, xy_segment[index + 1], xy_segment[index +2])
+#        triangles.append(triangle)
+#    return {'triangles': triangles, 'midpoints': midpoints}
+        
+
+
+xy_segment = [(1, 2), (3, 4), (5, 6), (7, 8), (9,10), (11, 12), (13, 14)]
+steps = ['IZ', 'ZI', 'ZI', 'IZ', 'IZ', 'ZI', 'IZ']
+
+def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # works!
+    segment = xy_segment[1: ]
+    no_repeat_segment = []
+    no_repeat_steps = []
+    last_step = ""
+    for i in segment:
+        index = xy_segment.index(i) # must be xy_segment to correspond to the Arai_steps, not the truncated segment
+        step = Arai_steps[index]
+        if step == last_step:
+            pass
+        else:
+            no_repeat_segment.append(i)
+            no_repeat_steps.append(step)
+            last_step = step
     triangles = []
-    for start in starting_points:
-        index = xy_segment.index(start)
-        triangle = (start, xy_segment[index + 1], xy_segment[index +2])
-        triangles.append(triangle)
-    midpoints = Arai_steps[3] # starts at xy[2], so xy[3] will be midpoint, corresponding to Arai_steps[3]
-    return { 'triangles': array(triangles), 'midpoints': midpoints } # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoint: 'ZI'     return
+    midpoints = []
+    for num, i in enumerate(no_repeat_segment[:-2]):
+        triangles.append((i, no_repeat_segment[num + 1], no_repeat_segment[num + 2]))
+        midpoints.append(no_repeat_steps[num+1])
+    print xy_segment
+    print Arai_steps
+    print no_repeat_segment
+    print no_repeat_steps
+    print "triangles", triangles
+    return {'triangles': triangles, 'midpoints': midpoints}
+        
 
     
 def get_triangle_sides(x_segment, y_segment):
