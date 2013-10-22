@@ -259,7 +259,7 @@ class IZZI_MD(unittest.TestCase):
         for num, i in enumerate(xy_array):
             self.assertAlmostEqual(i, self.ref_xy[num])
 
-    def test_get_triangles_simple(self):
+    def test_get_triangles_simple(self): # works
         x = [0, 1, 2, 3, 4, 5]
         y = [0, 2, 4, 6, 8, 10]
         ref_triangles = [((1, 2), (2, 4), (3, 6)), ((2, 4), (3, 6), (4, 8)), ((3,6), (4,8), (5, 10))]
@@ -278,7 +278,7 @@ class IZZI_MD(unittest.TestCase):
             else:
                 self.assertEqual(value, reference[key])
 
-    def test_get_triangles_complex(self):
+    def test_get_triangles_complex(self):# works
         xy_segment = ((1, 2),(3, 4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18))
         steps = ['ZI',  'ZI',  'IZ', 'IZ', 'IZ', 'ZI','IZ','ZI','ZI']
         ref_midpoints = ['IZ', 'ZI', 'IZ']
@@ -294,10 +294,7 @@ class IZZI_MD(unittest.TestCase):
             else:
                 self.assertEqual(value, reference[key])
 
-
-
-
-    def testTriangleSides(self): #
+    def testTriangleSides(self): # still seems to work
         result = lib_arai.get_triangle_sides(self.norm_x, self.norm_y)
         line1, line2, line3 = result['L1'], result['L2'], result['L3']
         lines = [line1, line2, line3]
@@ -305,7 +302,7 @@ class IZZI_MD(unittest.TestCase):
         for num, line in enumerate(lines):
             self.assertAlmostEqual(line, ref_lines[num])
 
-    def testTriangle(self):
+    def testTriangle(self): # still seems fine
         results = lib_arai.get_triangle(self.L1, self.L2, self.L3)
         print "results", results
         print "triangle", self.triangle
@@ -316,32 +313,44 @@ class IZZI_MD(unittest.TestCase):
         for key, value in results.items():
             self.assertAlmostEqual(self.triangle[key], value)
 
-    def testSign(self):  # needs fixing.  ZI or IZ can be the solo point of the triangle
-        midpoint = 'IZ'
-        results = lib_arai.get_sign(self.norm_x, self.norm_y, midpoint)
-        keys = 'first_line', 'second_line', 'slope', 'first_y_int', 'second_y_int', 'sign'
-        reference = { 'first_line': self.first_line, 'second_line': self.second_line, 'slope': self.first_line_slope, 'first_y_int': self.first_y_int, 'second_y_int': self.second_y_int, 'sign': self.sign }
+
+    def testSign(self):# working
+        triangle = ((1.,3.), (2.,2.5), (3.,1.))
+        ref_slope = -1.
+        ref_first_y_int = 4.
+        ref_second_y_int = 4.5
+        reference1 = {'sign': 1., 'slope': ref_slope, 'first_y_int': ref_first_y_int, 'second_y_int': ref_second_y_int}
+        midpoint1 = 'ZI'
+        midpoint2 = 'IZ'
+        result1 = lib_arai.get_sign(triangle, midpoint1)
+        result2 = lib_arai.get_sign(triangle, midpoint2)
+        self.assertEqual(result1['sign'], 1.)
+        self.assertEqual(result2['sign'], -1.)
+        keys = ['sign', 'slope', 'first_y_int', 'second_y_int']
+        print "reference1:", reference1
+        print "result1", result1
         for key in keys:
-            if type(reference[key]) == list:
+            if type(reference1[key]) == list:
                 #pass
-                for num, i in enumerate(reference[key]):
-                    self.assertAlmostEqual(results[key][num], i)
+                for num, i in enumerate(reference1[key]):
+                    self.assertAlmostEqual(result1[key][num], i)
             else:
-                self.assertEqual(results[key], reference[key])
+                self.assertEqual(result1[key], reference1[key])
+
+
         
 
- # IZ
 
-    def test_get_ZI_line(self):
-        arai_steps = ['IZ', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI']
-        xy = [(1., 2.), (2., 3.), (3., 4.), (5., 5.), (5., 6.), (6., 7.)]
-        ZI_points_ref = [(2., 3.), (5., 5.), (6., 7.)]
-        result = lib_arai.get_ZI_line(xy, arai_steps)
-        ZI_points = result['ZI_points']
-        ZI_line_ref = numpy.sqrt(5) + numpy.sqrt(1)  # unless you have misunderstood.  check this with Ron.  possibly there is an added exponent
-        ZI_line = result['ZI_line']
-        self.assertEqual(ZI_points, ZI_points_ref)
-        self.assertEqual(ZI_line, ZI_line_ref)
+#    def test_get_ZI_line(self):
+#        arai_steps = ['IZ', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI']
+#        xy = [(1., 2.), (2., 3.), (3., 4.), (5., 5.), (5., 6.), (6., 7.)]
+#        ZI_points_ref = [(2., 3.), (5., 5.), (6., 7.)]
+#        result = lib_arai.get_ZI_line(xy, arai_steps)
+#        ZI_points = result['ZI_points']
+#        ZI_line_ref = numpy.sqrt(5) + numpy.sqrt(1)  # unless you have misunderstood.  check this with Ron.  possibly there is an added exponent
+#        ZI_line = result['ZI_line']
+#        self.assertEqual(ZI_points, ZI_points_ref)
+#        self.assertEqual(ZI_line, ZI_line_ref)
 
     def test_get_IZZI_MD(self):
         # inputs:  Area of each triangle with their signs.  L_ZI

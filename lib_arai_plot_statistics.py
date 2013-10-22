@@ -272,7 +272,6 @@ def get_normed_points(point_array, norm): # good to go
     points = numpy.array(floated_array) / norm
     return points
 
-
 def get_xy_array(x_segment, y_segment): 
     """takes lists of x and y coordiantes and combines them, returning: [(x, y), (x, y)]"""
     xy_array = []
@@ -321,13 +320,7 @@ def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # works!
     for num, i in enumerate(no_repeat_segment[:-2]):
         triangles.append((i, no_repeat_segment[num + 1], no_repeat_segment[num + 2]))
         midpoints.append(no_repeat_steps[num+1])
-    print xy_segment
-    print Arai_steps
-    print no_repeat_segment
-    print no_repeat_steps
-    print "triangles", triangles
     return {'triangles': triangles, 'midpoints': midpoints}
-        
 
     
 def get_triangle_sides(x_segment, y_segment):
@@ -346,6 +339,33 @@ def get_triangle(line1, line2, line3):
     height = line3 * sin(phi)
     area = (line2 * line3 * sin(phi)) / 2
     return { 'triangle_phi': phi, 'triangle_H': height, 'triangle_A': area }
+        
+
+def get_sign(triangle, midpoint):
+    first_line = [(triangle[0]), (triangle[2])]
+    first_slope = (first_line[1][1] - first_line[0][1]) / (first_line[1][0] - first_line[0][0])
+    first_y_int = first_line[0][1] - (first_slope * first_line[0][0])
+    second_line = [(triangle[1])]
+    second_y_int = second_line[0][1] - (first_slope * second_line[0][0])
+    sign = 0.
+    if midpoint == 'IZ':
+        if first_y_int > second_y_int:
+            sign = 1.
+        elif first_y_int < second_y_int:
+            sign = -1.
+        else:
+            sign = 0
+    if midpoint == 'ZI':
+        if first_y_int > second_y_int:
+            sign = -1.
+        elif first_y_int < second_y_int:
+            sign = 1.
+        else:
+            sign = 0
+#    return sign
+    return {'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
+
+
 
 # you need to work through this one by hand and figure it out, make sure it's right
 
@@ -381,33 +401,9 @@ def get_triangle_area_sum(Arai_steps = steps, norm = norm, x_array = x, y_array 
         # get triangle side
         # get triangle
         # increment Area total
-        
 
 
-def get_sign(x_segment, y_segment, midpoint): # possibly needs fixing.  initially misunderstood
-    first_line = [(x_segment[0], y_segment[0]), (x_segment[2], y_segment[2])]
-    first_slope = (first_line[1][1] - first_line[0][1]) / (first_line[1][0] - first_line[0][0])
- # b = y - mx 
-    first_y_int = first_line[0][1] - (first_slope * first_line[0][0])
-    second_line = [(x_segment[1], y_segment[1])]
-    second_y_int = second_line[0][1] - (first_slope * second_line[0][0])
-    sign = ""
-    if midpoint == 'IZ':
-        if first_y_int > second_y_int:
-            sign = 1.
-        elif first_y_int < second_y_int:
-            sign = -1.
-        else:
-            sign = 0
-    if midpoint == 'ZI':
-        if first_y_int > second_y_int:
-            sign = -1.
-        elif first_y_int < second_y_int:
-            sign = 1.
-        else:
-            sign = 0
-    return { 'first_line': first_line, 'second_line': second_line, 'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
-
+    
 
 def get_ZI_line(xy_array, Arai_steps): # should this exclude the first two points, as does the rest of the calculation?
     # get ZI points
@@ -419,8 +415,6 @@ def get_ZI_line(xy_array, Arai_steps): # should this exclude the first two point
     print "ZI points:", ZI_points
     ZI_line = 0.
     for num, point in enumerate(ZI_points[:-1]): # iterating by one, instead of by two as in the spd document.  doing this because I have made a list of exclusively the ZI points, so I don't need to skip. 
-        print "point:", point
-        print "ZI_points[num]", ZI_points[num]
         result = (numpy.sqrt( (point[0] - ZI_points[num + 1][0])**2 - (point[1] - ZI_points[num + 1][1])**2 ))
         print result
         ZI_line += result
