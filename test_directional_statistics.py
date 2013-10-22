@@ -74,12 +74,17 @@ class CheckDecInc(unittest.TestCase):
     def test_order_eigenvectors(self): # figure it out
         pass
 
-    def test_reference_vector(self):
-        print "reference:", self.reference_vector
-        result = lib_direct.get_reference_vector(self.X1_prime, self.X2_prime, self.X3_prime)
-        print "result", result
-        for num, value in enumerate(result):
-            self.assertAlmostEqual(value, self.reference_vector[num])
+#    def test_reference_vector(self):  #not currently using reference vector, so removed test
+#        print "reference:", self.reference_vector
+#        result = lib_direct.get_reference_vector(self.X1_prime, self.X2_prime, self.X3_prime)
+#        print "result", result
+#        for num, value in enumerate(result):
+#            self.assertAlmostEqual(value, self.reference_vector[num])
+
+    def test_get_dec_and_inc(self): # testing with real data
+        dec, inc = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
+        self.assertAlmostEqual(dec, 267.4620127216387)
+        self.assertAlmostEqual(inc, 86.349431762792364)
         
 
         
