@@ -263,17 +263,17 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
 
 # IZZI_MD (mainly)
 
-def get_normed_points(point_array, norm):
+def get_normed_points(point_array, norm): # good to go
     """takes a set of points and norms them"""
     norm = float(norm)
     floated_array = []
-    for p in point_array:
+    for p in point_array: # need to make sure each point is a float
         floated_array.append(float(p))
     points = numpy.array(floated_array) / norm
     return points
 
 
-def get_xy_array(x_segment, y_segment): # make a test for this
+def get_xy_array(x_segment, y_segment): 
     """takes lists of x and y coordiantes and combines them, returning: [(x, y), (x, y)]"""
     xy_array = []
     for num, x in enumerate(x_segment):
@@ -283,7 +283,7 @@ def get_xy_array(x_segment, y_segment): # make a test for this
     
 def get_triangles(xy_segment, Arai_steps):
     starting_points = []  # old below was [2: -2:2]  but I think the new is more correct
-    for i in xy_segment[1:-2 :2]: # there may be a fencepost problem here.  attend to it.  (it might be [2:-3:2]
+    for i in xy_segment[1:-2 :1]: #  still not sure about this
         starting_points.append(i)
 #    for point in x_segment[2: :2]:
 #        starting_points.append(point)
@@ -293,8 +293,8 @@ def get_triangles(xy_segment, Arai_steps):
         index = xy_segment.index(start)
         triangle = (start, xy_segment[index + 1], xy_segment[index +2])
         triangles.append(triangle)
-    midpoint = Arai_steps[3] # starts at xy[2], so xy[3] will be midpoint, corresponding to Arai_steps[3]
-    return { 'triangles': array(triangles), 'midpoint': midpoint } # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoint: 'ZI'     return
+    midpoints = Arai_steps[3] # starts at xy[2], so xy[3] will be midpoint, corresponding to Arai_steps[3]
+    return { 'triangles': array(triangles), 'midpoints': midpoints } # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoint: 'ZI'     return
 
     
 def get_triangle_sides(x_segment, y_segment):

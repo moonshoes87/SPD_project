@@ -32,7 +32,7 @@ class CheckParams(unittest.TestCase):
     obj.calculate_all_statistics()
     obj_new_pars = obj.pars
     pre_calculation_pars = ['specimen_int_n', 'lab_dc_field']
-    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2', 'count_IZ', 'count_ZI', 'x_err', 'y_err', 'x_tag', 'y_tag', '_SCAT', 'Z']  # remember to update this as you add stats.  removed magic_method_codes...
+    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2', 'count_IZ', 'count_ZI', 'x_err', 'y_err', 'x_tag', 'y_tag', '_SCAT', 'Z', 'Zstar', 'Dec_Anc', 'Dec_Free', 'Inc_Anc', 'Inc_Free']  # remember to update this as you add stats.  removed magic_method_codes...
 
     def test_for_params_before(self):
         for par in self.pre_calculation_pars:
@@ -254,6 +254,36 @@ class IZZI_MD(unittest.TestCase):
         for num, point in enumerate(result):
             self.assertAlmostEqual(self.ref_normed_points[num], point)
 
+    def testXyArray(self):  # satisfactory
+        xy_array = lib_arai.get_xy_array(self.x, self.y)
+        for num, i in enumerate(xy_array):
+            self.assertAlmostEqual(i, self.ref_xy[num])
+
+    def test_get_triangles_simple(self):
+        x = [0, 1, 2, 3, 4, 5]
+        y = [0, 2, 4, 6, 8, 10]
+#  fenceposts, wrong: triangles = [((2, 4), (3, 6), (4, 8)),( (4, 8), (5, 10), (6, 12) ), ( (6, 12), (7, 14), (8, 16)) ]
+        ref_triangles = [((1, 2), (2, 4), (3, 6)), ((2, 4), (3, 6), (4, 8)), ((3,6), (4,8), (5, 10))]
+        ref_midpoints = ['ZI', 'IZ', 'ZI']
+        xy = lib_arai.get_xy_array(x, y)
+        print "xy", xy
+        reference = { 'triangles': ref_triangles, 'midpoints': ref_midpoints }
+        steps_Arai = ['ZI', 'IZ', 'ZI', 'IZ', 'ZI', 'IZ'] 
+        result = lib_arai.get_triangles(xy, steps_Arai)
+        # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoints: 'ZI'
+        for key, value in result.items():
+            if type(value) == numpy.ndarray:
+                v = numpy.allclose(value, reference[key]) # assesses two arrays for if they are approximately equal 
+                message = "%s is different from reference %s" %(value, reference[key])
+                self.assertTrue(v, message)
+            else:
+                self.assertEqual(value, reference[key])
+
+    def test_get_triangles_complex(self):
+        # make it the complicated kind
+        pass
+
+
     def testTriangleSides(self): #
         result = lib_arai.get_triangle_sides(self.norm_x, self.norm_y)
         line1, line2, line3 = result['L1'], result['L2'], result['L3']
@@ -287,28 +317,7 @@ class IZZI_MD(unittest.TestCase):
                 self.assertEqual(results[key], reference[key])
         
 
-    def test_get_triangles(self):
-        x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        y = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
-#  fenceposts, wrong: triangles = [((2, 4), (3, 6), (4, 8)),( (4, 8), (5, 10), (6, 12) ), ( (6, 12), (7, 14), (8, 16)) ]
-        triangles = [((1,2), (2,4), (3,6)), ((3,6), (4,8), (5, 10)), ((5, 10), (6, 12), (7, 14)), ((7, 14), (8, 16), (9, 18))]
-        xy = lib_arai.get_xy_array(x, y)
-        print "xy", xy
-        reference = { 'midpoint': 'ZI', 'triangles': triangles }
-        steps_Arai = ['ZI', 'IZ', 'IZ', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI', 'IZ'] 
-        result = lib_arai.get_triangles(xy, steps_Arai)
-        # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoint: 'ZI'
-        for key, value in result.items():
-            if type(value) == numpy.ndarray:
-                v = numpy.allclose(value, reference[key]) # assesses two arrays for if they are approximately equal 
-                message = "%s is different from reference %s" %(value, reference[key])
-                self.assertTrue(v, message)
-            else:
-                self.assertEqual(value, reference[key])
  # IZ
-    def test_get_xy(self):
-        xy = lib_arai.get_xy_array(self.x, self.y)
-        self.assertEqual(xy, self.ref_xy)
 
     def test_get_ZI_line(self):
         arai_steps = ['IZ', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI']
