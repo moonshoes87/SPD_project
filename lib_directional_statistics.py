@@ -183,6 +183,6 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     inc = PDir[1]
     return dec, inc
 
-dec1, inc1 = get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
-dec2, inc2 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax)
-dec3, inc3 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax, anchored=False)
+#dec1, inc1 = get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
+#dec2, inc2 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax)
+#dec3, inc3 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax, anchored=False)

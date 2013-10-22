@@ -34,11 +34,10 @@ class CheckDecInc(unittest.TestCase):
     X1_p = numpy.array(X1_prime)
     X2_p = numpy.array(X2_prime)
     X3_p = numpy.array(X3_prime)
-    # probably can write this more succintly, but good visualization
 
     orientation_tensor = lib_direct.get_orientation_tensor(X1_prime, X2_prime, X3_prime) # too complex to want to calculate by hand
 
-    reference_vector = (-1., -2., -6.5)
+#    reference_vector = (-1., -2., -6.5) # not currently testing this
     
 
     def test_zdata_segment(self):
@@ -81,22 +80,11 @@ class CheckDecInc(unittest.TestCase):
 #        for num, value in enumerate(result):
 #            self.assertAlmostEqual(value, self.reference_vector[num])
 
-    def test_get_dec_and_inc(self): # testing with real data
+    def test_get_dec_and_inc(self): # testing full thing with real data
         dec, inc = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
         self.assertAlmostEqual(dec, 267.4620127216387)
         self.assertAlmostEqual(inc, 86.349431762792364)
         
-
-        
-        
-
-# see L5772 in thellier_gui_spd
-
-
-#>>> for num, x in enumerate(X2):
-#...     t = x * X2_prime[num]
-#...     total += t
-
 
 
 if __name__ == "__main__":

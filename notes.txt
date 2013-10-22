@@ -220,3 +220,13 @@ LT-PTRM-Z    Lab Treatment			pTRM tail check After in laboratory field step, per
 LT-PTRM-I    Lab Treatment			 pTRM check: After zero field step, perform an in field cooling. After treatment at a particular temperature step, the specimen is then reheated to a lower temperature and cooled with the laboratory field on thus reapplying a pTRM. Coe 1967.
 
 LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory field step, perform a zero field cooling at same temperature. A check carried out during Thellier procedures to detect multidomain grains. Additional zero field heating steps are used to remove a previously placed pTRM. The ability to remove a prior pTRM step at the same temperature imparted is used as an indicator of reversal. Riisager & Riisager 2001, Scherbakov et al. 1993.
+
+
+
+
+to do:
+
+check get_curve()
+finish IZZI_MD
+put Dec_anc, Dec_free, Inc_anc, Inc_free into spd
+make sure verison of get_SCAT really does work

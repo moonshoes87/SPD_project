@@ -17,6 +17,7 @@
 
 import sys,pylab,scipy,os
 import lib_arai_plot_statistics as lib_arai
+import lib_directional_statistics as lib_direct
 from scipy import * 
 
 
@@ -350,7 +351,21 @@ class PintPars(object):
         self.pars['Zstar'] = Zstar
         return Zstar
                              
-            
+
+
+    def get_IZZI_MD(self):
+        pass
+
+        
+    # directional statistics begin here:
+
+    def get_dec_and_inc(self):
+        Dec_Anc, Inc_Anc = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=True)
+        Dec_Free, Inc_Free = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=False)
+        self.pars['Dec_Anc'], self.pars['Dec_Free'] = Dec_Anc, Dec_Free
+        self.pars['Inc_Anc'], self.pars['Inc_Free'] = Inc_Anc, Inc_Free
+        
+    
         
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
@@ -363,6 +378,10 @@ class PintPars(object):
         self.get_R_corr2()
         self.get_R_det2()
         self.get_Z()
+        self.get_Zstar()
+        self.get_IZZI_MD()
+        # directional statistics
+        self.get_dec_and_inc()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
