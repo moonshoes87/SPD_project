@@ -279,23 +279,6 @@ def get_xy_array(x_segment, y_segment):
         xy_array.append((x, y_segment[num]))
     return xy_array
 
-    
-#def get_triangles(xy_segment, Arai_steps): # succeeding, but only for simple ones without repeats
-#    starting_points = []  
-#    temp = []
-#    for i in xy_segment[1:-2 :1]: #  still not sure about this
-#        starting_points.append(i)
-#    print starting_points
-#    triangles = []
-#    midpoints = []
-#    for start in starting_points:
-#        index = xy_segment.index(start)
-#        midpoint = Arai_steps[index + 1]
-#        midpoints.append(midpoint) # finds if the midpoint is IZ or ZI
-#        triangle = (start, xy_segment[index + 1], xy_segment[index +2])
-#        triangles.append(triangle)
-#    return {'triangles': triangles, 'midpoints': midpoints}
-        
 
 
 xy_segment = [(1, 2), (3, 4), (5, 6), (7, 8), (9,10), (11, 12), (13, 14)]
@@ -331,7 +314,6 @@ def get_triangle_sides(x_segment, y_segment):
     L2 = sqrt((x_segment[1] - x_segment[2])**2 + (y_segment[1] - y_segment[2])**2)
     L3 = sqrt((x_segment[2] - x_segment[0])**2 + (y_segment[2] - y_segment[0])**2)
     return {'L1': L1, 'L2': L2, 'L3': L3}
-
 
 
 def get_triangle(line1, line2, line3):
@@ -370,39 +352,105 @@ def get_sign(triangle, midpoint):
     return {'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
 
 
+x = numpy.array([1., 1.5, 2., 3., 6., 8., 8.5, 8.5])
+y = numpy.array([8., 4., 3.9, 3.5, 3., 2.5, 2., 1.5])
+xy = []
+for num, x in enumerate(x):
+    xy.append((x, y[num]))
+norm = 2
+steps = ['ZI', 'IZ','ZI', 'IZ','ZI', 'IZ','ZI', 'IZ']
+def get_ZI_line(xy_array=xy, Arai_steps=steps): # seems to work.  only possible problem is not excluding repeat ZI points
+    ZI_points = []
+    for num, point in enumerate(xy_array):
+        if Arai_steps[num] == 'ZI':
+            ZI_points.append(point)
+    print "ZI points:", ZI_points
+    ZI_line = 0.
+    for num, point in enumerate(ZI_points[:-1]): # 
+#        print "point", point
+#        print "ZI_points[num + 1]", ZI_points[num+1]
+        result = (numpy.sqrt( (point[0] - ZI_points[num + 1][0])**2 + (point[1] - ZI_points[num + 1][1])**2 ))
+#        print "get sqrt of:", ( (point[0] - ZI_points[num + 1][0])**2 - (point[1] - ZI_points[num + 1][1])**2 )
+#        print "(", point[0], "-", ZI_points[num + 1][0], ")**2  -  (", point[1], "-", ZI_points[num+1][1], ")**2"
+#        print result
+        ZI_line += result
+    print ZI_line
+    return { 'ZI_line': ZI_line, 'ZI_points': ZI_points }
 
 # you need to work through this one by hand and figure it out, make sure it's right
 
 
-        
 xy_segment = ((1, 2),(2, 4),(5,6),(7,8),(8,10),(11,12),(13,14),(15,16),(17,18))
 A_steps =     ['ZI',  'ZI', 'IZ',  'IZ', 'IZ',  'ZI',    'IZ',  'ZI',   'ZI']
 x = [2, 8, 11, 13, 17]
 y = [4, 10, 12, 14, 18]
+real_ZI_line = get_ZI_line(xy_segment, A_steps)['ZI_line']
 ref_triangles = [((2,4),(8,10),(11, 12)),((8,10),(11,12),(13,14)),((11,12),(13,14),(17,18))]
 ref_midpoints = ['IZ', 'ZI', 'IZ']
 # triangles and midpoints are both returned by get_triangles
-def get_area_sum(triangles=ref_triangles, midpoints = ref_midpoints, ZI_line = 10):  
+def get_area_sum(triangles=ref_triangles, midpoints = ref_midpoints, ZI_line = real_ZI_line):  # this may work
     Area = 0
     for num, triangle in enumerate(triangles):
-        print triangle
+#        print triangle
         midpoint = midpoints[num]
         x_seg = [triangle[0][0], triangle[1][0], triangle[2][0]]
-        print "x_seg", x_seg  
+#        print "x_seg", x_seg  
         y_seg = [triangle[0][1], triangle[1][1], triangle[2][1]]
-        print "y_seg", y_seg
+#        print "y_seg", y_seg
         lines = get_triangle_sides(x_seg, y_seg)  
-        print "lines", lines
-        t = get_triangle(lines['L1'], lines['L2'], lines['L3']) # arccos of 1 is 0, so everything ends up zero.  ah, because my line was a straight line.  
+#        print "lines", lines
+        t = get_triangle(lines['L1'], lines['L2'], lines['L3'])
         t_area = t['triangle_A']
         sign = get_sign(triangle, midpoint)['sign']
-        print "sign", sign
+#        print "sign", sign
         normed_triangle_area = (t_area * sign) / ZI_line
-        print "normed_triangle_area", normed_triangle_area
+#        print "normed_triangle_area", normed_triangle_area
         Area += normed_triangle_area
-        print Area
+#        print Area
     print "Area:", Area
     return Area
+
+
+x_arai = [1, 2, 3, 4, 5, 6, 7]
+y_arai = [1., .8, .6, .4, .2, .1, .05]
+steps_arai = ['IZ', 'ZI', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI']
+
+def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
+    norm = y_Arai[0] # initial NRM
+   # def get_normed_points(point_array, norm): # good to go
+    #return points
+    
+    x = get_normed_points(x_Arai, norm)
+    y = get_normed_points(y_Arai, norm)
+
+    #def get_xy_array(x_segment, y_segment): 
+    #return xy_array
+
+    xy_array = get_xy_array(x, y)
+
+    #def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # works!
+    #return {'triangles': triangles, 'midpoints': midpoints}
+
+    t = get_triangles(xy_array, steps_Arai)
+    triangles = t['triangles']
+    midpoints = t['midpoints']
+    
+    #def get_ZI_line(xy_array=xy, Arai_steps=steps): # seems to work.  only possible problem is not excluding repeat ZI points
+    #return { 'ZI_line': ZI_line, 'ZI_points': ZI_points }
+
+    ZI_line = get_ZI_line(xy_array, steps_Arai)['ZI_line']
+    
+
+   # def get_area_sum(triangles=ref_triangles, midpoints = ref_midpoints, ZI_line = real_ZI_line):  # this may work
+    # calls get lines, get triangle, etc. for each triangle
+    #return Area
+
+    IZZI_MD = get_area_sum(triangles, midpoints, ZI_line)
+    
+    print "IZZI_MD:", IZZI_MD
+    return IZZI_MD
+
+
 
 
         #def get_triangle_sides(x_segment, y_segment):
@@ -418,28 +466,9 @@ def get_area_sum(triangles=ref_triangles, midpoints = ref_midpoints, ZI_line = 1
 
 
 
-x = numpy.array([1., 1.5, 2., 3., 6., 8., 8.5, 8.5])
-y = numpy.array([8., 4., 3.9, 3.5, 3., 2.5, 2., 1.5])
-norm = 2
-steps = ['ZI', 'IZ','ZI', 'IZ','ZI', 'IZ','ZI', 'IZ']
 
     
-
-def get_ZI_line(xy_array, Arai_steps): # should this exclude the first two points, as does the rest of the calculation?
-    # get ZI points
-    # do sigma operation to get line.  FIX THIS IT DOESN't WORK
-    ZI_points = []
-    for num, point in enumerate(xy_array):
-        if Arai_steps[num] == 'ZI':
-            ZI_points.append(point)
-    print "ZI points:", ZI_points
-    ZI_line = 0.
-    for num, point in enumerate(ZI_points[:-1]): # iterating by one, instead of by two as in the spd document.  doing this because I have made a list of exclusively the ZI points, so I don't need to skip. 
-        result = (numpy.sqrt( (point[0] - ZI_points[num + 1][0])**2 - (point[1] - ZI_points[num + 1][1])**2 ))
-        print result
-        ZI_line += result
-    print ZI_line
-    return { 'ZI_line': ZI_line, 'ZI_points': ZI_points }
+# I think the problem is that my example has a positive slope, but all araiplots will have a negative slope. nope.  
 
 
 # YOU NEED TO USE X_ARAI, etc., for the xy

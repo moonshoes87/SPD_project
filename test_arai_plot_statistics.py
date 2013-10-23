@@ -338,6 +338,16 @@ class IZZI_MD(unittest.TestCase):
             else:
                 self.assertEqual(result1[key], reference1[key])
 
+    def testZI_Line(self):
+        xy_segment = [(1, 2), (2, 4), (5, 7), (7, 7), (9,10), (11, 12), (13, 14), (15, 16)] # using full set of points, not truncated
+        steps =       ['IZ',   'ZI',    'IZ',  'ZI',    'IZ',   'ZI',   'ZI',  'IZ']
+        ref_ZI_points = [(2, 4), (7, 7), (11, 12), (13, 14)]
+        ref_ZI_line = 15.062503257024339
+        # test both of these values
+        result = lib_arai.get_ZI_line(xy_segment, steps)
+        self.assertAlmostEqual(result['ZI_line'], ref_ZI_line)
+        self.assertAlmostEqual(result['ZI_points'], ref_ZI_points)
+        
 
 
 #    def test_get_ZI_line(self):
