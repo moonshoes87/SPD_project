@@ -262,12 +262,12 @@ class IZZI_MD(unittest.TestCase):
     def test_get_triangles_simple(self): # works
         x = [0, 1, 2, 3, 4, 5]
         y = [0, 2, 4, 6, 8, 10]
+        steps_Arai = ['ZI', 'IZ', 'ZI', 'IZ', 'ZI', 'IZ'] 
         ref_triangles = [((1, 2), (2, 4), (3, 6)), ((2, 4), (3, 6), (4, 8)), ((3,6), (4,8), (5, 10))]
         ref_midpoints = ['ZI', 'IZ', 'ZI']
         xy = lib_arai.get_xy_array(x, y)
         print "xy", xy
         reference = { 'triangles': ref_triangles, 'midpoints': ref_midpoints }
-        steps_Arai = ['ZI', 'IZ', 'ZI', 'IZ', 'ZI', 'IZ'] 
         result = lib_arai.get_triangles(xy, steps_Arai)
         # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoints: 'ZI'
         for key, value in result.items():
@@ -278,14 +278,15 @@ class IZZI_MD(unittest.TestCase):
             else:
                 self.assertEqual(value, reference[key])
 
-    def test_get_triangles_complex(self):# works
+    def test_get_triangles_complex(self):# seems to work again, yay.
         xy_segment = ((1, 2),(3, 4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18))
         steps = ['ZI',  'ZI',  'IZ', 'IZ', 'IZ', 'ZI','IZ','ZI','ZI']
         ref_midpoints = ['IZ', 'ZI', 'IZ']
-        ref_triangles = [((3,4),(5,6),(11, 12)),((5,6),(11,12),(13,14)),((11,12),(13,14),(15,16))]
+        ref_triangles = [((3,4),(9,10),(11, 12)),((9,10),(11,12),(13,14)),((11,12),(13,14),(17,18))]
         # make it the complicated kind
         reference = {'triangles': ref_triangles, 'midpoints': ref_midpoints}
         result = lib_arai.get_triangles(xy_segment, steps)
+        print "reference triangles:", reference['triangles']
         for key, value in result.items():
             if type(value) == numpy.ndarray:
                 v = numpy.allclose(value, reference[key]) # assesses two arrays for if they are approximately equal 
@@ -337,8 +338,6 @@ class IZZI_MD(unittest.TestCase):
             else:
                 self.assertEqual(result1[key], reference1[key])
 
-
-        
 
 
 #    def test_get_ZI_line(self):

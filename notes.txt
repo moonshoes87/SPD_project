@@ -228,5 +228,8 @@ to do:
 
 check get_curve()
 finish IZZI_MD
+       use last repeated point, not first
 put Dec_anc, Dec_free, Inc_anc, Inc_free into spd
 make sure verison of get_SCAT really does work
+fix R_corr2 based on updated spd (v.0.5).  sigh. 
+
