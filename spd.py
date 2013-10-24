@@ -187,7 +187,7 @@ class PintPars(object):
         self.pars['SSE'] = data['SSE']
 
 
-    def other_get_SCAT(self):
+    def get_SCAT(self):
         slope, slope_err, slope_beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
 #        beta_threshold = .1                                                                                  
@@ -204,117 +204,9 @@ class PintPars(object):
         points = lib_arai.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temps, ptrm_checks_starting_temps, x_ptrm_check, y_ptrm_check, tail_checks_temps, tail_checks_starting_temps, x_tail_check, y_tail_check)
         # checking each point
         SCAT = lib_arai.get_SCAT(points, low_bound, high_bound, x_max, y_max)
-        self.pars['_SCAT'] = SCAT
+        self.pars['SCAT'] = SCAT
         
 
-    def get_SCAT(self):
-        slope, slope_err, beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
-# need beta_threshold.  default in thellier_gui is .1
-        x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
-        beta_threshold = 0.1 
-        slope_err_threshold = abs(slope) * beta_threshold
-        x=mean(array(self.x_Arai_segment))
-        y=mean(array(self.y_Arai_segment))
-        mass_center = (x, y)
-        # getting lines passing through mass_center
-        slope_1 = slope + (2 * slope_err_threshold)
-        l1_y_int = y - (slope_1 * x)
-        l1_x_int = -1 * (l1_y_int / slope_1)
-        slope_2 = slope - 2 * slope_err_threshold
-        l2_y_int = y - (slope_2 * x)
-        l2_x_int = -1 * (l2_y_int / slope_2)
-        # l1_y_int and l2_x_int form the bottom line of the box
-        # l2_y_int and l1_x_int form the top line of the box
-#        print "diagonal line1:", (0, l2_y_int), (l2_x_int, 0), (x, y)
-#        print "diagonal line2:", (0, l1_y_int), (l1_x_int, 0), (x, y)
-#        print "bottom line:", [(0, l1_y_int), (l2_x_int, 0)]
-#        print "top line:", [(0, l2_y_int), (l1_x_int, 0)]
-        low_line = [(0, l1_y_int), (l2_x_int, 0)]
-        high_line = [(0, l2_y_int), (l1_x_int, 0)]
-        x_max = high_line[1][0]# 
-        y_max = high_line[0][1]
-       # print "Max x, y: ", x_max, y_max
-        
-        # function for bottom line
-        low_slope = (low_line[0][1] - low_line[1][1]) / (low_line[0][0] - low_line[1][0]) # y_0 - y_1 / x_0 - x_1
-        low_y_int = low_line[0][1]
-        def low_line(x): # appears correct
-            y = low_slope * x + low_y_int
-            return y
-
-        # function for top line
-        high_slope = (high_line[0][1] - high_line[1][1]) / (high_line[0][0] - high_line[1][0]) # y_0 - y_1 / x_0 - x_1
-        high_y_int = high_line[0][1]
-        def high_line(x): # appears correct
-            y = high_slope * x + high_y_int
-            return y
-
-        # function to find if a particular point is in the box
-        def in_SCAT(x, y):
-           # print "x, y", x, y
-            passing = True
-            if x > x_max or y > y_max: 
-                print "x or y greater than x or y_max"
-                passing = False
-            if x < 0 or y < 0: # all data must be in upper right quadrant of graph
-                print "x or y smaller than 0"
-                passing = False
-            upper_limit = high_line(x)
-            lower_limit = low_line(x)
-           # print "upper limit, lower limit for y: ", upper_limit, lower_limit
-            if y > upper_limit:
-                print "y > upper limit"
-                passing = False
-            if y < lower_limit:
-                print "y < lower limit"
-                passing = False
-            return passing # boolean
-    
-        def get_points():
-            points = []
-        
-            for i in range(self.start, self.end + 1):
-                x = self.x_Arai[i]
-                y = self.y_Arai[i]
-                points.append((x, y))
-
-        # adding relevant ptrm checks
-           # print "points (x and y Arai added)", points
-            for num, temp in enumerate(self.ptrm_checks_temperatures): # seems to work
-                if temp >= self.tmin and temp <= self.tmax: # if temp is within selected range
-                    if self.ptrm_checks_starting_temperatures[num] >= self.tmin and self.ptrm_checks_starting_temperatures[num] <= self.tmax: # and also if it was not done after an out-of-range temperature
-                        x = self.x_ptrm_check[num]
-                        y = self.y_ptrm_check[num]
-                        points.append((x, y))
-
-           # print "points (ptrm checks added)", points
-        # adding relevant tail checks
-            for num, temp in enumerate(self.tail_checks_temperatures):  # check this one
-                if temp >= self.tmin and temp <= self.tmax:
-                    if self.tail_checks_starting_temperatures[num] >= self.tmin and self.tail_checks_starting_temperatures[num] <= self.tmax:
-                        x = self.x_tail_check[num]
-                        y = self.y_tail_check[num]
-                        points.append((x, y))
-           # print "points (tail checks added)", points
-            return points
-
-        points = get_points()
-        # iterate through all relevant points and see if any of them are outside of your SCAT box
-            
-        p = True
-        for point in points:
-            result = in_SCAT(point[0], point[1])
-            if result == False:
-                print "SCAT TEST FAILED"
-                p = False
-        if p:
-            print "SCAT TEST PASSED"
-            self.pars['SCAT'] = True
-        else:
-            print "SCAT TEST FAILED"
-            self.pars['SCAT'] = False
-        print "-----"
-        return {'SCAT': self.pars['SCAT'] }
 
 
     def get_R_corr2(self):
@@ -374,7 +266,6 @@ class PintPars(object):
         self.get_FRAC()
         self.get_curve()
         self.get_SCAT()
-        self.other_get_SCAT()
         self.get_R_corr2()
         self.get_R_det2()
         self.get_Z()
