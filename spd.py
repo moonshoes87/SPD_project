@@ -163,11 +163,11 @@ class PintPars(object):
         self.pars['max_diff'] = data['max_diff']
         self.pars['vector_diffs'] = data['vector_diffs']
         self.pars['specimen_vds'] = data['specimen_vds']
-        self.pars['specimen_fvds']= data['f_vds']
+        self.pars['specimen_fvds']= data['specimen_fvds']
         self.pars['vector_diffs_segment'] = data['vector_diffs_segment']
         self.pars['partial_vds'] = data['partial_vds']
         self.pars['GAP-MAX'] = data['GAP-MAX']
-        return {'max_diff': data['max_diff'], 'vector_diffs': data['vector_diffs'], 'specimen_vds': data['specimen_vds'], 'f_vds': data['f_vds'], 'vector_diffs_segment': data['vector_diffs_segment'], 'partial_vds': data['partial_vds'], 'GAP-MAX': data['GAP-MAX']}
+        return {'max_diff': data['max_diff'], 'vector_diffs': data['vector_diffs'], 'specimen_vds': data['specimen_vds'], 'specimen_fvds': data['specimen_fvds'], 'vector_diffs_segment': data['vector_diffs_segment'], 'partial_vds': data['partial_vds'], 'GAP-MAX': data['GAP-MAX']}
 
 
     def get_FRAC(self):

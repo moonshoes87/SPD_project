@@ -32,7 +32,7 @@ class CheckParams(unittest.TestCase):
     obj.calculate_all_statistics()
     obj_new_pars = obj.pars
     pre_calculation_pars = ['specimen_int_n', 'lab_dc_field']
-    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2', 'count_IZ', 'count_ZI', 'x_err', 'y_err', 'x_tag', 'y_tag', '_SCAT', 'Z', 'Zstar', 'Dec_Anc', 'Dec_Free', 'Inc_Anc', 'Inc_Free']  # remember to update this as you add stats.  removed magic_method_codes...
+    post_calculation_pars = ['vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'B_anc', 'SCAT', 'specimen_int', 'specimen_fvds', 'specimen_b_beta', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'specimen_int_n', 'centroid', 'max_diff', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_circle', 'delta_y_prime', 'B_anc_sigma', 'B_lab', 'specimen_b_sigma', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'specimen_k', 'specimen_q', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'R_corr2', 'R_det2', 'count_IZ', 'count_ZI', 'x_err', 'y_err', 'x_tag', 'y_tag', 'Z', 'Zstar', 'Dec_Anc', 'Dec_Free', 'Inc_Anc', 'Inc_Free']  # remember to update this as you add stats.  removed magic_method_codes...
 
     def test_for_params_before(self):
         for par in self.pre_calculation_pars:
@@ -106,17 +106,42 @@ class CheckYorkRegression(unittest.TestCase):
 
 
 
-class CheckVDSsequence(unittest.TestCase): # NOT DONE come back to this
+class CheckVDSsequence(unittest.TestCase): # adequate
 
     obj = copy.deepcopy(spd.thing)
     obj.York_Regression()
-    stuff = obj.get_vds()
+    result = obj.get_vds()
 #    stuff['vds'] = -.1
+# should be 0238x6011044, 473., 623
+    ref_fvds = 0.1360813531595344
+    ref_vds = 1.2591254846197817
+    ref_GAP_MAX = 0.32852441013324574
+    ref_vector_diffs_segment = [0.031295984827684566, 0.024151118628312387, 0.036482667142194579, 0.059128016249387697, 0.034082675643388412, 0.090581343759213978]
+    ref_partial_vds = 0.27572180625018161
+    
+    def test_against_known_values(self): # just testing with values verified in thellier_gui.  not a brilliant test, but fine
+        print self.result.keys()
+        self.assertAlmostEqual(self.result['specimen_fvds'], self.ref_fvds)
+        self.assertAlmostEqual(self.result['specimen_vds'], self.ref_vds)
+        self.assertAlmostEqual(self.result['GAP-MAX'], self.ref_GAP_MAX)
+        self.assertAlmostEqual(self.result['vector_diffs_segment'], self.ref_vector_diffs_segment)
+        self.assertAlmostEqual(self.result['partial_vds'], self.ref_partial_vds)
 
+    
+#zdata = [[1, 2, 3], [3, 4, 5], [4, 5.5, 6]]
+#2, 2, 2.  1, 1.5, 1.  4, 5.5, 6.
 
+ 
     def test_for_negative_values(self):
-        for k, v in self.stuff.items():
+        for k, v in self.result.items():
             self.assertGreaterEqual(v, 0) # none of these stats can possibly be negative numbers
+
+
+class CheckSCAT(unittest.TestCase): # NOT DONE
+
+    def test_some_stuff(self):
+        pass
+
 
 
 
@@ -180,7 +205,6 @@ class CheckR_det2(unittest.TestCase): # acceptable working test
         result = lib_arai.get_R_det2(self.y_segment, self.y_avg, self.y_prime)
         self.assertEqual((1 - .25/2.25), result)
     
-
 
 class CheckZigzag(unittest.TestCase):
     x = [1., 2., 3.]
@@ -347,17 +371,6 @@ class IZZI_MD(unittest.TestCase):
         self.assertAlmostEqual(result['ZI_points'], ref_ZI_points)
         
 
-
-#    def test_get_ZI_line(self):
-#        arai_steps = ['IZ', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI']
-#        xy = [(1., 2.), (2., 3.), (3., 4.), (5., 5.), (5., 6.), (6., 7.)]
-#        ZI_points_ref = [(2., 3.), (5., 5.), (6., 7.)]
-#        result = lib_arai.get_ZI_line(xy, arai_steps)
-#        ZI_points = result['ZI_points']
-#        ZI_line_ref = numpy.sqrt(5) + numpy.sqrt(1)  # unless you have misunderstood.  check this with Ron.  possibly there is an added exponent
-#        ZI_line = result['ZI_line']
-#        self.assertEqual(ZI_points, ZI_points_ref)
-#        self.assertEqual(ZI_line, ZI_line_ref)
 
     def test_get_IZZI_MD(self):
         # inputs:  Area of each triangle with their signs.  L_ZI

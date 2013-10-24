@@ -227,9 +227,14 @@ LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory f
 to do:
 
 check get_curve()
+      email Lisa # DONE
+email dude # DONE
+add tests for vds sequence # DONE
+ask Alex about last bit of VDS calculation
+add tests for SCAT
 finish IZZI_MD
        use last repeated point, not first # DONE
-put Dec_anc, Dec_free, Inc_anc, Inc_free into spd
-make sure verison of get_SCAT really does work
+put Dec_anc, Dec_free, Inc_anc, Inc_free into spd # DONE
+make sure verison of get_SCAT really does work # DONE
 fix R_corr2 based on updated spd (v.0.5).  sigh.   # DONE
 

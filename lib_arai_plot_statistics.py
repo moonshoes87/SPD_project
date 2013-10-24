@@ -54,7 +54,7 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     partial_vds = sum(vector_diffs_segment)
     max_diff = max(vector_diffs_segment)
     GAP_MAX = max_diff / partial_vds
-    return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'f_vds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
+    return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 
 def get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean, beta_threshold = .1):
