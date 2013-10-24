@@ -81,10 +81,24 @@ class CheckDecInc(unittest.TestCase):
 #            self.assertAlmostEqual(value, self.reference_vector[num])
 
     def test_get_dec_and_inc(self): # testing full thing with real data
-        dec, inc = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
+        dec, inc, tau = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
         self.assertAlmostEqual(dec, 267.4620127216387)
         self.assertAlmostEqual(inc, 86.349431762792364)
-        
+        self.assertGreaterEqual(tau[0], tau[1]) 
+        self.assertGreaterEqual(tau[1], tau[2])
+
+
+class CheckMad(unittest.TestCase):
+    
+    tau1 = .1
+    tau2 = .2
+    tau3 = .3
+    tau = [tau1, tau2, tau3]
+    ref_MAD = numpy.arctan((numpy.sqrt(tau2**2 + tau3**2)) / tau1)
+
+    def test_MAD(self):
+        MAD = lib_direct.get_MAD(self.tau)
+        self.assertAlmostEqual(MAD, self.ref_MAD)
 
 
 if __name__ == "__main__":

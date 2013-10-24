@@ -5783,7 +5783,12 @@ class Arai_GUI(wx.Frame):
 
         #  PCA in 2 lines
         M = (zdata_segment-mean(zdata_segment.T,axis=1)).T # subtract the mean (along columns)
+#        print "zdata_segment:"
+#        print zdata_segment
+#        print "T matrix?"
+#        print cov(M)
         [eigenvalues,eigenvectors] = linalg.eig(cov(M)) # attention:not always sorted
+        #tau, V
 
         # sort eigenvectors and eigenvalues
         eigenvalues=list(eigenvalues)
@@ -5810,6 +5815,13 @@ class Arai_GUI(wx.Frame):
 
         # MAD Kirschvink (1980)
         MAD=math.degrees(arctan(sqrt((t2+t3)/t1)))
+        print "-"
+        print self.s
+        print "t1, t2, t3", t1, t2, t3
+        print "DEC", DIR_PCA[0]
+        print "INC", DIR_PCA[1]
+        print "eigenvalues", eigenvalues
+        print "eigenvectors", eigenvectors
 
         # DANG Tauxe and Staudigel 2004
         DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
@@ -6451,10 +6463,10 @@ class Arai_GUI(wx.Frame):
 ##                    if Data_info["er_samples"][sample]['sample_type'] in ["Baked Clay","Baked Mud",
 
 
-        import spd
+       # import spd
 
-        PintPars = spd.PintPars(self.Data,self.s,tmin,tmax)   
-        print PintPars.calculate_all_statistics()
+       # PintPars = spd.PintPars(self.Data,self.s,tmin,tmax)   
+       # print PintPars.calculate_all_statistics()
         #dog.noise()
         return(pars)
         

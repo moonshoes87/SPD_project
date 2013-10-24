@@ -6,10 +6,13 @@ from numpy import linalg
 import spd
 
 
-def get_zdata_segment(zdata, t_Arai, tmin, tmax):  # oh, right, change this to use start and end.  
+def get_zdata_segment(zdata, t_Arai, tmin, tmax):  # 
+#    print "tmin, tmax", tmin, tmax
     lower_bound = t_Arai.index(tmin)
     upper_bound = t_Arai.index(tmax)
     zdata_segment = zdata[lower_bound:upper_bound + 1] # inclusive of upper bound
+#    print "zdata segment from get_zdata_segment"
+#    print zdata_segment
     return zdata_segment
 
 #       get center of mass for principal components (
@@ -56,7 +59,7 @@ def get_cart_primes_and_means(zdata_segment, anchored=True):
         X1_prime, X2_prime, X3_prime = list(X1), list(X2), list(X3)
     return {'X1_prime': X1_prime, 'X2_prime': X2_prime, 'X3_prime': X3_prime, 'X1': X1, 'X2': X2, 'X3': X3, 'X1_mean': means[0], 'X2_mean': means[1], 'X3_mean': means[2], 'means': means }
 
-def get_orientation_tensor(X1_p, X2_p, X3_p):
+def get_orientation_tensor(X1_p, X2_p, X3_p):  # TRY DOING IT RON STYLE, with cov
     X1_p, X2_p, X3_p = numpy.array(X1_p), numpy.array(X2_p), numpy.array(X3_p)
     orient_tensor = [[sum(X1_p * X1_p), sum(X1_p * X2_p), sum(X1_p * X3_p)],
                      [sum(X1_p * X2_p), sum(X2_p * X2_p), sum(X2_p * X3_p)],
@@ -80,7 +83,7 @@ def tauV(T):
     if tr!=0:
         for i in range(3):
 #            print "original:", evalues[i]
-            evalues[i]=evalues[i]/tr  # convention is norming eigenvalues so they sum to 1.  why?  just because.  :)
+            evalues[i]=evalues[i] /tr  # convention is norming eigenvalues so they sum to 1.  why?  just because.  :)
 #            print "normed:", evalues[i]
     else:
         return t,V  # if eigenvalues add up to zero, no sorting is needed
@@ -104,6 +107,8 @@ def tauV(T):
     t.append(t1)
     t.append(t2)
     t.append(t3)
+    print "tau", t
+    print "V", V
     return t,V
 
 
@@ -167,21 +172,36 @@ def cart2dir(cart):
 
 
 def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
-# get zdata segment
     zdata_segment = get_zdata_segment(zdata, t_Arai, tmin, tmax)
     data = get_cart_primes_and_means(zdata_segment, anchored)
     T = get_orientation_tensor(data['X1_prime'], data['X2_prime'], data['X3_prime'])
     t,V=tauV(T['orient_tensor'])
-#w1,w2,w3=t[2],t[1],t[0]
     PDir=cart2dir(V[0])
-    print "PDir", PDir 
+#    print "PDir", PDir 
     if PDir[1] < 0:  # this whole transformatio is NOT done in thellier_gui.  ask Ron
         PDir[0]+=180.
         PDir[1]=-PDir[1]
     PDir[0]=PDir[0]%360.
     dec = PDir[0]
     inc = PDir[1]
-    return dec, inc
+    print "tau", t
+    print "V", V
+    return dec, inc, t
+
+def get_MAD(tau):
+    MAD = numpy.arctan((numpy.sqrt(tau[1]**2 + tau[2]**2)) / tau[0])
+    return MAD
+
+def Lisa_get_MAD(t):
+    s1=numpy.sqrt(t[0])
+    MAD=numpy.arctan(numpy.sqrt(t[1]+t[2])/s1)/rad
+    print "Lisa MAD", MAD
+
+def Ron_get_MAD(tau):
+    tau1, tau2, tau3 = tau[0], tau[1], tau[2]
+    MAD=math.degrees(numpy.arctan(numpy.sqrt((t2+t3)/t1)))
+    print "Ron MAD", MAD
+
 
 #dec1, inc1 = get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
 #dec2, inc2 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax)
