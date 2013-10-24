@@ -152,22 +152,20 @@ class CheckFrac(unittest.TestCase): # basically good to go
 class CheckR_corr2(unittest.TestCase):
     obj = copy.deepcopy(spd.thing)
     R_corr2 = obj.get_R_corr2()
-    x_segment, y_segment = numpy.array([1., 5.]), numpy.array([0., 2.])
+    x_segment, y_segment = numpy.array([1., 5., 9.]), numpy.array([0., 2., 7.])
     x_avg = sum(x_segment) / len(x_segment)
     y_avg = sum(y_segment) / len(y_segment)
+    ref_numerator = 28.**2
+    ref_denominator = 32. * 26.
 
     def testPositiveOutput(self):
         """should produce positive output"""
         self.assertGreater(self.R_corr2, 0)
 
-    def testSizeOutput(self): # not absolutely sure this is true.  but it seems like it has to be.  
-        """output should be less than 1"""
-        self.assertLess(self.R_corr2, 1)
-
     def testSimpleInput(self):
         """should produce expected output with simple input"""
         r = lib_arai.get_R_corr2(self.x_avg, self.y_avg, self.x_segment, self.y_segment)
-        self.assertEqual(.5, r)
+        self.assertEqual((self.ref_numerator/self.ref_denominator), r)
         
     def testDivideByZero(self):
         """should raise ValueError when attempting to divide by zero"""

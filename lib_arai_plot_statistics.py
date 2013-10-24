@@ -205,9 +205,10 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
     denominator_x = 0
     denominator_y = 0
     for num, x in enumerate(x_segment):
-        r = ((x - x_avg) **2 ) * ((y_segment[num] - y_avg) **2 )
+        r = ((x - x_avg)  * (y_segment[num] - y_avg) )
         numerator += r
 #    print "numerator", numerator
+    numerator = numerator**2
     for x in x_segment:
         denominator_x += ((x - x_avg) ** 2)
 #    print "den_x", denominator_x
@@ -217,7 +218,6 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
     denominator = denominator_x * denominator_y
     if denominator == 0: raise ValueError("get_R_corr2 attempted dividing by zero")
     R_corr2 = numerator / denominator
-#    print R_corr2
     return R_corr2
 
 def get_R_det2(y_segment, y_avg, y_prime):
@@ -452,25 +452,3 @@ def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
 
 
 
-
-        #def get_triangle_sides(x_segment, y_segment):
-           # return {'L1': L1, 'L2': L2, 'L3': L3}
-
-        # def get_triangle(line1, line2, line3):
-            #return { 'triangle_phi': phi, 'triangle_H': height, 'triangle_A': area }
-
-        #def get_sign(triangle, midpoint):
-            #return {'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
-
-
-
-
-
-
-    
-# I think the problem is that my example has a positive slope, but all araiplots will have a negative slope. nope.  
-
-
-# YOU NEED TO USE X_ARAI, etc., for the xy
-
-#def get_IZZI_MD(
