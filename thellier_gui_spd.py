@@ -5837,7 +5837,8 @@ class Arai_GUI(wx.Frame):
             t2=1e-10
         if t3 <0 or t3==0:
             t3=1e-10
-            
+
+        print "tau?", t1, t2, t3
         pars["specimen_PCA_sigma_max"] =  sqrt(t1)
         pars["specimen_PCA_sigma_int"] =  sqrt(t2)
         pars["specimen_PCA_sigma_min"] =  sqrt(t3)

@@ -174,8 +174,9 @@ def cart2dir(cart):
 def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     zdata_segment = get_zdata_segment(zdata, t_Arai, tmin, tmax)
     data = get_cart_primes_and_means(zdata_segment, anchored)
+    means = data['means']
     T = get_orientation_tensor(data['X1_prime'], data['X2_prime'], data['X3_prime'])
-    t,V=tauV(T['orient_tensor'])
+    tau,V=tauV(T['orient_tensor'])
     PDir=cart2dir(V[0])
 #    print "PDir", PDir 
     if PDir[1] < 0:  # this whole transformatio is NOT done in thellier_gui.  ask Ron
@@ -184,18 +185,20 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     PDir[0]=PDir[0]%360.
     dec = PDir[0]
     inc = PDir[1]
-    print "tau", t
+    print "tau", tau
     print "V", V
-    return dec, inc, t
+    return dec, inc, tau, V, means
 
 def get_MAD(tau):
     MAD = numpy.arctan((numpy.sqrt(tau[1]**2 + tau[2]**2)) / tau[0])
     return MAD
 
 def Lisa_get_MAD(t):
+    rad = numpy.pi / 180.
     s1=numpy.sqrt(t[0])
     MAD=numpy.arctan(numpy.sqrt(t[1]+t[2])/s1)/rad
     print "Lisa MAD", MAD
+    return MAD
 
 def Ron_get_MAD(tau):
     tau1, tau2, tau3 = tau[0], tau[1], tau[2]
@@ -206,3 +209,35 @@ def Ron_get_MAD(tau):
 #dec1, inc1 = get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
 #dec2, inc2 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax)
 #dec3, inc3 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax, anchored=False)
+
+
+def Lisa_get_DANG(cm, Dir):
+    CMdir=cart2dir(cm)
+    Dirp=[Dir[0],Dir[1],1.]
+    dang=pmag_angle(CMdir,Dirp)
+
+def Ron_get_DANG(cm, best_fit_vector):
+    best_fit_vector=v1 # meaning the V1 
+    DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
+
+
+def pmag_angle(D1,D2): # use this 
+    """          
+    finds the angle between lists of two directions D1,D2
+    """
+    D1=numpy.array(D1)
+    if len(D1.shape)>1:
+        D1=D1[:,0:2] # strip off intensity
+    else: D1=D1[:2]
+    D2=numpy.array(D2)
+    if len(D2.shape)>1:
+        D2=D2[:,0:2] # strip off intensity
+    else: D2=D2[:2]
+    X1=dir2cart(D1) # convert to cartesian from polar
+    X2=dir2cart(D2)
+    angles=[] # set up a list for angles
+    for k in range(X1.shape[0]): # single vector
+        angle= numpy.arccos(numpy.dot(X1[k],X2[k]))*180./numpy.pi # take the dot product
+        angle=angle%360.
+        angles.append(angle)
+    return numpy.array(angles)

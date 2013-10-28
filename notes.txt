@@ -239,3 +239,6 @@ put Dec_anc, Dec_free, Inc_anc, Inc_free into spd # DONE
 make sure verison of get_SCAT really does work # DONE
 fix R_corr2 based on updated spd (v.0.5).  sigh.   # DONE
 
+
+
+dealing with eigenvectors and eigenvalues.  doing comparisons with Anc only

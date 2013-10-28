@@ -254,18 +254,25 @@ class PintPars(object):
     def get_dec_and_inc(self):
         print self.s
         print "-"
-        Dec_Anc, Inc_Anc, tau_Anc = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=True)
-        Dec_Free, Inc_Free, tau_Free = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=False)
+        Dec_Anc, Inc_Anc, tau_Anc, V_Anc, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=True)
+        Dec_Free, Inc_Free, tau_Free, V_Free, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=False)
         self.pars['Dec_Anc'], self.pars['Dec_Free'] = Dec_Anc, Dec_Free
         self.pars['Inc_Anc'], self.pars['Inc_Free'] = Inc_Anc, Inc_Free
         self.pars['tau_Anc'], self.pars['tau_Free'] = tau_Anc, tau_Free
+        self.pars['V_Anc'], self.pars['V_Free'] = V_Anc, V_Free
+        self.pars['zdata_mass_center'] = mass_center
 
         
     def get_MAD(self):
         MAD_Free = lib_direct.get_MAD(self.pars['tau_Free'])
         MAD_Anc = lib_direct.get_MAD(self.pars['tau_Anc'])
+        MAD_Anc_lisa = lib_direct.Lisa_get_MAD(self.pars['tau_Anc'])
+        MAD_ANC_lisa_free = lib_direct.Lisa_get_MAD(self.pars['tau_Free'])
         self.pars['MAD_Free'], self.pars['MAD_Anc'] = MAD_Free, MAD_Anc
+        self.pars['Lisa_MAD'] = MAD_Anc_lisa
+        self.pars['Lisa_MAD_free'] = MAD_ANC_lisa_free
         return {'MAD_Free': MAD_Free, 'MAD_Anc': MAD_Anc }
+    
            
         
     def calculate_all_statistics(self):
@@ -293,7 +300,7 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 thing.calculate_all_statistics()
 
 
-if False:
+if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
