@@ -2,6 +2,7 @@
 
 import numpy
 from numpy import linalg
+import math
 #import copy
 #import spd
 
@@ -191,18 +192,10 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
 
 def get_MAD(tau):
     # tau is ordered so that tau[0] > tau[1] > tau[2]
-    print "get_MAD tau:", tau
-    import math
 # makes no difference whether use math.degrees or / rad to turn answer into degrees
-    rad = numpy.pi / 180.
-    MAD0 = math.degrees(numpy.arctan( numpy.sqrt(  (tau[2] / tau[1]) + (tau[2] / tau[0]) ) ) )#/ rad # should work, but doesn't
-    MAD1 = math.degrees(numpy.arctan((numpy.sqrt(tau[1] + tau[2]) / tau[0])) )# / rad # should work, but doesn't
-    MAD2 = math.degrees(numpy.arctan((numpy.sqrt(tau[1] + tau[2])) / numpy.sqrt(tau[0])) )# / rad # does work, but shouldn't
- #   MAD1 = math.degrees(MAD)  # need to return in degrees, where python automatically outputs radians
-    print "MAD0", MAD0
-    print "MAD1", MAD1
-    print "MAD2", MAD2
-    return MAD0
+#    rad = numpy.pi / 180.
+    MAD = math.degrees(numpy.arctan(numpy.sqrt((tau[1] + tau[2]) / tau[0])) )# / rad # should work, AND DOES!!
+    return MAD
 
 def Lisa_get_MAD(t):
     print "Lisa_get_MAD tau:", t
@@ -211,11 +204,6 @@ def Lisa_get_MAD(t):
     MAD=numpy.arctan(numpy.sqrt(t[1]+t[2])/s1)/rad
     print "Lisa MAD", MAD
     return MAD
-
-def Ron_get_MAD(tau):
-    tau1, tau2, tau3 = tau[0], tau[1], tau[2]
-    MAD=math.degrees(numpy.arctan(numpy.sqrt((t2+t3)/t1)))
-    print "Ron MAD", MAD
 
 
 #dec1, inc1 = get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
