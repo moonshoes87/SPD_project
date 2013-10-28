@@ -228,6 +228,7 @@ to do:
 
 check get_curve()
       email Lisa # DONE
+      do proper curvature stats
 email dude # DONE
 add tests for vds sequence # DONE
 ask Alex about last bit of VDS calculation
@@ -239,7 +240,7 @@ put Dec_anc, Dec_free, Inc_anc, Inc_free into spd # DONE
 make sure verison of get_SCAT really does work # DONE
 fix R_corr2 based on updated spd (v.0.5).  sigh.   # DONE
 debug Dec, Inc # DONE
-fix b_wiggle runtime error
+fix b_wiggle runtime error # seems to be fixed
 add tests for MAD # DONE
 
 

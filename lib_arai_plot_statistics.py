@@ -237,28 +237,39 @@ def get_R_det2(y_segment, y_avg, y_prime):
 
 def get_b_wiggle(x, y, y_int):
     """returns instantaneous slope from the ratio of NRM lost to TRM gained at the ith step"""
-    b_wiggle = (y_int - y) / x
+#    print "(y_int - y) / x", 
+#    print "(", y_int,  "-", y, ") /",  x
+    if x == 0:
+        b_wiggle = 0
+    else:
+        b_wiggle = (y_int - y) / x
     return b_wiggle
 
 def get_Z(x_segment, y_segment, x_int, y_int, slope):
     """Arai plot zigzag parameter"""
     Z = 0
+    first_time = True
     for num, x in enumerate(x_segment):
         b_wiggle = get_b_wiggle(x, y_segment[num], y_int)
         z = (x * abs(b_wiggle - abs(slope)) ) / x_int
         Z += z
+        first_time = False
     return Z
 
 def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
     """Arai plot zigzag parameter (alternate)"""
 #    for num, x in enumerate(x_segment):
 #        b_wiggle = get_b_wiggle(x, y_segment[num], y_int)
+    print "doing Zstar"
     total = 0
+    first_time = True
     for num, x in enumerate(x_segment):
         b_wiggle = get_b_wiggle(x, y_segment[num], y_int)
         result = 100 * ( (x * abs(b_wiggle - abs(slope)) ) / y_int )
         total += result
+        first_time = False
     Zstar = (1. / (n - 1.)) * total
+    print "end Zstar"
     return Zstar
 
 # IZZI_MD (mainly)

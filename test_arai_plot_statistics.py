@@ -207,15 +207,22 @@ class CheckR_det2(unittest.TestCase): # acceptable working test
     
 
 class CheckZigzag(unittest.TestCase):
-    x = [1., 2., 3.]
-    y = [0., 4., 5.]
-    y_int = 5.
-    x_int = 1.
+    x = [0., 4., 5.]
+    y = [3., 2., 0.]
+    y_int = 3.
+    x_int = 5.
     n = len(x)
-    reference_b_wiggle = [5., .5, 0.]
+    reference_b_wiggle = [0, .25, 3./5.]
+
+
     slope = 1.2
-    Z = 8.8
-    Z_star = 88.
+    Z = 1.3599999999999999
+
+# above is correct
+
+
+    Z_star = 113.33333333333333
+#    Z_star = 88.
     obj = copy.deepcopy(spd.thing)
     obj.x_Arai, obj.y_Arai = x, y
     obj.pars['specimen_YT'], obj.pars['specimen_XT'] = y_int, x_int

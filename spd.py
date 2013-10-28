@@ -299,7 +299,7 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 thing.calculate_all_statistics()
 
 
-if False:
+if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
