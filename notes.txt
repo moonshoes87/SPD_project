@@ -238,12 +238,12 @@ put IZZI_MD into spd
 put Dec_anc, Dec_free, Inc_anc, Inc_free into spd # DONE
 make sure verison of get_SCAT really does work # DONE
 fix R_corr2 based on updated spd (v.0.5).  sigh.   # DONE
-debug Dec, Inc
+debug Dec, Inc # DONE
 fix b_wiggle runtime error
+add tests for MAD # DONE
 
 
 dealing with eigenvectors and eigenvalues.  doing comparisons with Anc only.  
 
-try using cov(T) and then try MAD
 
 thellier_gui Dec, Inc, and MAD are free.  lisa always uses free

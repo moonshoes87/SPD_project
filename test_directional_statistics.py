@@ -3,6 +3,7 @@
 import unittest
 import numpy
 #import copy
+import math
 import spd
 #import known_values
 import lib_directional_statistics as lib_direct
@@ -36,22 +37,20 @@ class CheckDecInc(unittest.TestCase):
     X3_p = numpy.array(X3_prime)
 
     orientation_tensor = lib_direct.get_orientation_tensor(X1_prime, X2_prime, X3_prime) # too complex to want to calculate by hand
-
 #    reference_vector = (-1., -2., -6.5) # not currently testing this
-    
 
     def test_zdata_segment(self):
         result = lib_direct.get_zdata_segment(self.zdata, self.t_Arai, self.tmin, self.tmax)
         self.assertEqual(result, self.zdata_segment)
 
     def test_cart_averages(self):
-        result = lib_direct.get_cart_primes_and_means(self.zdata_segment)
+        result = lib_direct.get_cart_primes_and_means(self.zdata_segment, anchored=False)
         self.assertEqual(result['X1_mean'], self.X1_avg)
         self.assertEqual(result['X2_mean'], self.X2_avg)
         self.assertEqual(result['X3_mean'], self.X3_avg)
 
     def test_cart_primes(self):
-        result = lib_direct.get_cart_primes_and_means(self.zdata_segment)
+        result = lib_direct.get_cart_primes_and_means(self.zdata_segment, anchored=False)
         self.assertEqual(result['X1_prime'], self.X1_prime)
         self.assertEqual(result['X2_prime'], self.X2_prime)
         self.assertEqual(result['X3_prime'], self.X3_prime)
@@ -81,7 +80,7 @@ class CheckDecInc(unittest.TestCase):
 #            self.assertAlmostEqual(value, self.reference_vector[num])
 
     def test_get_dec_and_inc(self): # testing full thing with real data
-        dec, inc, tau = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
+        dec, inc, tau, V, means = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax, anchored=False)
         self.assertAlmostEqual(dec, 267.4620127216387)
         self.assertAlmostEqual(inc, 86.349431762792364)
         self.assertGreaterEqual(tau[0], tau[1]) 
@@ -94,7 +93,7 @@ class CheckMad(unittest.TestCase):
     tau2 = .2
     tau3 = .3
     tau = [tau1, tau2, tau3]
-    ref_MAD = numpy.arctan((numpy.sqrt(tau2**2 + tau3**2)) / tau1)
+    ref_MAD = math.degrees(numpy.arctan(numpy.sqrt(5.)))
 
     def test_MAD(self):
         MAD = lib_direct.get_MAD(self.tau)

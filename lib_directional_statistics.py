@@ -211,14 +211,35 @@ def Lisa_get_MAD(t):
 #dec3, inc3 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax, anchored=False)
 
 
+
+# cm same as ...pars['zdata_mass_center']
 def Lisa_get_DANG(cm, Dir):
     CMdir=cart2dir(cm)
     Dirp=[Dir[0],Dir[1],1.]
     dang=pmag_angle(CMdir,Dirp)
+    return dang
 
 def Ron_get_DANG(cm, best_fit_vector):
     best_fit_vector=v1 # meaning the V1 
     DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
+
+
+def dir2cart(d): # from pmag.py
+   # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z    
+    ints=numpy.ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs             
+    d=numpy.array(d)
+    rad=numpy.pi/180.
+    if len(d.shape)>1: # array of vectors                                                         
+        decs,incs=d[:,0]*rad,d[:,1]*rad
+        if d.shape[1]==3: ints=d[:,2] # take the given lengths                  
+    else: # single vector                                 
+        decs,incs=numpy.array(d[0])*rad,numpy.array(d[1])*rad
+        if len(d)==3:
+            ints=numpy.array(d[2])
+        else:
+            ints=numpy.array([1.])
+    cart= numpy.array([ints*numpy.cos(decs)*numpy.cos(incs),ints*numpy.sin(decs)*numpy.cos(incs),ints*numpy.sin(incs)]).transpose()
+    return cart
 
 
 def pmag_angle(D1,D2): # use this 
@@ -241,3 +262,14 @@ def pmag_angle(D1,D2): # use this
         angle=angle%360.
         angles.append(angle)
     return numpy.array(angles)
+
+if False:
+    import spd
+    thing = spd.thing
+    cm = thing.pars['zdata_mass_center']
+    Dir = [thing.pars['Dec_Free'], thing.pars['Inc_Free'], 0]
+    r = Lisa_get_DANG(cm, Dir)
+    print "cm", cm
+    print "Dir", Dir
+    print "zebra,", r
+#def Lisa_get_DANG(cm, Dir):
