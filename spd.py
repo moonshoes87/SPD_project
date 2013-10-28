@@ -264,14 +264,15 @@ class PintPars(object):
 
         
     def get_MAD(self):
+        print "self.pars['tau_Free'],", self.pars['tau_Free']
         MAD_Free = lib_direct.get_MAD(self.pars['tau_Free'])
-        MAD_Anc = lib_direct.get_MAD(self.pars['tau_Anc'])
-        MAD_Anc_lisa = lib_direct.Lisa_get_MAD(self.pars['tau_Anc'])
-        MAD_ANC_lisa_free = lib_direct.Lisa_get_MAD(self.pars['tau_Free'])
-        self.pars['MAD_Free'], self.pars['MAD_Anc'] = MAD_Free, MAD_Anc
-        self.pars['Lisa_MAD'] = MAD_Anc_lisa
-        self.pars['Lisa_MAD_free'] = MAD_ANC_lisa_free
-        return {'MAD_Free': MAD_Free, 'MAD_Anc': MAD_Anc }
+#        MAD_Anc = lib_direct.get_MAD(self.pars['tau_Anc'])
+        MAD_Lisa_Free = lib_direct.Lisa_get_MAD(self.pars['tau_Free'])
+        self.pars['MAD_free'] = MAD_Free
+#        self.pars['Lisa_MAD'] = MAD_Anc_lisa
+        self.pars['MAD_lisa_free'] = MAD_Lisa_Free
+        print "self.pars['tau_Free'],", self.pars['tau_Free']
+        return {'MAD_Free': MAD_Free }
     
            
         
@@ -300,7 +301,7 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 thing.calculate_all_statistics()
 
 
-if True:
+if False:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()

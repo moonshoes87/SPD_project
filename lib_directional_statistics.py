@@ -3,7 +3,7 @@
 import numpy
 from numpy import linalg
 #import copy
-import spd
+#import spd
 
 
 def get_zdata_segment(zdata, t_Arai, tmin, tmax):  # 
@@ -51,7 +51,7 @@ def get_cart_primes_and_means(zdata_segment, anchored=True):
     X2 = zdata[:,1]
     X3 = zdata[:,2]
     means = list(numpy.mean(zdata.T,axis=1))
-    if anchored:
+    if anchored == False:
         X1_prime = list(X1 - means[0])#X1_mean)
         X2_prime = list(X2 - means[1])
         X3_prime = list(X3 - means[2])
@@ -190,10 +190,22 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     return dec, inc, tau, V, means
 
 def get_MAD(tau):
-    MAD = numpy.arctan((numpy.sqrt(tau[1]**2 + tau[2]**2)) / tau[0])
-    return MAD
+    # tau is ordered so that tau[0] > tau[1] > tau[2]
+    print "get_MAD tau:", tau
+    import math
+# makes no difference whether use math.degrees or / rad to turn answer into degrees
+    rad = numpy.pi / 180.
+    MAD0 = math.degrees(numpy.arctan( numpy.sqrt(  (tau[2] / tau[1]) + (tau[2] / tau[0]) ) ) )#/ rad # should work, but doesn't
+    MAD1 = math.degrees(numpy.arctan((numpy.sqrt(tau[1] + tau[2]) / tau[0])) )# / rad # should work, but doesn't
+    MAD2 = math.degrees(numpy.arctan((numpy.sqrt(tau[1] + tau[2])) / numpy.sqrt(tau[0])) )# / rad # does work, but shouldn't
+ #   MAD1 = math.degrees(MAD)  # need to return in degrees, where python automatically outputs radians
+    print "MAD0", MAD0
+    print "MAD1", MAD1
+    print "MAD2", MAD2
+    return MAD0
 
 def Lisa_get_MAD(t):
+    print "Lisa_get_MAD tau:", t
     rad = numpy.pi / 180.
     s1=numpy.sqrt(t[0])
     MAD=numpy.arctan(numpy.sqrt(t[1]+t[2])/s1)/rad
