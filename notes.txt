@@ -242,6 +242,8 @@ fix R_corr2 based on updated spd (v.0.5).  sigh.   # DONE
 debug Dec, Inc # DONE
 fix b_wiggle runtime error # seems to be fixed
 add tests for MAD # DONE
+change get_Dec_and_Inc to also get Intensity.  fix this so it works correctly
+       best fit vector is: thing.pars['V_Free'][0] & thing.pars['V_Anc'][0]
 
 
 dealing with eigenvectors and eigenvalues.  doing comparisons with Anc only.  

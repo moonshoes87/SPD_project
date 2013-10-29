@@ -254,10 +254,11 @@ class PintPars(object):
     def get_dec_and_inc(self):
         print self.s
         print "-"
-        Dec_Anc, Inc_Anc, tau_Anc, V_Anc, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=True)
-        Dec_Free, Inc_Free, tau_Free, V_Free, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=False)
+        Dec_Anc, Inc_Anc, best_fit_Anc, tau_Anc, V_Anc, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=True)
+        Dec_Free, Inc_Free, best_fit_Free, tau_Free, V_Free, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=False)
         self.pars['Dec_Anc'], self.pars['Dec_Free'] = Dec_Anc, Dec_Free
         self.pars['Inc_Anc'], self.pars['Inc_Free'] = Inc_Anc, Inc_Free
+        self.pars['best_fit_vector_Anc'], self.pars['best_fit_vector_Free'] = best_fit_Anc, best_fit_Free
         self.pars['tau_Anc'], self.pars['tau_Free'] = tau_Anc, tau_Free
         self.pars['V_Anc'], self.pars['V_Free'] = V_Anc, V_Free
         self.pars['zdata_mass_center'] = mass_center
@@ -272,7 +273,14 @@ class PintPars(object):
 #        self.pars['MAD_lisa_free'] = MAD_Lisa_Free
         return {'MAD_Free': MAD_Free, 'MAD_Anc': MAD_Anc }
     
-           
+       
+    def get_alpha(self): # need Int_Free and Int_Anc
+        free = self.pars['best_fit_vector_Free']
+        anc = self.pars['best_fit_vector_Anc']
+        alpha = lib_direct.get_alpha(anc, free)
+        self.pars['alpha'] = alpha
+
+    
         
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
@@ -289,6 +297,7 @@ class PintPars(object):
         # directional statistics
         self.get_dec_and_inc()
         self.get_MAD()
+        self.get_alpha()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]

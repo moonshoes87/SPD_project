@@ -178,7 +178,10 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     means = data['means']
     T = get_orientation_tensor(data['X1_prime'], data['X2_prime'], data['X3_prime'])
     tau,V=tauV(T['orient_tensor'])
+    print "alt possible best fit vector", V[0]
     PDir=cart2dir(V[0])
+    best_fit_vector = V[0]
+    print "best fit vector"
 #    print "PDir", PDir 
     if PDir[1] < 0:  # this whole transformatio is NOT done in thellier_gui.  ask Ron
         PDir[0]+=180.
@@ -186,9 +189,10 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     PDir[0]=PDir[0]%360.
     dec = PDir[0]
     inc = PDir[1]
+    intensity = PDir[2]
     print "tau", tau
     print "V", V
-    return dec, inc, tau, V, means
+    return dec, inc, best_fit_vector, tau, V, means
 
 def get_MAD(tau): # works
     # tau is ordered so that tau[0] > tau[1] > tau[2]
@@ -276,8 +280,17 @@ def pmag_angle(D1,D2): # use this
     return numpy.array(angles)
 
 
+def get_alpha(anc_fit, free_fit): # possibly should be converted to degrees
+    """returns angle between anchored best fit vector and free best fit vector"""
+    anc_fit = numpy.array(anc_fit)
+    free_fit = numpy.array(free_fit)
+    alpha=numpy.arccos( ( numpy.dot(anc_fit, free_fit) )/( numpy.sqrt(sum(anc_fit**2)) * numpy.sqrt(sum(free_fit**2))))    
+    alpha_deg = math.degrees(alpha)
+    return alpha_deg
 
-if True:
+
+
+if False:
     import spd
     thing = spd.thing
     cm = thing.pars['zdata_mass_center']

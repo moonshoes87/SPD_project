@@ -2,7 +2,7 @@
 
 import unittest
 import numpy
-#import copy
+import copy
 import math
 import spd
 #import known_values
@@ -80,7 +80,7 @@ class CheckDecInc(unittest.TestCase):
 #            self.assertAlmostEqual(value, self.reference_vector[num])
 
     def test_get_dec_and_inc(self): # testing full thing with real data
-        dec, inc, tau, V, means = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax, anchored=False)
+        dec, inc, intenstiy, tau, V, means = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax, anchored=False)
         self.assertAlmostEqual(dec, 267.4620127216387)
         self.assertAlmostEqual(inc, 86.349431762792364)
         self.assertGreaterEqual(tau[0], tau[1]) 
@@ -102,10 +102,20 @@ class CheckMad(unittest.TestCase):
 
 class CheckAlpha(unittest.TestCase):
 
-    # but possibly input ought be direction, output should be cartesian coordinates?? not sure??
     d1 = [-1., 2.]
     d2 = [3., 4.]
-    reference_alpha = numpy.arccos(5./11)
+    ref_alpha = numpy.arccos(5. / (numpy.sqrt(5) * 5)) # 1.1071487177940904
+    ref_alpha_degrees = math.degrees(ref_alpha)
+
+    ref_real_alpha = 2.074709711008407
+
+    def test_alpha(self):
+        result = lib_direct.get_alpha(self.d1, self.d2)
+        self.assertAlmostEqual(self.ref_alpha_degrees, result)
+
+    def test_alpha_real_data(self):
+        self.assertAlmostEqual(thing.pars['alpha'], self.ref_real_alpha)
+
 #    1*3 + 2 * 4
 
     

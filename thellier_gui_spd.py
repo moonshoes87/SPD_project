@@ -5815,13 +5815,13 @@ class Arai_GUI(wx.Frame):
 
         # MAD Kirschvink (1980)
         MAD=math.degrees(arctan(sqrt((t2+t3)/t1)))
-        print "-"
-        print self.s
-        print "t1, t2, t3", t1, t2, t3
-        print "DEC", DIR_PCA[0]
-        print "INC", DIR_PCA[1]
-        print "eigenvalues", eigenvalues
-        print "eigenvectors", eigenvectors
+#        print "-"
+#        print self.s
+#        print "t1, t2, t3", t1, t2, t3
+#        print "DEC", DIR_PCA[0]
+#        print "INC", DIR_PCA[1]
+#        print "eigenvalues", eigenvalues
+#        print "eigenvectors", eigenvectors
 
         # DANG Tauxe and Staudigel 2004
         DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
