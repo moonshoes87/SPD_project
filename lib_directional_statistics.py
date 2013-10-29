@@ -190,14 +190,14 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     print "V", V
     return dec, inc, tau, V, means
 
-def get_MAD(tau):
+def get_MAD(tau): # works
     # tau is ordered so that tau[0] > tau[1] > tau[2]
 # makes no difference whether use math.degrees or / rad to turn answer into degrees
 #    rad = numpy.pi / 180.
     MAD = math.degrees(numpy.arctan(numpy.sqrt((tau[1] + tau[2]) / tau[0])) )# / rad # should work, AND DOES!!
     return MAD
 
-def Lisa_get_MAD(t):
+def Lisa_get_MAD(t): # also works
     print "Lisa_get_MAD tau:", t
     rad = numpy.pi / 180.
     s1=numpy.sqrt(t[0])
@@ -214,14 +214,24 @@ def Lisa_get_MAD(t):
 
 # cm same as ...pars['zdata_mass_center']
 def Lisa_get_DANG(cm, Dir):
+   # print "cm, Dir", cm, Dir
     CMdir=cart2dir(cm)
     Dirp=[Dir[0],Dir[1],1.]
     dang=pmag_angle(CMdir,Dirp)
+    print "Lisa cmdir, dirp", CMdir, Dirp
     return dang
 
 def Ron_get_DANG(cm, best_fit_vector):
-    best_fit_vector=v1 # meaning the V1 
-    DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
+#    best_fit_vector=v1 # meaning the V1 
+#    cmdir = cart2dir(cm)
+    cmdir = cm
+#    dirp = cart2dir(best_fit_vector)
+    dirp = best_fit_vector
+#    DANG=math.degrees( numpy.arccos( ( numpy.dot(cmdir, best_fit_vector) )/( numpy.sqrt(sum(cmdir**2)) * numpy.sqrt(sum(best_fit_vector**2)))))
+    DANG=math.degrees( numpy.arccos( ( numpy.dot(cmdir, dirp) )/( numpy.sqrt(sum(cmdir**2)) * numpy.sqrt(sum(dirp**2)))))
+    print "Ron cmdir, dirp,", cmdir, dirp
+    print "dirp Should be:", should_be
+    return DANG
 
 
 def dir2cart(d): # from pmag.py
@@ -254,6 +264,8 @@ def pmag_angle(D1,D2): # use this
     if len(D2.shape)>1:
         D2=D2[:,0:2] # strip off intensity
     else: D2=D2[:2]
+    print "D1", D1
+    print "D2", D2
     X1=dir2cart(D1) # convert to cartesian from polar
     X2=dir2cart(D2)
     angles=[] # set up a list for angles
@@ -263,13 +275,20 @@ def pmag_angle(D1,D2): # use this
         angles.append(angle)
     return numpy.array(angles)
 
-if False:
+
+
+if True:
     import spd
     thing = spd.thing
     cm = thing.pars['zdata_mass_center']
-    Dir = [thing.pars['Dec_Free'], thing.pars['Inc_Free'], 0]
+    Dir = [thing.pars['Dec_Free'], thing.pars['Inc_Free'], 1.]
     r = Lisa_get_DANG(cm, Dir)
-    print "cm", cm
-    print "Dir", Dir
-    print "zebra,", r
+#    r2 = Ron_get_DANG(numpy.array(cm), numpy.array(Dir))
+    r2 = Ron_get_DANG(numpy.array(cm), thing.pars['V_Free'][0])
+#    print "Dir", Dir
+#    print "cm", cm
+    print "Lisa r,", r
+    print "Ron r", r2
+#    r1 = Ron_get_DANG(cm, Dir)
+#    print "Ron DANG", r1
 #def Lisa_get_DANG(cm, Dir):

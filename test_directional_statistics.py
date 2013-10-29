@@ -100,5 +100,18 @@ class CheckMad(unittest.TestCase):
         self.assertAlmostEqual(MAD, self.ref_MAD)
 
 
+class CheckAlpha(unittest.TestCase):
+
+    # but possibly input ought be direction, output should be cartesian coordinates?? not sure??
+    d1 = [-1., 2.]
+    d2 = [3., 4.]
+    reference_alpha = numpy.arccos(5./11)
+#    1*3 + 2 * 4
+
+    
+    
+
+
+
 if __name__ == "__main__":
     unittest.main()

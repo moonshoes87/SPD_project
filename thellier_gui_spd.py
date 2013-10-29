@@ -5825,6 +5825,8 @@ class Arai_GUI(wx.Frame):
 
         # DANG Tauxe and Staudigel 2004
         DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
+        print "cm", cm
+        print "best fit vector", best_fit_vector
 
 
         # best fit PCA direction
@@ -5838,7 +5840,7 @@ class Arai_GUI(wx.Frame):
         if t3 <0 or t3==0:
             t3=1e-10
 
-        print "tau?", t1, t2, t3
+#        print "tau?", t1, t2, t3
         pars["specimen_PCA_sigma_max"] =  sqrt(t1)
         pars["specimen_PCA_sigma_int"] =  sqrt(t2)
         pars["specimen_PCA_sigma_min"] =  sqrt(t3)
