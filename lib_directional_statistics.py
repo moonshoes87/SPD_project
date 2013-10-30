@@ -316,6 +316,11 @@ def get_DANG(mass_center, free_best_fit_vector): # not working in all cases!  bu
     return DANG
 
 
+def get_NRM_dev(dang, x_avg, y_int):
+    NRM_dev = ( numpy.sin(dang) * numpy.sqrt(x_avg[0]**2 + x_avg[1]**2 + x_avg[2]**2) ) / y_int
+    NRM_dev *= 100.
+    return NRM_dev
+
 #means = list(numpy.mean(zdata.T,axis=1))
 #m=array(mean(CART_pTRMS_orig.T,axis=1)) 
 #        v1_plus=v1*sqrt(sum(cm**2))

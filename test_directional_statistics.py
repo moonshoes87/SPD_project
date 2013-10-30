@@ -130,7 +130,6 @@ class CheckDang(unittest.TestCase):
 
     ref_real_DANG = 2.08192544535
    
-
     def test_DANG(self):
         print "STARTING TEST"
         result = lib_direct.get_DANG(self.v1, self.v2)
@@ -139,6 +138,23 @@ class CheckDang(unittest.TestCase):
     def test_DANG_real_values(self):
         thing.get_DANG()
         self.assertAlmostEqual(thing.pars['DANG'], self.ref_real_DANG)
+
+
+class CheckNRMdev(unittest.TestCase):
+    dang = 2.
+#    X1_avg, X2_avg, X3_avg = 1.5, 5., 7
+    X_avg = [1.5, 5., 7.]
+    y_int = 7.
+    ref_NRM_dev = 113.42997754204494
+
+    def test_NRM_dev(self):
+        result = lib_direct.get_NRM_dev(self.dang, self.X_avg, self.y_int)
+        self.assertAlmostEqual(self.ref_NRM_dev, result)
+
+    def test_NRM_dev_real_values(self):
+        r = thing.get_NRM_dev()
+        print r
+    
 
 
 if __name__ == "__main__":

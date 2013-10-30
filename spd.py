@@ -286,7 +286,11 @@ class PintPars(object):
         DANG = lib_direct.get_angle_difference(free, cm)
         self.pars['DANG'] = DANG
 
-    
+    def get_NRM_dev(self):
+#        get_NRM_dev(self.dang, self.X_avg, self.y_int)
+        NRM_dev = lib_direct.get_NRM_dev(self.pars['DANG'], self.pars['zdata_mass_center'], self.pars['specimen_YT'])
+        self.pars['NRM_dev'] = NRM_dev
+        return NRM_dev
         
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
@@ -305,6 +309,7 @@ class PintPars(object):
         self.get_MAD()
         self.get_alpha()
         self.get_DANG()
+        self.get_NRM_dev()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
