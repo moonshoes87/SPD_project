@@ -280,6 +280,12 @@ class PintPars(object):
         alpha = lib_direct.get_alpha(anc, free)
         self.pars['alpha'] = alpha
 
+    def get_DANG(self):
+        free = self.pars['best_fit_vector_Free']
+        cm = self.pars['zdata_mass_center']
+        DANG = lib_direct.get_angle_difference(free, cm)
+        self.pars['DANG'] = DANG
+
     
         
     def calculate_all_statistics(self):
@@ -298,15 +304,19 @@ class PintPars(object):
         self.get_dec_and_inc()
         self.get_MAD()
         self.get_alpha()
+        self.get_DANG()
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
-thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
-thing.calculate_all_statistics()
+#thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
+#specimens = gui.Data.keys()
+#thing = PintPars(gui.Data, specimens[3], 523., 773.)
+#thing = PintPars(gui.Data, specimens[4], 273., 798.)
+#thing.calculate_all_statistics()
 
 if True:
     gui = tgs.Arai_GUI()

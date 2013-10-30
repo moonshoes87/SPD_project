@@ -118,7 +118,12 @@ class CheckAlpha(unittest.TestCase):
 
 #    1*3 + 2 * 4
 
+class CheckDang(unittest.TestCase):
+
     
+
+    def test_DANG(self):
+        pass
     
 
 

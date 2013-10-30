@@ -5825,6 +5825,7 @@ class Arai_GUI(wx.Frame):
 
         # DANG Tauxe and Staudigel 2004
         DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
+        print "specimen", self.s
         print "cm", cm
         print "best fit vector", best_fit_vector
 
@@ -6254,14 +6255,14 @@ class Arai_GUI(wx.Frame):
 
         vector_diffs=self.Data[s]['vector_diffs']
         vector_diffs_segment=vector_diffs[zstart:zend]
-        print "----"
-        print "----"
-        print "vector_diffs:", vector_diffs
-        print "start, end: *", zstart, zend
-        print "specimen: ", self.s, tmin - 273., tmax - 273
-        print "segment*:", vector_diffs_segment
-        print "segment max:", max(vector_diffs_segment)
-        print "segment vds: ", sum(vector_diffs_segment)
+#        print "----"
+#        print "----"
+#        print "vector_diffs:", vector_diffs
+#        print "start, end: *", zstart, zend
+#        print "specimen: ", self.s, tmin - 273., tmax - 273
+#        print "segment*:", vector_diffs_segment
+#        print "segment max:", max(vector_diffs_segment)
+#        print "segment vds: ", sum(vector_diffs_segment)
         
         FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
         max_FRAC_gap=max(vector_diffs_segment/sum(vector_diffs_segment))

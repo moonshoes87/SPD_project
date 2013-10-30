@@ -58,7 +58,7 @@ def get_cart_primes_and_means(zdata_segment, anchored=True):
         X3_prime = list(X3 - means[2])
     else:
         X1_prime, X2_prime, X3_prime = list(X1), list(X2), list(X3)
-    return {'X1_prime': X1_prime, 'X2_prime': X2_prime, 'X3_prime': X3_prime, 'X1': X1, 'X2': X2, 'X3': X3, 'X1_mean': means[0], 'X2_mean': means[1], 'X3_mean': means[2], 'means': means }
+    return {'X1_prime': X1_prime, 'X2_prime': X2_prime, 'X3_prime': X3_prime, 'X1': X1, 'X2': X2, 'X3': X3, 'X1_mean': means[0], 'X2_mean': means[1], 'X3_mean': means[2], 'zdata_mass_center': means }
 
 def get_orientation_tensor(X1_p, X2_p, X3_p):  # TRY DOING IT RON STYLE, with cov
     X1_p, X2_p, X3_p = numpy.array(X1_p), numpy.array(X2_p), numpy.array(X3_p)
@@ -175,24 +175,25 @@ def cart2dir(cart):
 def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     zdata_segment = get_zdata_segment(zdata, t_Arai, tmin, tmax)
     data = get_cart_primes_and_means(zdata_segment, anchored)
-    means = data['means']
+    means = data['zdata_mass_center']
     T = get_orientation_tensor(data['X1_prime'], data['X2_prime'], data['X3_prime'])
     tau,V=tauV(T['orient_tensor'])
-    print "alt possible best fit vector", V[0]
     PDir=cart2dir(V[0])
     best_fit_vector = V[0]
-    print "best fit vector"
-#    print "PDir", PDir 
+    vector = adjust_best_fit_vector(best_fit_vector)
     if PDir[1] < 0:  # this whole transformatio is NOT done in thellier_gui.  ask Ron
-        PDir[0]+=180.
+        PDir[0]+=180. 
         PDir[1]=-PDir[1]
     PDir[0]=PDir[0]%360.
     dec = PDir[0]
     inc = PDir[1]
-    intensity = PDir[2]
-    print "tau", tau
-    print "V", V
-    return dec, inc, best_fit_vector, tau, V, means
+#    print "tau", tau
+#    print "V", V
+    print "anchored:", anchored, " end best fit vector", best_fit_vector
+    return dec, inc, vector, tau, V, means
+
+def adjust_best_fit_vector(vector):
+    return vector
 
 def get_MAD(tau): # works
     # tau is ordered so that tau[0] > tau[1] > tau[2]
@@ -226,15 +227,11 @@ def Lisa_get_DANG(cm, Dir):
     return dang
 
 def Ron_get_DANG(cm, best_fit_vector):
-#    best_fit_vector=v1 # meaning the V1 
-#    cmdir = cart2dir(cm)
+    """gets deviation angle between center of mass and the free-float best-fit vector"""
     cmdir = cm
-#    dirp = cart2dir(best_fit_vector)
     dirp = best_fit_vector
-#    DANG=math.degrees( numpy.arccos( ( numpy.dot(cmdir, best_fit_vector) )/( numpy.sqrt(sum(cmdir**2)) * numpy.sqrt(sum(best_fit_vector**2)))))
     DANG=math.degrees( numpy.arccos( ( numpy.dot(cmdir, dirp) )/( numpy.sqrt(sum(cmdir**2)) * numpy.sqrt(sum(dirp**2)))))
     print "Ron cmdir, dirp,", cmdir, dirp
-    print "dirp Should be:", should_be
     return DANG
 
 
@@ -280,14 +277,50 @@ def pmag_angle(D1,D2): # use this
     return numpy.array(angles)
 
 
+def get_angle_difference(v1, v2):
+    """returns angular difference in degrees between two vectors"""
+    v1 = numpy.array(v1)
+    v2 = numpy.array(v2)
+    angle=numpy.arccos( ( numpy.dot(v1, v2) )/( numpy.sqrt(sum(v1**2)) * numpy.sqrt(sum(v2**2))))    
+    return math.degrees(angle)
+
+
 def get_alpha(anc_fit, free_fit): # possibly should be converted to degrees
     """returns angle between anchored best fit vector and free best fit vector"""
-    anc_fit = numpy.array(anc_fit)
-    free_fit = numpy.array(free_fit)
-    alpha=numpy.arccos( ( numpy.dot(anc_fit, free_fit) )/( numpy.sqrt(sum(anc_fit**2)) * numpy.sqrt(sum(free_fit**2))))    
-    alpha_deg = math.degrees(alpha)
+#    anc_fit = numpy.array(anc_fit)
+#    free_fit = numpy.array(free_fit)
+#    alpha=numpy.arccos( ( numpy.dot(anc_fit, free_fit) )/( numpy.sqrt(sum(anc_fit**2)) * numpy.sqrt(sum(free_fit**2))))    
+#    alpha_deg = math.degrees(alpha)
+    alpha_deg = get_angle_difference(anc_fit, free_fit)
     return alpha_deg
 
+def get_DANG(mass_center, free_best_fit_vector): # not working in all cases!  but working in some
+    DANG = get_angle_difference(mass_center, free_best_fit_vector)
+    return DANG
+
+
+#means = list(numpy.mean(zdata.T,axis=1))
+#m=array(mean(CART_pTRMS_orig.T,axis=1)) 
+#        v1_plus=v1*sqrt(sum(cm**2))
+#        v1_minus=v1*-1*sqrt(sum(cm**2))
+#        test_v=CART_pTRMS_orig[0]-CART_pTRMS_orig[-1]
+#        if sqrt(sum((v1_minus-test_v)**2)) > sqrt(sum((v1_plus-test_v)**2)):
+#         DIR_PCA=self.cart2dir(v1*-1)
+#         best_fit_vector=v1*-1
+#        else:
+#         DIR_PCA=self.cart2dir(v1)
+#         best_fit_vector=v1
+
+
+# put this into get dec_and_inc
+#cm = zdata_mass_center
+#v1_plus = best_fit_vector * numpy.sqrt(sum(cm**2))
+#v1_minus = best_fit_vector * -1. * numpy.sqrt(sum(cm**2))
+#test_v = zdata[0] - zdata[-1]
+#        if sqrt(sum((v1_minus-test_v)**2)) > sqrt(sum((v1_plus-test_v)**2)):
+#          best_fit_vector = v1* -1.
+#        else:
+#          best_fit_vector = v1
 
 
 if False:
@@ -297,11 +330,17 @@ if False:
     Dir = [thing.pars['Dec_Free'], thing.pars['Inc_Free'], 1.]
     r = Lisa_get_DANG(cm, Dir)
 #    r2 = Ron_get_DANG(numpy.array(cm), numpy.array(Dir))
-    r2 = Ron_get_DANG(numpy.array(cm), thing.pars['V_Free'][0])
-#    print "Dir", Dir
-#    print "cm", cm
+    r2 = Ron_get_DANG(numpy.array(cm), thing.pars['best_fit_vector_Free'])
+    r3 = get_DANG(cm, thing.pars['best_fit_vector_Free'])
+    
+    # best fit vector is coming out wrong.  positive when should be negative
+    print "Dir", Dir
+    print "cm", cm
+    print "which thing??", thing.s
+    print "best_fit_vector", thing.pars['best_fit_vector_Free']
     print "Lisa r,", r
     print "Ron r", r2
+    print "Lori r", r3
 #    r1 = Ron_get_DANG(cm, Dir)
 #    print "Ron DANG", r1
 #def Lisa_get_DANG(cm, Dir):
