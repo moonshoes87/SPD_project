@@ -340,9 +340,11 @@ def get_DANG(mass_center, free_best_fit_vector): # not working in all cases!  bu
 #          best_fit_vector = v1
 
 
-if True:
+if False:
     import spd
     thing = spd.thing
+#    thing1 = spd.thing1
+#    thing1.calculate_all_statistics()
     cm = thing.pars['zdata_mass_center']
     Dir = thing.pars['best_fit_vector_Free']
     r = Lisa_get_DANG(cm, Dir)

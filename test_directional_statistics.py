@@ -10,6 +10,7 @@ import lib_directional_statistics as lib_direct
 
 
 thing = spd.thing
+#thing1 = spd.thing1
 
 class CheckDecInc(unittest.TestCase):
     
@@ -119,13 +120,25 @@ class CheckAlpha(unittest.TestCase):
 #    1*3 + 2 * 4
 
 class CheckDang(unittest.TestCase):
-
     
+    v1, v2 = [1., -2., 3.], [0.5, 4., 5.]
+#    v2 = 
+    dot_product =7.5 # .5 + (-6.) + 15.
+    mag1 = numpy.sqrt(14.)#(1 + 4 + 9)
+    mag2 = numpy.sqrt(41.25)#(.25 + 16 + 25)
+    ref_Dang = math.degrees(numpy.arccos(7.5 / (mag1 * mag2)))
+
+    ref_real_DANG = 2.08192544535
+   
 
     def test_DANG(self):
-        pass
+        print "STARTING TEST"
+        result = lib_direct.get_DANG(self.v1, self.v2)
+        self.assertAlmostEqual(result, self.ref_Dang)
     
-
+    def test_DANG_real_values(self):
+        thing.get_DANG()
+        self.assertAlmostEqual(thing.pars['DANG'], self.ref_real_DANG)
 
 
 if __name__ == "__main__":

@@ -283,7 +283,6 @@ class PintPars(object):
     def get_DANG(self):
         free = self.pars['best_fit_vector_Free']
         cm = self.pars['zdata_mass_center']
-        print "in spd free:", free, "cm:", cm
         DANG = lib_direct.get_angle_difference(free, cm)
         self.pars['DANG'] = DANG
 
@@ -312,12 +311,13 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
-#thing = PintPars(gui.Data, '0238x6011044', 473., 623.) # all 3 work with this one
-
+thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 specimens = gui.Data.keys()
-#thing = PintPars(gui.Data, specimens[3], 523., 773.) # Ron & Lori work with this one
-#thing = PintPars(gui.Data, specimens[4], 273., 798.)  #  Ron & Lori work with this one
-thing = PintPars(gui.Data, specimens[2], 273., 773.) # Ron & Lori work with this one
+thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
+
+#thing = PintPars(gui.Data, specimens[3], 523., 773.)
+#thing = PintPars(gui.Data, specimens[4], 273., 798.)
+#thing = PintPars(gui.Data, specimens[2], 273., 773.)
 thing.calculate_all_statistics()
 
 if False:
