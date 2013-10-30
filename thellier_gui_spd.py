@@ -5805,6 +5805,7 @@ class Arai_GUI(wx.Frame):
         v1_plus=v1*sqrt(sum(cm**2))
         v1_minus=v1*-1*sqrt(sum(cm**2))
         test_v=zdata_segment[0]-zdata_segment[-1]
+        print "test_v", test_v
 
         if sqrt(sum((v1_minus-test_v)**2)) < sqrt(sum((v1_plus-test_v)**2)):
          DIR_PCA=self.cart2dir(v1*-1)

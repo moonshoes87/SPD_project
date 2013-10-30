@@ -180,7 +180,7 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     tau,V=tauV(T['orient_tensor'])
     PDir=cart2dir(V[0])
     best_fit_vector = V[0]
-    vector = adjust_best_fit_vector(best_fit_vector)
+    vector = adjust_best_fit_vector(best_fit_vector, means, zdata) # means is mass 
     if PDir[1] < 0:  # this whole transformatio is NOT done in thellier_gui.  ask Ron
         PDir[0]+=180. 
         PDir[1]=-PDir[1]
@@ -189,11 +189,34 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     inc = PDir[1]
 #    print "tau", tau
 #    print "V", V
-    print "anchored:", anchored, " end best fit vector", best_fit_vector
+    print "anchored:", anchored, " best fit vector", best_fit_vector, "adjusted vector", vector
     return dec, inc, vector, tau, V, means
 
-def adjust_best_fit_vector(vector):
-    return vector
+def adjust_best_fit_vector(vector, cm, zdata):
+    """finds correct sign "+/-" for best fit vector"""
+#cm = zdata_mass_center
+    cm = numpy.array(cm)
+    best_fit_vector = numpy.array(vector)
+    v1_plus = best_fit_vector * numpy.sqrt(sum(cm**2))
+    v1_minus = best_fit_vector * -1. * numpy.sqrt(sum(cm**2))
+    test_v = zdata[0] - zdata[-1]
+    print "test_v", test_v
+    if numpy.sqrt(sum((v1_minus-test_v)**2)) < numpy.sqrt(sum((v1_plus-test_v)**2)):
+        best_fit_vector = best_fit_vector* -1. 
+    return best_fit_vector
+
+#        cm=array(mean(zdata_segment.T,axis=1)) # center of mass  
+ #       v1_plus=v1*sqrt(sum(cm**2))
+#        v1_minus=v1*-1*sqrt(sum(cm**2))
+#        test_v=zdata_segment[0]-zdata_segment[-1]
+#        if sqrt(sum((v1_minus-test_v)**2)) < sqrt(sum((v1_plus-test_v)**2)):
+#         DIR_PCA=self.cart2dir(v1*-1)
+#         best_fit_vector=v1*-1
+#        else:
+#         DIR_PCA=self.cart2dir(v1)
+#         best_fit_vector=v1
+
+
 
 def get_MAD(tau): # works
     # tau is ordered so that tau[0] > tau[1] > tau[2]
@@ -323,11 +346,11 @@ def get_DANG(mass_center, free_best_fit_vector): # not working in all cases!  bu
 #          best_fit_vector = v1
 
 
-if False:
+if True:
     import spd
     thing = spd.thing
     cm = thing.pars['zdata_mass_center']
-    Dir = [thing.pars['Dec_Free'], thing.pars['Inc_Free'], 1.]
+    Dir = [thing.pars['best_fit_vector_Free'][0], thing.pars['best_fit_vector_Free'][1], 1.]
     r = Lisa_get_DANG(cm, Dir)
 #    r2 = Ron_get_DANG(numpy.array(cm), numpy.array(Dir))
     r2 = Ron_get_DANG(numpy.array(cm), thing.pars['best_fit_vector_Free'])
