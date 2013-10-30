@@ -234,18 +234,12 @@ def Lisa_get_MAD(t): # also works
     return MAD
 
 
-#dec1, inc1 = get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax)
-#dec2, inc2 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax)
-#dec3, inc3 = get_dec_and_inc(spd.thing1.zdata, spd.thing1.t_Arai, spd.thing1.tmin, spd.thing1.tmax, anchored=False)
-
-
-
 # cm same as ...pars['zdata_mass_center']
-def Lisa_get_DANG(cm, Dir):
+def Lisa_get_DANG(cm, Dir): # working
    # print "cm, Dir", cm, Dir
     CMdir=cart2dir(cm)
-    Dirp=[Dir[0],Dir[1],1.]
-    dang=pmag_angle(CMdir,Dirp)
+    Dirp=cart2dir([Dir[0],Dir[1], Dir[2]])
+    dang=pmag_angle(CMdir,Dirp) 
     print "Lisa cmdir, dirp", CMdir, Dirp
     return dang
 
@@ -350,11 +344,11 @@ if True:
     import spd
     thing = spd.thing
     cm = thing.pars['zdata_mass_center']
-    Dir = [thing.pars['best_fit_vector_Free'][0], thing.pars['best_fit_vector_Free'][1], 1.]
+    Dir = thing.pars['best_fit_vector_Free']
     r = Lisa_get_DANG(cm, Dir)
 #    r2 = Ron_get_DANG(numpy.array(cm), numpy.array(Dir))
-    r2 = Ron_get_DANG(numpy.array(cm), thing.pars['best_fit_vector_Free'])
-    r3 = get_DANG(cm, thing.pars['best_fit_vector_Free'])
+    r2 = Ron_get_DANG(numpy.array(cm), Dir)
+    r3 = get_DANG(cm, Dir)
     
     # best fit vector is coming out wrong.  positive when should be negative
     print "Dir", Dir
