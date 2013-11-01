@@ -321,6 +321,8 @@ def get_NRM_dev(dang, x_avg, y_int):
     NRM_dev *= 100.
     return NRM_dev
 
+
+
 #means = list(numpy.mean(zdata.T,axis=1))
 #m=array(mean(CART_pTRMS_orig.T,axis=1)) 
 #        v1_plus=v1*sqrt(sum(cm**2))

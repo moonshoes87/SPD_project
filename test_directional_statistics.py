@@ -155,7 +155,20 @@ class CheckNRMdev(unittest.TestCase):
         r = thing.get_NRM_dev()
         print r
     
+class CheckGamma(unittest.TestCase):
 
+    def testGamma(self):
+        pass
+
+
+# trm...
+# x,y,z of B_lab ? 
+#specimen_Data['Thellier_dc_field_theta'] = 90.0
+#specimen_Data['Thellier_dc_field_phi'] = 0.0
+#specimen_Data['Thellier_dc_field_uT'] = 4e-05
+
+#datablock[1]['treatment_ac_field'] = 0
+#datablock[1]['treatment_dc_field'] = '4e-05'
 
 if __name__ == "__main__":
     unittest.main()
