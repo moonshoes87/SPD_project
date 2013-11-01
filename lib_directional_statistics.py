@@ -108,8 +108,8 @@ def tauV(T):
     t.append(t1)
     t.append(t2)
     t.append(t3)
-    print "tau", t
-    print "V", V
+#    print "tau", t
+#    print "V", V
     return t,V
 
 
@@ -189,7 +189,7 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     inc = PDir[1]
 #    print "tau", tau
 #    print "V", V
-    print "anchored:", anchored, " best fit vector", best_fit_vector, "adjusted vector", vector
+#    print "anchored:", anchored, " best fit vector", best_fit_vector, "adjusted vector", vector
     return dec, inc, vector, tau, V, means
 
 def adjust_best_fit_vector(vector, cm, zdata):
@@ -200,7 +200,7 @@ def adjust_best_fit_vector(vector, cm, zdata):
     v1_plus = best_fit_vector * numpy.sqrt(sum(cm**2))
     v1_minus = best_fit_vector * -1. * numpy.sqrt(sum(cm**2))
     test_v = zdata[0] - zdata[-1]
-    print "test_v", test_v
+#    print "test_v", test_v
     if numpy.sqrt(sum((v1_minus-test_v)**2)) < numpy.sqrt(sum((v1_plus-test_v)**2)):
         best_fit_vector = best_fit_vector* -1. 
     return best_fit_vector
@@ -226,11 +226,11 @@ def get_MAD(tau): # works
     return MAD
 
 def Lisa_get_MAD(t): # also works
-    print "Lisa_get_MAD tau:", t
+#    print "Lisa_get_MAD tau:", t
     rad = numpy.pi / 180.
     s1=numpy.sqrt(t[0])
     MAD=numpy.arctan(numpy.sqrt(t[1]+t[2])/s1)/rad
-    print "Lisa MAD", MAD
+#    print "Lisa MAD", MAD
     return MAD
 
 
@@ -240,7 +240,7 @@ def Lisa_get_DANG(cm, Dir): # working
     CMdir=cart2dir(cm)
     Dirp=cart2dir([Dir[0],Dir[1], Dir[2]])
     dang=pmag_angle(CMdir,Dirp) 
-    print "Lisa cmdir, dirp", CMdir, Dirp
+#    print "Lisa cmdir, dirp", CMdir, Dirp
     return dang
 
 def Ron_get_DANG(cm, best_fit_vector):
@@ -248,7 +248,7 @@ def Ron_get_DANG(cm, best_fit_vector):
     cmdir = cm
     dirp = best_fit_vector
     DANG=math.degrees( numpy.arccos( ( numpy.dot(cmdir, dirp) )/( numpy.sqrt(sum(cmdir**2)) * numpy.sqrt(sum(dirp**2)))))
-    print "Ron cmdir, dirp,", cmdir, dirp
+#    print "Ron cmdir, dirp,", cmdir, dirp
     return DANG
 
 
@@ -282,8 +282,8 @@ def pmag_angle(D1,D2): # use this
     if len(D2.shape)>1:
         D2=D2[:,0:2] # strip off intensity
     else: D2=D2[:2]
-    print "D1", D1
-    print "D2", D2
+#    print "D1", D1
+#    print "D2", D2
     X1=dir2cart(D1) # convert to cartesian from polar
     X2=dir2cart(D2)
     angles=[] # set up a list for angles
@@ -295,10 +295,18 @@ def pmag_angle(D1,D2): # use this
 
 
 def get_angle_difference(v1, v2):
-    """returns angular difference in degrees between two vectors"""
+    """returns angular difference in degrees between two vectors.  takes in cartesian coordinates."""
     v1 = numpy.array(v1)
     v2 = numpy.array(v2)
-    angle=numpy.arccos( ( numpy.dot(v1, v2) )/( numpy.sqrt(sum(v1**2)) * numpy.sqrt(sum(v2**2))))    
+#    print "v1:", v1, "v2:", v2
+    print "numpy.dot(v1, v2):", numpy.dot(v1, v2)
+#    print "v1**2", v1**2
+#    print "sum(v1**2)", math.fsum(v1**2)
+#    print "numpy.sqrt(sum(v1**2))", numpy.sqrt(math.fsum(v1**2))
+    print " * numpy.sqrt(sum(v2**2))", numpy.sqrt(math.fsum(v2**2))
+    print "denominator", ( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2)))
+    angle=numpy.arccos( ( numpy.dot(v1, v2) )/( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2))))    
+    print "angle in radians:", angle
     return math.degrees(angle)
 
 
@@ -321,7 +329,17 @@ def get_NRM_dev(dang, x_avg, y_int):
     NRM_dev *= 100.
     return NRM_dev
 
+def get_theta(): # FINISH MEEEEEE
+    pass
 
+def get_gamma(B_lab_dir, pTRM_dir):
+    B_lab_cart = dir2cart(B_lab_dir)
+    pTRM_cart = dir2cart(pTRM_dir)
+    print "B_lab_cart", B_lab_cart # [ ]
+    print "pTRM cart", pTRM_cart # [[ ]] 
+    gamma = pmag_angle(B_lab_dir, pTRM_dir)
+   # gamma = get_angle_difference(B_lab_cart, pTRM_cart)
+    return gamma
 
 #means = list(numpy.mean(zdata.T,axis=1))
 #m=array(mean(CART_pTRMS_orig.T,axis=1)) 

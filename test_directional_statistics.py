@@ -155,10 +155,30 @@ class CheckNRMdev(unittest.TestCase):
         r = thing.get_NRM_dev()
         print r
     
+class CheckTheta(unittest.TestCase):
+    ChRM = 0  # using free PCA example:   267.462012722 86.3494317628.  dir2cart: [-0.00281948, -0.06360888,  0.99797092]
+    B_lab_vector = [0, 90.]
+
+    def test_theta(self):  # FINISH ME!!!!!
+        pass
+    
+
 class CheckGamma(unittest.TestCase):
+    B_lab_dir = [0, 90, 1]
+    B_lab_cart = lib_direct.dir2cart(B_lab_dir)  # [  6.12323400e-17,   0.00000000e+00,   1.00000000e+00]
+
+    #[3,2,1] --> array([ 33.69006753,  15.50135957,   3.74165739])
+    pTRM_dir = [3, 2, 1]
+    pTRM_cart = lib_direct.dir2cart(pTRM_dir)
+
+
+    ref_gamma = 88.
 
     def testGamma(self):
-        pass
+        result = lib_direct.get_gamma(self.B_lab_dir, self.pTRM_dir)
+        print result, self.ref_gamma
+        self.assertAlmostEqual(self.ref_gamma, result)
+
 
 
 # trm...
