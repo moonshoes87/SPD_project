@@ -86,6 +86,8 @@ class PintPars(object):
 #         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from     
         self.ptrm_checks_starting_temperatures = self.specimen_Data['ptrm_checks_starting_temperatures'] # a list of temperatures from which the pTRM checks started from 
 
+        self.PTRMS = self.specimen_Data['PTRMS']
+
         self.zijdblock=self.specimen_Data['zijdblock']        
         self.z_temperatures=self.specimen_Data['z_temp']
 
@@ -96,9 +98,11 @@ class PintPars(object):
         self.pars={}
 
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
+        self.B_lab_vector = [self.specimen_Data['Thellier_dc_field_phi'], self.specimen_Data['Thellier_dc_field_theta'], self.specimen_Data['Thellier_dc_field_uT']]  # although generally last one can be abstracted as 1
+
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         self.pars['specimen_int_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K", "steps_Arai", "xy_Arai", "xy_Arai_segment"] # needs to be updated
+        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K", "steps_Arai", "xy_Arai", "xy_Arai_segment", "B_lab_vector", "PTRMS"] # needs to be updated
  
         #LJ ADDING stats:
         self.steps_Arai = self.specimen_Data['steps_Arai']
@@ -147,7 +151,7 @@ class PintPars(object):
         self.pars['specimen_w'] = data['specimen_w']
         self.pars['count_IZ'] = data['count_IZ']
         self.pars['count_ZI'] = data['count_ZI']
-        self.pars['B_lab'] = data['B_lab']
+        self.pars['B_lab'] = data['B_lab']  # think I don't need this, actually
         self.pars['B_anc'] = data['B_anc']
         self.pars['B_anc_sigma'] = data['B_anc_sigma']
         self.pars['specimen_int'] = data['specimen_int']
