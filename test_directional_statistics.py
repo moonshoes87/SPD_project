@@ -170,5 +170,7 @@ class CheckGamma(unittest.TestCase):
 #datablock[1]['treatment_ac_field'] = 0
 #datablock[1]['treatment_dc_field'] = '4e-05'
 
+# what is x,y,z of TRM_i=end.  .
+
 if __name__ == "__main__":
     unittest.main()

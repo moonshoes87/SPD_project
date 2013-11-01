@@ -229,6 +229,7 @@ to do:
 check get_curve()
       do proper curvature stats
       got Chernov and Lesort 2005, and matlab code.  but fuuuuuuuck this is confusing.  
+      review array manipulation in numpy tutorial
 ask Alex about last bit of VDS calculation
 add tests for SCAT
 finish IZZI_MD
@@ -240,6 +241,7 @@ debug DANG
       sometimes best_fit_vector is postive where should be negative.  
 remaining Directional stats:
 	  talk to Ron
+	  use thellier magic to check up on gamma
 
 
 
