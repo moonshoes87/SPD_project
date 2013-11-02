@@ -171,7 +171,6 @@ class CheckGamma(unittest.TestCase):
     pTRM_dir = [3, 2, 1]
     pTRM_cart = lib_direct.dir2cart(pTRM_dir)
 
-
     ref_gamma = 88.
 
     def testGamma(self):

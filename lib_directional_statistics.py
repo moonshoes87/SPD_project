@@ -289,6 +289,7 @@ def pmag_angle(D1,D2): # use this
     angles=[] # set up a list for angles
     for k in range(X1.shape[0]): # single vector
         angle= numpy.arccos(numpy.dot(X1[k],X2[k]))*180./numpy.pi # take the dot product
+#    angle=numpy.arccos( ( numpy.dot(v1, v2) )/( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2))))    
         angle=angle%360.
         angles.append(angle)
     return numpy.array(angles)
@@ -298,11 +299,11 @@ def get_angle_difference(v1, v2):
     """returns angular difference in degrees between two vectors.  takes in cartesian coordinates."""
     v1 = numpy.array(v1)
     v2 = numpy.array(v2)
-#    print "v1:", v1, "v2:", v2
-    print "numpy.dot(v1, v2):", numpy.dot(v1, v2)
-#    print "v1**2", v1**2
-#    print "sum(v1**2)", math.fsum(v1**2)
-#    print "numpy.sqrt(sum(v1**2))", numpy.sqrt(math.fsum(v1**2))
+    print "v1:", v1, "v2:", v2
+    print "numerator", numpy.dot(v1, v2)
+    print "v1**2", v1**2
+    print "sum(v1**2)", math.fsum(v1**2)
+    print "numpy.sqrt(sum(v1**2))", numpy.sqrt(math.fsum(v1**2))
     print " * numpy.sqrt(sum(v2**2))", numpy.sqrt(math.fsum(v2**2))
     print "denominator", ( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2)))
     angle=numpy.arccos( ( numpy.dot(v1, v2) )/( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2))))    
@@ -310,12 +311,8 @@ def get_angle_difference(v1, v2):
     return math.degrees(angle)
 
 
-def get_alpha(anc_fit, free_fit): # possibly should be converted to degrees
+def get_alpha(anc_fit, free_fit): # 
     """returns angle between anchored best fit vector and free best fit vector"""
-#    anc_fit = numpy.array(anc_fit)
-#    free_fit = numpy.array(free_fit)
-#    alpha=numpy.arccos( ( numpy.dot(anc_fit, free_fit) )/( numpy.sqrt(sum(anc_fit**2)) * numpy.sqrt(sum(free_fit**2))))    
-#    alpha_deg = math.degrees(alpha)
     alpha_deg = get_angle_difference(anc_fit, free_fit)
     return alpha_deg
 
@@ -332,14 +329,35 @@ def get_NRM_dev(dang, x_avg, y_int):
 def get_theta(): # FINISH MEEEEEE
     pass
 
+
+dir1 = [0, 90, 1]
+cart1 = dir2cart(dir1)
+
+dir2 = [1,2,3]
+cart2 = dir2cart(dir2)
+
+
 def get_gamma(B_lab_dir, pTRM_dir):
     B_lab_cart = dir2cart(B_lab_dir)
     pTRM_cart = dir2cart(pTRM_dir)
+    print "B_lab_dir", B_lab_dir, "pTRM_dir", pTRM_dir
     print "B_lab_cart", B_lab_cart # [ ]
     print "pTRM cart", pTRM_cart # [[ ]] 
-    gamma = pmag_angle(B_lab_dir, pTRM_dir)
-   # gamma = get_angle_difference(B_lab_cart, pTRM_cart)
-    return gamma
+    gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
+    gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
+    # pmag_angle and get_angle difference are equivalent with non zero values
+    gamma2 = numpy.array([gamma2])
+    boo = gamma1 == gamma2
+    print boo   # why the fuck is this false?  what the fuck is the difference between these things?
+    if gamma1 == gamma2:
+        return gamma1
+    else:
+        print type(gamma1), type(gamma2)
+        print type(gamma1[0]), type(gamma2[0])
+        print gamma1.ndim, gamma2.ndim
+        print gamma1.shape, gamma2.shape
+        print gamma1, gamma2
+        return gamma1  # or return gamma 2.  both work with unittests, so why the fuck don't they come out as equal, hmm?
 
 #means = list(numpy.mean(zdata.T,axis=1))
 #m=array(mean(CART_pTRMS_orig.T,axis=1)) 

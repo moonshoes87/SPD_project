@@ -295,6 +295,13 @@ class PintPars(object):
         NRM_dev = lib_direct.get_NRM_dev(self.pars['DANG'], self.pars['zdata_mass_center'], self.pars['specimen_YT'])
         self.pars['NRM_dev'] = NRM_dev
         return NRM_dev
+
+    def get_gamma(self):
+        lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
+        ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1]
+        gamma = lib_direct.get_gamma(lab_vector, ptrm_vector)
+        self.pars['gamma'] = gamma
+        return gamma
         
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
@@ -329,7 +336,7 @@ thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
 thing.calculate_all_statistics()
 
-if False:
+if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
