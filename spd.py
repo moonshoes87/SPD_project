@@ -299,7 +299,7 @@ class PintPars(object):
     def get_gamma(self):
         lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
         ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1]
-        gamma = lib_direct.get_gamma(lab_vector, ptrm_vector)
+        gamma = lib_direct.get_gamma(lab_vector, ptrm_vector
         self.pars['gamma'] = gamma
         return gamma
         

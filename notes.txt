@@ -246,3 +246,7 @@ remaining Directional stats:
 
 
 thellier_gui Dec, Inc, and MAD are free.  lisa always uses free
+
+
+matlab SVD and numpy SVD produce nearly, but not exactly, identical output.  difference is in V, and also in the format for S (less important)
+Also, checked and numpy and matlab notation for slicing is the same, except that matlab indexing starts at 1, not 0

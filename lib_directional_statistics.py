@@ -348,9 +348,11 @@ def get_gamma(B_lab_dir, pTRM_dir):
     # pmag_angle and get_angle difference are equivalent with non zero values
     gamma2 = numpy.array([gamma2])
     boo = gamma1 == gamma2
-    print boo   # why the fuck is this false?  what the fuck is the difference between these things?
-    if gamma1 == gamma2:
-        return gamma1
+    print "boo", boo   # why the fuck is this false?  what the fuck is the difference between these things?
+    print type(boo)
+    if str(gamma1) == str(gamma2):
+        print "success"
+        return gamma1, gamma2
     else:
         print type(gamma1), type(gamma2)
         print type(gamma1[0]), type(gamma2[0])
