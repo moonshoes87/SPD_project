@@ -155,12 +155,19 @@ class CheckNRMdev(unittest.TestCase):
         r = thing.get_NRM_dev()
         print r
     
-class CheckTheta(unittest.TestCase):
-    ChRM = 0  # using free PCA example:   267.462012722 86.3494317628.  dir2cart: [-0.00281948, -0.06360888,  0.99797092]
-    B_lab_vector = [0, 90.]
+class CheckTheta(unittest.TestCase):  # need to understand dir2cart, cart2dir better before can sign off on this one.  however, I THINK it is right as is
+#    ChRM = [-0.00281948, -0.06360888,  0.99797092] # using free PCA example:   267.462012722 86.3494317628.  dir2cart: [-0.00281948, -0.06360888,  0.99797092]
+    #ChRM = numpy.array([-0.00281948, -0.06360888,  0.99797092])
+    ChRM = numpy.array([-0.00281947815208591791, -0.06360887927605490821,  0.99797092193119241177])
+    B_lab_dir = [0.0, 90.0, 1.] # different from B_lab_vector... ignore last value
 
     def test_theta(self):  # FINISH ME!!!!!
-        pass
+        print "testing with, B_lab_dir", self.B_lab_dir, "ChRM", self.ChRM
+        result = lib_direct.get_theta(self.B_lab_dir, self.ChRM)
+        print "test theta result", result
+        self.assertAlmostEqual(result, thing.pars['theta'])
+
+
     
 
 class CheckGamma(unittest.TestCase):

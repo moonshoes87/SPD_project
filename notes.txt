@@ -242,6 +242,16 @@ debug DANG
 remaining Directional stats:
 	  talk to Ron
 	  use thellier magic to check up on gamma
+	  figure out exactly what ChRM is
+	  test your alpha
+	  do theta
+
+
+cart2dir
+	require x,y,z
+dir2cart
+	works with just Dec, Inc
+	however, outputs very different value if given Dec, Inc, and m (or whatever)
 
 
 

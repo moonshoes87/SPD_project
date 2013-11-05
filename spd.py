@@ -297,7 +297,13 @@ class PintPars(object):
         return NRM_dev
 
     def get_theta(self):
-        lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
+        b_lab_dir = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
+        print self.s
+        ChRM = self.pars['best_fit_vector_Free']
+        print "in spd: b_lab_dir", b_lab_dir, "ChRM", ChRM
+        theta = lib_direct.get_theta(b_lab_dir, ChRM)
+        self.pars['theta'] = theta
+        return theta
 
     def get_gamma(self):
         lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.] # dir
@@ -324,6 +330,8 @@ class PintPars(object):
         self.get_alpha()
         self.get_DANG()
         self.get_NRM_dev()
+        self.get_theta() # not necessarily done
+        self.get_gamma() # ditto
         print "done with calculate_all_statistics"
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
@@ -339,7 +347,7 @@ thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
 thing.calculate_all_statistics()
 
-if True:
+if False:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()

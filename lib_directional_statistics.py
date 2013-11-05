@@ -180,7 +180,7 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     tau,V=tauV(T['orient_tensor'])
     PDir=cart2dir(V[0])
     best_fit_vector = V[0]
-    vector = adjust_best_fit_vector(best_fit_vector, means, zdata) # means is mass 
+    vector = adjust_best_fit_vector(best_fit_vector, means, zdata) # means is mass center
     if PDir[1] < 0:  # this whole transformatio is NOT done in thellier_gui.  ask Ron
         PDir[0]+=180. 
         PDir[1]=-PDir[1]
@@ -299,15 +299,15 @@ def get_angle_difference(v1, v2):
     """returns angular difference in degrees between two vectors.  takes in cartesian coordinates."""
     v1 = numpy.array(v1)
     v2 = numpy.array(v2)
-    print "v1:", v1, "v2:", v2
-    print "numerator", numpy.dot(v1, v2)
-    print "v1**2", v1**2
-    print "sum(v1**2)", math.fsum(v1**2)
-    print "numpy.sqrt(sum(v1**2))", numpy.sqrt(math.fsum(v1**2))
-    print " * numpy.sqrt(sum(v2**2))", numpy.sqrt(math.fsum(v2**2))
-    print "denominator", ( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2)))
+#    print "v1:", v1, "v2:", v2
+#    print "numerator", numpy.dot(v1, v2)
+#    print "v1**2", v1**2
+#    print "sum(v1**2)", math.fsum(v1**2)
+#    print "numpy.sqrt(sum(v1**2))", numpy.sqrt(math.fsum(v1**2))
+#    print " * numpy.sqrt(sum(v2**2))", numpy.sqrt(math.fsum(v2**2))
+#    print "denominator", ( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2)))
     angle=numpy.arccos( ( numpy.dot(v1, v2) )/( numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2))))    
-    print "angle in radians:", angle
+#    print "angle in radians:", angle
     return math.degrees(angle)
 
 
@@ -328,8 +328,12 @@ def get_NRM_dev(dang, x_avg, y_int):
 
 def get_theta(B_lab_dir, ChRM): # FINISH MEEEEEE
     B_lab_cart = dir2cart(B_lab_dir)
-    get_angle_difference(B_lab_cart, cart) # you should change it so that get_angle_difference can take dir or cart
-    pass
+    # make sure ChRM is cartesian.  I think it is......
+    ChRM = ChRM
+    print "B_lab_cart", B_lab_cart
+    print "ChRM", ChRM
+    theta = get_angle_difference(B_lab_cart, ChRM) # you should change it so that get_angle_difference can take dir or cart
+    return theta
 
 
 dir1 = [0, 90, 1]
@@ -342,18 +346,18 @@ cart2 = dir2cart(dir2)
 def get_gamma(B_lab_dir, pTRM_dir):
     B_lab_cart = dir2cart(B_lab_dir)
     pTRM_cart = dir2cart(pTRM_dir)
-    print "B_lab_dir", B_lab_dir, "pTRM_dir", pTRM_dir
-    print "B_lab_cart", B_lab_cart # [ ]
-    print "pTRM cart", pTRM_cart # [[ ]] 
+#    print "B_lab_dir", B_lab_dir, "pTRM_dir", pTRM_dir
+#    print "B_lab_cart", B_lab_cart # [ ]
+#    print "pTRM cart", pTRM_cart # [[ ]] 
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
     gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
     # pmag_angle and get_angle difference are equivalent with non zero values
     gamma2 = numpy.array([gamma2])
     boo = gamma1 == gamma2
-    print "boo", boo   # why the fuck is this false?  what the fuck is the difference between these things?
-    print type(boo)
+#    print "boo", boo   # why the fuck is this false?  what the fuck is the difference between these things?
+#    print type(boo)
     if str(gamma1) == str(gamma2):
-        print "success"
+#        print "success"
         return gamma1, gamma2
     else:
         print type(gamma1), type(gamma2)
