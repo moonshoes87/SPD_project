@@ -326,7 +326,9 @@ def get_NRM_dev(dang, x_avg, y_int):
     NRM_dev *= 100.
     return NRM_dev
 
-def get_theta(): # FINISH MEEEEEE
+def get_theta(B_lab_dir, ChRM): # FINISH MEEEEEE
+    B_lab_cart = dir2cart(B_lab_dir)
+    get_angle_difference(B_lab_cart, cart) # you should change it so that get_angle_difference can take dir or cart
     pass
 
 
@@ -360,6 +362,9 @@ def get_gamma(B_lab_dir, pTRM_dir):
         print gamma1.shape, gamma2.shape
         print gamma1, gamma2
         return gamma1  # or return gamma 2.  both work with unittests, so why the fuck don't they come out as equal, hmm?
+
+
+
 
 #means = list(numpy.mean(zdata.T,axis=1))
 #m=array(mean(CART_pTRMS_orig.T,axis=1)) 

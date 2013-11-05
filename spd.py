@@ -296,10 +296,13 @@ class PintPars(object):
         self.pars['NRM_dev'] = NRM_dev
         return NRM_dev
 
-    def get_gamma(self):
+    def get_theta(self):
         lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
-        ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1]
-        gamma = lib_direct.get_gamma(lab_vector, ptrm_vector
+
+    def get_gamma(self):
+        lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.] # dir
+        ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1] # dir
+        gamma = lib_direct.get_gamma(lab_vector, ptrm_vector)
         self.pars['gamma'] = gamma
         return gamma
         
