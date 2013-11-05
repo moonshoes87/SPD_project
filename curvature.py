@@ -1,8 +1,13 @@
 #!/usr/bin/env python 
 
 import numpy
+#import spd
+#import lib_arai_plot_statistics as lib_arai
 
-    
+#thing = spd.thing
+#  def get_xy_array(x_segment, y_segment):
+#xy_real = lib_arai.get_xy_array(thing.x_Arai_segment, thing.y_Arai_segment)
+#xy_real = [[0.12182379795523131, 0.98795180722891562], [0.1876743181924827, 0.95783132530120485], [0.21711848591334654, 0.96987951807228912], [0.32091411888460553, 0.98192771084337338], [0.48291503240724426, 0.9337349397590361], [0.72423703304017273, 0.90361445783132521], [1.0313987625711432, 0.81325301204819278]]    
 """
 function Par = TaubinSVD(XY)
 
@@ -28,9 +33,14 @@ function Par = TaubinSVD(XY)
 
 """
 
+xy_real = [[0.12182379795523131, 0.98795180722891562], [0.1876743181924827, 0.95783132530120485], [0.21711848591334654, 0.96987951807228912], [0.32091411888460553, 0.98192771084337338], [0.48291503240724426, 0.9337349397590361], [0.72423703304017273, 0.90361445783132521], [1.0313987625711432, 0.81325301204819278]]    
+
+# coming out fairly different from get_curvature in spd.  need matlab
+
 xy = [[0.,-2.], [2.5,3.], [4., 5.]]
 
-def TaubinSVD(XY = numpy.array(xy)):
+def TaubinSVD(XY = xy):
+    XY = numpy.array(XY)
     print "XY", XY
     X = XY[:,0] - numpy.mean(XY[:,0]) # norming points by x avg
     Y = XY[:,1] - numpy.mean(XY[:,1]) # norming points by y avg
@@ -66,7 +76,7 @@ def TaubinSVD(XY = numpy.array(xy)):
     #         sqrt(A(2)*A(2)+A(3)*A(3)-4*A(1)*A(4))/abs(A(1))/2];
     r = numpy.sqrt(A[1]*A[1]+A[2]*A[2]-4*A[0]*A[3])/abs(A[0])/2;
 #    return A, V
-    return a,b,r, XY[:,0], XY[:,1]
+    return { 'a':a,'b': b, 'r': r } #, XY[:,0], XY[:,1]
     
 #    return (-1 * numpy.transpose((A[1:2]))) / A[0] / 2 + centroid
     
@@ -89,7 +99,7 @@ end
 """
 
 
-
+ignore_me_too = """
 
 
 function Par = LMA(XY,ParIni)                                                                                                  
@@ -109,6 +119,7 @@ function Par = LMA(XY,ParIni)
 %                           center (a,b) and radius R                                                                          
 %                                                                                                                              
 %--------------------------------------------------------------------------                                                    
+
                                                                                                                                
 factorUp=10;  factorDown=0.04;     
 lambda0=0.01;  epsilon=0.000001;    
@@ -291,3 +302,4 @@ Par(2) = -H*sin(Told)/(Aold+Aold) - Yshift;
 Par(3) = 1/abs(Aold+Aold);                                                                                                     
                                                                                                                                
 end  % LMA                                                                                                                     
+"""
