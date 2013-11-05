@@ -249,8 +249,14 @@ class PintPars(object):
                              
 
 
-    def get_IZZI_MD(self):
-        pass
+    def get_IZZI_MD(self): # not sure if this is right.  
+#def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
+        x_Arai = self.x_Arai
+        y_Arai = self.y_Arai
+        steps_Arai = self.steps_Arai
+        IZZI_MD = lib_arai.get_IZZI_MD(x_Arai, y_Arai, steps_Arai)
+        self.pars['IZZI_MD'] = IZZI_MD
+        return IZZI_MD
 
         
     # directional statistics begin here:
@@ -347,7 +353,7 @@ thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
 thing.calculate_all_statistics()
 
-if False:
+if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()

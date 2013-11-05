@@ -312,7 +312,6 @@ class IZZI_MD(unittest.TestCase):
         steps = ['ZI',  'ZI',  'IZ', 'IZ', 'IZ', 'ZI','IZ','ZI','ZI']
         ref_midpoints = ['IZ', 'ZI', 'IZ']
         ref_triangles = [((3,4),(9,10),(11, 12)),((9,10),(11,12),(13,14)),((11,12),(13,14),(17,18))]
-        # make it the complicated kind
         reference = {'triangles': ref_triangles, 'midpoints': ref_midpoints}
         result = lib_arai.get_triangles(xy_segment, steps)
         print "reference triangles:", reference['triangles']
@@ -380,11 +379,12 @@ class IZZI_MD(unittest.TestCase):
 
 
     def test_get_IZZI_MD(self):
+        pass
         # inputs:  Area of each triangle with their signs.  L_ZI
         # list of triangle areas, list of signs
-        A = '???'
-        L_ZI = 1.
-        ref_IZZI_MD = 0
+#        A = '???'
+#        L_ZI = 1.
+#        ref_IZZI_MD = 0
 #        result = lib_arai.get_IZZI_MD(A, L_ZI)
 #        self.assertEqual(result, ref_IZZI_MD)
         

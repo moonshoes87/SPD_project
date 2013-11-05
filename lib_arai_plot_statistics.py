@@ -126,7 +126,7 @@ def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temp
                 y = y_ptrm_check[num]
                 points.append((x, y))
 
-    for num, temp in enumerate(tail_checks_temperatures):  # check this one   
+    for num, temp in enumerate(tail_checks_temperatures):  
         if temp >= tmin and temp <= tmax:
             if tail_checks_starting_temperatures[num] >= tmin and tail_checks_starting_temperatures[num] <= tmax:
                 x = x_tail_check[num]
@@ -451,7 +451,6 @@ def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
 
     ZI_line = get_ZI_line(xy_array, steps_Arai)['ZI_line']
     
-
    # def get_area_sum(triangles=ref_triangles, midpoints = ref_midpoints, ZI_line = real_ZI_line):  # this may work
     # calls get lines, get triangle, etc. for each triangle
     #return Area

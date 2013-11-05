@@ -326,10 +326,9 @@ def get_NRM_dev(dang, x_avg, y_int):
     NRM_dev *= 100.
     return NRM_dev
 
-def get_theta(B_lab_dir, ChRM): # FINISH MEEEEEE
+def get_theta(B_lab_dir, ChRM): 
     B_lab_cart = dir2cart(B_lab_dir)
     # make sure ChRM is cartesian.  I think it is......
-    ChRM = ChRM
     print "B_lab_cart", B_lab_cart
     print "ChRM", ChRM
     theta = get_angle_difference(B_lab_cart, ChRM) # you should change it so that get_angle_difference can take dir or cart
@@ -358,14 +357,15 @@ def get_gamma(B_lab_dir, pTRM_dir):
 #    print type(boo)
     if str(gamma1) == str(gamma2):
 #        print "success"
-        return gamma1, gamma2
+        return gamma1
     else:
-        print type(gamma1), type(gamma2)
-        print type(gamma1[0]), type(gamma2[0])
-        print gamma1.ndim, gamma2.ndim
-        print gamma1.shape, gamma2.shape
-        print gamma1, gamma2
-        return gamma1  # or return gamma 2.  both work with unittests, so why the fuck don't they come out as equal, hmm?
+        return False
+#        print type(gamma1), type(gamma2)
+#        print type(gamma1[0]), type(gamma2[0])
+#        print gamma1.ndim, gamma2.ndim
+#        print gamma1.shape, gamma2.shape
+#        print gamma1, gamma2
+#        return gamma1  # or return gamma 2.  both work with unittests, so why the fuck don't they come out as equal, hmm?
 
 
 
