@@ -56,12 +56,14 @@ def TaubinSVD(XY = xy):
     Zmean = numpy.mean(Z)
     print "Zmean", Zmean
     Z0 = (Z - Zmean) / (2. * numpy.sqrt(Zmean))
-    ZXY = numpy.array([Z0, X, Y])
+    print "Z0", Z0
+    ZXY = numpy.array([Z0, X, Y]).T
     print "ZXY", ZXY
     U, S, V = numpy.linalg.svd(ZXY, full_matrices=False) # svd(X, 0) in original documentation.  however, belive that full_matrices=False accomplishes same
     print "U", U
     print "S", S
     print "V", V
+    V = V.transpose()
     A = V[:,2]
     print "A", A
     A[0] = A[0] / (2. * numpy.sqrt(Zmean))
