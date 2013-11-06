@@ -18,6 +18,7 @@
 import sys,pylab,scipy,os
 import lib_arai_plot_statistics as lib_arai
 import lib_directional_statistics as lib_direct
+import lib_ptrm_statistics as lib_ptrm
 from scipy import * 
 
 
@@ -317,6 +318,29 @@ class PintPars(object):
         gamma = lib_direct.get_gamma(lab_vector, ptrm_vector)
         self.pars['gamma'] = gamma
         return gamma
+
+# ptrm statistics begin here
+    
+    def get_n_ptrm(self):
+        tmin, tmax = self.tmin, self.tmax
+        ptrm_temps, ptrm_starting_temps = self.ptrm_checks_temperatures, self.ptrm_checks_starting_temperatures
+        n, steps = lib_ptrm.get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps)
+        print "n_ptrm", n, "steps", steps
+        self.pars['n_ptrm'] = n
+        self.pars['ptrm_checks_segment'] = steps
+#        def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
+        
+    def get_max_ptrm_check(self):
+#        def get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai):
+        ptrm_checks_segment = self.pars['ptrm_checks_segment']
+        ptrm_checks = self.ptrm_checks_temperatures
+        ptrm_x = self.x_ptrm_check
+        x_Arai, t_Arai = self.x_Arai, self.t_Arai
+        max_ptrm_check = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
+        self.pars['max_ptrm_check'] = max_ptrm_check
+        return max_ptrm_check
+
+
         
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
