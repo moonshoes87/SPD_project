@@ -14,8 +14,8 @@ class CheckpTRMparams(unittest.TestCase):
     y_ptrm = [7., 6., 4., 2.4, 0.]
     ptrm_temps = [10, 20, 30, 40, 50]
     ptrm_starting_temps = [20, 30, 40, 50, 60]
-    ref_n = 3
-    ref_steps = [20, 30, 40]
+    ref_n = 4.
+    ref_steps = [10, 20, 30, 40]
 
     x_Arai = [1., 2., 2.5, 3., 4., 5., 6., 8.] # ptrm initially acquired at a temp
     t_Arai = [0,  10, 20,  30, 40, 50, 60, 70]
