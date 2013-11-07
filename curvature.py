@@ -101,26 +101,73 @@ end
 """
 
 
+
+xy = numpy.array([[1,3],[0,2], [3,7], [8,10], [9,12]])
+par = [1,2,7]
+
+def VarCircle(XY = xy, Par = par):  # must have at least 4 sets of xy points or else division by zero occurs
+    """
+    computing the sample variance of distances from data points (XY) to the circle Par = [a b R]
+    """
+    n = len(XY)
+    Dx = XY[:,0] - Par[0]
+    Dy = XY[:,1] - Par[1]
+    D = numpy.sqrt(Dx * Dx + Dy * Dy) - Par[2]
+    result = numpy.dot(D, D)/(n-3)
+    print n, Dx, Dy
+    print D
+    print result
+    return D
+
+ignore = """
+function Var = VarCircle(XY,Par)
+%--------------------------------------------------------------------------
+%            computing the sample variance of distances 
+%             from data points (XY) to the circle Par = [a b R]
+%
+%   
+%--------------------------------------------------------------------------
+ 
+
+n = size(XY,1);      % number of data points
+Dx = XY(:,1) - Par(1);  Dy = XY(:,2) - Par(2);
+D = sqrt(Dx.*Dx + Dy.*Dy) - Par(3);
+
+Var = D'*D/(n-3);
+
+end  %  VarCircle #'
+"""
+
+def LMA(XY,ParIni):
+    """
+%     Geometric circle fit (minimizing orthogonal distances)  
+%     based on the Levenberg-Marquardt scheme in the
+%     "algebraic parameters" A,B,C,D  with constraint B*B+C*C-4*A*D=1
+%        N. Chernov and C. Lesort, "Least squares fitting of circles",
+%        J. Math. Imag. Vision, Vol. 23, 239-251 (2005)
+%     Input:  XY(n,2) is the array of coordinates of n points x(i)=XY(i,1), y(i)=XY(i,2)             
+%             ParIni = [a b R] is the initial guess (supplied by user)
+%     Output: Par = [a b R] is the fitting circle:                                               
+%                           center (a,b) and radius R                                                                  
+%                                                                                                     
+"""
+
+
 ignore_me_too = """
 
 
-function Par = LMA(XY,ParIni)                                                                                                  
-                                                                                                                               
-%--------------------------------------------------------------------------                                                    
-%                                                                                                                              
-%     Geometric circle fit (minimizing orthogonal distances)                                                                   
-%     based on the Levenberg-Marquardt scheme in the                                                                           
-%     "algebraic parameters" A,B,C,D  with constraint B*B+C*C-4*A*D=1                                                          
-%        N. Chernov and C. Lesort, "Least squares fitting of circles",                                                         
-%        J. Math. Imag. Vision, Vol. 23, 239-251 (2005)                                                                        
-%                                                                                                                              
-%     Input:  XY(n,2) is the array of coordinates of n points x(i)=XY(i,1), y(i)=XY(i,2)                                       
-%             ParIni = [a b R] is the initial guess (supplied by user)                                                         
-%                                                                                                                              
-%     Output: Par = [a b R] is the fitting circle:                                                                             
-%                           center (a,b) and radius R                                                                          
-%                                                                                                                              
-%--------------------------------------------------------------------------                                                    
+function Par = LMA(XY,ParIni)
+%--------------------------------------------------------------------------                                                %     Geometric circle fit (minimizing orthogonal distances)  
+%     based on the Levenberg-Marquardt scheme in the
+%     "algebraic parameters" A,B,C,D  with constraint B*B+C*C-4*A*D=1
+%        N. Chernov and C. Lesort, "Least squares fitting of circles",
+%        J. Math. Imag. Vision, Vol. 23, 239-251 (2005)
+%     Input:  XY(n,2) is the array of coordinates of n points x(i)=XY(i,1), y(i)=XY(i,2)             
+%             ParIni = [a b R] is the initial guess (supplied by user)
+%     Output: Par = [a b R] is the fitting circle:                                               
+%                           center (a,b) and radius R                                                                  
+%                                                                                                     
+    
 
                                                                                                                                
 factorUp=10;  factorDown=0.04;     
@@ -128,32 +175,31 @@ lambda0=0.01;  epsilon=0.000001;
 IterMAX = 50;  AdjustMax = 20; 
 Xshift=0;  Yshift=0;  dX=1;  dY=0;                                                                                    
 n = size(XY,1);      # number of data points                                                                                   
-                                                                                                                               
+                                                                                                                            
 #     starting with the given initial guess
-anew = ParIni(1) + Xshift;                                                                                                     
-bnew = ParIni(2) + Yshift;                                                                                                     
-                                                                                                                               
-Anew = 1/(2*ParIni(3));                                                                                                        
-aabb = anew*anew + bnew*bnew;                                                                                                  
-Fnew = (aabb - ParIni(3)*ParIni(3))*Anew;                                                                                      
-Tnew = acos(-anew/sqrt(aabb));                                                                                                 
-if (bnew > 0)                                                                                                                  
-    Tnew = 2*pi - Tnew;                                                                                                        
-end                                                                                                                            
-%        if 1+4*Anew*Fnew < epsilon                                                                                            
+anew = ParIni(1) + Xshift;        
+bnew = ParIni(2) + Yshift;                                                             
+Anew = 1/(2*ParIni(3));                                                                                   
+aabb = anew*anew + bnew*bnew;                                                                                  
+Fnew = (aabb - ParIni(3)*ParIni(3))*Anew;                                                                
+Tnew = acos(-anew/sqrt(aabb));                                                             
+if (bnew > 0)                                                                                              
+    Tnew = 2*pi - Tnew;                                              
+end                                                                                                                  
+%        if 1+4*Anew*Fnew < epsilon                                                                                     
 %            fprintf(1,' +++ violation:  %f\n',1+4*Anew*Fnew);                                                                 
 %        end                                                                                                                   
-                                                                                                                               
-VarNew = VarCircle(XY,ParIni);                                                                                                 
-                                                                                                                               
-#     initializing lambda and iter                                                                                             
-                                                                                                                               
+                                                
+VarNew = VarCircle(XY,ParIni);                                                   
+                                                                                                 
+#     initializing lambda and iter                                                                   
+                                                                                        
 lambda = lambda0;  finish = 0;  
-                                                                                                                               
-for iter=1:IterMAX                                                                                                             
-                                                                                                                               
+                                                                                                      
+for iter=1:IterMAX                                                                               
+                                                                      
     Aold = Anew;  Fold = Fnew;  Told = Tnew;  VarOld = VarNew;
-                                                                                                                               
+                                                                                                                      
     H = sqrt(1+4*Aold*Fold);                                                                 
     aold = -H*cos(Told)/(Aold+Aold) - Xshift;
     bold = -H*sin(Told)/(Aold+Aold) - Yshift;
@@ -199,11 +245,11 @@ for iter=1:IterMAX
                                                                                                                                
 %             Cholesly decomposition                                                                                           
                                                                                                                                
-        G11 = sqrt(H11 + lambda);                                                                                              
-        G12 = H12/G11;                                                                                                         
-        G13 = H13/G11;                                                                                                         
-        G22 = sqrt(H22 + lambda - G12*G12);                                                                                    
-        G23 = (H23 - G12*G13)/G22;                                                                                             
+        G11 = sqrt(H11 + lambda);                                                                                       
+        G12 = H12/G11;                                                                              
+        G13 = H13/G11;                                                                                                 
+        G22 = sqrt(H22 + lambda - G12*G12);                                                              
+        G23 = (H23 - G12*G13)/G22;                                             
         G33 = sqrt(H33 + lambda - G13*G13 - G23*G23);                                                                          
                                                                                                                                
         D1 = F1/G11;                                                                                                           
@@ -296,11 +342,11 @@ for iter=1:IterMAX
     if finish == 1                                                                                                             
        break;                                                                                                                  
     end                                                                                                                        
-end                                                                                                                            
+end                                                                                                                       
 
-H = sqrt(1+4*Aold*Fold);                                                                                                       
-Par(1) = -H*cos(Told)/(Aold+Aold) - Xshift;                                                                                    
-Par(2) = -H*sin(Told)/(Aold+Aold) - Yshift;                                                                                    
+H = sqrt(1+4*Aold*Fold);                                                                                        
+Par(1) = -H*cos(Told)/(Aold+Aold) - Xshift;                                                      
+Par(2) = -H*sin(Told)/(Aold+Aold) - Yshift;                                                 
 Par(3) = 1/abs(Aold+Aold);                                                                                                     
                                                                                                                                
 end  % LMA                                                                                                                     
