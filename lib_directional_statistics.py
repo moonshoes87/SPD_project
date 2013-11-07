@@ -113,20 +113,20 @@ def tauV(T):
     return t,V
 
 
-def sort_eigenvectors_and_eigenvalues(orient_tensor):
-    # may need to sort eigenvectors, eigenvalues.  possibly not in order...?
+def get_PD_direction():
     pass
 
-
+# PUT THIS IN THERE
 # not sure if this is needed.  there is a method for getting direction along V1 using the vector dot product of V1 and R.  I just don't know if we need this.  
 #def get_reference_vector(X1_prime, X2_prime, X3_prime):
 #    n = len(X1_prime) - 1
-#    X1 = X1_prime[0] - X1_prime[n]
+#    X1 = X1_prime[0] - X1_prime[n]  # make sure this manner of indexing is correct.  I think it may be
 #    X2 = X2_prime[0] - X2_prime[n]
 #    X3 = X3_prime[0] - X3_prime[n]
 #    R= numpy.array([X1, X2, X3])
 #    return R
 #    return numpy.array([0, 0, 0])
+
     
 #tau, V = tauV(T['orient_tensor'])
 #V1 = V[0]
@@ -136,7 +136,6 @@ def sort_eigenvectors_and_eigenvalues(orient_tensor):
 #    dot = -1
 #elif dot > 1:
 #    dot = 1
-
 
 
 ex_zdata = [[1., 1., 1.],[1., 2., 3.], [2., 4., 4.5], [2., 3., 7.5]]
@@ -178,14 +177,11 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     means = data['zdata_mass_center']
     T = get_orientation_tensor(data['X1_prime'], data['X2_prime'], data['X3_prime'])
     tau,V=tauV(T['orient_tensor'])
-    PDir=cart2dir(V[0])
-    best_fit_vector = V[0]
+    get_PD_direction() # this will make it positive or negative, you need to write this code
+    PDir=cart2dir(V[0]) # PDir is direction
+    best_fit_vector = V[0]  # best_fit is cartesian
     vector = adjust_best_fit_vector(best_fit_vector, means, zdata) # means is mass center
-    if PDir[1] < 0:  # this whole transformatio is NOT done in thellier_gui.  ask Ron
-        PDir[0]+=180. 
-        PDir[1]=-PDir[1]
-    PDir[0]=PDir[0]%360.
-    dec = PDir[0]
+    dec = PDir[0]  # fixed, took out bad adjustment.  dec must always be positive, but cart2dir ensures that it is
     inc = PDir[1]
 #    print "tau", tau
 #    print "V", V
