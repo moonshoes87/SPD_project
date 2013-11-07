@@ -259,91 +259,91 @@ for iter=1:IterMAX
         F3 = F3 + Gi*DGDTi;                                                        
     end                                                        
 
-    for adjust=1:AdjustMax                                                               
-                                                                              
-%             Cholesly decomposition                                                                                           
-                                                                                                                               
+    for adjust=1:AdjustMax      
+                                              
+%             Cholesly decomposition                                     
+                                                                       
         G11 = sqrt(H11 + lambda);                                                                                       
         G12 = H12/G11;                                                                              
         G13 = H13/G11;                                                                                                 
         G22 = sqrt(H22 + lambda - G12*G12);                                                              
         G23 = (H23 - G12*G13)/G22;                                             
-        G33 = sqrt(H33 + lambda - G13*G13 - G23*G23);                                                                          
-                                                                                                                               
-        D1 = F1/G11;                                                                                                           
-        D2 = (F2 - G12*D1)/G22;                                                                                                
-        D3 = (F3 - G13*D1 - G23*D2)/G33;                                                                                       
+        G33 = sqrt(H33 + lambda - G13*G13 - G23*G23);                
+                                                                                   
+        D1 = F1/G11;                                            
+        D2 = (F2 - G12*D1)/G22;                                                              
+        D3 = (F3 - G13*D1 - G23*D2)/G33;                
 
-        dT = D3/G33;                                                                                                           
-        dF = (D2 - G23*dT)/G22;                                                                                                
-        dA = (D1 - G12*dF - G13*dT)/G11;                                                                                       
-                                                                                                                               
+        dT = D3/G33;                                                                        
+        dF = (D2 - G23*dT)/G22;                                              
+        dA = (D1 - G12*dF - G13*dT)/G11;                                      
+                                                                                   
 %            updating the parameters
-                                                                                                                               
-        Anew = Aold - dA;                                                                                                      
-        Fnew = Fold - dF;                                                                                                      
-        Tnew = Told - dT;                                                                                                      
-%        fprintf(1,'%2d   %.8f\n',iter,lambda);                                                                                
+                                                                                            
+        Anew = Aold - dA;             
+        Fnew = Fold - dF;                             
+        Tnew = Told - dT;                                                                          
+%        fprintf(1,'%2d   %.8f\n',iter,lambda);          
 
-        if (1+4*Anew*Fnew < epsilon && lambda>1)                                                                               
-%            fprintf(1,'     violation:  %f\n',1+4*Anew*Fnew);                                                                 
-            Xshift = Xshift + dX;                                                                                              
-            Yshift = Yshift + dY;                                                                                              
-                                                                                                                               
-            H = sqrt(1+4*Aold*Fold);                                                                                           
-            aTemp = -H*cos(Told)/(Aold+Aold) + dX;                                                                             
-            bTemp = -H*sin(Told)/(Aold+Aold) + dY;                                                                             
-            rTemp = 1/abs(Aold+Aold);                                                                                          
-                                                                                                                               
-            Anew = 1/(rTemp + rTemp);                                                                                          
-            aabb = aTemp*aTemp + bTemp*bTemp;                                                                                  
-            Fnew = (aabb - rTemp*rTemp)*Anew;                                                                                  
-            Tnew = acos(-aTemp/sqrt(aabb));                                                                                    
-            if bTemp > 0                                                                                                       
-               Tnew = 2*pi - Tnew;                                                                                             
-            end                                                                                                                
-            VarNew = VarOld;                                                                                                   
-            break;                                                                                                             
-        end                                                                                                                    
-                                                                                                                               
-        if 1+4*Anew*Fnew < epsilon                                                                                             
-           lambda = lambda * factorUp;                                                                                         
-           continue;                                                                                                           
-        end                                                                                                                    
+        if (1+4*Anew*Fnew < epsilon && lambda>1)                    
+%            fprintf(1,'     violation:  %f\n',1+4*Anew*Fnew);             
+            Xshift = Xshift + dX;                                          
+            Yshift = Yshift + dY;                                                                               
+                                                                                     
+            H = sqrt(1+4*Aold*Fold);                               
+            aTemp = -H*cos(Told)/(Aold+Aold) + dX;                                     
+            bTemp = -H*sin(Told)/(Aold+Aold) + dY;                                      
+            rTemp = 1/abs(Aold+Aold);                                       
+                                                                             
+            Anew = 1/(rTemp + rTemp);                         
+            aabb = aTemp*aTemp + bTemp*bTemp;                          
+            Fnew = (aabb - rTemp*rTemp)*Anew;                             
+            Tnew = acos(-aTemp/sqrt(aabb));                                       
+            if bTemp > 0                           
+               Tnew = 2*pi - Tnew;           
+            end                                                                                  
+            VarNew = VarOld;                                         
+            break;                               
+        end                                                    
+                                                      
+        if 1+4*Anew*Fnew < epsilon                             
+           lambda = lambda * factorUp;             
+           continue;              
+        end
 
-       DD = 1 + 4*Anew*Fnew;                                                                                                  
-        D = sqrt(DD);                                                                                                          
-        CT = cos(Tnew);                                                                                                        
-        ST = sin(Tnew);                                                                                                        
-                                                                                                                               
-        GG = 0;                                                                                                                
-                                                                                                                               
-        for i=1:n                                                                                                              
-            Xi = XY(i,1) + Xshift;                                                                                             
-            Yi = XY(i,2) + Yshift;                                                                                             
-            Zi = Xi*Xi + Yi*Yi;                                                                                                
-            Ui = Xi*CT + Yi*ST;                                                                                                
-                                                                                                                               
-            ADF = Anew*Zi + D*Ui + Fnew;                                                                                       
-            SQ = sqrt(4*Anew*ADF + 1);                                                                                         
-            DEN = SQ + 1;                                                                                                      
-            Gi = 2*ADF/DEN;                                                                                                    
-            GG = GG + Gi*Gi;                                                                                                   
-        end                                                                                                                    
-                                                                                                                               
-        VarNew = GG/(n-3);                                                                                                     
-                                                                                                                               
-        H = sqrt(1+4*Anew*Fnew);                                                                                               
-        anew = -H*cos(Tnew)/(Anew+Anew) - Xshift;                                                                              
-        bnew = -H*sin(Tnew)/(Anew+Anew) - Yshift;                                                                              
-        Rnew = 1/abs(Anew+Anew);                                                                                               
-                                                                                                                               
-%             checking if improvement is gained                                                                                
+       DD  1 + 4*Anew*Fnew;                  
+        D = sqrt(DD);                                                         
+        CT = cos(Tnew);                                
+        ST = sin(Tnew);    
+                    
+        GG = 0;                
+                            
+        for i=1:n                 
+            Xi = XY(i,1) + Xshift;          
+            Yi = XY(i,2) + Yshift;    
+            Zi = Xi*Xi + Yi*Yi;     
+            Ui = Xi*CT + Yi*ST;            
+                                                 
+            ADF = Anew*Zi + D*Ui + Fnew;                    
+            SQ = sqrt(4*Anew*ADF + 1);               
+            DEN = SQ + 1;                   
+            Gi = 2*ADF/DEN;           
+            GG = GG + Gi*Gi;                       
+        end              
+                                   
+        VarNew = GG/(n-3);    
+         
+        H = sqrt(1+4*Anew*Fnew);               
+        anew = -H*cos(Tnew)/(Anew+Anew) - Xshift;  
+        bnew = -H*sin(Tnew)/(Anew+Anew) - Yshift;       
+        Rnew = 1/abs(Anew+Anew);               
+                                    
+%             checking if improvement is gained                                                      
 
-        if VarNew <= VarOld      %   yes, improvement                                                                          
-           progress = (abs(anew-aold) + abs(bnew-bold) + abs(Rnew-Rold))/(Rnew+Rold);                                          
-           if progress < epsilon                                                                                               
-              Aold = Anew;                                                                                                     
+        if VarNew <= VarOld      %   yes, improvement                
+           progress = (abs(anew-aold) + abs(bnew-bold) + abs(Rnew-Rold))/(Rnew+Rold);      
+           if progress < epsilon 
+              Aold = Anew;          
               Fold = Fnew;                                                                                                     
               Told = Tnew;                                                                                                     
               VarOld = VarNew; %#ok<NASGU>                                                                                     

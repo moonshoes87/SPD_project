@@ -238,6 +238,7 @@ finish IZZI_MD  # DONE (?)
 put IZZI_MD into spd # DONE
 debug DANG # seems fine and Done
       sometimes best_fit_vector is postive where should be negative.  # DONE (or at least can't reproduce this problem....)
+check giving PD direction thing (dot, R, etc.).  IMPORTANT
 remaining Directional stats:
 	  talk to Ron
 	  use thellier magic to check up on gamma # looking good
