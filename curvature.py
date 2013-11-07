@@ -109,7 +109,10 @@ def VarCircle(XY = xy, Par = par):  # must have at least 4 sets of xy points or 
     """
     computing the sample variance of distances from data points (XY) to the circle Par = [a b R]
     """
+    print "varcircle"
+    print "XY", XY
     n = len(XY)
+    print "n", n
     Dx = XY[:,0] - Par[0]
     Dy = XY[:,1] - Par[1]
     D = numpy.sqrt(Dx * Dx + Dy * Dy) - Par[2]
@@ -117,40 +120,55 @@ def VarCircle(XY = xy, Par = par):  # must have at least 4 sets of xy points or 
     print n, Dx, Dy
     print D
     print result
-    return D
+    print "done varcircle"
+    return result
 
-ignore = """
-function Var = VarCircle(XY,Par)
-%--------------------------------------------------------------------------
-%            computing the sample variance of distances 
-%             from data points (XY) to the circle Par = [a b R]
-%
-%   
-%--------------------------------------------------------------------------
- 
 
-n = size(XY,1);      % number of data points
-Dx = XY(:,1) - Par(1);  Dy = XY(:,2) - Par(2);
-D = sqrt(Dx.*Dx + Dy.*Dy) - Par(3);
+xy = numpy.array([[1,1],[0.,-2.], [.5,3.], [4., 5.]])
+par_ini = [21.2500,   -9.5000,   22.5347]
 
-Var = D'*D/(n-3);
-
-end  %  VarCircle #'
-"""
-
-def LMA(XY,ParIni):
+def LMA(XY=xy,ParIni=par_ini):
     """
-%     Geometric circle fit (minimizing orthogonal distances)  
-%     based on the Levenberg-Marquardt scheme in the
-%     "algebraic parameters" A,B,C,D  with constraint B*B+C*C-4*A*D=1
-%        N. Chernov and C. Lesort, "Least squares fitting of circles",
-%        J. Math. Imag. Vision, Vol. 23, 239-251 (2005)
-%     Input:  XY(n,2) is the array of coordinates of n points x(i)=XY(i,1), y(i)=XY(i,2)             
-%             ParIni = [a b R] is the initial guess (supplied by user)
-%     Output: Par = [a b R] is the fitting circle:                                               
-%                           center (a,b) and radius R                                                                  
-%                                                                                                     
-"""
+    %     Geometric circle fit (minimizing orthogonal distances)  
+    %     based on the Levenberg-Marquardt scheme in the
+    %     "algebraic parameters" A,B,C,D  with constraint B*B+C*C-4*A*D=1
+    %        N. Chernov and C. Lesort, "Least squares fitting of circles",
+    %        J. Math. Imag. Vision, Vol. 23, 239-251 (2005)
+    %     Input:  XY(n,2) is the array of coordinates of n points x(i)=XY(i,1), y(i)=XY(i,2)             
+    %             ParIni = [a b R] is the initial guess (supplied by user)
+    %     Output: Par = [a b R] is the fitting circle:                                               
+    %                           center (a,b) and radius R                                                                  
+    %                                                                                                     
+    """
+    factorUp=10
+    factorDown=0.04
+    lambda0=0.01
+    epsilon=0.000001
+    IterMAX = 50
+    AdjustMax = 20
+    Xshift=0  
+    Yshift=0  
+    dX=1  
+    dY=0;                                                                                    
+    n = len(XY);      # number of data points  # checked
+#    print n
+
+    anew = ParIni[0] + Xshift
+    bnew = ParIni[1] + Yshift
+    Anew = 1./(2.*ParIni[2])                                                                              
+    aabb = anew*anew + bnew*bnew    
+    Fnew = (aabb - ParIni[2]*ParIni[2])*Anew # checked
+#    print "Fnew", Fnew
+    Tnew = numpy.arccos(-anew/numpy.sqrt(aabb)) # checked
+#    print "Tnew", Tnew
+
+    if bnew > 0:
+        Tnew = 2*numpy.pi - Tnew
+#    print "XY & ParIni", XY, ParIni
+    VarNew = VarCircle(XY,ParIni) # checked
+#    print VarNew 
+
+
 
 
 ignore_me_too = """
@@ -205,44 +223,44 @@ for iter=1:IterMAX
     bold = -H*sin(Told)/(Aold+Aold) - Yshift;
     Rold = 1/abs(Aold+Aold); 
 #    fprintf(1,'%2d  (%f, %f)  %f  %.8f\n',iter,aold,bold,Rold,sqrt(VarOld));    
-#           computing moments                                                                                                  
-                                                                                                                               
+#           computing moments                                                                                         
+         
     DD = 1 + 4*Aold*Fold; 
     D = sqrt(DD);  
-    CT = cos(Told);                                                                                                            
-    ST = sin(Told);                                                                                                            
-                                                                                                                               
-    H11=0; H12=0; H13=0; H22=0; H23=0; H33=0; F1=0; F2=0; F3=0;                                                                
-                                                                                                                               
-    for i=1:n                                                                                                                  
-        Xi = XY(i,1) + Xshift;                                                                                                 
-        Yi = XY(i,2) + Yshift;                                                                                                 
-        Zi = Xi*Xi + Yi*Yi;                                                                                                    
-        Ui = Xi*CT + Yi*ST;                                                                                                    
+    CT = cos(Told); 
+    ST = sin(Told);    
+    H11=0; H12=0; H13=0; H22=0; H23=0; H33=0; F1=0; F2=0; F3=0;           
+                                                            
+    for i=1:n                                                                                                
+        Xi = XY(i,1) + Xshift;   
+        Yi = XY(i,2) + Yshift;       
+        Zi = Xi*Xi + Yi*Yi;  
+        Ui = Xi*CT + Yi*ST;             
         Vi =-Xi*ST + Yi*CT;
 
-        ADF = Aold*Zi + D*Ui + Fold;                                                                                           
-        SQ = sqrt(4*Aold*ADF + 1);                                                                                             
-        DEN = SQ + 1;                                                                                                          
-        Gi = 2*ADF/DEN;                                                                                                        
-        FACT = 2/DEN*(1 - Aold*Gi/SQ);                                                                                         
-        DGDAi = FACT*(Zi + 2*Fold*Ui/D) - Gi*Gi/SQ;                                                                            
-        DGDFi = FACT*(2*Aold*Ui/D + 1);                                                                                        
-        DGDTi = FACT*D*Vi;                                                                                                     
-                                                                                                                               
-        H11 = H11 + DGDAi*DGDAi;                                                                                               
-        H12 = H12 + DGDAi*DGDFi;                                                                                               
-        H13 = H13 + DGDAi*DGDTi;                                                                                               
-        H22 = H22 + DGDFi*DGDFi;                                                                                               
-        H23 = H23 + DGDFi*DGDTi;                                                                                               
-        H33 = H33 + DGDTi*DGDTi;                                                                                               
-                                                                                                                               
-        F1 = F1 + Gi*DGDAi;                                                                                                    
-        F2 = F2 + Gi*DGDFi;                                                                                                    
-        F3 = F3 + Gi*DGDTi;                                                                                                    
-    end                                                                                                                        
-    for adjust=1:AdjustMax                                                                                                     
-                                                                                                                               
+        ADF = Aold*Zi + D*Ui + Fold;    
+        SQ = sqrt(4*Aold*ADF + 1);           
+        DEN = SQ + 1;                                          
+        Gi = 2*ADF/DEN;   
+        FACT = 2/DEN*(1 - Aold*Gi/SQ);      
+        DGDAi = FACT*(Zi + 2*Fold*Ui/D) - Gi*Gi/SQ;                
+        DGDFi = FACT*(2*Aold*Ui/D + 1);        
+        DGDTi = FACT*D*Vi;    
+                                                          
+        H11 = H11 + DGDAi*DGDAi;                 
+        H12 = H12 + DGDAi*DGDFi;                           
+        H13 = H13 + DGDAi*DGDTi;                                          
+        H22 = H22 + DGDFi*DGDFi;                  
+        H23 = H23 + DGDFi*DGDTi;                                     
+        H33 = H33 + DGDTi*DGDTi;                        
+                                                 
+        F1 = F1 + Gi*DGDAi;             
+        F2 = F2 + Gi*DGDFi;    
+        F3 = F3 + Gi*DGDTi;                                                        
+    end                                                        
+
+    for adjust=1:AdjustMax                                                               
+                                                                              
 %             Cholesly decomposition                                                                                           
                                                                                                                                
         G11 = sqrt(H11 + lambda);                                                                                       
