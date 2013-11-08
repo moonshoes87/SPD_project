@@ -4,10 +4,6 @@ import numpy
 #import spd
 #import lib_arai_plot_statistics as lib_arai
 
-#thing = spd.thing
-#  def get_xy_array(x_segment, y_segment):
-#xy_real = lib_arai.get_xy_array(thing.x_Arai_segment, thing.y_Arai_segment)
-#xy_real = [[0.12182379795523131, 0.98795180722891562], [0.1876743181924827, 0.95783132530120485], [0.21711848591334654, 0.96987951807228912], [0.32091411888460553, 0.98192771084337338], [0.48291503240724426, 0.9337349397590361], [0.72423703304017273, 0.90361445783132521], [1.0313987625711432, 0.81325301204819278]]    
 
 xy_real = [[0.12182379795523131, 0.98795180722891562], [0.1876743181924827, 0.95783132530120485], [0.21711848591334654, 0.96987951807228912], [0.32091411888460553, 0.98192771084337338], [0.48291503240724426, 0.9337349397590361], [0.72423703304017273, 0.90361445783132521], [1.0313987625711432, 0.81325301204819278]]    
 
@@ -64,12 +60,14 @@ def TaubinSVD(XY = xy):
 xy = numpy.array([[1,3],[0,2], [3,7], [8,10], [9,12]])
 par = [1,2,7]
 
-def VarCircle(XY = xy, Par = par):  # must have at least 4 sets of xy points or else division by zero occurs
+def VarCircle(XY, Par):  # must have at least 4 sets of xy points or else division by zero occurs
     """
     computing the sample variance of distances from data points (XY) to the circle Par = [a b R]
     """
 #    print "varcircle"
 #    print "XY", XY
+    if type(XY) != numpy.ndarray:
+        XY = numpy.array(XY)
     n = len(XY)
 #    print "n", n
     if n < 4:
@@ -112,7 +110,6 @@ def LMA(XY=xy,ParIni=par_ini):
     dX=1  
     dY=0;                                                                                    
     n = len(XY);      # number of data points  # checked
-#    print n
 
     anew = ParIni[0] + Xshift
     bnew = ParIni[1] + Yshift
@@ -122,7 +119,6 @@ def LMA(XY=xy,ParIni=par_ini):
 #    print "Fnew", Fnew
     Tnew = numpy.arccos(-anew/numpy.sqrt(aabb)) # checked
 #    print "Tnew", Tnew
-
     if bnew > 0:
         Tnew = 2*numpy.pi - Tnew
 #    print "XY & ParIni", XY, ParIni
