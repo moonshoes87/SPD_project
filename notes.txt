@@ -234,28 +234,28 @@ check get_curve()
 ask Alex about last bit of VDS calculation
 add tests for SCAT
 finish IZZI_MD  # DONE (?)
-       use last repeated point, not first # DONE
-put IZZI_MD into spd # DONE
-debug DANG # seems fine and Done
+       use last repeated point, not first # 
       sometimes best_fit_vector is postive where should be negative.  # DONE (or at least can't reproduce this problem....)
 check giving PD direction thing (dot, R, etc.).  IMPORTANT
 remaining Directional stats:
 	  talk to Ron
 	  use thellier magic to check up on gamma # looking good
-	  figure out exactly what ChRM is
+	  figure out exactly what ChRM is # DONE
 	  do theta
+
+include pTRM checks below tmin # DONE
 
 
 cart2dir
 	require x,y,z
 dir2cart
 	works with just Dec, Inc
-	however, outputs very different value if given Dec, Inc, and m (or whatever)
-
-
+	however, outputs very different value if given Dec, Inc, and m (or whatever)  magnitude is different
+	dir2cart(Dec, Inc, 1) --> x,y,z
+	dir2cart(Dec, Inc, 2) --> 2x,2y,z
+	
 
 thellier_gui Dec, Inc, and MAD are free.  lisa always uses free
-
 
 matlab SVD and numpy SVD produce nearly, but not exactly, identical output.  difference is in V, and also in the format for S (less important)
 Also, checked and numpy and matlab notation for slicing is the same, except that matlab indexing starts at 1, not 0
