@@ -11,6 +11,9 @@ import numpy
 
 xy_real = [[0.12182379795523131, 0.98795180722891562], [0.1876743181924827, 0.95783132530120485], [0.21711848591334654, 0.96987951807228912], [0.32091411888460553, 0.98192771084337338], [0.48291503240724426, 0.9337349397590361], [0.72423703304017273, 0.90361445783132521], [1.0313987625711432, 0.81325301204819278]]    
 
+x_real = numpy.array([ 0.1218238 ,  0.18767432,  0.21711849,  0.32091412,  0.48291503, 0.72423703,  1.03139876])
+y_real = numpy.array([ 0.98795181,  0.95783133,  0.96987952,  0.98192771,  0.93373494, 0.90361446,  0.81325301])
+
 xy = [[0.,-2.], [2.5,3.], [4., 5.]]
 
 def TaubinSVD(XY = xy):
@@ -51,8 +54,8 @@ def TaubinSVD(XY = xy):
     print "a,b", a,b
     #         sqrt(A(2)*A(2)+A(3)*A(3)-4*A(1)*A(4))/abs(A(1))/2];
     r = numpy.sqrt(A[1]*A[1]+A[2]*A[2]-4*A[0]*A[3])/abs(A[0])/2;
-#    return A, V
-    return { 'a':a,'b': b, 'r': r } #, XY[:,0], XY[:,1]
+#    return { 'a':a,'b': b, 'r': r } #, XY[:,0], XY[:,1]
+    return a,b,r
     
 #    return (-1 * numpy.transpose((A[1:2]))) / A[0] / 2 + centroid
     
@@ -273,9 +276,8 @@ def LMA(XY=xy,ParIni=par_ini):
             Rnew = 1/abs(Anew+Anew); 
             print "anew", anew, "bnew", bnew
 
-
             if VarNew <= VarOld: #   yes, improvement                
-                print "VarNew <= VarOld", VarNew, VarOld
+               # print "VarNew <= VarOld", VarNew, VarOld
                 progress = (abs(anew-aold) + abs(bnew-bold) + abs(Rnew-Rold))/(Rnew+Rold);      
                 if progress < epsilon: 
                     print "Progress < epsilon"
@@ -285,21 +287,16 @@ def LMA(XY=xy,ParIni=par_ini):
                     VarOld = VarNew # %#ok<NASGU>  
                     finish = 1;     
                     break;  
-#           end  
+
                 VarLambda = VarLambda * factorDown
                 break  
             else:                 #    %   no improvement  
                 print "doing else"
                 VarLambda = VarLambda * factorUp;      
                 continue;     
- #       end    
-#    end       
+
         if finish == 1:
             break
-    #   break
-    
- #   end                                               
-#end                                                                                                                      
 
     H = numpy.sqrt(1+4*Aold*Fold);                                                                                        
     result_a = -H*numpy.cos(Told)/(Aold+Aold) - Xshift;                                                      
@@ -310,12 +307,12 @@ def LMA(XY=xy,ParIni=par_ini):
     return result_a, result_b, result_r
 
 
-
 new_xy = numpy.array([[.4, 6], [.3, 5.5], [.51, 5], [.7, 4.2], [.3, 3], [.8, 2.1]])
 new_par_ini = [58.4404, 8.2870, 58.0924]
-a, b, r = LMA(new_xy, new_par_ini)
-print "new results"
-print a, b, r
+#a, b, r = LMA(new_xy, new_par_ini)
+#print "new results"
+#print a, b, r
+
 
 def AraiCurvature(x,y):
     """
@@ -324,89 +321,78 @@ def AraiCurvature(x,y):
 % Paterson, G. A., (2011), A simple test for the presence of multidomain
 % behaviour during paleointensity experiments, J. Geophys. Res., in press,
 % doi: 10.1029/2011JB008369
-%
+% input: x = [1, 2, 3], y = [6, 4, 3]
+% output: curvature, a (x coordinate circle center), b (y coordinate circle center), SSE (goodness of fit)
 % parameters[0] = k
 % parameters[1] = a
 % parameters[2] = b
 % parameters[3] = SSE (goodness of fit)
     """
 
-#xy = numpy.array([[1,1],[0.,-2.], [.5,3.], [4., 5.]])
-
-   # x=reshape(x, length(x), 1);
-#    y=reshape(y, length(y), 1);
-    
+    XY = []
+    for num, X in enumerate(x):
+        XY.append([X, y[num]])
+    XY = numpy.array(XY)
     # Normalizevectors
-    XY[:,0] = XY[:,0] / max(XY[:,0]) # important that values are all floats
-    XY[:,1] = XY[:,1] / max(XY[:,1]) # norms y values
-#    x=x./max(x);
-#    y=y./max(y);
-
+    XY[:,0] = XY[:,0] / max(XY[:,0]) # important that values are all floats  
+    XY[:,1] = XY[:,1] / max(XY[:,1]) # norms y values  # ThIS MAY ALREADY BE DONE.... from the thellier_magic processing
+    X = XY[:,0]
+    Y = XY[:,1]
+                  
     #Provide the intitial estimate
     E1=TaubinSVD(XY);
+
+    print "E1", E1
 
     #Determine the iterative solution
     E2=LMA(XY, E1);
 
     estimates=[E2[2], E2[0], E2[1]];
     
+    best_a = E2[0]
+    best_b = E2[1]
+    best_r = E2[2]
 
-    # Define the function to be minimized and calculate the SSE
-    func=@(v) sum((sqrt((x-v(2)).^2+(y-v(3)).^2)-v(1)).^2);
-    SSE=func(estimates);
+    print "mean x"
+    print numpy.mean(X)
 
-    if (E2(1)<=mean(x) && E2(2)<=mean(y)):
-        k=-1/E2(3);
+    if best_a <= numpy.mean(X) and best_b <= numpy.mean(Y):
+        print "-1/r"
+        k = -1./best_r
     else:
-        k=1/E2(3);
+        print "1/r"
+        k = 1./best_r
+
+    SSE = get_SSE(best_a, best_b, best_r, X, Y)
+
     #end
-
-    parameters=[k; E2(1); E2(2); SSE];
-
-end % Arai plot curvature
-
-
+    print "best_r", best_r
+    print "k, best_a, best_b, SSE"
+    print k, best_a, best_b, SSE
+    return k, best_a, best_b, SSE
 
 
-function [parameters]=AraiCurvature(x,y)
-%
-% Function for calculating the radius of the best fit circle to a set of 
-% x-y coordinates.
-% Paterson, G. A., (2011), A simple test for the presence of multidomain
-% behaviour during paleointensity experiments, J. Geophys. Res., in press,
-% doi: 10.1029/2011JB008369
-%
-% parameters(1) = k
-% parameters(2) = a
-% parameters(3) = b
-% parameters(4) = SSE (goodness of fit)
+a, b, r = 1,2, 3
+x = [0.1, 0.2, 0.5]
+y = [6.0, 4.0, 3.0]
 
-% Reshape vectors for suitable input
-x=reshape(x, length(x), 1);
-y=reshape(y, length(y), 1);
+def get_SSE(a,b,r,x,y):
+    SSE = 0
+    X = numpy.array(x)
+    Y = numpy.array(y)
+    for i in range(len(X)):
+        x = X[i]
+        y = Y[i]
+        v = (numpy.sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
+#            print v                                                                                  
+        SSE += v
+    print SSE
+    return SSE
 
-% Normalizevectors
-x=x./max(x);
-y=y./max(y);
 
-% Provide the intitial estimate
-E1=TaubinSVD([x,y]);
 
-% Determine the iterative solution
-E2=LMA([x,y], E1);
+xy = [[1,1],[0.,-2.], [.5,3.], [4., 5.]]
+x_arai = [1,0.,.5,4.]
+y_arai = [1., -2., 4., 5.]
+#AraiCurvature(x_arai, y_arai)
 
-estimates=[E2(3), E2(1), E2(2)];
-
-% Define the function to be minimized and calculate the SSE
-func=@(v) sum((sqrt((x-v(2)).^2+(y-v(3)).^2)-v(1)).^2);
-SSE=func(estimates);
-
-if (E2(1)<=mean(x) && E2(2)<=mean(y))
-    k=-1/E2(3);
-else
-    k=1/E2(3);
-end
-
-parameters=[k; E2(1); E2(2); SSE];
-
-end % Arai plot curvature
