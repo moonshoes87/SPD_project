@@ -69,6 +69,8 @@ def VarCircle(XY = xy, Par = par):  # must have at least 4 sets of xy points or 
 #    print "XY", XY
     n = len(XY)
 #    print "n", n
+    if n < 4:
+        raise Warning("Circle cannot be calculated with less than 4 data points.  Please include more data")
     Dx = XY[:,0] - Par[0]
     Dy = XY[:,1] - Par[1]
     D = numpy.sqrt(Dx * Dx + Dy * Dy) - Par[2]
@@ -90,10 +92,10 @@ def LMA(XY=xy,ParIni=par_ini):
     %     "algebraic parameters" A,B,C,D  with constraint B*B+C*C-4*A*D=1
     %        N. Chernov and C. Lesort, "Least squares fitting of circles",
     %        J. Math. Imag. Vision, Vol. 23, 239-251 (2005)
-    %     Input:  XY(n,2) is the array of coordinates of n points x(i)=XY(i,1), y(i)=XY(i,2)             
+    %     Input:  XY[n,2] is the array of coordinates of n points x[i]=XY[i,0]), y[i]=XY[i,1]             
     %             ParIni = [a b R] is the initial guess (supplied by user)
     %     Output: Par = [a b R] is the fitting circle:                                               
-    %                           center (a,b) and radius R                                                                  
+    %                           center (a,b) and radius R 
     %                                                                                                     
     """
     factorUp=10
@@ -315,3 +317,96 @@ a, b, r = LMA(new_xy, new_par_ini)
 print "new results"
 print a, b, r
 
+def AraiCurvature(x,y):
+    """
+% Function for calculating the radius of the best fit circle to a set of 
+% x-y coordinates.
+% Paterson, G. A., (2011), A simple test for the presence of multidomain
+% behaviour during paleointensity experiments, J. Geophys. Res., in press,
+% doi: 10.1029/2011JB008369
+%
+% parameters[0] = k
+% parameters[1] = a
+% parameters[2] = b
+% parameters[3] = SSE (goodness of fit)
+    """
+
+#xy = numpy.array([[1,1],[0.,-2.], [.5,3.], [4., 5.]])
+
+   # x=reshape(x, length(x), 1);
+#    y=reshape(y, length(y), 1);
+    
+    # Normalizevectors
+    XY[:,0] = XY[:,0] / max(XY[:,0]) # important that values are all floats
+    XY[:,1] = XY[:,1] / max(XY[:,1]) # norms y values
+#    x=x./max(x);
+#    y=y./max(y);
+
+    #Provide the intitial estimate
+    E1=TaubinSVD(XY);
+
+    #Determine the iterative solution
+    E2=LMA(XY, E1);
+
+    estimates=[E2[2], E2[0], E2[1]];
+    
+
+    # Define the function to be minimized and calculate the SSE
+    func=@(v) sum((sqrt((x-v(2)).^2+(y-v(3)).^2)-v(1)).^2);
+    SSE=func(estimates);
+
+    if (E2(1)<=mean(x) && E2(2)<=mean(y)):
+        k=-1/E2(3);
+    else:
+        k=1/E2(3);
+    #end
+
+    parameters=[k; E2(1); E2(2); SSE];
+
+end % Arai plot curvature
+
+
+
+
+function [parameters]=AraiCurvature(x,y)
+%
+% Function for calculating the radius of the best fit circle to a set of 
+% x-y coordinates.
+% Paterson, G. A., (2011), A simple test for the presence of multidomain
+% behaviour during paleointensity experiments, J. Geophys. Res., in press,
+% doi: 10.1029/2011JB008369
+%
+% parameters(1) = k
+% parameters(2) = a
+% parameters(3) = b
+% parameters(4) = SSE (goodness of fit)
+
+% Reshape vectors for suitable input
+x=reshape(x, length(x), 1);
+y=reshape(y, length(y), 1);
+
+% Normalizevectors
+x=x./max(x);
+y=y./max(y);
+
+% Provide the intitial estimate
+E1=TaubinSVD([x,y]);
+
+% Determine the iterative solution
+E2=LMA([x,y], E1);
+
+estimates=[E2(3), E2(1), E2(2)];
+
+% Define the function to be minimized and calculate the SSE
+func=@(v) sum((sqrt((x-v(2)).^2+(y-v(3)).^2)-v(1)).^2);
+SSE=func(estimates);
+
+if (E2(1)<=mean(x) && E2(2)<=mean(y))
+    k=-1/E2(3);
+else
+    k=1/E2(3);
+end
+
+parameters=[k; E2(1); E2(2); SSE];
+
+end % Arai plot curvature
