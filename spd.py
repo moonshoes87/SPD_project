@@ -17,6 +17,7 @@
 
 import sys,pylab,scipy,os
 import lib_arai_plot_statistics as lib_arai
+import lib_curvature as lib_k
 import lib_directional_statistics as lib_direct
 import lib_ptrm_statistics as lib_ptrm
 from scipy import * 
@@ -185,11 +186,15 @@ class PintPars(object):
 
     def get_curve(self):
         x_Arai, y_Arai = self.x_Arai, self.y_Arai
-        data = lib_arai.get_curve(x_Arai, y_Arai)
-        self.pars['centroid'] = data['centroid']
-        self.pars['specimen_k'] = data['k']
-        self.pars['best_fit_circle'] = data['best_fit_circle']
-        self.pars['SSE'] = data['SSE']
+        data = lib_k.AraiCurvature(x_Arai,y_Arai)
+        # k, a, b, SSE
+        self.pars['specimen_k'] = data[0]
+        self.pars['SSE'] = data[3]
+#        data = lib_arai.get_curve(x_Arai, y_Arai)
+#        self.pars['centroid'] = data['centroid']
+#        self.pars['specimen_k'] = data['k']
+#        self.pars['best_fit_circle'] = data['best_fit_circle']
+#        self.pars['SSE'] = data['SSE']
 
 
     def get_SCAT(self):
