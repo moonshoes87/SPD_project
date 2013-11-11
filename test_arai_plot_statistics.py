@@ -144,8 +144,18 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         slope_err_threshold = .25
         x_mean, y_mean = 3, 2
 #        def get_SCAT_box(slope, slope_err, x_mean, y_mean, beta_threshold = .1):
+        ref_y_max = 6.5
+        ref_x_max = 7.
+        ref_low_bound_result = 1.8846153846153846
+        ref_high_bound_result = 4.642857142857142
         result = lib_arai.get_SCAT_box(b, x_mean, y_mean, beta_threshold = .25)
+        self.assertAlmostEqual(ref_low_bound_result, result[0](2.))
+        self.assertAlmostEqual(ref_high_bound_result, result[1](2.))
+        self.assertAlmostEqual(ref_x_max, result[2])
+        self.assertAlmostEqual(ref_y_max, result[3])
         print result
+        print result[0](2) # low_bound
+        print result[1](2) # high bound
 
 
 
