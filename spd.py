@@ -190,6 +190,7 @@ class PintPars(object):
         # k, a, b, SSE
         self.pars['specimen_k'] = data[0]
         self.pars['SSE'] = data[3]
+        return data[0], data[3]
 #        data = lib_arai.get_curve(x_Arai, y_Arai)
 #        self.pars['centroid'] = data['centroid']
 #        self.pars['specimen_k'] = data['k']

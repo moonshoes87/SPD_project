@@ -227,10 +227,10 @@ LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory f
 to do:
 
 check get_curve()
-      do proper curvature stats
-      got Chernov and Lesort 2005, and matlab code.  but fuuuuuuuck this is confusing.  
-      review array manipulation in numpy tutorial
-      get MATLAB
+      do proper curvature stats # DONE
+      got Chernov and Lesort 2005, and matlab code.  but fuuuuuuuck this is confusing.  # DONE
+      review array manipulation in numpy tutorial 
+      determine whether norming should or should not be done
 ask Alex about last bit of VDS calculation
 add tests for SCAT
 finish IZZI_MD  # DONE (?)
@@ -238,10 +238,10 @@ finish IZZI_MD  # DONE (?)
       sometimes best_fit_vector is postive where should be negative.  # DONE (or at least can't reproduce this problem....)
 check giving PD direction thing (dot, R, etc.).  IMPORTANT
 remaining Directional stats:
-	  talk to Ron
+	  talk to Ron # DONE
 	  use thellier magic to check up on gamma # looking good
 	  figure out exactly what ChRM is # DONE
-	  do theta
+	  do theta # DONE
 
 include pTRM checks below tmin # DONE
 
