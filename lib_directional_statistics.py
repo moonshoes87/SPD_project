@@ -60,13 +60,12 @@ def get_cart_primes_and_means(zdata_segment, anchored=True):
         X1_prime, X2_prime, X3_prime = list(X1), list(X2), list(X3)
     return {'X1_prime': X1_prime, 'X2_prime': X2_prime, 'X3_prime': X3_prime, 'X1': X1, 'X2': X2, 'X3': X3, 'X1_mean': means[0], 'X2_mean': means[1], 'X3_mean': means[2], 'zdata_mass_center': means }
 
-def get_orientation_tensor(X1_p, X2_p, X3_p):  # TRY DOING IT RON STYLE, with cov
+def get_orientation_tensor(X1_p, X2_p, X3_p):  
     X1_p, X2_p, X3_p = numpy.array(X1_p), numpy.array(X2_p), numpy.array(X3_p)
     orient_tensor = [[sum(X1_p * X1_p), sum(X1_p * X2_p), sum(X1_p * X3_p)],
                      [sum(X1_p * X2_p), sum(X2_p * X2_p), sum(X2_p * X3_p)],
                      [sum(X1_p * X3_p), sum(X2_p * X3_p), sum(X3_p * X3_p)]]
     tau, V = numpy.linalg.eig(orient_tensor) 
-# ATTEND!!  POSSIBLY THIS SHOULD BE numpy.linalg.eig(numpy.cov(orient_tensor))  numpy.cov gets the covariance matrix of data
     return {'orient_tensor': orient_tensor, 'tau': tau, 'V': V}
 
 
@@ -113,8 +112,26 @@ def tauV(T):
     return t,V
 
 
-def get_PD_direction():
-    pass
+def get_PD_direction(X1_prime, X2_prime, X3_prime, PD):
+    """takes arrays of X1_prime, X2_prime, X3_prime, and the PD.  checks that the PD vector direction is correct"""
+#    pass
+    n = len(X1_prime) - 1
+    X1 = X1_prime[0] - X1_prime[n]  # make sure this manner of indexing is correct.  I think it may be
+    X2 = X2_prime[0] - X2_prime[n]
+    X3 = X3_prime[0] - X3_prime[n]
+    R= numpy.array([X1, X2, X3])
+#V1 = V[0]
+    dot = numpy.dot(PD, R) # dot product of reference vector and the principal axis of the V matrix
+    if dot < -1:
+        dot = -1
+    elif dot > 1:
+        dot = 1
+    if numpy.arccos(dot) > numpy.pi / 2:
+        print "negative"
+        print PD
+        PD = -1. * numpy.array(PD)
+        print PD
+    return PD
 
 # PUT THIS IN THERE
 # not sure if this is needed.  there is a method for getting direction along V1 using the vector dot product of V1 and R.  I just don't know if we need this.  
@@ -177,41 +194,27 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     means = data['zdata_mass_center']
     T = get_orientation_tensor(data['X1_prime'], data['X2_prime'], data['X3_prime'])
     tau,V=tauV(T['orient_tensor'])
-    get_PD_direction() # this will make it positive or negative, you need to write this code
-    PDir=cart2dir(V[0]) # PDir is direction
-    best_fit_vector = V[0]  # best_fit is cartesian
-    vector = adjust_best_fit_vector(best_fit_vector, means, zdata) # means is mass center
+    PD = get_PD_direction(data['X1_prime'], data['X2_prime'], data['X3_prime'], V[0]) # makes PD + or -
+    PDir=cart2dir(PD) # PDir is direction
+    vector = PD # best fit vector / ChRM is cartesian
+#    best_fit_vector = V[0]  # # old way of doing get_PD_direction.  I think the new way is better.  
+#    vector = adjust_best_fit_vector(best_fit_vector, means, zdata) 
     dec = PDir[0]  # fixed, took out bad adjustment.  dec must always be positive, but cart2dir ensures that it is
     inc = PDir[1]
-#    print "tau", tau
-#    print "V", V
-#    print "anchored:", anchored, " best fit vector", best_fit_vector, "adjusted vector", vector
     return dec, inc, vector, tau, V, means
 
-def adjust_best_fit_vector(vector, cm, zdata):
-    """finds correct sign "+/-" for best fit vector"""
+#def adjust_best_fit_vector(vector, cm, zdata): # not using this one anymore
+#    """finds correct sign "+/-" for best fit vector"""
 #cm = zdata_mass_center
-    cm = numpy.array(cm)
-    best_fit_vector = numpy.array(vector)
-    v1_plus = best_fit_vector * numpy.sqrt(sum(cm**2))
-    v1_minus = best_fit_vector * -1. * numpy.sqrt(sum(cm**2))
-    test_v = zdata[0] - zdata[-1]
+#    cm = numpy.array(cm)
+#    best_fit_vector = numpy.array(vector)
+#    v1_plus = best_fit_vector * numpy.sqrt(sum(cm**2))
+#    v1_minus = best_fit_vector * -1. * numpy.sqrt(sum(cm**2))
+#    test_v = zdata[0] - zdata[-1]
 #    print "test_v", test_v
-    if numpy.sqrt(sum((v1_minus-test_v)**2)) < numpy.sqrt(sum((v1_plus-test_v)**2)):
-        best_fit_vector = best_fit_vector* -1. 
-    return best_fit_vector
-
-#        cm=array(mean(zdata_segment.T,axis=1)) # center of mass  
- #       v1_plus=v1*sqrt(sum(cm**2))
-#        v1_minus=v1*-1*sqrt(sum(cm**2))
-#        test_v=zdata_segment[0]-zdata_segment[-1]
-#        if sqrt(sum((v1_minus-test_v)**2)) < sqrt(sum((v1_plus-test_v)**2)):
-#         DIR_PCA=self.cart2dir(v1*-1)
-#         best_fit_vector=v1*-1
-#        else:
-#         DIR_PCA=self.cart2dir(v1)
-#         best_fit_vector=v1
-
+#    if numpy.sqrt(sum((v1_minus-test_v)**2)) < numpy.sqrt(sum((v1_plus-test_v)**2)):
+#        best_fit_vector = best_fit_vector* -1. 
+#    return best_fit_vector
 
 
 def get_MAD(tau): # works

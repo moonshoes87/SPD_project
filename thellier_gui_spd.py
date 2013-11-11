@@ -5813,6 +5813,7 @@ class Arai_GUI(wx.Frame):
         else:
          DIR_PCA=self.cart2dir(v1)
          best_fit_vector=v1
+        print "best_fit_vector", best_fit_vector
 
         # MAD Kirschvink (1980)
         MAD=math.degrees(arctan(sqrt((t2+t3)/t1)))

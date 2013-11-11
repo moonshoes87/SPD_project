@@ -70,15 +70,23 @@ class CheckDecInc(unittest.TestCase):
         v = numpy.allclose(result['orient_tensor'], orient_tensor) # assesses two arrays for if they are approximately eq
         self.assertTrue(v)
 
-    def test_order_eigenvectors(self): # figure it out
-        pass
+    def test_PD_direction(self):
+        X1_prime, X2_prime, X3_prime = [1., 3.], [5., 2.], [8., 7.]
+        PD = [1., 2., 3.]
+        result = lib_direct.get_PD_direction(X1_prime, X2_prime, X3_prime, PD)
+        ref_PD = [1., 2., 3.]
+        for num, ref in enumerate(ref_PD):
+            self.assertAlmostEqual(ref, result[num])
+        
+    def test_PD_direction_negative(self):
+        X1_prime, X2_prime, X3_prime = [1., 3.], [2., 5.], [8., 7.]
+        PD = [1., 2., 3.]
+        result = lib_direct.get_PD_direction(X1_prime, X2_prime, X3_prime, PD)
+        ref_PD = [-1., -2.,-3.]
+        print "ref, result", ref_PD, result
+        for num, ref in enumerate(ref_PD):
+            self.assertAlmostEqual(ref, result[num])
 
-#    def test_reference_vector(self):  #not currently using reference vector, so removed test
-#        print "reference:", self.reference_vector
-#        result = lib_direct.get_reference_vector(self.X1_prime, self.X2_prime, self.X3_prime)
-#        print "result", result
-#        for num, value in enumerate(result):
-#            self.assertAlmostEqual(value, self.reference_vector[num])
 
     def test_get_dec_and_inc(self): # testing full thing with real data
         dec, inc, intenstiy, tau, V, means = lib_direct.get_dec_and_inc(spd.thing.zdata, spd.thing.t_Arai, spd.thing.tmin, spd.thing.tmax, anchored=False)
