@@ -227,22 +227,15 @@ LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory f
 to do:
 
 check get_curve()
-      do proper curvature stats # DONE
-      got Chernov and Lesort 2005, and matlab code.  but fuuuuuuuck this is confusing.  # DONE
-      review array manipulation in numpy tutorial 
+      everything else # DONE
       determine whether norming should or should not be done
 ask Alex about last bit of VDS calculation
 add tests for SCAT
 finish IZZI_MD  # DONE (?)
        use last repeated point, not first # 
       sometimes best_fit_vector is postive where should be negative.  # DONE (or at least can't reproduce this problem....)
-check giving PD direction thing (dot, R, etc.).  IMPORTANT
-remaining Directional stats:
-	  talk to Ron # DONE
-	  use thellier magic to check up on gamma # looking good
-	  figure out exactly what ChRM is # DONE
-	  do theta # DONE
-
+check giving PD direction thing (dot, R, etc.).  # DONE
+fix -/+ for PD/Dec + Inc # DONE
 include pTRM checks below tmin # DONE
 
 
@@ -256,6 +249,5 @@ dir2cart
 	
 
 thellier_gui Dec, Inc, and MAD are free.  lisa always uses free
-
-matlab SVD and numpy SVD produce nearly, but not exactly, identical output.  difference is in V, and also in the format for S (less important)
+matlab SVD and numpy SVD produce nearly, but not exactly, identical output.  difference is in V, and also in the format for S (less important) # seems to be a rounding issue only
 Also, checked and numpy and matlab notation for slicing is the same, except that matlab indexing starts at 1, not 0

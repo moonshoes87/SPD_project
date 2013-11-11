@@ -354,7 +354,7 @@ class PintPars(object):
         self.get_vds()
         self.get_FRAC()
         self.get_curve()
-        self.get_SCAT()
+#        self.get_SCAT()
         self.get_R_corr2()
         self.get_R_det2()
         self.get_Z()

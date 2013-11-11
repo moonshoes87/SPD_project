@@ -56,7 +56,10 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 
-def get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean, beta_threshold = .1):
+def get_SCAT_box(slope,  x_mean, y_mean, beta_threshold = .1):  # don't need x_int and y_int, slope_beta, x_Arai_segment, y_Arai_segment, slope_err...?  consider removing.   slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, slope_err
+    """
+    takes in data and returns information about SCAT box: the largest possible x_value, the largest possible y_value, and functions for the two bounding lines of the box
+    """
     slope_err_threshold = abs(slope) * beta_threshold
     x, y = x_mean, y_mean
     # get lines that pass through mass center

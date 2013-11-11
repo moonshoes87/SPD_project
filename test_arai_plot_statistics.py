@@ -139,8 +139,13 @@ class CheckVDSsequence(unittest.TestCase): # adequate
 
 class CheckSCAT(unittest.TestCase): # NOT DONE
 
-    def test_some_stuff(self):
-        pass
+    def test_SCAT_box(self):
+        b = -1.
+        slope_err_threshold = .25
+        x_mean, y_mean = 3, 2
+#        def get_SCAT_box(slope, slope_err, x_mean, y_mean, beta_threshold = .1):
+        result = lib_arai.get_SCAT_box(b, x_mean, y_mean, beta_threshold = .25)
+        print result
 
 
 
