@@ -331,23 +331,33 @@ class PintPars(object):
         tmin, tmax = self.tmin, self.tmax
         ptrm_temps, ptrm_starting_temps = self.ptrm_checks_temperatures, self.ptrm_checks_starting_temperatures
         n, steps = lib_ptrm.get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps)
-        print "n_ptrm", n, "steps", steps
+#        print "n_ptrm", n, "steps", steps
         self.pars['n_ptrm'] = n
         self.pars['ptrm_checks_segment'] = steps
-#        def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
         
     def get_max_ptrm_check(self):
-#        def get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai):
         ptrm_checks_segment = self.pars['ptrm_checks_segment']
         ptrm_checks = self.ptrm_checks_temperatures
         ptrm_x = self.x_ptrm_check
         x_Arai, t_Arai = self.x_Arai, self.t_Arai
-        max_ptrm_check = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
+        max_ptrm_check, check_percent = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
+        self.pars['max_ptrm_check_percent'] = check_percent
         self.pars['max_ptrm_check'] = max_ptrm_check
         return max_ptrm_check
 
+    def get_delta_CK(self):
+#        def get_delta_CK(max_ptrm_check, x_int):
+        delta_CK = lib_ptrm.get_delta_CK(self.pars['max_ptrm_check'], self.pars['specimen_XT'])
+        self.pars['delta_CK'] = delta_CK
+        return delta_CK
 
-        
+    def get_DRAT(self):
+#        def get_DRAT(delta_y_prime, delta_x_prime, max_ptrm_check):
+        DRAT = lib_ptrm.get_DRAT(self.pars['delta_y_prime'], self.pars['delta_x_prime'], self.pars['max_ptrm_check'])
+        self.pars['DRAT'] = DRAT
+        return DRAT
+                                 
+
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
         self.York_Regression()
@@ -368,7 +378,12 @@ class PintPars(object):
         self.get_NRM_dev()
         self.get_theta() # not necessarily done
         self.get_gamma() # ditto
+        # ptrm check statistics
+        self.get_n_ptrm()
+        self.get_max_ptrm_check()
+        self.get_delta_CK()
         print "done with calculate_all_statistics"
+
 
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]

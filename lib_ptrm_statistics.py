@@ -27,6 +27,17 @@ def get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
         ptrm_orig = x_Arai[arai_ind]
         diff = ptrm_check / ptrm_orig
         diffs.append(diff)
-    return max(diffs) * 100.
-#        return 0
+    return max(diffs), max(diffs) * 100.
+
+def get_delta_CK(max_ptrm_check, x_int):
+    """Returns maximum difference produced by a ptrm check, normed by total TRM (x int of best fit line)"""
+    return max_ptrm_check / x_int * 100.
+
+def get_DRAT(delta_y_prime, delta_x_prime, max_ptrm_check):
+    """Returns maximum difference produced by a ptrm check, normed by length of best_fit line"""
+    L = numpy.sqrt(delta_x_prime**2 + delta_y_prime**2)
+    DRAT = max_ptrm_check / L * 100
+    return DRAT
+
+
     
