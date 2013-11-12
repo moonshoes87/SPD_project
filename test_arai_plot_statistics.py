@@ -138,17 +138,18 @@ class CheckVDSsequence(unittest.TestCase): # adequate
 
 
 class CheckSCAT(unittest.TestCase): # NOT DONE
+    b = -1.
+    slope_err_threshold = .25
+    x_mean, y_mean = 3, 2
+    beta_threshold = .25
 
     def test_SCAT_box(self):
-        b = -1.
-        slope_err_threshold = .25
-        x_mean, y_mean = 3, 2
 #        def get_SCAT_box(slope, slope_err, x_mean, y_mean, beta_threshold = .1):
         ref_y_max = 6.5
         ref_x_max = 7.
         ref_low_bound_result = 1.8846153846153846
         ref_high_bound_result = 4.642857142857142
-        result = lib_arai.get_SCAT_box(b, x_mean, y_mean, beta_threshold = .25)
+        result = lib_arai.get_SCAT_box(self.b, self.x_mean, self.y_mean, self.beta_threshold)
         self.assertAlmostEqual(ref_low_bound_result, result[0](2.))
         self.assertAlmostEqual(ref_high_bound_result, result[1](2.))
         self.assertAlmostEqual(ref_x_max, result[2])
@@ -156,6 +157,22 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         print result
         print result[0](2) # low_bound
         print result[1](2) # high bound
+
+    def test_in_SCAT_box(self):
+        print "doing zee test"
+        low_bound, high_bound, x_max, y_max = lib_arai.get_SCAT_box(self.b, self.x_mean, self.y_mean, self.beta_threshold)
+        good = [(2., 1.9), (1., 5.), (5., 1.8)]
+        bad = [(1., 2.), (3., 4), (7.1, .2)]
+#        def in_SCAT_box(x, y, low_bound, high_bound, x_max, y_max):
+        print "low_bound", low_bound
+        print low_bound(2)
+        for xy in good:
+            print "xy", xy
+            result = lib_arai.in_SCAT_box(xy[0], xy[1], low_bound, high_bound, x_max, y_max)
+            self.assertTrue(result)
+        for xy in bad:
+            result = lib_arai.in_SCAT_box(xy[0], xy[1], low_bound, high_bound, x_max, y_max)
+            self.assertFalse(result)
 
 
 
