@@ -188,6 +188,30 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         for xy in result:
             self.assertIn(xy, ref_points)
         print result, ref_points
+
+    def test_SCAT(self):
+#def get_SCAT(points, low_bound, high_bound, x_max, y_max):
+        points = [(2., 1.9), (1., 4.5), (5., .2)]
+        points1 = [(2., 1.9), (1., 4.5), (3.5, .1)]
+        points2 =  [(2., 1.9), (1., 4.5), (3.5, -.1)]
+        points3 = [(2., 1.9), (1., 4.5), (4., 4.)]
+        def low_bound(x):
+            y = 3.5/-4.3333335 * x + 3.5
+            return y
+        def high_bound(x):
+            y = 6.5/-7. * x + 6.5
+            return y
+        x_max = 7
+        y_max = 6.5
+        result = lib_arai.get_SCAT(points, low_bound, high_bound, x_max, y_max)
+        result1 = lib_arai.get_SCAT(points1, low_bound, high_bound, x_max, y_max)
+        result2 = lib_arai.get_SCAT(points2, low_bound, high_bound, x_max, y_max)
+        result3 = lib_arai.get_SCAT(points3, low_bound, high_bound, x_max, y_max)
+        self.assertTrue(result)
+        self.assertFalse(result1)
+        self.assertFalse(result2)
+        self.assertFalse(result3)
+
         
 
 

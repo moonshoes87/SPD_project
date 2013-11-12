@@ -103,18 +103,18 @@ def in_SCAT_box(x, y, low_bound, high_bound, x_max, y_max):
     passing = True
     upper_limit = high_bound(x)
     lower_limit = low_bound(x)
-    print "upper limit", upper_limit, "lower_limit", lower_limit
+#    print "upper limit", upper_limit, "lower_limit", lower_limit
     if x > x_max or y > y_max:
-        print "x or y greater than x or y_max"
+#        print "x or y greater than x or y_max"
         passing = False
     if x < 0 or y < 0:
-        print "x or y smaller than zero: all data should be positive"
+#        print "x or y smaller than zero: all data should be positive"
         passing = False
     if y > upper_limit:
-        print "y > upper limit"
+#        print "y > upper limit"
         passing = False
     if y < lower_limit:
-        print "y < lower_limit"
+#        print "y < lower_limit"
         passing = False
     return passing
 
