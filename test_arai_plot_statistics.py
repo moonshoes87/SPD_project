@@ -159,20 +159,36 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         print result[1](2) # high bound
 
     def test_in_SCAT_box(self):
-        print "doing zee test"
         low_bound, high_bound, x_max, y_max = lib_arai.get_SCAT_box(self.b, self.x_mean, self.y_mean, self.beta_threshold)
         good = [(2., 1.9), (1., 5.), (5., 1.8)]
         bad = [(1., 2.), (3., 4), (7.1, .2)]
 #        def in_SCAT_box(x, y, low_bound, high_bound, x_max, y_max):
-        print "low_bound", low_bound
-        print low_bound(2)
         for xy in good:
-            print "xy", xy
             result = lib_arai.in_SCAT_box(xy[0], xy[1], low_bound, high_bound, x_max, y_max)
             self.assertTrue(result)
         for xy in bad:
             result = lib_arai.in_SCAT_box(xy[0], xy[1], low_bound, high_bound, x_max, y_max)
             self.assertFalse(result)
+
+    def test_SCAT_points(self):
+        x_Arai_segment = [1., 2.]
+        y_Arai_segment = [4.5, 1.]
+        tmin = 20.
+        tmax = 40.
+        ptrm_checks_temperatures = [10, 20, 30, 40]
+        ptrm_checks_starting_temperatures = [20, 30, 40, 50]
+        x_ptrm_check = [1, 2, 3, 4]
+        y_ptrm_check = [4., 3., 2., 0.]
+        tail_checks_temperatures = [15., 25., 35., 45.]
+        tail_checks_starting_temperatures = [25., 35., 45., 55.]
+        x_tail_check = [1.5, 2.5, 3.5, 4.5]
+        y_tail_check = [4.5, 3.5, 2.5, 1.5]
+        ref_points = [(1., 4.5), (2., 1.), (2., 3.), (3., 2.), (2.5, 3.5)]
+        result = lib_arai.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temperatures, ptrm_checks_starting_temperatures, x_ptrm_check, y_ptrm_check, tail_checks_temperatures, tail_checks_starting_temperatures, x_tail_check, y_tail_check)
+        for xy in result:
+            self.assertIn(xy, ref_points)
+        print result, ref_points
+        
 
 
 

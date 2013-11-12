@@ -122,12 +122,12 @@ def in_SCAT_box(x, y, low_bound, high_bound, x_max, y_max):
 def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temperatures, ptrm_checks_starting_temperatures, x_ptrm_check, y_ptrm_check, tail_checks_temperatures, tail_checks_starting_temperatures, x_tail_check, y_tail_check):
     """returns relevant points for a SCAT test"""
     points = []
-    for i in range(len(x_Arai_segment)):
+    for i in range(len(x_Arai_segment)): # uses only the best_fit segment, so no need for further selection
         x = x_Arai_segment[i]
         y = y_Arai_segment[i]
         points.append((x, y))
 
-    for num, temp in enumerate(ptrm_checks_temperatures): # seems to 
+    for num, temp in enumerate(ptrm_checks_temperatures): # 
         if temp >= tmin and temp <= tmax: # if temp is within selected range
             if ptrm_checks_starting_temperatures[num] >= tmin and ptrm_checks_starting_temperatures[num] <= tmax: # and also if it was not done after an out-of-range temp
                 x = x_ptrm_check[num]
