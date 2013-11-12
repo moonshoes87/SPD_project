@@ -82,9 +82,6 @@ def get_SCAT_box(slope,  x_mean, y_mean, beta_threshold = .1):  # don't need x_i
     # function for low_bound
     low_slope = (low_bound[0][1] - low_bound[1][1]) / (low_bound[0][0] - low_bound[1][0]) # y_0 - y_1 / x_0 - x_1     
     low_y_int = low_bound[0][1]
-    print "low_bound, high_bound", low_bound, high_bound
-    print "low y int", low_y_int
-    print "low slope", low_slope
     def low_bound(x): # appears 
         y = low_slope * x + low_y_int
         return y

@@ -138,6 +138,7 @@ class CheckVDSsequence(unittest.TestCase): # adequate
 
 
 class CheckSCAT(unittest.TestCase): # NOT DONE
+    obj = copy.deepcopy(spd.thing)
     b = -1.
     slope_err_threshold = .25
     x_mean, y_mean = 3, 2
@@ -212,6 +213,17 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         self.assertFalse(result2)
         self.assertFalse(result3)
 
+    def test_SCAT_real_data(self):
+        thing = spd.PintPars(spd.gui.Data, '0238x6011044', 273., 673.) # 0, 400
+        thing.York_Regression()
+        print "panda"
+        print thing.tmin_K, thing.tmax_K
+        thing1 = spd.PintPars(spd.gui.Data, '0238x6011044', 273., 698.) # 0, 425
+        thing1.York_Regression()
+        print "octopus"
+        print thing1.tmin_K, thing1.tmax_K
+        self.assertFalse(thing.get_SCAT())
+        self.assertTrue(thing1.get_SCAT())
         
 
 
