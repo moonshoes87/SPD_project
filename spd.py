@@ -199,12 +199,13 @@ class PintPars(object):
 
 
     def get_SCAT(self):
-        slope, slope_err, slope_beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
-        x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
+        slope = self.pars['specimen_b'] #, slope_err, slope_beta = self.pars['specimen_b'], self.pars['specimen_b_sigma'], self.pars['specimen_b_beta']
+#        x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
 #        beta_threshold = .1                                                                                  
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
-        box = lib_arai.get_SCAT_box(slope, slope_err, slope_beta, x_int, y_int, x_Arai_segment, y_Arai_segment, x_mean, y_mean)
+        box = lib_arai.get_SCAT_box(slope, x_mean, y_mean)
+#def get_SCAT_box(slope,  x_mean, y_mean, beta_threshold = .1):
     #    print "SCAT-box", box
         low_bound, high_bound, x_max, y_max = box[0], box[1], box[2], box[3]
         # getting SCAT points
@@ -354,7 +355,7 @@ class PintPars(object):
         self.get_vds()
         self.get_FRAC()
         self.get_curve()
-#        self.get_SCAT()
+        self.get_SCAT()
         self.get_R_corr2()
         self.get_R_det2()
         self.get_Z()
