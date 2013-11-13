@@ -40,18 +40,27 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
     max_diff = max(abs_diffs)
     check_percent = max(check_percents)
     sum_diffs = sum(diffs)
-    return max_diff, sum_diffs, check_percent # gives the largest difference between an original trm measurement and a ptrm check, the sum of those differences, and the percentage 
+    sum_abs_diffs = sum(abs_diffs)
+    return max_diff, sum_diffs, check_percent, sum_abs_diffs # gives the largest difference between an original trm measurement and a ptrm check, the sum of those differences, and the percentage 
 
 
 def get_delta_CK(max_ptrm_check, x_int):
     """Returns maximum difference produced by a ptrm check, normed by total TRM (x int of best fit line)"""
-    return max_ptrm_check / x_int * 100.
+    return (max_ptrm_check / x_int) * 100.
 
-def get_DRAT(delta_y_prime, delta_x_prime, max_ptrm_check):
+def get_DRAT(delta_x_prime, delta_y_prime, max_ptrm_check):
     """Returns maximum difference produced by a ptrm check, normed by length of best_fit line"""
     L = numpy.sqrt(delta_x_prime**2 + delta_y_prime**2)
-    DRAT = max_ptrm_check / L * 100
-    return DRAT
+    DRAT = (max_ptrm_check / L) * 100
+    return DRAT, L
+
+def get_max_DEV(delta_x_prime, max_ptrm_check):
+    return (max_ptrm_check / delta_x_prime) * 100.
+
+def get_CDRAT(L, sum_ptrm_checks, sum_abs_ptrm_checks):
+    CDRAT = (sum_ptrm_checks / L) * 100.
+    CDRAT_prime = (sum_abs_ptrm_checks / L) * 100.
+    return CDRAT, CDRAT_prime
 
 
     

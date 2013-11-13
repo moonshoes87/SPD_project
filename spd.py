@@ -340,10 +340,11 @@ class PintPars(object):
         ptrm_checks = self.ptrm_checks_temperatures
         ptrm_x = self.x_ptrm_check
         x_Arai, t_Arai = self.x_Arai, self.t_Arai
-        max_ptrm_check, sum_ptrm_checks, check_percent = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
+        max_ptrm_check, sum_ptrm_checks, check_percent, sum_abs_ptrm_checks = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
         self.pars['max_ptrm_check_percent'] = check_percent
         self.pars['max_ptrm_check'] = max_ptrm_check
         self.pars['sum_ptrm_checks'] = sum_ptrm_checks
+        self.pars['sum_abs_ptrm_checks'] = sum_abs_ptrm_checks
         return max_ptrm_check
 
     def get_delta_CK(self):
@@ -354,10 +355,19 @@ class PintPars(object):
 
     def get_DRAT(self):
 #        def get_DRAT(delta_y_prime, delta_x_prime, max_ptrm_check):
-        DRAT = lib_ptrm.get_DRAT(self.pars['delta_y_prime'], self.pars['delta_x_prime'], self.pars['max_ptrm_check'])
+        DRAT, L = lib_ptrm.get_DRAT(self.pars['delta_x_prime'], self.pars['delta_y_prime'], self.pars['max_ptrm_check'])
         self.pars['DRAT'] = DRAT
+        self.pars['length_best_fit_line'] = L
         return DRAT
-                                 
+
+    def get_max_DEV(self):
+#def get_max_DEV(delta_x_prime, max_ptrm_check):
+        pass
+    
+    def get_CDRAT(self):
+#def get_CDRAT(L, sum_ptrm_checks, sum_abs_ptrm_checks):                     
+        pass
+            
 
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"

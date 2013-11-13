@@ -25,9 +25,17 @@ class CheckpTRMparams(unittest.TestCase):
     ref_max_ptrm_check = 2.5
     ref_sum_ptrm_check = -1. 
     ref_check_percent = (2.5/ 5.5) * 100.
+    ref_sum_abs_ptrm_check = 5.
 
     x_int = 8.5
     ref_delta_CK = 2.5 / 8.5 * 100
+
+    delta_y_prime = 5.
+    delta_x_prime = 8.
+
+    ref_L = numpy.sqrt(25 + 64)
+
+
     
     def test_n_ptrm(self):
         result = lib_ptrm.get_n_ptrm(self.tmin, self.tmax, self.ptrm_temps, self.ptrm_starting_temps)
@@ -37,10 +45,11 @@ class CheckpTRMparams(unittest.TestCase):
     def test_max_ptrm_check(self):
 #def get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai):
         result = lib_ptrm.get_max_ptrm_check(self.ref_steps, self.ptrm_temps, self.x_ptrm, self.t_Arai, self.x_Arai)
-        max_ptrm_diff, sum_ptrm_diffs, check_percent = result[0], result[1], result[2]
+        max_ptrm_diff, sum_ptrm_diffs, check_percent, sum_abs_ptrm_diffs = result[0], result[1], result[2], result[3]
         self.assertAlmostEqual(self.ref_max_ptrm_check, max_ptrm_diff)
         self.assertAlmostEqual(self.ref_sum_ptrm_check, sum_ptrm_diffs)
         self.assertAlmostEqual(self.ref_check_percent, check_percent)
+        self.assertAlmostEqual(self.ref_sum_abs_ptrm_check, sum_abs_ptrm_diffs)
 
 
     def test_delta_CK(self):
@@ -49,12 +58,22 @@ class CheckpTRMparams(unittest.TestCase):
 
         
     def test_DRAT(self):
-        delta_y_prime = 5.
-        delta_x_prime = 8.
-        L = numpy.sqrt(25 + 64)
-        ref_DRAT = self.ref_max_ptrm_check / L * 100.
-        result = lib_ptrm.get_DRAT(delta_y_prime, delta_x_prime, self.ref_max_ptrm_check)
-        self.assertAlmostEqual(ref_DRAT, result)
+        ref_DRAT = (self.ref_max_ptrm_check / self.ref_L) * 100.
+        DRAT, L = lib_ptrm.get_DRAT(self.delta_y_prime, self.delta_x_prime, self.ref_max_ptrm_check)
+        self.assertAlmostEqual(ref_DRAT, DRAT)
+        self.assertAlmostEqual(self.ref_L, L)
+
+    def test_max_DEV(self):
+        result = lib_ptrm.get_max_DEV(self.delta_x_prime, self.ref_max_ptrm_check)
+        ref_max_DEV = (2.5 / 8.) * 100
+        self.assertAlmostEqual(ref_max_DEV, result)
+        
+    def test_CDRAT(self):
+        CDRAT, CDRAT_prime = lib_ptrm.get_CDRAT(self.ref_L, self.ref_sum_ptrm_check, self.ref_sum_abs_ptrm_check)
+        ref_CDRAT, ref_CDRAT_prime = (-1. / self.ref_L) * 100., (5. / self.ref_L) * 100
+        self.assertAlmostEqual(ref_CDRAT, CDRAT)
+        self.assertAlmostEqual(ref_CDRAT_prime, CDRAT_prime)
+        
 
 
 if __name__ == "__main__":
