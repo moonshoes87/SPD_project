@@ -27,7 +27,7 @@ class CheckpTRMparams(unittest.TestCase):
     ref_check_percent = (2.5/ 5.5) * 100.
 
     x_int = 8.5
-    ref_delta_CK = 1.25 / 8.5 * 100
+    ref_delta_CK = 2.5 / 8.5 * 100
     
     def test_n_ptrm(self):
         result = lib_ptrm.get_n_ptrm(self.tmin, self.tmax, self.ptrm_temps, self.ptrm_starting_temps)
@@ -45,7 +45,7 @@ class CheckpTRMparams(unittest.TestCase):
 
     def test_delta_CK(self):
         result = lib_ptrm.get_delta_CK(self.ref_max_ptrm_check, self.x_int)
-#        self.assertAlmostEqual(self.ref_delta_CK, result)
+        self.assertAlmostEqual(self.ref_delta_CK, result)
 
         
     def test_DRAT(self):
@@ -54,7 +54,7 @@ class CheckpTRMparams(unittest.TestCase):
         L = numpy.sqrt(25 + 64)
         ref_DRAT = self.ref_max_ptrm_check / L * 100.
         result = lib_ptrm.get_DRAT(delta_y_prime, delta_x_prime, self.ref_max_ptrm_check)
-#        self.assertAlmostEqual(ref_DRAT, result)
+        self.assertAlmostEqual(ref_DRAT, result)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ import numpy
 
 
 def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
-    """return number of ptrm_checks included in best fit segment.  excludes checks if temp exceeds tmax OR if starting temp exceeds tmax"""
+    """return number of ptrm_checks included in best fit segment.  excludes checks if temp exceeds tmax OR if starting temp exceeds tmax. also returns those ptrm_check temperatures"""
     # does not exclude ptrm checks that are less than tmin
     ptrm_checks_segment= []
     for num, check in enumerate(ptrm_temps):
@@ -17,45 +17,30 @@ def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
             ptrm_checks_segment.append(check)
     return len(ptrm_checks_segment), ptrm_checks_segment
 
-# fix it so that max_ptrm_check is right.  it should be subtraction, not division.  
+
 def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x, t_Arai, x_Arai): 
+    """sorts through included ptrm_checks and finds the largest ptrm check diff, the sum of the total diffs, and the percentage of the largest check / original measurement at that temperature step"""
     diffs = []
     abs_diffs = []
     x_Arai_compare = []
     ptrm_compare = []
-#    print "ptrm_checks_included_temps", ptrm_checks_included_temps
+    check_percents = []
     ptrm_checks_all_temps = list(ptrm_checks_all_temps)
-#    print "ptrm_x", ptrm_x
-#    print "ptrm_checks_all_temps", ptrm_checks_all_temps
     for check in ptrm_checks_included_temps:
-#        print "check", check
         ptrm_ind = ptrm_checks_all_temps.index(check)
-#        print "ptrm_ind", ptrm_ind
         ptrm_check = ptrm_x[ptrm_ind]
         ptrm_compare.append(ptrm_check)
         arai_ind = t_Arai.index(check)
         ptrm_orig = x_Arai[arai_ind]
         x_Arai_compare.append(ptrm_orig)
-#        print "ptrm_check", ptrm_check, "ptrm_orig", ptrm_orig
         diff = ptrm_check - ptrm_orig
         diffs.append(diff)
         abs_diffs.append(abs(diff))
-#    print "diffs", diffs
-#    print "ptrm_checks", ptrm_compare
-#    print "x_Arai_compare", x_Arai_compare
-    print "abs_diffs", abs_diffs
-    print "diffs", diffs
+        check_percents.append((abs(diff) / ptrm_orig) * 100)
     max_diff = max(abs_diffs)
-    diff_ind = abs_diffs.index(max_diff)
-    print diff_ind
-    norm_x = x_Arai_compare[diff_ind]
-    print x_Arai_compare, "x_Arai_compare"
-    print norm_x
-    check_percent = max_diff / norm_x * 100
-    return max_diff, sum(diffs), check_percent
-
-def get_check_percent(max_ptrm_diff, x_at_that_step):
-    pass
+    check_percent = max(check_percents)
+    sum_diffs = sum(diffs)
+    return max_diff, sum_diffs, check_percent # gives the largest difference between an original trm measurement and a ptrm check, the sum of those differences, and the percentage 
 
 
 def get_delta_CK(max_ptrm_check, x_int):

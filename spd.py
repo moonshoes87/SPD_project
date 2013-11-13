@@ -383,6 +383,7 @@ class PintPars(object):
         self.get_n_ptrm()
         self.get_max_ptrm_check()
         self.get_delta_CK()
+        self.get_DRAT()
         print "done with calculate_all_statistics"
 
 
@@ -390,10 +391,10 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
-#thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 specimens = gui.Data.keys()
 thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
-thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
+#thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
 
 #thing = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[4], 273., 798.)

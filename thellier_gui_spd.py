@@ -6096,11 +6096,14 @@ class Arai_GUI(wx.Frame):
         x_ptrm_check_for_SCAT=array(x_ptrm_check_for_SCAT)
         y_ptrm_check_for_SCAT=array(y_ptrm_check_for_SCAT)
 
-        print 'x_ptrm_check_in_0_to_end', x_ptrm_check_in_0_to_end
-        print "x_Arai_compare", x_Arai_compare
-        print "divisor", x_Arai[end]
+#        print 'x_ptrm_check_in_0_to_end', x_ptrm_check_in_0_to_end
+#        print "x_Arai_compare", x_Arai_compare
+#        print "divisor", x_Arai[end]
+#        print "diffs"
+#        print x_ptrm_check_in_0_to_end - x_Arai_compare
                                
         DRATS=100*(abs(sum(x_ptrm_check_in_0_to_end-x_Arai_compare))/(x_Arai[end]))
+#        print "DRATS", DRATS
         int_ptrm_n=len(x_ptrm_check_in_0_to_end)
         if int_ptrm_n > 0:
            pars['specimen_int_ptrm_n']=int_ptrm_n
