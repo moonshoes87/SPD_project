@@ -5805,7 +5805,7 @@ class Arai_GUI(wx.Frame):
         v1_plus=v1*sqrt(sum(cm**2))
         v1_minus=v1*-1*sqrt(sum(cm**2))
         test_v=zdata_segment[0]-zdata_segment[-1]
-        print "test_v", test_v
+#        print "test_v", test_v
 
         if sqrt(sum((v1_minus-test_v)**2)) < sqrt(sum((v1_plus-test_v)**2)):
          DIR_PCA=self.cart2dir(v1*-1)
@@ -5813,7 +5813,7 @@ class Arai_GUI(wx.Frame):
         else:
          DIR_PCA=self.cart2dir(v1)
          best_fit_vector=v1
-        print "best_fit_vector", best_fit_vector
+#        print "best_fit_vector", best_fit_vector
 
         # MAD Kirschvink (1980)
         MAD=math.degrees(arctan(sqrt((t2+t3)/t1)))
@@ -5827,9 +5827,9 @@ class Arai_GUI(wx.Frame):
 
         # DANG Tauxe and Staudigel 2004
         DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
-        print "specimen", self.s
-        print "cm", cm
-        print "best fit vector", best_fit_vector
+#        print "specimen", self.s
+#        print "cm", cm
+#        print "best fit vector", best_fit_vector
 
 
         # best fit PCA direction
@@ -6095,6 +6095,10 @@ class Arai_GUI(wx.Frame):
         y_ptrm_check_in_start_to_end=array(y_ptrm_check_in_start_to_end)
         x_ptrm_check_for_SCAT=array(x_ptrm_check_for_SCAT)
         y_ptrm_check_for_SCAT=array(y_ptrm_check_for_SCAT)
+
+        print 'x_ptrm_check_in_0_to_end', x_ptrm_check_in_0_to_end
+        print "x_Arai_compare", x_Arai_compare
+        print "divisor", x_Arai[end]
                                
         DRATS=100*(abs(sum(x_ptrm_check_in_0_to_end-x_Arai_compare))/(x_Arai[end]))
         int_ptrm_n=len(x_ptrm_check_in_0_to_end)
@@ -6268,7 +6272,7 @@ class Arai_GUI(wx.Frame):
         
         FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
         max_FRAC_gap=max(vector_diffs_segment/sum(vector_diffs_segment))
-        print "GAP-MAX: ", max_FRAC_gap
+#        print "GAP-MAX: ", max_FRAC_gap
 
         pars['specimen_frac']=FRAC
         pars['specimen_gmax']=max_FRAC_gap

@@ -340,9 +340,10 @@ class PintPars(object):
         ptrm_checks = self.ptrm_checks_temperatures
         ptrm_x = self.x_ptrm_check
         x_Arai, t_Arai = self.x_Arai, self.t_Arai
-        max_ptrm_check, check_percent = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
+        max_ptrm_check, sum_ptrm_checks, check_percent = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
         self.pars['max_ptrm_check_percent'] = check_percent
         self.pars['max_ptrm_check'] = max_ptrm_check
+        self.pars['sum_ptrm_checks'] = sum_ptrm_checks
         return max_ptrm_check
 
     def get_delta_CK(self):
@@ -389,16 +390,17 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
-thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+#thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 specimens = gui.Data.keys()
 thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
+thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
 
 #thing = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[4], 273., 798.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
 thing.calculate_all_statistics()
 
-if True:
+if False:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
