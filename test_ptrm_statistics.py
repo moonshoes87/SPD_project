@@ -17,14 +17,14 @@ class CheckpTRMparams(unittest.TestCase):
     ref_n = 4.
     ref_steps = [10, 20, 30, 40]
 
-    x_Arai = [1., 2., 2.5, 3., 7., 5., 6., 8.] # ptrm initially acquired at a temp
+    x_Arai = [1., 1., 2.5, 5.5, 7., 5., 6., 8.] # ptrm initially acquired at a temp
     t_Arai = [0,  10, 20,  30, 40, 50, 60, 70]
     #    1,   2,   3,  9.
-    #  - 2,   2.5, 3., 7.
-    #   -1., -.5,  0., 2.
-    ref_max_ptrm_check = 2.
-    ref_sum_ptrm_check = .5 
-    ref_check_percent = (2./ 7.) * 100.
+    #  - 1,   2.5, 5.5, 7.
+    #    0., -.5,  -2.5, 2.
+    ref_max_ptrm_check = 2.5
+    ref_sum_ptrm_check = -1. 
+    ref_check_percent = (2.5/ 5.5) * 100.
 
     x_int = 8.5
     ref_delta_CK = 1.25 / 8.5 * 100
@@ -42,7 +42,6 @@ class CheckpTRMparams(unittest.TestCase):
         self.assertAlmostEqual(self.ref_sum_ptrm_check, sum_ptrm_diffs)
         self.assertAlmostEqual(self.ref_check_percent, check_percent)
 
-        
 
     def test_delta_CK(self):
         result = lib_ptrm.get_delta_CK(self.ref_max_ptrm_check, self.x_int)

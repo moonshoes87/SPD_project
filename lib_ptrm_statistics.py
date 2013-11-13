@@ -20,6 +20,7 @@ def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
 # fix it so that max_ptrm_check is right.  it should be subtraction, not division.  
 def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x, t_Arai, x_Arai): 
     diffs = []
+    abs_diffs = []
     x_Arai_compare = []
     ptrm_compare = []
 #    print "ptrm_checks_included_temps", ptrm_checks_included_temps
@@ -38,17 +39,20 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
 #        print "ptrm_check", ptrm_check, "ptrm_orig", ptrm_orig
         diff = ptrm_check - ptrm_orig
         diffs.append(diff)
+        abs_diffs.append(abs(diff))
 #    print "diffs", diffs
 #    print "ptrm_checks", ptrm_compare
 #    print "x_Arai_compare", x_Arai_compare
-    max_diff = max(diffs)
-    diff_ind = diffs.index(max_diff)
+    print "abs_diffs", abs_diffs
+    print "diffs", diffs
+    max_diff = max(abs_diffs)
+    diff_ind = abs_diffs.index(max_diff)
     print diff_ind
     norm_x = x_Arai_compare[diff_ind]
     print x_Arai_compare, "x_Arai_compare"
     print norm_x
     check_percent = max_diff / norm_x * 100
-    return max(diffs), sum(diffs), check_percent
+    return max_diff, sum(diffs), check_percent
 
 def get_check_percent(max_ptrm_diff, x_at_that_step):
     pass
