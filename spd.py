@@ -389,6 +389,12 @@ class PintPars(object):
         self.pars['mean_DRAT_prime'] = mean_DRAT_prime
         return mean_DRAT, mean_DRAT_prime
 
+    def get_mean_DEV(self):
+#        def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
+        mean_DEV, mean_DEV_prime = lib_ptrm.get_mean_DEV(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['n_ptrm'], self.pars['delta_x_prime'])
+        self.pars['mean_DEV'] = mean_DEV
+        self.pars['mean_DEV_prime'] = mean_DEV_prime
+
 # maybe make this a dictionary with a little explanation of what the statistic is
 
     #ptrm_stats = [ self.pars['n_ptrm'], self.pars['ptrm_checks_segment'], self.pars['max_ptrm_check_percent'], self.pars['max_ptrm_check'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['delta_CK'],  self.pars['DRAT'], self.pars['length_best_fit_line'], self.pars['max_DEV'], self.pars['CDRAT'], self.pars['CDRAT_prime'] ]
@@ -422,6 +428,8 @@ class PintPars(object):
         self.get_max_DEV()
         self.get_CDRAT()
         self.get_DRATS()
+        self.get_mean_DRAT()
+        self.get_mean_DEV()
         print "done with calculate_all_statistics"
 
 

@@ -96,11 +96,18 @@ class CheckpTRMparams(unittest.TestCase):
 #    ref_sum_ptrm_check = abs(-1.)
 #    ref_sum_abs_ptrm_check = 5.
 #  ref_n = 4
-        ref_mean_DRAT = 0.026499947000159001
-        ref_mean_DRAT_prime = 0.13249973500079501
+        ref_mean_DRAT = 0.026499947000159001 * 100.
+        ref_mean_DRAT_prime = 0.13249973500079501 * 100.
         mean_DRAT, mean_DRAT_prime = lib_ptrm.get_mean_DRAT(self.ref_sum_ptrm_check, self.ref_sum_abs_ptrm_check, self.ref_n, self.ref_L)
         self.assertAlmostEqual(ref_mean_DRAT, mean_DRAT)
         self.assertAlmostEqual(ref_mean_DRAT_prime, mean_DRAT_prime)
+
+    def test_mean_DEV(self):
+        ref_mean_DEV = (1. / 4.) * ( 1.  / 8.)  * 100
+        ref_mean_DEV_prime = (1./ 4.) * (5. / 8.)  * 100
+        mean_DEV, mean_DEV_prime = lib_ptrm.get_mean_DEV(self.ref_sum_ptrm_check, self.ref_sum_abs_ptrm_check, self.ref_n, self.delta_x_prime)
+        self.assertAlmostEqual(ref_mean_DEV, mean_DEV)
+        self.assertAlmostEqual(ref_mean_DEV_prime, mean_DEV_prime)
 
 
 if __name__ == "__main__":
