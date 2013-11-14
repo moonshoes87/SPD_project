@@ -2,6 +2,7 @@
 
 import numpy
 import unittest
+import spd
 import lib_ptrm_statistics as lib_ptrm
 
 
@@ -23,7 +24,7 @@ class CheckpTRMparams(unittest.TestCase):
     #  - 1,   2.5, 5.5, 7.
     #    0., -.5,  -2.5, 2.
     ref_max_ptrm_check = 2.5
-    ref_sum_ptrm_check = -1. 
+    ref_sum_ptrm_check = abs(-1.)
     ref_check_percent = (2.5/ 5.5) * 100.
     ref_sum_abs_ptrm_check = 5.
 
@@ -70,9 +71,21 @@ class CheckpTRMparams(unittest.TestCase):
         
     def test_CDRAT(self):
         CDRAT, CDRAT_prime = lib_ptrm.get_CDRAT(self.ref_L, self.ref_sum_ptrm_check, self.ref_sum_abs_ptrm_check)
-        ref_CDRAT, ref_CDRAT_prime = (-1. / self.ref_L) * 100., (5. / self.ref_L) * 100
+        ref_CDRAT, ref_CDRAT_prime = (1. / self.ref_L) * 100., (5. / self.ref_L) * 100
         self.assertAlmostEqual(ref_CDRAT, CDRAT)
         self.assertAlmostEqual(ref_CDRAT_prime, CDRAT_prime)
+        
+    def test_DRATS(self):
+        #ref_DRATS = .9
+        ref_DRATS = (self.ref_sum_ptrm_check / 7.) * 100.
+        end = 4
+        DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
+        self.assertAlmostEqual(ref_DRATS, DRATS)
+        
+    def test_DRATS_real_data(self):
+        ref_drats = .9
+        DRATS = spd.thing.get_DRATS()
+        self.assertEqual(ref_drats, DRATS)
         
 
 

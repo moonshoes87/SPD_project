@@ -327,6 +327,9 @@ class PintPars(object):
 
 # ptrm statistics begin here
     
+
+
+
     def get_n_ptrm(self):
         tmin, tmax = self.tmin, self.tmax
         ptrm_temps, ptrm_starting_temps = self.ptrm_checks_temperatures, self.ptrm_checks_starting_temperatures
@@ -362,11 +365,27 @@ class PintPars(object):
 
     def get_max_DEV(self):
 #def get_max_DEV(delta_x_prime, max_ptrm_check):
-        pass
+        max_DEV = lib_ptrm.get_max_DEV(self.pars['delta_x_prime'], self.pars['max_ptrm_check'])
+        self.pars['max_DEV'] = max_DEV
+        return max_DEV
+
     
     def get_CDRAT(self):
 #def get_CDRAT(L, sum_ptrm_checks, sum_abs_ptrm_checks):                     
-        pass
+        CDRAT, CDRAT_prime = lib_ptrm.get_CDRAT(self.pars['length_best_fit_line'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'])
+        self.pars['CDRAT'], self.pars['CDRAT_prime'] = CDRAT, CDRAT_prime
+        return CDRAT, CDRAT_prime
+
+
+    def get_DRATS(self):
+        DRATS = lib_ptrm.get_DRATS(self.pars['sum_ptrm_checks'], self.x_Arai, self.end)
+        self.pars['DRATS'] = DRATS
+        return DRATS
+#def get_DRATS(sum_ptrm_checks, x_Arai, end):
+
+# maybe make this a dictionary with a little explanation of what the statistic is
+
+    #ptrm_stats = [ self.pars['n_ptrm'], self.pars['ptrm_checks_segment'], self.pars['max_ptrm_check_percent'], self.pars['max_ptrm_check'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['delta_CK'],  self.pars['DRAT'], self.pars['length_best_fit_line'], self.pars['max_DEV'], self.pars['CDRAT'], self.pars['CDRAT_prime'] ]
             
 
     def calculate_all_statistics(self):
@@ -394,6 +413,9 @@ class PintPars(object):
         self.get_max_ptrm_check()
         self.get_delta_CK()
         self.get_DRAT()
+        self.get_max_DEV()
+        self.get_CDRAT()
+        self.get_DRATS()
         print "done with calculate_all_statistics"
 
 
@@ -411,7 +433,7 @@ thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
 thing.calculate_all_statistics()
 
-if False:
+if True:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
