@@ -33,7 +33,7 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
         arai_ind = t_Arai.index(check)
         ptrm_orig = x_Arai[arai_ind]
         x_Arai_compare.append(ptrm_orig)
-        diff = ptrm_check - ptrm_orig
+        diff = ptrm_orig - ptrm_check
         diffs.append(diff)
         abs_diffs.append(abs(diff))
         check_percents.append((abs(diff) / ptrm_orig) * 100)
