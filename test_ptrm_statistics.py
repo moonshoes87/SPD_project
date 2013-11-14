@@ -109,6 +109,16 @@ class CheckpTRMparams(unittest.TestCase):
         self.assertAlmostEqual(ref_mean_DEV, mean_DEV)
         self.assertAlmostEqual(ref_mean_DEV_prime, mean_DEV_prime)
 
+class CheckDeltaPal(unittest.TestCase):
+
+    t_Arai = [1, 2, 3, 4, 5, 6, 7]
+    t_max = 5
+    x_Arai = [.1, .2, .3, .4, .5, .6, .7]
+    ptrm_checks_temperatures =          [1, 3, 4, 5, 6]
+    ptrm_checks_starting_temperatures = [2, 4, 5, 6, 7]
+    ptrm_checks_segment = [1, 3, 4]
+#    ptrm_vector = [self.PTRMS[i][1], self.PTRMS[i][2], 1] # from spd I suspect this is the ptrm vector.  this is direction, not cartesian
+
 
 if __name__ == "__main__":
     unittest.main()
