@@ -378,7 +378,7 @@ class PintPars(object):
 
 
     def get_DRATS(self):
-        DRATS = lib_ptrm.get_DRATS(self.pars['sum_ptrm_checks'], self.x_Arai, self.end)
+        DRATS, DRATS_prime = lib_ptrm.get_DRATS(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.x_Arai, self.end)
         self.pars['DRATS'] = DRATS
         return DRATS
 #def get_DRATS(sum_ptrm_checks, x_Arai, end):

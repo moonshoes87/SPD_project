@@ -37,10 +37,10 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
         diffs.append(diff)
         abs_diffs.append(abs(diff))
         check_percents.append((abs(diff) / ptrm_orig) * 100)
-    print "ptrm_checks_included_temps", ptrm_checks_included_temps
-    print "ptrm_compare", ptrm_compare
-    print "x_Arai_compare", x_Arai_compare
-    print "diffs", diffs
+#    print "ptrm_checks_included_temps", ptrm_checks_included_temps
+#    print "ptrm_compare", ptrm_compare
+#    print "x_Arai_compare", x_Arai_compare
+#    print "diffs", diffs
     max_diff = max(abs_diffs)
     check_percent = max(check_percents)
     sum_diffs = abs(sum(diffs))
@@ -65,10 +65,11 @@ def get_CDRAT(L, sum_ptrm_checks, sum_abs_ptrm_checks):
     CDRAT_prime = (sum_abs_ptrm_checks / L) * 100.
     return CDRAT, CDRAT_prime
 
-def get_DRATS(sum_ptrm_checks, x_Arai, end):
+def get_DRATS(sum_ptrm_checks, sum_abs_ptrm_checks, x_Arai, end):
     DRATS = (sum_ptrm_checks / x_Arai[end]) * 100.
+    DRATS_prime = (sum_abs_ptrm_checks / x_Arai[end]) * 100.
     print "x_Arai[end]", x_Arai[end]
-    return DRATS
+    return DRATS, DRATS_prime
 
 
 #DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)

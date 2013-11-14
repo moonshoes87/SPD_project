@@ -77,15 +77,17 @@ class CheckpTRMparams(unittest.TestCase):
         
     def test_DRATS(self):
         #ref_DRATS = .9
-        ref_DRATS = (self.ref_sum_ptrm_check / 7.) * 100.
+        ref_DRATS = (1. / 7.) * 100.
+        ref_DRATS_prime = (5. / 7.) * 100.
         end = 4
-        DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
+        DRATS, DRATS_prime = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.ref_sum_abs_ptrm_check, self.x_Arai, end)
         self.assertAlmostEqual(ref_DRATS, DRATS)
+        self.assertAlmostEqual(ref_DRATS_prime, DRATS_prime)
         
     def test_DRATS_real_data(self):
-        ref_drats = .9
+        ref_drats = 0.928840447566
         DRATS = spd.thing.get_DRATS()
-        self.assertEqual(ref_drats, DRATS)
+        self.assertAlmostEqual(ref_drats, DRATS)
         
 
 
