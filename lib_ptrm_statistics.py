@@ -71,6 +71,11 @@ def get_DRATS(sum_ptrm_checks, sum_abs_ptrm_checks, x_Arai, end):
     print "x_Arai[end]", x_Arai[end]
     return DRATS, DRATS_prime
 
+def get_mean_DRAT(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, L):
+    mean_DRAT = (1. / n_pTRM) * (sum_ptrm_checks / L)
+    mean_DRAT_prime = (1./ n_pTRM) * (sum_abs_ptrm_checks / L)
+    return mean_DRAT, mean_DRAT_prime
+
 
 #DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
     

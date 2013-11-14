@@ -88,7 +88,19 @@ class CheckpTRMparams(unittest.TestCase):
         ref_drats = 0.928840447566
         DRATS = spd.thing.get_DRATS()
         self.assertAlmostEqual(ref_drats, DRATS)
-        
+
+    def test_mean_DRAT(self):
+#        (1 / nPTRM) * (ref_sum_ptrm_check / L) = 1/4 * 1/ numpy.sqrt(25 + 64)
+#        (1 / nPTRM) * (ref_abs_sum_ptrm_check / L)
+#ref_L = numpy.sqrt(25 + 64)        
+#    ref_sum_ptrm_check = abs(-1.)
+#    ref_sum_abs_ptrm_check = 5.
+#  ref_n = 4
+        ref_mean_DRAT = 0.026499947000159001
+        ref_mean_DRAT_prime = 0.13249973500079501
+        mean_DRAT, mean_DRAT_prime = lib_ptrm.get_mean_DRAT(self.ref_sum_ptrm_check, self.ref_sum_abs_ptrm_check, self.ref_n, self.ref_L)
+        self.assertAlmostEqual(ref_mean_DRAT, mean_DRAT)
+        self.assertAlmostEqual(ref_mean_DRAT_prime, mean_DRAT_prime)
 
 
 if __name__ == "__main__":

@@ -381,7 +381,13 @@ class PintPars(object):
         DRATS, DRATS_prime = lib_ptrm.get_DRATS(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.x_Arai, self.end)
         self.pars['DRATS'] = DRATS
         return DRATS
-#def get_DRATS(sum_ptrm_checks, x_Arai, end):
+
+    def get_mean_DRAT(self):
+        #def get_mean_DRAT(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM,L):
+        mean_DRAT, mean_DRAT_prime = lib_ptrm.get_mean_DRAT(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['n_ptrm'], self.pars['length_best_fit_line'])
+        self.pars['mean_DRAT'] = mean_DRAT
+        self.pars['mean_DRAT_prime'] = mean_DRAT_prime
+        return mean_DRAT, mean_DRAT_prime
 
 # maybe make this a dictionary with a little explanation of what the statistic is
 
