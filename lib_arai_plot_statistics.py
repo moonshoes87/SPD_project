@@ -287,7 +287,7 @@ def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # works!
     for num, i in enumerate(no_repeat_segment[:-2]):
         triangles.append((i, no_repeat_segment[num + 1], no_repeat_segment[num + 2]))
         midpoints.append(no_repeat_steps[num+1])
-    print "triangles:", triangles
+#    print "triangles:", triangles
     return {'triangles': triangles, 'midpoints': midpoints}
 
     
@@ -347,7 +347,7 @@ def get_ZI_line(xy_array=xy, Arai_steps=steps): # seems to work.  only possible 
     for num, point in enumerate(xy_array):
         if Arai_steps[num] == 'ZI':
             ZI_points.append(point)
-    print "ZI points:", ZI_points
+#    print "ZI points:", ZI_points
     ZI_line = 0.
     for num, point in enumerate(ZI_points[:-1]): # 
 #        print "point", point
@@ -357,7 +357,7 @@ def get_ZI_line(xy_array=xy, Arai_steps=steps): # seems to work.  only possible 
 #        print "(", point[0], "-", ZI_points[num + 1][0], ")**2  -  (", point[1], "-", ZI_points[num+1][1], ")**2"
 #        print result
         ZI_line += result
-    print ZI_line
+#    print ZI_line
     return { 'ZI_line': ZI_line, 'ZI_points': ZI_points }
 
 # you need to work through this one by hand and figure it out, make sure it's right
@@ -390,7 +390,7 @@ def get_area_sum(triangles=ref_triangles, midpoints = ref_midpoints, ZI_line = r
 #        print "normed_triangle_area", normed_triangle_area
         Area += normed_triangle_area
 #        print Area
-    print "Area:", Area
+#    print "Area:", Area
     return Area
 
 

@@ -20,6 +20,7 @@ import lib_arai_plot_statistics as lib_arai
 import lib_curvature as lib_k
 import lib_directional_statistics as lib_direct
 import lib_ptrm_statistics as lib_ptrm
+import lib_tail_check_statistics as lib_tail
 from scipy import * 
 
 
@@ -398,7 +399,15 @@ class PintPars(object):
     #ptrm_stats = [ self.pars['n_ptrm'], self.pars['ptrm_checks_segment'], self.pars['max_ptrm_check_percent'], self.pars['max_ptrm_check'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['delta_CK'],  self.pars['DRAT'], self.pars['length_best_fit_line'], self.pars['max_DEV'], self.pars['CDRAT'], self.pars['CDRAT_prime'] ]
 
         # tail check statistics
-            
+
+    def get_n_tail(self):
+#        def get_n_tail(tmax, tail_temps):
+        if len(self.tail_checks_temperatures) > 0:
+            tail_n = lib_tail.get_n_tail(self.tmax, self.tail_checks_temperatures)
+        else:
+            tail_n = 0
+        self.pars['tail_n'] = tail_n
+        return tail_n
 
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
@@ -431,6 +440,7 @@ class PintPars(object):
         self.get_mean_DRAT()
         self.get_mean_DEV()
         # tail check statistics
+        self.get_n_tail()
         print "done with calculate_all_statistics"
 
 

@@ -14,40 +14,40 @@ xy = [[0.,-2.], [2.5,3.], [4., 5.]]
 
 def TaubinSVD(XY = xy):
     XY = numpy.array(XY)
-    print "XY", XY
+#    print "XY", XY
     X = XY[:,0] - numpy.mean(XY[:,0]) # norming points by x avg
     Y = XY[:,1] - numpy.mean(XY[:,1]) # norming points by y avg
     centroid = [numpy.mean(XY[:,0]), numpy.mean(XY[:,1])]
-    print "centroid", centroid
+#    print "centroid", centroid
 #    XY[:,0] = XY[:, 0] - centroid[0] # from each x, subtract x_avg
 #    XY[:,1] = XY[:, 1] - centroid[1] # from each y, subtract y_avg
     print "XY", XY
     print "X", X, "Y", Y
     # Z is correct
     Z = X * X + Y * Y  # Z = X.*X + Y.*Y; .*   # in matlab, .* is equivalent to *, and * is equivalent to numpy.dot
-    print "Z", Z
+#    print "Z", Z
     Zmean = numpy.mean(Z)
-    print "Zmean", Zmean
+#    print "Zmean", Zmean
     Z0 = (Z - Zmean) / (2. * numpy.sqrt(Zmean))
-    print "Z0", Z0
+#    print "Z0", Z0
     ZXY = numpy.array([Z0, X, Y]).T
-    print "ZXY", ZXY
+#    print "ZXY", ZXY
     U, S, V = numpy.linalg.svd(ZXY, full_matrices=False) # svd(X, 0) in original documentation.  however, belive that full_matrices=False accomplishes same
-    print "U", U
-    print "S", S
-    print "V", V
+#    print "U", U
+#    print "S", S
+#    print "V", V
     V = V.transpose()
     A = V[:,2]
-    print "A", A
+#    print "A", A
     A[0] = A[0] / (2. * numpy.sqrt(Zmean))
-    print "adjusted A", A
-    print "A", A, "other part", (-1. * Zmean * A[0])
+#    print "adjusted A", A
+#    print "A", A, "other part", (-1. * Zmean * A[0])
     A = numpy.concatenate([A, [(-1. * Zmean * A[0])]], axis=0)
-    print "final A", A
+#    print "final A", A
     #          -(A(2:3))'/A(1)/2+centroid
     a, b = (-1 * A[1:3]) / A[0] / 2 + centroid # but should be transposed, somewhere???.  syntax is problematic.  
     # A[1:3].conj().transpose()
-    print "a,b", a,b
+#    print "a,b", a,b
     #         sqrt(A(2)*A(2)+A(3)*A(3)-4*A(1)*A(4))/abs(A(1))/2];
     r = numpy.sqrt(A[1]*A[1]+A[2]*A[2]-4*A[0]*A[3])/abs(A[0])/2;
 #    return { 'a':a,'b': b, 'r': r } #, XY[:,0], XY[:,1]
@@ -76,8 +76,8 @@ def VarCircle(XY, Par):  # must have at least 4 sets of xy points or else divisi
     Dy = XY[:,1] - Par[1]
     D = numpy.sqrt(Dx * Dx + Dy * Dy) - Par[2]
     result = numpy.dot(D, D)/(n-3)
-    print n, Dx, Dy
-    print D
+#    print n, Dx, Dy
+#    print D
 #    print result
 #    print "done varcircle"
     return result
@@ -215,7 +215,7 @@ def LMA(XY=xy,ParIni=par_ini):
 
 
             if 1+4*Anew*Fnew < epsilon and VarLambda>1:  # not hitting this condition in example or my code
-                print "1+4*Anew*Fnew < epsilon and VarLambda>1:"
+#                print "1+4*Anew*Fnew < epsilon and VarLambda>1:"
 #            fprintf(1,'     violation:  %f\n',1+4*Anew*Fnew);             
                 Xshift = Xshift + dX;                                          
                 Yshift = Yshift + dY;                                                                               
@@ -236,9 +236,9 @@ def LMA(XY=xy,ParIni=par_ini):
            # end                                                    
             
             if 1+4*Anew*Fnew < epsilon:  # not hitting this condition in example or my code
-                print "it", it
+#                print "it", it
                 VarLambda = VarLambda * factorUp;             
-                print "VarLambda", VarLambda
+#                print "VarLambda", VarLambda
                 continue;              
            # end
 
@@ -270,13 +270,13 @@ def LMA(XY=xy,ParIni=par_ini):
             anew = -H*numpy.cos(Tnew)/(Anew+Anew) - Xshift;  #checked
             bnew = -H*numpy.sin(Tnew)/(Anew+Anew) - Yshift;  #checked
             Rnew = 1/abs(Anew+Anew); 
-            print "anew", anew, "bnew", bnew
+#            print "anew", anew, "bnew", bnew
 
             if VarNew <= VarOld: #   yes, improvement                
                # print "VarNew <= VarOld", VarNew, VarOld
                 progress = (abs(anew-aold) + abs(bnew-bold) + abs(Rnew-Rold))/(Rnew+Rold);      
                 if progress < epsilon: 
-                    print "Progress < epsilon"
+#                    print "Progress < epsilon"
                     Aold = Anew;          
                     Fold = Fnew;      
                     Told = Tnew;           
@@ -287,7 +287,7 @@ def LMA(XY=xy,ParIni=par_ini):
                 VarLambda = VarLambda * factorDown
                 break  
             else:                 #    %   no improvement  
-                print "doing else"
+#                print "doing else"
                 VarLambda = VarLambda * factorUp;      
                 continue;     
 
@@ -299,7 +299,7 @@ def LMA(XY=xy,ParIni=par_ini):
     result_b = -H*numpy.sin(Told)/(Aold+Aold) - Yshift;                                                 
     result_r = 1/abs(Aold+Aold);       
 
-    print result_a, result_b, result_r
+#    print result_a, result_b, result_r
     return result_a, result_b, result_r
 
 
@@ -338,7 +338,7 @@ def AraiCurvature(x,y):
     #Provide the intitial estimate
     E1=TaubinSVD(XY);
 
-    print "E1", E1
+#    print "E1", E1
 
     #Determine the iterative solution
     E2=LMA(XY, E1);
@@ -349,8 +349,8 @@ def AraiCurvature(x,y):
     best_b = E2[1]
     best_r = E2[2]
 
-    print "mean x"
-    print numpy.mean(X)
+#    print "mean x"
+#    print numpy.mean(X)
 
     if best_a <= numpy.mean(X) and best_b <= numpy.mean(Y):
         print "-1/r"
