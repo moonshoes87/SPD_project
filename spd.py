@@ -328,8 +328,6 @@ class PintPars(object):
 # ptrm statistics begin here
     
 
-
-
     def get_n_ptrm(self):
         tmin, tmax = self.tmin, self.tmax
         ptrm_temps, ptrm_starting_temps = self.ptrm_checks_temperatures, self.ptrm_checks_starting_temperatures
@@ -398,6 +396,8 @@ class PintPars(object):
 # maybe make this a dictionary with a little explanation of what the statistic is
 
     #ptrm_stats = [ self.pars['n_ptrm'], self.pars['ptrm_checks_segment'], self.pars['max_ptrm_check_percent'], self.pars['max_ptrm_check'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['delta_CK'],  self.pars['DRAT'], self.pars['length_best_fit_line'], self.pars['max_DEV'], self.pars['CDRAT'], self.pars['CDRAT_prime'] ]
+
+        # tail check statistics
             
 
     def calculate_all_statistics(self):
@@ -430,6 +430,7 @@ class PintPars(object):
         self.get_DRATS()
         self.get_mean_DRAT()
         self.get_mean_DEV()
+        # tail check statistics
         print "done with calculate_all_statistics"
 
 

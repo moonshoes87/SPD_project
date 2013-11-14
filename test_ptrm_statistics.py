@@ -118,6 +118,7 @@ class CheckDeltaPal(unittest.TestCase):
     ptrm_checks_starting_temperatures = [2, 4, 5, 6, 7]
     ptrm_checks_segment = [1, 3, 4]
 #    ptrm_vector = [self.PTRMS[i][1], self.PTRMS[i][2], 1] # from spd I suspect this is the ptrm vector.  this is direction, not cartesian
+#  
 
 
 if __name__ == "__main__":
