@@ -4,6 +4,7 @@ import numpy
 import unittest
 import spd
 import lib_ptrm_statistics as lib_ptrm
+import lib_directional_statistics as lib_direct
 
 
 
@@ -111,15 +112,50 @@ class CheckpTRMparams(unittest.TestCase):
 
 class CheckDeltaPal(unittest.TestCase):
 
-    t_Arai = [1, 2, 3, 4, 5, 6, 7]
-    t_max = 5
-    x_Arai = [.1, .2, .3, .4, .5, .6, .7]
-    ptrm_checks_temperatures =          [1, 3, 4, 5, 6]
-    ptrm_checks_starting_temperatures = [2, 4, 5, 6, 7]
-    ptrm_checks_segment = [1, 3, 4]
-#    ptrm_vector = [self.PTRMS[i][1], self.PTRMS[i][2], 1] # from spd I suspect this is the ptrm vector.  this is direction, not cartesian
-#  
+    PTRMS = [[10, 78.05582281,  10.65530605,   "hello", 1], [20, 78., 10., "hi", 0],[30, 60.5021261 , 8.24033996,   "heyo", 1],[40, 65.37643521,  10.72414794,   "bonjour", 0.], [50., 70.60218755,   7.5674351 ,   1. ]]
 
+# cartesian
+    PTRMS_cart = numpy.array([[ 0.20339007,  0.96148034,  0.18490007],[ 0.20475305,  0.96328734,  0.17364818], [ 0.4873076 ,  0.86138785,  0.14332577], [ 0.40937761,  0.89318751,  0.18608073], [ 0.32923249,  0.93502028,  0.131693  ]])
+
+# direction
+    PTRMS_dir = numpy.array([[ 78.05582281,  10.65530605,   1.], [78., 10., 1], [ 60.5021261 ,   8.24033996,   1.], [ 65.37643521,  10.72414794,   1.], [ 70.60218755,   7.5674351 ,   1. ]])    
+
+# format of PTRMS = [[373.0, 144.66319008038636, -22.857955141406837, 6.5034930359418245e-11, 0], ...
+# temp, dec, inc, moment, ZI or IZ
+
+    PTRM_Checks_cart = numpy.array([[ 0.19245009,  0.96225045,  0.19245009], [ 0.44232587,  0.88465174,  0.14744196],[ 0.43643578,  0.87287156,  0.21821789],[ 0.27216553,  0.95257934,  0.13608276]])
+
+    PTRM_Checks_dir = numpy.array([[ 78.69006753,  11.09580328,   1.], [ 63.43494882,   8.47871315,   1.], [ 63.43494882,  12.60438265,   1.], [ 74.0546041 ,   7.82123551,   1.]])
+
+    PTRM_Checks = [[10, 78.69006753,  11.09580328, "hi"],[30, 63.43494882,   8.47871315,   "hello"], [40, 63.43494882,  12.60438265,   "guten tag"], [50, 74.0546041 ,   7.82123551,   "cheerio"]]
+
+# format of PTRM_Checks
+# temp, dec, inc, moment
+#[[373.0, 276.84693928434058, 83.278957773601846, 6.0140429219203115e-11], ....
+    def test_delta_pal_PTRM_vectors(self):
+        ptrms_vectors, ptrms_checks_vectors = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
+        for num, vector in enumerate(ptrms_vectors):
+            for n, i in enumerate(vector):
+                print i, self.PTRMS_cart[num][n]
+                self.assertAlmostEqual(i, self.PTRMS_cart[num][n])
+    
+    def test_delta_pal_check_vectors(self):
+        ptrms_vectors, ptrms_checks_vectors = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
+        for num, vector in enumerate(ptrms_checks_vectors):
+            for n, i in enumerate(vector):
+                print i, self.PTRM_Checks_cart[num][n]
+                self.assertAlmostEqual(i, self.PTRM_Checks_cart[num][n])
+
+#            print vector, self.PTRMS_cart[num]
+
+#        self.assert_AlmostEqual(self.PTRMS, ptrms_vectors)
+#        self.assertAlmostEqual(self.PTRMS_cart, ptrms_checks_vectors)
+
+# """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form. """
+                                
+    def test_delta_pal(self):
+        pass
+        
 
 if __name__ == "__main__":
     unittest.main()

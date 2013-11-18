@@ -84,3 +84,9 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 
 #DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
     
+def get_delta_pal_vectors(PTRMS, PTRM_Checks):
+    """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this forma\
+t: [temp, dec, inc, moment].  Returns them in vector form. """   
+    PTRM = numpy.zeros((len(PTRMS), 3))
+    PTRM_Checks = numpy.zeros((len(PTRM_Checks), 3))
+    return PTRM, PTRM_Checks
