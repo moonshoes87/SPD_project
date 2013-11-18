@@ -409,6 +409,18 @@ class PintPars(object):
         self.pars['tail_n'] = tail_n
         return tail_n
 
+    def get_max_tail_check(self):
+        if len(self.y_tail_check) > 0:
+            tail_check_max, tail_check_diffs = lib_tail.get_max_tail_check(self.y_Arai, self.y_tail_check, self.t_Arai, self.tail_checks_temperatures, self.pars['tail_n'])
+        else:
+            tail_check_max, tail_check_diffs = 0, [0]
+            self.pars['tail_check_max'], self.pars['tail_check_diffs'] = tail_check_max, tail_check_diffs
+            return tail_check_max, tail_check_diffs
+
+#        self.y_tail_check=self.specimen_Data['y_tail_check']
+#        self.tail_checks_temperatures = self.specimen_Data['tail_check_temperatures']
+#def get_max_tail_check(y_Arai, y_tail, t_Arai, tail_temps, n_tail):
+
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
         self.York_Regression()
@@ -441,6 +453,7 @@ class PintPars(object):
         self.get_mean_DEV()
         # tail check statistics
         self.get_n_tail()
+        self.get_max_tail_check()
         print "done with calculate_all_statistics"
 
 

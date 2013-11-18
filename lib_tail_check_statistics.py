@@ -24,10 +24,10 @@ def get_max_tail_check(y_Arai, y_tail, t_Arai, tail_temps, n_tail):
     print "n_tail", n_tail
     for temp in tail_temps[:n_tail]:
         print "temp", temp
-        tail_index = tail_temps.index(temp)
+        tail_index = list(tail_temps).index(temp)
         tail_check = y_tail[tail_index]
         tail_compare.append(tail_check)
-        arai_index = t_Arai.index(temp)
+        arai_index = list(t_Arai).index(temp)
         print "arai_index", arai_index
         nrm_orig = y_Arai[arai_index]
         y_Arai_compare.append(nrm_orig)
@@ -39,27 +39,3 @@ def get_max_tail_check(y_Arai, y_tail, t_Arai, tail_temps, n_tail):
     print "diffs", diffs
     return max_check, diffs
 
-
-def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x, t_Arai, x_Arai):
-    """sorts through included ptrm_checks and finds the largest ptrm check diff, the sum of the total diffs, and the percentage of the largest check / original measurement at that temperature step"""
-    diffs = []
-    abs_diffs = []
-    x_Arai_compare = []
-    ptrm_compare = []
-    check_percents = []
-    ptrm_checks_all_temps = list(ptrm_checks_all_temps)
-    for check in ptrm_checks_included_temps:
-        ptrm_ind = ptrm_checks_all_temps.index(check)
-        ptrm_check = ptrm_x[ptrm_ind]
-        ptrm_compare.append(ptrm_check)
-        arai_ind = t_Arai.index(check)
-        ptrm_orig = x_Arai[arai_ind]
-        x_Arai_compare.append(ptrm_orig)
-        diff = ptrm_check - ptrm_orig
-        diffs.append(diff)
-        abs_diffs.append(abs(diff))
-        check_percents.append((abs(diff) / ptrm_orig) * 100)
-    max_diff = max(abs_diffs)
-    check_percent = max(check_percents)
-    sum_diffs = abs(sum(diffs))
-    sum_abs_diffs = sum(abs_diffs)
