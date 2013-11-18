@@ -34,12 +34,20 @@ from scipy import *
 # Data[s]['t_Arai']=[] # a list of temperatures (C? K?)
 # Data[s]'steps_Arai']=[] a list of the "ZI/IZ" steps (IZ= blue ZI=red). i.e. ['ZI','IZ','ZI']
 
+# NRMS # # temp K, dec, inc, moment, 0 or 1 (ZI=1, IZ=0)  # needs to convert to cartesian for vector operations
+# PTRMS  # temp K, dec, inc, moment, 0 or 1 (ZI=1, IZ=0)
+
+#PTRM_Checks # same same
+
 # pTRM checks ("triangles")
 #         Data[s]['x_ptrm_check']=[] # a list of x coordinates of pTRM checks
 #         Data[s]['y_ptrm_check']=[] # a list of y coordinates of pTRM checks      
 #         Data[s]['ptrm_checks_temperatures']=[] # a list of pTRM checks temperature 
 #         Data[s]['x_ptrm_check_starting_point'] # a list of x coordinates of the point ehere the pTRM checks started from
 #         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from            #         Data[s]['ptrm_checks_starting_temperatures']=[] # a list of temperatures from which the pTRM checks started from 
+
+
+
 
 # pTRM tail checks ("squares")
 #        Data[s]['x_tail_check']
@@ -59,6 +67,7 @@ from scipy import *
 # Data[s]['zij_rotated']=[[x,y,z], [x,y,z] ,[x,y,z] ]: a list of the x,y,z coordinates of the rotated Zijderveld plot
 #                                                      the rotated zijderveld plot is what is plotted in Thellier Gui.
 # Data[s]['zdata'] -- same as zij_rotated, but not rotated
+
 
 
 class PintPars(object):
@@ -90,6 +99,13 @@ class PintPars(object):
         self.ptrm_checks_starting_temperatures = self.specimen_Data['ptrm_checks_starting_temperatures'] # a list of temperatures from which the pTRM checks started from 
 
         self.PTRMS = self.specimen_Data['PTRMS']
+        self.NRMS = self.specimen_Data['NRMS']
+        # add these
+        self.PTRM_Checks = self.specimen_Data['PTRM_Checks']
+#        Data[s]['PTRM_Checks'] = ptrm_checks  # same convention as PTRMS and NRMS
+        #Data[s]['PTRM_Checks'] = ptrm_checks
+        #Data[s]['TAIL_Checks'] = ptrm_tail # different convention, don't use yet
+        self.TAIL_Checks = self.specimen_Data['TAIL_Checks']
 
         self.zijdblock=self.specimen_Data['zijdblock']        
         self.z_temperatures=self.specimen_Data['z_temp']

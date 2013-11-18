@@ -251,3 +251,33 @@ dir2cart
 thellier_gui Dec, Inc, and MAD are free.  lisa always uses free
 matlab SVD and numpy SVD produce nearly, but not exactly, identical output.  difference is in V, and also in the format for S (less important) # seems to be a rounding issue only
 Also, checked and numpy and matlab notation for slicing is the same, except that matlab indexing starts at 1, not 0
+
+
+
+
+
+
+
+
+
+for meeting with Ron:
+
+norming of points in curvature.  are they already normed?  I guess it just matters for magnitude
+
+
+	This from thellier_gui is in contradiction to what's in spd.  this sometimes causes different results for pTRM check statistics
+          # If triangle is within the interval but started after the upper temperature bound, then one pTRM check is in
+cluded                                                                                                               
+          # For example: if T_max=480, the traingle in 450 fall far, and it started at 500, then it is included  
+          # the ateration occured between 450 and 500, we dont know when. 
+
+
+
+delta_pal.  really pays no attention to tmin, just tmax?  weird.  check this.
+
+also, delta_pal requires pTRM vector.  not sure what this is.
+
+should selection of tail checks to include take into consideration starting temperature, as with the ptrm checks?
+
+
+optimizing for specific stats can wait.  towards the end.  

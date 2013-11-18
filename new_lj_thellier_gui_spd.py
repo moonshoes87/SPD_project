@@ -780,6 +780,7 @@ class Arai_GUI():
         x_ptrm_check=array(x_ptrm_check)  
         ptrm_check=array(y_ptrm_check)
         ptrm_checks_temperatures=array(ptrm_checks_temperatures)
+        Data[s]['PTRM_Checks'] = ptrm_checks
         Data[s]['x_ptrm_check']=x_ptrm_check
         Data[s]['y_ptrm_check']=y_ptrm_check        
         Data[s]['ptrm_checks_temperatures']=ptrm_checks_temperatures
@@ -839,6 +840,7 @@ class Arai_GUI():
         y_tail_check_starting_point=array(y_tail_check_starting_point)
         tail_checks_starting_temperatures=array(tail_checks_starting_temperatures)
         
+        Data[s]['TAIL_Checks'] = ptrm_tail
         Data[s]['x_tail_check']=x_tail_check
         Data[s]['y_tail_check']=y_tail_check
         Data[s]['tail_check_temperatures']=tail_check_temperatures
