@@ -24,6 +24,8 @@ class CheckTailSelection(unittest.TestCase):
     ref_tail_check_max = .7
     ref_diffs = [ .5, -.7,  0,  .6]
 
+    ref_L = 3.
+
     def test_n_tail(self):
         ref_n_tail = 4
 #        ref_tail_section.  specifying this is not neacessary if we always start at the first tail check.  need to check that this is so
@@ -39,6 +41,12 @@ class CheckTailSelection(unittest.TestCase):
         for num, diff in enumerate(tail_check_diffs):
             self.assertAlmostEqual(self.ref_diffs[num], diff)
         self.assertAlmostEqual(self.ref_tail_check_max, tail_check_max)
+
+    def test_DRAT_tail(self):
+        ref_DRAT_tail = (.7 / 3.) * 100
+        DRAT_tail = lib_tail.get_DRAT_tail(self.ref_tail_check_max, self.ref_L)
+        self.assertAlmostEqual(ref_DRAT_tail, DRAT_tail)
+        # max_tail_check / best_fit line  * 100
         
                       
         
