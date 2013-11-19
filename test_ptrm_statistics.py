@@ -126,7 +126,7 @@ class CheckDeltaPal(unittest.TestCase):
 # format of PTRMS = [[373.0, 144.66319008038636, -22.857955141406837, 6.5034930359418245e-11, 0], ...
 # temp, dec, inc, moment, ZI or IZ
 
-    PTRM_Checks_cart = numpy.array([[ 0.19245009,  0.96225045,  0.19245009], [0., 0., 0], [ 0.44232587,  0.88465174,  0.14744196],[ 0.43643578,  0.87287156,  0.21821789],[ 0.27216553,  0.95257934,  0.13608276]])
+    PTRM_Checks_cart = numpy.array([[ 0.19245009,  0.96225045,  0.19245009], [ 0.44232587,  0.88465174,  0.14744196],[ 0.43643578,  0.87287156,  0.21821789],[ 0.27216553,  0.95257934,  0.13608276]])
 
     PTRM_Checks_dir = numpy.array([[ 78.69006753,  11.09580328,   1.], [ 63.43494882,   8.47871315,   1.], [ 63.43494882,  12.60438265,   1.], [ 74.0546041 ,   7.82123551,   1.]])
 
@@ -136,9 +136,17 @@ class CheckDeltaPal(unittest.TestCase):
 # temp, dec, inc, moment
 #[[373.0, 276.84693928434058, 83.278957773601846, 6.0140429219203115e-11], ....
 
-    diffs = numpy.array([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[  2.04753050e-01,   9.63287340e-01,   1.73648180e-01], [  4.49817300e-02,  -2.32638900e-02,  -4.11619000e-03], [ -2.70581700e-02,   2.03159500e-02,  -3.21371600e-02], [  5.70669600e-02,  -1.75590600e-02,  -4.38976000e-03]])
+#    diffs = numpy.array([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[  2.04753050e-01,   9.63287340e-01,   1.73648180e-01], [  4.49817300e-02,  -2.32638900e-02,  -4.11619000e-03], [ -2.70581700e-02,   2.03159500e-02,  -3.21371600e-02], [  5.70669600e-02,  -1.75590600e-02,  -4.38976000e-03]])
 
-    C = ([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[  2.15693030e-01,   9.62517230e-01,   1.66098160e-01], [  2.60674760e-01,   9.39253340e-01,   1.61981970e-01], [  2.33616590e-01,   9.59569290e-01,   1.29844810e-01], [  2.90683550e-01,   9.42010230e-01,   1.25455050e-01]])
+    correct_diffs = numpy.array([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[0,0,0], [  4.49817300e-02,  -2.32638900e-02,  -4.11619000e-03], [ -2.70581700e-02,   2.03159500e-02,  -3.21371600e-02], [  5.70669600e-02,  -1.75590600e-02,  -4.38976000e-03]])
+
+#    C = ([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[  2.15693030e-01,   9.62517230e-01,   1.66098160e-01], [  2.60674760e-01,   9.39253340e-01,   1.61981970e-01], [  2.33616590e-01,   9.59569290e-01,   1.29844810e-01], [  2.90683550e-01,   9.42010230e-01,   1.25455050e-01]])
+
+    correct_C = numpy.array([[ 0.01093998, -0.00077011, -0.00755002], [ 0.        ,  0.        ,  0.        ], [ 0.04498173, -0.02326389, -0.00411619], [-0.02705817,  0.02031595, -0.03213716], [ 0.05706696, -0.01755906, -0.00438976]])
+
+    correct_C = numpy.array([[ 0.02187996, -0.00154022, -0.01510004],[ 0.02187996, -0.00154022, -0.01510004],[ 0.06686169, -0.02480411, -0.01921623], [ 0.03980352, -0.00448816, -0.05135339], [ 0.09687048, -0.02204722, -0.05574315]])
+
+    correct_C = numpy.array([[ 0.01093998, -0.00077011, -0.00755002],[ 0.01093998, -0.00077011, -0.00755002], [ 0.05592171, -0.024034  , -0.01166621], [ 0.02886354, -0.00371805, -0.04380337], [ 0.0859305 , -0.02127711, -0.04819313]])
 
     def test_delta_pal_PTRM_vectors(self):
         ptrms_vectors, ptrms_checks_vectors, TRM_1 = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
@@ -156,17 +164,17 @@ class CheckDeltaPal(unittest.TestCase):
 
 
     def test_diffs(self):
-        diffs, C = lib_ptrm.get_diffs(self.PTRMS_cart, self.PTRM_Checks_cart)
+        diffs, C = lib_ptrm.get_diffs(self.PTRMS_cart, self.PTRM_Checks_cart, self.PTRMS, self.PTRM_Checks)
         for num, diff in enumerate(diffs):
             for n, v in enumerate(diff):
-                print self.diffs[num][n], v
-                self.assertAlmostEqual(self.diffs[num][n], v)
+                print self.correct_diffs[num][n], v
+                self.assertAlmostEqual(self.correct_diffs[num][n], v)
 
     def test_C(self):
-        diffs, C = lib_ptrm.get_diffs(self.PTRMS_cart, self.PTRM_Checks_cart)
+        diffs, C = lib_ptrm.get_diffs(self.PTRMS_cart, self.PTRM_Checks_cart, self.PTRMS, self.PTRM_Checks)
         for num, total in enumerate(C):
             for n, v in enumerate(total):
-                self.assertAlmostEqual(self.C[num][n], v)
+                self.assertAlmostEqual(self.correct_C[num][n], v)
 
     def test_delta_pal(self):
         pass

@@ -92,34 +92,37 @@ def get_delta_pal_vectors(PTRMS, PTRM_Checks):
     print "ptrms sans first:", ptrms
     PTRM = lib_direct.dir2cart(ptrms[:,1:3])
     checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])
-    new_checks = numpy.zeros((len(ptrms), 3))
-    if len(ptrms) != len(checks):  # if checks were not performed at all temperatures, a placeholder vector of [0, 0, 0] is inserted into the list of checks
-        print "doing sequence"
-        check_num = 0
-        for num in range(len(ptrms)):
-            print PTRMS[num+1][0], PTRM_Checks[check_num][0]
-            if PTRMS[num+1][0] == PTRM_Checks[check_num][0]:
-                new_checks[num] = (lib_direct.dir2cart(PTRM_Checks[check_num][1:3]))
-                check_num += 1
-                print "new_checks", new_checks
-            else:
-                new_checks[num] = [0,0,0]
-        checks = new_checks
-    print "PTRM", PTRM
-    print "checks", checks
-    print len(PTRM), len(checks)
     return PTRM, checks, TRM_1
 
-def get_diffs(ptrms_vectors, ptrm_checks_vectors):
-    diffs = ptrms_vectors - ptrm_checks_vectors
+def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  # need to add temperatures into this
+    print "ptrms_vectors", ptrms_vectors
+    print "ptrm_checks_vectors", ptrm_checks_vectors
+    if len(ptrms_vectors) == len(ptrm_checks_vectors):
+        diffs = ptrms_vectors - ptrm_checks_vectors
+    else:
+        diffs = numpy.zeros((len(ptrms_vectors), 3))
+        check_num = 0
+        for num, ptrm in enumerate(ptrms_orig):
+            if num == 0:
+                print "first is zero"
+                diff = [0,0,0]
+            elif ptrms_orig[num][0] == checks_orig[check_num][0]:
+                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
+                diff = ptrms_vectors[num-1] - ptrm_checks_vectors[check_num]
+                check_num += 1
+            else:
+                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
+                diff = [0,0,0]
+            diffs[num-1] = diff
+            print "diff:", diff
     C = numpy.zeros((len(ptrms_vectors),3))
-    print diffs
     print C
     total = numpy.zeros(3)
     print total
     for num, diff in enumerate(diffs):
         total += diff
         C[num] = total
+    print "C", C
     return diffs, C
 
 
