@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import numpy
+import lib_directional_statistics as lib_direct
 
 
 
@@ -87,6 +88,14 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 def get_delta_pal_vectors(PTRMS, PTRM_Checks):
     """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this forma\
 t: [temp, dec, inc, moment].  Returns them in vector form. """   
-    PTRM = numpy.zeros((len(PTRMS), 3))
-    PTRM_Checks = numpy.zeros((len(PTRM_Checks), 3))
-    return PTRM, PTRM_Checks
+    ptrms= PTRMS
+    print type(ptrms)
+    print ptrms
+    print ptrms[0][0]
+    print ptrms.shape
+    print ptrms[:,1:3]
+    PTRM = lib_direct.dir2cart(ptrms[:,1:3])
+    checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])
+#    PTRM = numpy.zeros((len(PTRMS), 3))
+#    checks = numpy.zeros((len(PTRM_Checks), 3))
+    return PTRM, checks
