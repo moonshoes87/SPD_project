@@ -87,18 +87,40 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
     
 def get_delta_pal_vectors(PTRMS, PTRM_Checks):
     """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form. """   
-    ptrms= PTRMS
+    TRM_1 = lib_direct.dir2cart(PTRMS[0,1:3])
+    ptrms= PTRMS[1:]
+    print "ptrms sans first:", ptrms
     PTRM = lib_direct.dir2cart(ptrms[:,1:3])
     checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])
-    new_checks = numpy.zeros((len(PTRMS), 3))
-    if len(PTRM) != len(checks):  # if checks were not performed at all temperatures, a placeholder vector of [0, 0, 0] is inserted into the list of checks
+    new_checks = numpy.zeros((len(ptrms), 3))
+    if len(ptrms) != len(checks):  # if checks were not performed at all temperatures, a placeholder vector of [0, 0, 0] is inserted into the list of checks
+        print "doing sequence"
         check_num = 0
-        for num in range(len(PTRMS)):
-            print PTRMS[num][0], PTRM_Checks[check_num][0]
-            if PTRMS[num][0] == PTRM_Checks[check_num][0]:
+        for num in range(len(ptrms)):
+            print PTRMS[num+1][0], PTRM_Checks[check_num][0]
+            if PTRMS[num+1][0] == PTRM_Checks[check_num][0]:
                 new_checks[num] = (lib_direct.dir2cart(PTRM_Checks[check_num][1:3]))
                 check_num += 1
+                print "new_checks", new_checks
             else:
                 new_checks[num] = [0,0,0]
         checks = new_checks
-    return PTRM, checks
+    print "PTRM", PTRM
+    print "checks", checks
+    print len(PTRM), len(checks)
+    return PTRM, checks, TRM_1
+
+def get_diffs(ptrms_vectors, ptrm_checks_vectors):
+    diffs = ptrms_vectors - ptrm_checks_vectors
+    C = numpy.zeros((len(ptrms_vectors),3))
+    print diffs
+    print C
+    total = numpy.zeros(3)
+    print total
+    for num, diff in enumerate(diffs):
+        total += diff
+        C[num] = total
+    return diffs, C
+
+
+
