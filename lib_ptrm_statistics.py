@@ -89,15 +89,15 @@ def get_delta_pal_vectors(PTRMS, PTRM_Checks):
     """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """   
     TRM_1 = lib_direct.dir2cart(PTRMS[0,1:3])
     ptrms= PTRMS[1:]
-    print "ptrms sans first:", ptrms
+#    print "ptrms sans first:", ptrms
     PTRMS_cart = lib_direct.dir2cart(ptrms[:,1:3])
     checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])
     return PTRMS_cart, checks, TRM_1
 
 def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
     """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  takes these in and returns diffs and C"""
-    print "ptrms_vectors", ptrms_vectors
-    print "ptrm_checks_vectors", ptrm_checks_vectors
+#    print "ptrms_vectors", ptrms_vectors
+#    print "ptrm_checks_vectors", ptrm_checks_vectors
     if len(ptrms_vectors) == len(ptrm_checks_vectors):
         diffs = ptrms_vectors - ptrm_checks_vectors
     else:
@@ -105,40 +105,49 @@ def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
         check_num = 0
         for num, ptrm in enumerate(ptrms_orig):
             if num == 0:
-                print "first is zero"
+#                print "first is zero"
                 diff = [0,0,0]
             elif ptrms_orig[num][0] == checks_orig[check_num][0]:
-                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
+#                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
                 diff = ptrms_vectors[num-1] - ptrm_checks_vectors[check_num]
                 check_num += 1
             else:
-                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
+#                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
                 diff = [0,0,0]
             diffs[num-1] = diff
-            print "diff:", diff
+#            print "diff:", diff
     C = numpy.zeros((len(ptrms_vectors),3))
-    print C
+#    print C
     total = numpy.zeros(3)
-    print total
+#    print total
     for num, diff in enumerate(diffs):
         total += diff
         C[num] = total
-    print "C", C
+#    print "C", C
     return diffs, C
 
 
 def get_TRM_star(PTRMS_cart, C, TRM_1):
     #TRM_star = numpy.zeros(((len(PTRMS_cart) + 1),3))
-    print PTRMS_cart
-    print TRM_1
+#    print PTRMS_cart
+#    print TRM_1
     TRM1 = TRM_1.reshape((1,3)) # ensures that TRM_1 is compatible to be concatenated
     TRMS_adj = PTRMS_cart + C
     TRM_star = numpy.concatenate((TRM1, TRMS_adj))
-    return TRM_star
+    x_star = numpy.zeros(len(TRM_star))
+    for num, trm in enumerate(TRM_star):
+        x_star[num] = numpy.linalg.norm(trm)
+    return TRM_star, x_star
 
-def get_corrected_x():
+def get_b_star(x_star, y_err, y_mean):
     """get corrected x segment and x_mean"""
-    pass
+    x_star_mean = numpy.mean(x_star)
+    x_err = x_star - x_star_mean
+    b_star = -1* numpy.sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
+    return b_star
+
+def get_delta_pal(b, b_star):
+    return 0
 
 
 # york b code
