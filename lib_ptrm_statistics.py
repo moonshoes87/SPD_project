@@ -86,15 +86,16 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 #DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
     
 def get_delta_pal_vectors(PTRMS, PTRM_Checks):
-    """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form. """   
+    """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """   
     TRM_1 = lib_direct.dir2cart(PTRMS[0,1:3])
     ptrms= PTRMS[1:]
     print "ptrms sans first:", ptrms
-    PTRM = lib_direct.dir2cart(ptrms[:,1:3])
+    PTRMS_cart = lib_direct.dir2cart(ptrms[:,1:3])
     checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])
-    return PTRM, checks, TRM_1
+    return PTRMS_cart, checks, TRM_1
 
-def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  # need to add temperatures into this
+def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
+    """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  takes these in and returns diffs and C"""
     print "ptrms_vectors", ptrms_vectors
     print "ptrm_checks_vectors", ptrm_checks_vectors
     if len(ptrms_vectors) == len(ptrm_checks_vectors):
@@ -124,6 +125,20 @@ def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  # n
         C[num] = total
     print "C", C
     return diffs, C
+
+
+def get_TRM_star(PTRMS_cart, C, TRM_1):
+    return 0
+
+def get_corrected_x():
+    """get corrected x segment and x_mean"""
+    pass
+
+
+# york b code
+#    x_err = x_segment - x_mean
+#    y_err = y_segment - y_mean
+#    york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
 
 
 

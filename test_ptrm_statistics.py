@@ -116,6 +116,7 @@ class CheckDeltaPal(unittest.TestCase):
     # add in initial TRM [0, 79., 11., 0, 1]
     PTRMS = numpy.array([[0, 79., 11., 0., 1.],[10, 78.05582281,  10.65530605,   0, 1], [20, 78., 10., 0., 0], [30, 60.5021261 , 8.24033996, 0, 1],[40, 65.37643521,  10.72414794,   0, 0.], [50., 70.60218755,   7.5674351, 0, 1. ]])
 
+    TRM_1 = numpy.array([ 0.1873033 ,  0.96359193,  0.190809  ])
 
 # cartesian  # and not including TRM_1
     PTRMS_cart = numpy.array([[ 0.20339007,  0.96148034,  0.18490007],[ 0.20475305,  0.96328734,  0.17364818], [ 0.4873076 ,  0.86138785,  0.14332577], [ 0.40937761,  0.89318751,  0.18608073], [ 0.32923249,  0.93502028,  0.131693]])
@@ -136,15 +137,9 @@ class CheckDeltaPal(unittest.TestCase):
 # temp, dec, inc, moment
 #[[373.0, 276.84693928434058, 83.278957773601846, 6.0140429219203115e-11], ....
 
-#    diffs = numpy.array([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[  2.04753050e-01,   9.63287340e-01,   1.73648180e-01], [  4.49817300e-02,  -2.32638900e-02,  -4.11619000e-03], [ -2.70581700e-02,   2.03159500e-02,  -3.21371600e-02], [  5.70669600e-02,  -1.75590600e-02,  -4.38976000e-03]])
 
     correct_diffs = numpy.array([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[0,0,0], [  4.49817300e-02,  -2.32638900e-02,  -4.11619000e-03], [ -2.70581700e-02,   2.03159500e-02,  -3.21371600e-02], [  5.70669600e-02,  -1.75590600e-02,  -4.38976000e-03]])
 
-#    C = ([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[  2.15693030e-01,   9.62517230e-01,   1.66098160e-01], [  2.60674760e-01,   9.39253340e-01,   1.61981970e-01], [  2.33616590e-01,   9.59569290e-01,   1.29844810e-01], [  2.90683550e-01,   9.42010230e-01,   1.25455050e-01]])
-
-    correct_C = numpy.array([[ 0.01093998, -0.00077011, -0.00755002], [ 0.        ,  0.        ,  0.        ], [ 0.04498173, -0.02326389, -0.00411619], [-0.02705817,  0.02031595, -0.03213716], [ 0.05706696, -0.01755906, -0.00438976]])
-
-    correct_C = numpy.array([[ 0.02187996, -0.00154022, -0.01510004],[ 0.02187996, -0.00154022, -0.01510004],[ 0.06686169, -0.02480411, -0.01921623], [ 0.03980352, -0.00448816, -0.05135339], [ 0.09687048, -0.02204722, -0.05574315]])
 
     correct_C = numpy.array([[ 0.01093998, -0.00077011, -0.00755002],[ 0.01093998, -0.00077011, -0.00755002], [ 0.05592171, -0.024034  , -0.01166621], [ 0.02886354, -0.00371805, -0.04380337], [ 0.0859305 , -0.02127711, -0.04819313]])
 
@@ -154,6 +149,11 @@ class CheckDeltaPal(unittest.TestCase):
             for n, i in enumerate(vector):
                 print i, self.PTRMS_cart[num][n]
                 self.assertAlmostEqual(i, self.PTRMS_cart[num][n])
+
+    def test_delta_pal_TRM_1(self):
+        ptrms_vectors, ptrms_checks_vectors, TRM_1 = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
+        for num, value in enumerate(TRM_1.ravel()): # flattens array to avoid unnecessary looping
+            self.assertAlmostEqual(self.TRM_1[num], value)
     
     def test_delta_pal_check_vectors(self):
         ptrms_vectors, ptrm_checks_vectors, TRM_1 = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
@@ -167,7 +167,7 @@ class CheckDeltaPal(unittest.TestCase):
         diffs, C = lib_ptrm.get_diffs(self.PTRMS_cart, self.PTRM_Checks_cart, self.PTRMS, self.PTRM_Checks)
         for num, diff in enumerate(diffs):
             for n, v in enumerate(diff):
-                print self.correct_diffs[num][n], v
+#                print self.correct_diffs[num][n], v
                 self.assertAlmostEqual(self.correct_diffs[num][n], v)
 
     def test_C(self):
@@ -176,7 +176,14 @@ class CheckDeltaPal(unittest.TestCase):
             for n, v in enumerate(total):
                 self.assertAlmostEqual(self.correct_C[num][n], v)
 
+    def test_TRM_star(self):
+        TRM_star = lib_ptrm.get_TRM_star(self.PTRMS_cart, self.correct_C, self.TRM_1)
+        print self.TRM_1
+        print "original cartesian ptrm:", self.PTRMS_cart
+        print "C (difference)", self.correct_C
+
     def test_delta_pal(self):
+#        delta_pal, x_star, b_star = lib_ptrm.get_delta_pal(self.C, self.PTRMS_Cart, self.TRM_1) # probs also needs self.NRMS, or perhaps self.y_Arai
         pass
     
 
