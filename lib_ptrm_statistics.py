@@ -128,7 +128,13 @@ def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
 
 
 def get_TRM_star(PTRMS_cart, C, TRM_1):
-    return 0
+    #TRM_star = numpy.zeros(((len(PTRMS_cart) + 1),3))
+    print PTRMS_cart
+    print TRM_1
+    TRM1 = TRM_1.reshape((1,3)) # ensures that TRM_1 is compatible to be concatenated
+    TRMS_adj = PTRMS_cart + C
+    TRM_star = numpy.concatenate((TRM1, TRMS_adj))
+    return TRM_star
 
 def get_corrected_x():
     """get corrected x segment and x_mean"""

@@ -143,6 +143,9 @@ class CheckDeltaPal(unittest.TestCase):
 
     correct_C = numpy.array([[ 0.01093998, -0.00077011, -0.00755002],[ 0.01093998, -0.00077011, -0.00755002], [ 0.05592171, -0.024034  , -0.01166621], [ 0.02886354, -0.00371805, -0.04380337], [ 0.0859305 , -0.02127711, -0.04819313]])
 
+    TRM_star = numpy.array([[ 0.1873033 ,  0.96359193,  0.190809  ],[ 0.21433005,  0.96071023,  0.17735005], [ 0.21569303,  0.96251723,  0.16609816], [ 0.54322931,  0.83735385,  0.13165956], [ 0.43824115,  0.88946946,  0.14227736],  [ 0.41516299,  0.91374317,  0.08349987]])
+
+
     def test_delta_pal_PTRM_vectors(self):
         ptrms_vectors, ptrms_checks_vectors, TRM_1 = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
         for num, vector in enumerate(ptrms_vectors):
@@ -181,6 +184,13 @@ class CheckDeltaPal(unittest.TestCase):
         print self.TRM_1
         print "original cartesian ptrm:", self.PTRMS_cart
         print "C (difference)", self.correct_C
+        print "TRM_1", self.TRM_1, "rest of TRM", self.PTRMS_cart + self.correct_C
+        for num, trm in enumerate(TRM_star):
+            for n, v in enumerate(trm):
+                self.assertAlmostEqual(self.TRM_star[num][n], v)
+
+# so ref_TRM_star should be TRM_1 then PTRMS_cart + correct_C
+# then find vector lengths to get x_star
 
     def test_delta_pal(self):
 #        delta_pal, x_star, b_star = lib_ptrm.get_delta_pal(self.C, self.PTRMS_Cart, self.TRM_1) # probs also needs self.NRMS, or perhaps self.y_Arai
