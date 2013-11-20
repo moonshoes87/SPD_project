@@ -147,7 +147,8 @@ def get_b_star(x_star, y_err, y_mean):
     return b_star
 
 def get_delta_pal(b, b_star):
-    return 0
+    delta_pal = numpy.abs((b - b_star) / b) * 100
+    return delta_pal
 
 
 # york b code

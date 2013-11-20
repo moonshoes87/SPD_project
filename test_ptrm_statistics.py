@@ -156,7 +156,7 @@ class CheckDeltaPal(unittest.TestCase):
     b_star = -1 * numpy.sqrt( (sum((y_segment-y_mean)**2) / sum((x_star-x_star_mean)**2)) )
 
     b_regular = -2.
-    delta_pal = -39.16818049049999
+    delta_pal = 39.16818049049999
 
     def test_delta_pal_PTRM_vectors(self):
         ptrms_vectors, ptrms_checks_vectors, TRM_1 = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
