@@ -410,6 +410,15 @@ class PintPars(object):
         self.pars['mean_DEV'] = mean_DEV
         self.pars['mean_DEV_prime'] = mean_DEV_prime
 
+    def get_delta_pal(self):  # also need to add only the appropriate ptrms segment, right now using the whole thing
+#        pass
+        # do something here to get the ptrm checks segment
+        # the diffs included appear not to take into consideration starting temps, although I'm not fully sure.  meh
+        delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
+        self.pars['delta_pal'] = delta_pal
+
+def
+
 # maybe make this a dictionary with a little explanation of what the statistic is
 
     #ptrm_stats = [ self.pars['n_ptrm'], self.pars['ptrm_checks_segment'], self.pars['max_ptrm_check_percent'], self.pars['max_ptrm_check'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['delta_CK'],  self.pars['DRAT'], self.pars['length_best_fit_line'], self.pars['max_DEV'], self.pars['CDRAT'], self.pars['CDRAT_prime'] ]
@@ -433,8 +442,6 @@ class PintPars(object):
             self.pars['tail_check_max'], self.pars['tail_check_diffs'] = tail_check_max, tail_check_diffs
             return tail_check_max, tail_check_diffs
 
-    def get_delta_pal(self):
-        pass
 
 #        self.y_tail_check=self.specimen_Data['y_tail_check']
 #        self.tail_checks_temperatures = self.specimen_Data['tail_check_temperatures']
@@ -470,6 +477,7 @@ class PintPars(object):
         self.get_DRATS()
         self.get_mean_DRAT()
         self.get_mean_DEV()
+        self.get_delta_pal()
         # tail check statistics
         self.get_n_tail()
         self.get_max_tail_check()

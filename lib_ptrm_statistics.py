@@ -9,15 +9,15 @@ numpy.set_printoptions(precision=15)
 def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
     """return number of ptrm_checks included in best fit segment.  excludes checks if temp exceeds tmax OR if starting temp exceeds tmax. also returns those ptrm_check temperatures"""
     # does not exclude ptrm checks that are less than tmin
-    ptrm_checks_segment= []
+    ptrm_checks_included_temps= []
     for num, check in enumerate(ptrm_temps):
-        if check > tmax: #or check < tmin:
+        if check > tmax: 
             pass
         elif ptrm_starting_temps[num] > tmax: # or ptrm_starting_temps[num] < tmin:
             pass
         else:
-            ptrm_checks_segment.append(check)
-    return len(ptrm_checks_segment), ptrm_checks_segment
+            ptrm_checks_included_temps.append(check)
+    return len(ptrm_checks_included_temps), ptrm_checks_included_temps
 
 
 def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x, t_Arai, x_Arai): 
@@ -87,18 +87,22 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 #DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
     
 def get_delta_pal_vectors(PTRMS, PTRM_Checks):
-    """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """   
+    """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """
+    if type(PTRMS) != numpy.ndarray:
+        PTRMS = numpy.array(PTRMS)
+    if type(PTRM_Checks != numpy.ndarray):
+        PTRM_Checks = numpy.array(PTRM_Checks)
     TRM_1 = lib_direct.dir2cart(PTRMS[0,1:3])
-    ptrms= PTRMS[1:]
-#    print "ptrms sans first:", ptrms
-    PTRMS_cart = lib_direct.dir2cart(ptrms[:,1:3])
+    PTRMS_cart = lib_direct.dir2cart(PTRMS[1:,1:3])
     checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])
     return PTRMS_cart, checks, TRM_1
 
 def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
-    """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  takes these in and returns diffs and C"""
-#    print "ptrms_vectors", ptrms_vectors
-#    print "ptrm_checks_vectors", ptrm_checks_vectors
+    """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  requires both vector and original format of ptrms and checks for correct temperature indexing.  takes these in and returns diffs and C"""
+    print "ptrms_vectors", ptrms_vectors
+    print "ptrm_checks_vectors", ptrm_checks_vectors
+    print "ptrms original", ptrms_orig
+    print "checks original", checks_orig
     if len(ptrms_vectors) == len(ptrm_checks_vectors):
         diffs = ptrms_vectors - ptrm_checks_vectors
     else:
@@ -108,6 +112,8 @@ def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
             if num == 0:
 #                print "first is zero"
                 diff = [0,0,0]
+            elif len(checks_orig) <= check_num:  # if there are ptrms at higher temps than checks, this breaks the cycle
+                break
             elif ptrms_orig[num][0] == checks_orig[check_num][0]:
 #                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
                 diff = ptrms_vectors[num-1] - ptrm_checks_vectors[check_num]
@@ -117,14 +123,7 @@ def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
                 diff = [0,0,0]
             diffs[num-1] = diff
 #            print "diff:", diff
-    C = numpy.zeros((len(ptrms_vectors),3))
-#    print C
-    total = numpy.zeros(3)
-#    print total
-    for num, diff in enumerate(diffs):
-        total += diff
-        C[num] = total
-#    print "C", C
+    C = numpy.cumsum(diffs, axis=0)
     return diffs, C
 
 

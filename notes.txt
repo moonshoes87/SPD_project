@@ -237,6 +237,7 @@ finish IZZI_MD  # DONE (?)
 check giving PD direction thing (dot, R, etc.).  # DONE
 fix -/+ for PD/Dec + Inc # DONE
 include pTRM checks below tmin # DONE
+maybe return to delta_pal, although I think it is working
 
 
 cart2dir

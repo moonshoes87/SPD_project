@@ -148,8 +148,6 @@ class CheckDeltaPal(unittest.TestCase):
     correct_diffs = numpy.array([[  1.09399800e-02,  -7.70110000e-04,  -7.55002000e-03],[0,0,0], [  4.49817300e-02,  -2.32638900e-02,  -4.11619000e-03], [ -2.70581700e-02,   2.03159500e-02,  -3.21371600e-02], [  5.70669600e-02,  -1.75590600e-02,  -4.38976000e-03]])
 
 
-
-
     correct_C = numpy.array([[ 0.01093998, -0.00077011, -0.00755002],[ 0.01093998, -0.00077011, -0.00755002], [ 0.05592171, -0.024034  , -0.01166621], [ 0.02886354, -0.00371805, -0.04380337], [ 0.0859305 , -0.02127711, -0.04819313]])
 
     TRM_star = numpy.array([[ 0.1873033 ,  0.96359193,  0.190809  ],[ 0.21433005,  0.96071023,  0.17735005], [ 0.21569303,  0.96251723,  0.16609816], [ 0.54322931,  0.83735385,  0.13165956], [ 0.43824115,  0.88946946,  0.14227736],  [ 0.41516299,  0.91374317,  0.08349987]])
@@ -181,9 +179,9 @@ class CheckDeltaPal(unittest.TestCase):
     
     def test_delta_pal_check_vectors(self):
         ptrms_vectors, ptrm_checks_vectors, TRM_1 = lib_ptrm.get_delta_pal_vectors(self.PTRMS, self.PTRM_Checks)
-        print "ptrms_vectors", ptrms_vectors
-        print "ptrm_checks_vectors", ptrm_checks_vectors
-        print "TRM_1", TRM_1
+#        print "ptrms_vectors", ptrms_vectors
+#        print "ptrm_checks_vectors", ptrm_checks_vectors
+#        print "TRM_1", TRM_1
         for num, vector in enumerate(ptrm_checks_vectors):
             for n, i in enumerate(vector):
                # print i, self.PTRM_Checks_cart[num][n]
@@ -196,8 +194,8 @@ class CheckDeltaPal(unittest.TestCase):
             for n, v in enumerate(diff):
 #                print self.correct_diffs[num][n], v
                 self.assertAlmostEqual(self.correct_diffs[num][n], v)
-        print "diffs", diffs
-        print "C", C
+#        print "diffs", diffs
+#        print "C", C
 
     def test_C(self):
         diffs, C = lib_ptrm.get_diffs(self.PTRMS_cart, self.PTRM_Checks_cart, self.PTRMS, self.PTRM_Checks)
