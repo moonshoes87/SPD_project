@@ -99,10 +99,10 @@ def get_delta_pal_vectors(PTRMS, PTRM_Checks):
 
 def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
     """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  requires both vector and original format of ptrms and checks for correct temperature indexing.  takes these in and returns diffs and C"""
-    print "ptrms_vectors", ptrms_vectors
-    print "ptrm_checks_vectors", ptrm_checks_vectors
-    print "ptrms original", ptrms_orig
-    print "checks original", checks_orig
+#    print "ptrms_vectors", ptrms_vectors
+#    print "ptrm_checks_vectors", ptrm_checks_vectors
+#    print "ptrms original", ptrms_orig
+#    print "checks original", checks_orig
     if len(ptrms_vectors) == len(ptrm_checks_vectors):
         diffs = ptrms_vectors - ptrm_checks_vectors
     else:
@@ -150,15 +150,31 @@ def get_delta_pal(b, b_star):
 def get_full_delta_pal(PTRMS, PTRM_Checks, y_err, y_mean, b):
 #    return 0
     PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks)
-    print "PTRMS_Cart", PTRMS_cart
+#    print "PTRMS_Cart", PTRMS_cart
     diffs, C = get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
-    print "C", C
+#    print "C", C
     TRM_star, x_star = get_TRM_star(PTRMS_cart, C, TRM_1)
-    print "x_star", x_star
-    print type(x_star)
+#    print "x_star", x_star
+#    print type(x_star)
     b_star = get_b_star(x_star, y_err, y_mean)
     delta_pal = get_delta_pal(b, b_star)
     return delta_pal
+
+
+def get_segments(ptrms, ptrm_checks, tmax):
+    ptrms_included = []
+    checks_included = []
+    ptrms = numpy.array(ptrms)
+    for ptrm in ptrms:
+        if ptrm[0] <= tmax:
+            ptrms_included.append(ptrm)
+    for check in ptrm_checks:
+        if check[0] <= tmax:
+            checks_included.append(check)
+    print "checks", ptrm_checks
+    print "checks_included", checks_included
+    return ptrms_included, checks_included
+
     
 #    def get_delta_pal_vectors(PTRMS, PTRM_Checks):
     #return PTRMS_cart, checks, TRM_1

@@ -223,7 +223,6 @@ class CheckDeltaPal(unittest.TestCase):
 
     def test_b_star(self):
         b_star = lib_ptrm.get_b_star(self.x_star, self.y_err, self.y_mean)
-        print "bstar", b_star
         self.assertAlmostEqual(self.b_star, b_star)
             
         

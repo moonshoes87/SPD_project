@@ -351,14 +351,14 @@ class PintPars(object):
         n, steps = lib_ptrm.get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps)
 #        print "n_ptrm", n, "steps", steps
         self.pars['n_ptrm'] = n
-        self.pars['ptrm_checks_segment'] = steps
+        self.pars['ptrm_checks_included_temps'] = steps
         
     def get_max_ptrm_check(self):
-        ptrm_checks_segment = self.pars['ptrm_checks_segment']
+        ptrm_checks_included_temps = self.pars['ptrm_checks_included_temps']
         ptrm_checks = self.ptrm_checks_temperatures
         ptrm_x = self.x_ptrm_check
         x_Arai, t_Arai = self.x_Arai, self.t_Arai
-        max_ptrm_check, sum_ptrm_checks, check_percent, sum_abs_ptrm_checks = lib_ptrm.get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai)
+        max_ptrm_check, sum_ptrm_checks, check_percent, sum_abs_ptrm_checks = lib_ptrm.get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks, ptrm_x, t_Arai, x_Arai)
         self.pars['max_ptrm_check_percent'] = check_percent
         self.pars['max_ptrm_check'] = max_ptrm_check
         self.pars['sum_ptrm_checks'] = sum_ptrm_checks
@@ -405,23 +405,22 @@ class PintPars(object):
         return mean_DRAT, mean_DRAT_prime
 
     def get_mean_DEV(self):
-#        def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
         mean_DEV, mean_DEV_prime = lib_ptrm.get_mean_DEV(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['n_ptrm'], self.pars['delta_x_prime'])
         self.pars['mean_DEV'] = mean_DEV
         self.pars['mean_DEV_prime'] = mean_DEV_prime
 
-    def get_delta_pal(self):  # also need to add only the appropriate ptrms segment, right now using the whole thing
-#        pass
-        # do something here to get the ptrm checks segment
-        # the diffs included appear not to take into consideration starting temps, although I'm not fully sure.  meh
+    def get_delta_pal(self): 
+        # the diffs included appear not to take into consideration starting temps, although I'm not fully sure.  meh.  must check on this
+        ptrms_segment, checks_segment = lib_ptrm.get_segments(self.PTRMS, self.PTRM_Checks, self.tmax)
+        delta_pal = lib_ptrm.get_full_delta_pal(ptrms_segment, checks_segment, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
         delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
         self.pars['delta_pal'] = delta_pal
 
-def
+
 
 # maybe make this a dictionary with a little explanation of what the statistic is
 
-    #ptrm_stats = [ self.pars['n_ptrm'], self.pars['ptrm_checks_segment'], self.pars['max_ptrm_check_percent'], self.pars['max_ptrm_check'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['delta_CK'],  self.pars['DRAT'], self.pars['length_best_fit_line'], self.pars['max_DEV'], self.pars['CDRAT'], self.pars['CDRAT_prime'] ]
+    #ptrm_stats = [ self.pars['n_ptrm'], self.pars['ptrm_checks_included_temps'], self.pars['max_ptrm_check_percent'], self.pars['max_ptrm_check'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['delta_CK'],  self.pars['DRAT'], self.pars['length_best_fit_line'], self.pars['max_DEV'], self.pars['CDRAT'], self.pars['CDRAT_prime'] ]
 
         # tail check statistics
 
@@ -498,7 +497,7 @@ thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
 thing.calculate_all_statistics()
 
-if True:
+if False:
     gui = tgs.Arai_GUI()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.) 
     gui = tgs.Arai_GUI()
