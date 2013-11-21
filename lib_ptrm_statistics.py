@@ -3,6 +3,7 @@
 import numpy
 import lib_directional_statistics as lib_direct
 
+numpy.set_printoptions(precision=15)
 
 
 def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
@@ -128,9 +129,6 @@ def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
 
 
 def get_TRM_star(PTRMS_cart, C, TRM_1):
-    #TRM_star = numpy.zeros(((len(PTRMS_cart) + 1),3))
-#    print PTRMS_cart
-#    print TRM_1
     TRM1 = TRM_1.reshape((1,3)) # ensures that TRM_1 is compatible to be concatenated
     TRMS_adj = PTRMS_cart + C
     TRM_star = numpy.concatenate((TRM1, TRMS_adj))
@@ -150,6 +148,35 @@ def get_delta_pal(b, b_star):
     delta_pal = numpy.abs((b - b_star) / b) * 100
     return delta_pal
 
+def get_full_delta_pal(PTRMS, PTRM_Checks, y_err, y_mean, b):
+#    return 0
+    PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks)
+    print "PTRMS_Cart", PTRMS_cart
+    diffs, C = get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
+    print "C", C
+    TRM_star, x_star = get_TRM_star(PTRMS_cart, C, TRM_1)
+    print "x_star", x_star
+    print type(x_star)
+    b_star = get_b_star(x_star, y_err, y_mean)
+    delta_pal = get_delta_pal(b, b_star)
+    return delta_pal
+    
+#    def get_delta_pal_vectors(PTRMS, PTRM_Checks):
+    #return PTRMS_cart, checks, TRM_1
+
+    #def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
+#    return diffs, C
+
+#   def get_TRM_star(PTRMS_cart, C, TRM_1):
+#    return TRM_star, x_star
+
+#def get_b_star(x_star, y_err, y_mean):
+    #return b_star
+
+#def get_delta_pal(b, b_star):
+    # return delta_pal
+
+            
 
 # york b code
 #    x_err = x_segment - x_mean

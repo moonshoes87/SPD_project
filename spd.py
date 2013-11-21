@@ -433,6 +433,9 @@ class PintPars(object):
             self.pars['tail_check_max'], self.pars['tail_check_diffs'] = tail_check_max, tail_check_diffs
             return tail_check_max, tail_check_diffs
 
+    def get_delta_pal(self):
+        pass
+
 #        self.y_tail_check=self.specimen_Data['y_tail_check']
 #        self.tail_checks_temperatures = self.specimen_Data['tail_check_temperatures']
 #def get_max_tail_check(y_Arai, y_tail, t_Arai, tail_temps, n_tail):
