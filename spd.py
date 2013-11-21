@@ -438,13 +438,26 @@ class PintPars(object):
             tail_check_max, tail_check_diffs = lib_tail.get_max_tail_check(self.y_Arai, self.y_tail_check, self.t_Arai, self.tail_checks_temperatures, self.pars['tail_n'])
         else:
             tail_check_max, tail_check_diffs = 0, [0]
-            self.pars['tail_check_max'], self.pars['tail_check_diffs'] = tail_check_max, tail_check_diffs
-            return tail_check_max, tail_check_diffs
+        self.pars['tail_check_max'], self.pars['tail_check_diffs'] = tail_check_max, tail_check_diffs
+        return tail_check_max, tail_check_diffs
 
+    def get_DRAT_tail(self):
+        DRAT_tail = lib_tail.get_DRAT_tail(self.pars['tail_check_max'], self.pars['length_best_fit_line'])
+        self.pars['DRAT_tail'] = DRAT_tail
+        return DRAT_tail
 
-#        self.y_tail_check=self.specimen_Data['y_tail_check']
-#        self.tail_checks_temperatures = self.specimen_Data['tail_check_temperatures']
-#def get_max_tail_check(y_Arai, y_tail, t_Arai, tail_temps, n_tail):
+    def get_delta_TR(self):
+    #    def get_delta_TR(tail_check_max, y_int)
+        delta_TR = lib_tail.get_delta_TR(self.pars['tail_check_max'], self.pars['specimen_YT'])
+        self.pars['delta_TR'] = delta_TR
+        return delta_TR
+
+    def get_MD_VDS(self):
+        MD_VDS = lib_tail.get_MD_VDS(self.pars['tail_check_max'], self.pars['specimen_vds'])
+        self.pars['MD_VDS'] = MD_VDS
+        return MD_VDS
+        
+
 
     def calculate_all_statistics(self):
         print "calling calculate_all_statistics in spd.py"
@@ -480,6 +493,9 @@ class PintPars(object):
         # tail check statistics
         self.get_n_tail()
         self.get_max_tail_check()
+        self.get_DRAT_tail()
+        self.get_delta_TR()
+        self.get_MD_VDS()
         print "done with calculate_all_statistics"
 
 

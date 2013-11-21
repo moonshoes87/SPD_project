@@ -26,6 +26,9 @@ class CheckTailSelection(unittest.TestCase):
 
     ref_L = 3.
 
+    y_int = 4.5
+    vds = 1.25
+
     def test_n_tail(self):
         ref_n_tail = 4
 #        ref_tail_section.  specifying this is not neacessary if we always start at the first tail check.  need to check that this is so
@@ -48,5 +51,14 @@ class CheckTailSelection(unittest.TestCase):
         self.assertAlmostEqual(ref_DRAT_tail, DRAT_tail)
         # max_tail_check / best_fit line  * 100
         
-                      
+    def test_delta_TR(self):
+        ref_delta_TR = (.7 / 4.5) * 100.
+        delta_TR = lib_tail.get_delta_TR(self.ref_tail_check_max, self.y_int)
+        self.assertAlmostEqual(ref_delta_TR, delta_TR)
+        
+
+    def test_MD_VDS(self):
+        ref_MD_VDS = (self.ref_tail_check_max / self.vds) * 100.
+        MD_VDS = lib_tail.get_MD_VDS(self.ref_tail_check_max, self.vds)
+        self.assertAlmostEqual(ref_MD_VDS, MD_VDS)
         

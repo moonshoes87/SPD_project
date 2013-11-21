@@ -39,3 +39,14 @@ def get_max_tail_check(y_Arai, y_tail, t_Arai, tail_temps, n_tail):
     print "diffs", diffs
     return max_check, diffs
 
+def get_DRAT_tail(max_check, L):
+    DRAT_tail = (max_check / L) * 100.
+    return DRAT_tail
+
+def get_delta_TR(tail_check_max, y_int):
+    delta_TR = (tail_check_max / y_int) * 100.
+    return delta_TR
+
+def get_MD_VDS(tail_check_max, vds):
+    MD_VDS = (tail_check_max / vds) * 100
+    return MD_VDS
