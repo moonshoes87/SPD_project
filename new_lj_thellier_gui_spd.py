@@ -847,28 +847,68 @@ class Arai_GUI():
         Data[s]['x_tail_check_starting_point']=x_tail_check_starting_point
         Data[s]['y_tail_check_starting_point']=y_tail_check_starting_point
         Data[s]['tail_checks_starting_temperatures']=tail_checks_starting_temperatures
-        
-##        #--------------------------------------------------------------
-##        # collect tail checks 
-##        #--------------------------------------------------------------
-##
-##
-##        ptrm_tail = araiblock[3]
-##        #print ptrm_tail
-##        x_tail_check,y_tail_check=[],[]
-##
-##        for k in range(len(ptrm_tail)):                  
-##          index_infield=infield_temperatures.index(ptrm_tail[k][0])
-##          x_tail_check.append(infields[index_infield][3]/NRM)
-##          y_tail_check.append(ptrm_tail[k][3]/NRM + zerofields[index_infield][3]/NRM)
-##          
-##
-##        x_tail_check=array(x_tail_check)  
-##        y_tail_check=array(y_tail_check)
-##
-##        Data[s]['x_tail_check']=x_tail_check
-##        Data[s]['y_tail_check']=y_tail_check
 
+
+        #--------------------------------------------------------------     
+        # collect additivity checks                                                                 
+        #--------------------------------------------------------------      
+        print "araiblock"
+#        print araiblock
+        print "len araiblock", len(araiblock)
+        print s
+        additivity_checks = araiblock[6]
+        ignore = """
+        x_AC,y_AC,AC_temperatures=[],[],[]
+        x_AC_starting_point,y_AC_starting_point,AC_starting_temperatures=[],[],[]
+
+        tmp_data_block=list(copy(datablock))
+        for k in range(len(additivity_checks)):
+          if additivity_checks[k][0] in zerofield_temperatures:
+            for i in range(len(tmp_data_block)):
+                rec=tmp_data_block[i]
+                if "LT-PTRM-AC" in rec['magic_method_codes'] and float(rec['treatment_temp'])==additivity_checks[k][0]:
+                    del(tmp_data_block[i])
+                    break
+
+            # find the infield step that comes before the additivity check                                                 
+            foundit=False
+            for j in range(i-1,1,-1):
+                if "LT-T-I" in tmp_data_block[j]['magic_method_codes']:
+                  foundit=True
+                  starting_temperature=float(tmp_data_block[j]['treatment_temp']);
+                  break
+            if foundit:
+                    try:
+                        index=t_Arai.index(starting_temperature)
+                        x_AC_starting_point.append(x_Arai[index])
+                        y_AC_starting_point.append(y_Arai[index])
+                        AC_starting_temperatures.append(starting_temperature)
+
+                        index_zerofield=zerofield_temperatures.index(additivity_checks[k][0])
+                        x_AC.append(additivity_checks[k][3]/NRM)
+                        y_AC.append(zerofields[index_zerofield][3]/NRM)
+                        AC_temperatures.append(additivity_checks[k][0])
+
+                    except:
+                        pass
+
+
+
+        x_AC=array(x_AC)
+        y_AC=array(y_AC)
+        AC_temperatures=array(AC_temperatures)
+        x_AC_starting_point=array(x_AC_starting_point)
+        y_AC_starting_point=array(y_AC_starting_point)
+        AC_starting_temperatures=array(AC_starting_temperatures)
+
+        Data[s]['x_additivity_check']=x_AC
+        Data[s]['y_additivity_check']=y_AC
+        Data[s]['additivity_check_temperatures']=AC_temperatures
+        Data[s]['x_additivity_check_starting_point']=x_AC_starting_point
+        Data[s]['y_additivity_check_starting_point']=y_AC_starting_point
+        Data[s]['additivity_check_starting_temperatures']=AC_starting_temperatures
+"""
+        
       print("-I- number of specimens in this project directory: %i\n"%len(self.specimens))
       print("-I- number of samples in this project directory: %i\n"%len(Data_hierarchy['samples'].keys()))
 
@@ -877,6 +917,9 @@ class Arai_GUI():
 #      print str(Data["0238x5721062"])[:500] + "...."
 #      print "done with get_data"
       return(Data,Data_hierarchy)
+
+
+
 
 
       
@@ -1080,8 +1123,8 @@ class Arai_GUI():
         first_Z,first_I,zptrm_check,ptrm_check,ptrm_tail=[],[],[],[],[]
         field,phi,theta="","",""
         starthere=0
-        Treat_I,Treat_Z,Treat_PZ,Treat_PI,Treat_M=[],[],[],[],[]
-        ISteps,ZSteps,PISteps,PZSteps,MSteps=[],[],[],[],[]
+        Treat_I,Treat_Z,Treat_PZ,Treat_PI,Treat_M,Treat_AC=[],[],[],[],[],[]
+        ISteps,ZSteps,PISteps,PZSteps,MSteps,ACSteps=[],[],[],[],[],[]
         GammaChecks=[] # comparison of pTRM direction acquired and lab field
         Mkeys=['measurement_magn_moment','measurement_magn_volume','measurement_magn_mass','measurement_magnitude']
         rec=datablock[0]  # finds which type of magnetic measurement is present in magic_measurements.txt, then assigns momkey to that value
@@ -1316,7 +1359,38 @@ class Arai_GUI():
                    print len(first_Z),len(first_I)
                    print " Something wrong with this specimen! Better fix it or delete it "
                    raw_input(" press return to acknowledge message")
-        araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
+
+       #---------------------                                                                         
+        # find  Additivity (patch by rshaar)                                                           
+        #---------------------                                                                         
+
+        additivity_check=[]
+        for i in range(len(Treat_AC)):
+            step_0=ACSteps[i]
+            temp=Treat_AC[i]
+            dec0=float(datablock[step_0]["measurement_dec"])
+            inc0=float(datablock[step_0]["measurement_inc"])
+            moment0=float(datablock[step_0]['measurement_magn_moment'])
+            V0=self.dir2cart([dec0,inc0,moment0])
+
+            # find the infield step that comes before the additivity check                             
+            foundit=False
+            for j in range(step_0,1,-1):
+                if "LT-T-I" in datablock[j]['magic_method_codes']:
+                  foundit=True ; break
+            if foundit:
+                dec1=float(datablock[j]["measurement_dec"])
+                inc1=float(datablock[j]["measurement_inc"])
+                moment1=float(datablock[j]['measurement_magn_moment'])
+                V1=self.dir2cart([dec1,inc1,moment1])
+
+                I=[]
+                for c in range(3): I.append(V1[c]-V0[c])
+                dir1=self.cart2dir(I)
+                additivity_check.append([temp,dir1[0],dir1[1],dir1[2]])
+
+        araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks,additivity_check)
+
 #        print "done with sortarai()"
 #        print "araiblock[0] (first_Z) "
         #  [[273, 277.5, 79.6, 1.66e-09, 1], .....]
@@ -1339,7 +1413,7 @@ class Arai_GUI():
 #def automate():
 #if __name__ == '__main__':
 if True:
-    gui = Arai_GUI()
+    gui = Arai_GUI('new_magic_measurements.txt')
 if False:
     gui = Arai_GUI()
     specimens = gui.Data.keys()

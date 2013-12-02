@@ -238,6 +238,10 @@ check giving PD direction thing (dot, R, etc.).  # DONE
 fix -/+ for PD/Dec + Inc # DONE
 include pTRM checks below tmin # DONE
 maybe return to delta_pal, although I think it is working
+documentation
+return to thellier_gui_spd editing.  definitely will want to rename, probably prune some unnecessary code
+maybe go through stats one at a time, checking them against their definition?  but really, probably it's better just to get matlab
+consider adding in a params checker so that you can actually run one statistic only.  or, run the stats in groups (by chapter)
 
 
 cart2dir
@@ -255,9 +259,26 @@ Also, checked and numpy and matlab notation for slicing is the same, except that
 
 
 
+meeting with lisa:
+
+need to figure out how we're doing testing.  I know matlab basic syntax now, but will need help parsing data to feed it into his code.  
+
+architecture and use scenarios
+	     paramater checking, to enable running just one statistic (with its dependencies)
+
+abstracting out the parsing portion of thellier_gui_spd further
 
 
 
+
+new meeting notes:
+
+from greig's code:  % ChRM          - a (1 x 2) or a (1 x 3) vector describing an independent measure of the direction of Banc (can be a known direction).
+this would make one of my stats wrong.  
+
+how to do additivity
+
+which chapter to stop at??
 
 
 
