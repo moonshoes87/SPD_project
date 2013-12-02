@@ -899,7 +899,9 @@ class Arai_GUI():
         x_AC_starting_point=array(x_AC_starting_point)
         y_AC_starting_point=array(y_AC_starting_point)
         AC_starting_temperatures=array(AC_starting_temperatures)
+        print "additivity checks", additivity_checks
 
+        Data[s]['ADD_Checks'] = additivity_checks
         Data[s]['x_additivity_check']=x_AC
         Data[s]['y_additivity_check']=y_AC
         Data[s]['additivity_check_temperatures']=AC_temperatures
