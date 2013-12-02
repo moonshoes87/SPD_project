@@ -520,7 +520,7 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 #thing = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[4], 273., 798.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
-#thing.calculate_all_statistics()
+thing.calculate_all_statistics()
 
 if False:
     gui = tgs.Arai_GUI()
