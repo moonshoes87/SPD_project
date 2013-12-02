@@ -857,7 +857,6 @@ class Arai_GUI():
         print "len araiblock", len(araiblock)
         print s
         additivity_checks = araiblock[6]
-        ignore = """
         x_AC,y_AC,AC_temperatures=[],[],[]
         x_AC_starting_point,y_AC_starting_point,AC_starting_temperatures=[],[],[]
 
@@ -907,7 +906,7 @@ class Arai_GUI():
         Data[s]['x_additivity_check_starting_point']=x_AC_starting_point
         Data[s]['y_additivity_check_starting_point']=y_AC_starting_point
         Data[s]['additivity_check_starting_temperatures']=AC_starting_temperatures
-"""
+
         
       print("-I- number of specimens in this project directory: %i\n"%len(self.specimens))
       print("-I- number of samples in this project directory: %i\n"%len(Data_hierarchy['samples'].keys()))
@@ -1186,6 +1185,9 @@ class Arai_GUI():
                 # if pTRM tail check
                 Treat_M.append(temp)
                 MSteps.append(k)
+            if 'LT-PTRM-AC' in methcodes or 'LT-PMRM-AC' in methcodes:
+                Treat_AC.append(temp)
+                ACSteps.append(k)
             if 'LT-NO' in methcodes:
                 # if no treatments applied before measurement
                 dec=float(rec["measurement_dec"])

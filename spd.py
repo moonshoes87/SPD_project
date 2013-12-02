@@ -98,13 +98,18 @@ class PintPars(object):
 #         Data[s]['y_ptrm_check_starting_point'] # a list of y coordinates of the point ehere the pTRM checks started from     
         self.ptrm_checks_starting_temperatures = self.specimen_Data['ptrm_checks_starting_temperatures'] # a list of temperatures from which the pTRM checks started from 
 
+        # AC checks
+        self.x_add_check = self.specimen_Data['x_additivity_check']
+        self.y_add_check = self.specimen_Data['y_additivity_check']
+        self.add_checks_temperatures = self.specimen_Data['additivity_check_temperatures']
+        self.add_checks_starting_temperatures = self.specimen_Data['additivity_check_starting_temperatures']
+        self.x_add_check_starting_point = self.specimen_Data['x_additivity_check_starting_point']
+        self.y_add_check_starting_point = self.specimen_Data['y_additivity_check_starting_point']
+
+
         self.PTRMS = self.specimen_Data['PTRMS']
         self.NRMS = self.specimen_Data['NRMS']
-        # add these
         self.PTRM_Checks = self.specimen_Data['PTRM_Checks']
-#        Data[s]['PTRM_Checks'] = ptrm_checks  # same convention as PTRMS and NRMS
-        #Data[s]['PTRM_Checks'] = ptrm_checks
-        #Data[s]['TAIL_Checks'] = ptrm_tail # different convention, don't use yet
         self.TAIL_Checks = self.specimen_Data['TAIL_Checks']
 
         self.zijdblock=self.specimen_Data['zijdblock']        
@@ -502,10 +507,12 @@ class PintPars(object):
 # K temps: [0.0, 100.0, 150.0, 200.0, 225.0, 250.0, 275.0, 300.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 500.0, 525.0, 550.0]
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
+
 gui = tgs.Arai_GUI()
-specimens = gui.Data.keys()
-print "specimens", specimens
-#thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
+specimens = gui2.Data.keys()
+new_thing = PintPars(gui2.Data, specimens[0], 473., 803.)
+thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
@@ -530,5 +537,8 @@ if False:
     thing3.calculate_all_statistics()
     thing4 = PintPars(gui.Data, specimens[2], 273., 773.)
     thing4.calculate_all_statistics()
-    print "---"
+    "---"
+    # none of my old specimens have any ac check data :(
+#    for specimen in specimens:
+#        print gui.Data[specimen]['araiblock'][6]#['specimen_Data']['araiblock'][6]
 
