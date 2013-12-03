@@ -28,11 +28,11 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
     ptrm_compare = []
     check_percents = []
     ptrm_checks_all_temps = list(ptrm_checks_all_temps)
-    for check in ptrm_checks_included_temps:
-        ptrm_ind = ptrm_checks_all_temps.index(check)
-        ptrm_check = ptrm_x[ptrm_ind]
-        ptrm_compare.append(ptrm_check)
-        arai_ind = t_Arai.index(check)
+    for check in ptrm_checks_included_temps: # goes through each included temperature step
+        ptrm_ind = ptrm_checks_all_temps.index(check) # indexes the number of the check
+        ptrm_check = ptrm_x[ptrm_ind] # x value at that temperature step
+        ptrm_compare.append(ptrm_check) # 
+        arai_ind = t_Arai.index(check) 
         ptrm_orig = x_Arai[arai_ind]
         x_Arai_compare.append(ptrm_orig)
         diff = ptrm_orig - ptrm_check
