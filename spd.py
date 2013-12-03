@@ -214,11 +214,6 @@ class PintPars(object):
         self.pars['specimen_k'] = data[0]
         self.pars['SSE'] = data[3]
         return data[0], data[3]
-#        data = lib_arai.get_curve(x_Arai, y_Arai)
-#        self.pars['centroid'] = data['centroid']
-#        self.pars['specimen_k'] = data['k']
-#        self.pars['best_fit_circle'] = data['best_fit_circle']
-#        self.pars['SSE'] = data['SSE']
 
 
     def get_SCAT(self):
@@ -278,7 +273,6 @@ class PintPars(object):
         return Zstar
                              
 
-
     def get_IZZI_MD(self): # not sure if this is right.  
 #def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
         x_Arai = self.x_Arai
@@ -327,7 +321,6 @@ class PintPars(object):
         self.pars['DANG'] = DANG
 
     def get_NRM_dev(self):
-#        get_NRM_dev(self.dang, self.X_avg, self.y_int)
         NRM_dev = lib_direct.get_NRM_dev(self.pars['DANG'], self.pars['zdata_mass_center'], self.pars['specimen_YT'])
         self.pars['NRM_dev'] = NRM_dev
         return NRM_dev
@@ -461,6 +454,63 @@ class PintPars(object):
         self.pars['MD_VDS'] = MD_VDS
         return MD_VDS
         
+    def arai_plot_statistics(self):
+        self.York_Regression()
+        self.get_vds()
+        #
+        self.get_FRAC()
+        self.get_curve()
+        self.get_SCAT()
+        self.get_R_corr2()
+        self.get_R_det2()
+        self.get_Z()
+        self.get_Zstar()
+        self.get_IZZI_MD()
+
+    def directional_statistics(self):
+        self.York_Regression()
+        self.get_vds()
+        #
+        self.get_dec_and_inc()
+        self.get_MAD()
+        self.get_alpha()
+        self.get_DANG()
+        self.get_NRM_dev()
+        self.get_theta() # not necessarily done
+        self.get_gamma() # ditto        
+
+
+    def ptrm_check_statistics(self):# ptrm check statistics
+        self.York_Regression()
+        self.get_vds()
+        #
+        self.get_n_ptrm()
+        self.get_max_ptrm_check()
+        self.get_delta_CK()
+        self.get_DRAT()
+        self.get_max_DEV()
+        self.get_CDRAT()
+        self.get_DRATS()
+        self.get_mean_DRAT()
+        self.get_mean_DEV()
+        self.get_delta_pal()
+
+    def tail_check_statistics(self):
+        # tail check statistics
+        self.York_Regression()
+        self.get_vds()
+        self.get_n_ptrm()
+        self.get_max_ptrm_check()
+        self.get_DRAT()
+        #
+        self.get_n_tail()
+        self.get_max_tail_check()
+        self.get_DRAT_tail()
+        self.get_delta_TR()
+        self.get_MD_VDS()
+
+    def additivity_check_statistics(self):
+        pass
 
 
     def calculate_all_statistics(self):
@@ -519,7 +569,31 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 #thing = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data, specimens[4], 273., 798.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
-thing.calculate_all_statistics()
+
+#thing.calculate_all_statistics()
+
+#try:
+#    thing.arai_plot_statistics()
+#except:
+#    print "failed arai_plot_statistics"
+
+#try:
+#    thing.directional_statistics()
+#except: 
+#    print "failed directional statistics"
+
+#try:
+#    thing.ptrm_check_statistics()
+#except:
+#    print "failed ptrm check statistics"
+
+try:
+    thing.tail_check_statistics()
+except:
+    print "failed tail check statistics"
+
+thing.tail_check_statistics()
+
 
 if False:
     gui = tgs.Arai_GUI()
