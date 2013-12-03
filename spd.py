@@ -385,14 +385,12 @@ class PintPars(object):
         return DRAT
 
     def get_max_DEV(self):
-#def get_max_DEV(delta_x_prime, max_ptrm_check):
         max_DEV = lib_ptrm.get_max_DEV(self.pars['delta_x_prime'], self.pars['max_ptrm_check'])
         self.pars['max_DEV'] = max_DEV
         return max_DEV
 
     
     def get_CDRAT(self):
-#def get_CDRAT(L, sum_ptrm_checks, sum_abs_ptrm_checks):                     
         CDRAT, CDRAT_prime = lib_ptrm.get_CDRAT(self.pars['length_best_fit_line'], self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'])
         self.pars['CDRAT'], self.pars['CDRAT_prime'] = CDRAT, CDRAT_prime
         return CDRAT, CDRAT_prime
