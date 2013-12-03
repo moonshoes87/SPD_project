@@ -1,24 +1,3 @@
-def magic_read(self,infile):  # called from  self.get_data.  reads magic file and returns a dictionary
-
-This is how the data gets parsed and whatever within thellier_GUI:
-
-class Arai_GUI(wx.Frame):
-
-default self.magic_file = ./magic_measurements.txt # this is how self.get_data functions on initialization
-
-def on_menu_open_magic_file(self, event):
-...
-	self.Data = self.get_data()  # this is the key one
-		  calls self.magic_read() # parses file and returns data dictionary
-		  also self.get_specs() # parses file and returns list (?) of specimen names
-	self.Data_info=self.get_data_info()
-
-ultimately returns Data
-...
-
-
-I probably want to use def get_PI_parameters().  However, it appears (possibly) that one must do both self.get_data and then self.get_PI_parameters.  At the start of self.get_data, self.Data = {}.  However, at the start of self.get_PI_parameters(), self.Data is referenced as if it were full.  So....
-
 
 
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']                           
@@ -38,27 +17,6 @@ But nowhere do the magic_method codes get pulled out and organized
         # also, fix the weirdness of having to set the precise number for tmin and tmax    
 
        
-sequence to get Data to feed into spd.py:
-	 >>> import lj_thellier_gui_spd as tgs
-	 >>> tgs
-	 <module 'lj_thellier_gui_spd' from 'lj_thellier_gui_spd.py'>
-	 >>> gui = tgs.Arai_GUI()
-	 __init__ Arai_gui instance
-	 .....	 
-	>>> gui.Data
-	.... (necessary Data for spd.py)
-	thing = gui.get_PI_parameters(gui.s, 273, 798)
-
-or:
-	import new_lj_thellier_gui_spd as tgs
-	gui = tgs.Arai_GUI()
-	data = gui.Data
-	specimen = gui.s
-	import spd
-	thing = spd.PintPars(data, specimen, 273, 798)
-	thing.calculate_all_statistics()
-
-In these two examples, thing appears to be the same
 
 The temperature selector bar thing is in kelvin, but tmin, tmax are in C.  hahahahaha.  
 
@@ -227,16 +185,8 @@ LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory f
 to do:
 
 check get_curve()
-      everything else # DONE
       determine whether norming should or should not be done
 ask Alex about last bit of VDS calculation
-add tests for SCAT # DONE
-finish IZZI_MD  # DONE (?)
-       use last repeated point, not first # 
-      sometimes best_fit_vector is postive where should be negative.  # DONE (or at least can't reproduce this problem....)
-check giving PD direction thing (dot, R, etc.).  # DONE
-fix -/+ for PD/Dec + Inc # DONE
-include pTRM checks below tmin # DONE
 maybe return to delta_pal, although I think it is working
 documentation
 return to thellier_gui_spd editing.  definitely will want to rename, probably prune some unnecessary code
@@ -297,9 +247,4 @@ cluded
 
 delta_pal.  really pays no attention to tmin, just tmax?  weird.  check this.
 
-also, delta_pal requires pTRM vector.  not sure what this is.
 
-should selection of tail checks to include take into consideration starting temperature, as with the ptrm checks?
-
-
-optimizing for specific stats can wait.  towards the end.  

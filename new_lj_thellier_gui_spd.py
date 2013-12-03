@@ -13,14 +13,14 @@ try:
     import thellier_gui_preferences
 except:
     pass
-import copy
-import stat
-import subprocess
-import time
-import random
-import copy
-from pylab import *
-from scipy.optimize import curve_fit
+#import copy
+#import stat
+#import subprocess
+#import time
+#import random
+#import copy
+from pylab import *  # this stuff is being used, don't know all where
+#from scipy.optimize import curve_fit
 
 import thellier_consistency_test
 
@@ -596,7 +596,7 @@ class Arai_GUI():
                      Data[s]['cooling_rate_data']['CR_correction_factor_flag']!="calculated":
                         Data[s]['cooling_rate_data']['CR_correction_factor']=mean_CR_correction
                         Data[s]['cooling_rate_data']['CR_correction_factor_flag']="inferred"
-              
+      
       #------------------------------------------------
       # sort Arai block
       #------------------------------------------------
@@ -852,10 +852,10 @@ class Arai_GUI():
         #--------------------------------------------------------------     
         # collect additivity checks                                                                 
         #--------------------------------------------------------------      
-        print "araiblock"
+#        print "araiblock"
 #        print araiblock
-        print "len araiblock", len(araiblock)
-        print s
+#        print "len araiblock", len(araiblock)
+#        print s
         additivity_checks = araiblock[6]
         x_AC,y_AC,AC_temperatures=[],[],[]
         x_AC_starting_point,y_AC_starting_point,AC_starting_temperatures=[],[],[]
@@ -1414,8 +1414,6 @@ class Arai_GUI():
 #        print "field ", field
         return araiblock,field
 
-#def automate():
-#if __name__ == '__main__':
 if True:
     gui = Arai_GUI('new_magic_measurements.txt')
 if False:
@@ -1450,7 +1448,6 @@ if False:
     thing5.calculate_all_statistics()
 
 
-#automate()
 
 
 
