@@ -190,7 +190,9 @@ class CheckGamma(unittest.TestCase):
 
     def testGamma(self):
         result = lib_direct.get_gamma(self.B_lab_dir, self.pTRM_dir)
+        print "result of testGamma", result
         print result, self.ref_gamma
+        self.assertAlmostEqual(87.999999999999986, 88.)
         self.assertAlmostEqual(self.ref_gamma, result)
 
 

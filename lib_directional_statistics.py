@@ -133,27 +133,6 @@ def get_PD_direction(X1_prime, X2_prime, X3_prime, PD):
         print PD
     return PD
 
-# PUT THIS IN THERE
-# not sure if this is needed.  there is a method for getting direction along V1 using the vector dot product of V1 and R.  I just don't know if we need this.  
-#def get_reference_vector(X1_prime, X2_prime, X3_prime):
-#    n = len(X1_prime) - 1
-#    X1 = X1_prime[0] - X1_prime[n]  # make sure this manner of indexing is correct.  I think it may be
-#    X2 = X2_prime[0] - X2_prime[n]
-#    X3 = X3_prime[0] - X3_prime[n]
-#    R= numpy.array([X1, X2, X3])
-#    return R
-#    return numpy.array([0, 0, 0])
-
-    
-#tau, V = tauV(T['orient_tensor'])
-#V1 = V[0]
-#R = get_reference_vector(t['X1_prime'], t['X2_prime'], t['X3_prime'])
-#dot = numpy.dot(V1, R) # dot product of reference vector and the principal axis of the V matrix
-#if dot < -1:
-#    dot = -1
-#elif dot > 1:
-#    dot = 1
-
 
 ex_zdata = [[1., 1., 1.],[1., 2., 3.], [2., 4., 4.5], [2., 3., 7.5]]
 real_zdata = [[-0.0178569 , -0.05399429,  0.9863136 ],
@@ -184,9 +163,6 @@ def cart2dir(cart):
         return numpy.zeros(3)
     return numpy.array([Decs,Incs,Rs]).transpose() # return the directions list
 
-# Lisa sequence:
-#T=numpy.array(Tmatrix(X))
-
 
 def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     zdata_segment = get_zdata_segment(zdata, t_Arai, tmin, tmax)
@@ -197,30 +173,13 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     PD = get_PD_direction(data['X1_prime'], data['X2_prime'], data['X3_prime'], V[0]) # makes PD + or -
     PDir=cart2dir(PD) # PDir is direction
     vector = PD # best fit vector / ChRM is cartesian
-#    best_fit_vector = V[0]  # # old way of doing get_PD_direction.  I think the new way is better.  
-#    vector = adjust_best_fit_vector(best_fit_vector, means, zdata) 
     dec = PDir[0]  # fixed, took out bad adjustment.  dec must always be positive, but cart2dir ensures that it is
     inc = PDir[1]
     return dec, inc, vector, tau, V, means
 
-#def adjust_best_fit_vector(vector, cm, zdata): # not using this one anymore
-#    """finds correct sign "+/-" for best fit vector"""
-#cm = zdata_mass_center
-#    cm = numpy.array(cm)
-#    best_fit_vector = numpy.array(vector)
-#    v1_plus = best_fit_vector * numpy.sqrt(sum(cm**2))
-#    v1_minus = best_fit_vector * -1. * numpy.sqrt(sum(cm**2))
-#    test_v = zdata[0] - zdata[-1]
-#    print "test_v", test_v
-#    if numpy.sqrt(sum((v1_minus-test_v)**2)) < numpy.sqrt(sum((v1_plus-test_v)**2)):
-#        best_fit_vector = best_fit_vector* -1. 
-#    return best_fit_vector
-
 
 def get_MAD(tau): # works
     # tau is ordered so that tau[0] > tau[1] > tau[2]
-# makes no difference whether use math.degrees or / rad to turn answer into degrees
-#    rad = numpy.pi / 180.
     MAD = math.degrees(numpy.arctan(numpy.sqrt((tau[1] + tau[2]) / tau[0])) )# / rad # should work, AND DOES!!
     return MAD
 
@@ -252,7 +211,7 @@ def Ron_get_DANG(cm, best_fit_vector):
 
 
 def dir2cart(d): # from pmag.py
-   # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z    
+    """converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z form """
     ints=numpy.ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs             
     d=numpy.array(d)
     rad=numpy.pi/180.
@@ -315,7 +274,7 @@ def get_alpha(anc_fit, free_fit): #
     alpha_deg = get_angle_difference(anc_fit, free_fit)
     return alpha_deg
 
-def get_DANG(mass_center, free_best_fit_vector): # not working in all cases!  but working in some
+def get_DANG(mass_center, free_best_fit_vector): 
     DANG = get_angle_difference(mass_center, free_best_fit_vector)
     return DANG
 
@@ -327,9 +286,8 @@ def get_NRM_dev(dang, x_avg, y_int):
 
 def get_theta(B_lab_dir, ChRM): 
     B_lab_cart = dir2cart(B_lab_dir)
-    # make sure ChRM is cartesian.  I think it is......
-    print "B_lab_cart", B_lab_cart
-    print "ChRM", ChRM
+#    print "B_lab_cart", B_lab_cart
+#    print "ChRM", ChRM
     theta = get_angle_difference(B_lab_cart, ChRM) # you should change it so that get_angle_difference can take dir or cart
     return theta
 
@@ -344,53 +302,18 @@ cart2 = dir2cart(dir2)
 def get_gamma(B_lab_dir, pTRM_dir):
     B_lab_cart = dir2cart(B_lab_dir)
     pTRM_cart = dir2cart(pTRM_dir)
-#    print "B_lab_dir", B_lab_dir, "pTRM_dir", pTRM_dir
-#    print "B_lab_cart", B_lab_cart # [ ]
-#    print "pTRM cart", pTRM_cart # [[ ]] 
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
     gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
     # pmag_angle and get_angle difference are equivalent with non zero values
     gamma2 = numpy.array([gamma2])
     boo = gamma1 == gamma2
-#    print "boo", boo   # why the fuck is this false?  what the fuck is the difference between these things?
-#    print type(boo)
-    if str(gamma1) == str(gamma2):
-#        print "success"
+    if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
         return gamma1
     else:
+        print gamma1
+        print gamma2
         return False
-#        print type(gamma1), type(gamma2)
-#        print type(gamma1[0]), type(gamma2[0])
-#        print gamma1.ndim, gamma2.ndim
-#        print gamma1.shape, gamma2.shape
-#        print gamma1, gamma2
-#        return gamma1  # or return gamma 2.  both work with unittests, so why the fuck don't they come out as equal, hmm?
 
-
-
-
-#means = list(numpy.mean(zdata.T,axis=1))
-#m=array(mean(CART_pTRMS_orig.T,axis=1)) 
-#        v1_plus=v1*sqrt(sum(cm**2))
-#        v1_minus=v1*-1*sqrt(sum(cm**2))
-#        test_v=CART_pTRMS_orig[0]-CART_pTRMS_orig[-1]
-#        if sqrt(sum((v1_minus-test_v)**2)) > sqrt(sum((v1_plus-test_v)**2)):
-#         DIR_PCA=self.cart2dir(v1*-1)
-#         best_fit_vector=v1*-1
-#        else:
-#         DIR_PCA=self.cart2dir(v1)
-#         best_fit_vector=v1
-
-
-# put this into get dec_and_inc
-#cm = zdata_mass_center
-#v1_plus = best_fit_vector * numpy.sqrt(sum(cm**2))
-#v1_minus = best_fit_vector * -1. * numpy.sqrt(sum(cm**2))
-#test_v = zdata[0] - zdata[-1]
-#        if sqrt(sum((v1_minus-test_v)**2)) > sqrt(sum((v1_plus-test_v)**2)):
-#          best_fit_vector = v1* -1.
-#        else:
-#          best_fit_vector = v1
 
 
 if False:
