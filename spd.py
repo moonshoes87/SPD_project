@@ -561,6 +561,7 @@ gui = tgs.Arai_GUI()
 gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 specimens = gui2.Data.keys()
 new_thing = PintPars(gui2.Data, specimens[0], 473., 803.)
+newer_thing = PintPars(gui2.Data, specimens[1], 573., 833.)
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)

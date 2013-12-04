@@ -24,8 +24,24 @@ def get_ptrm_star(incl_temps, starting_temps, x_Arai, t_Arai):
         v = x_Arai[ind_start_temp] - x_Arai[ind_temp]
         ptrm_star[k] = v
     return ptrm_star
-#    return {(2,1): 0, (3,2): 0, (4,3): 0}
 
+
+def get_ptrm_actual(incl_temps, starting_temps, x_Arai, t_Arai, x_add_check):
+   # get_ptrm_actual(self.ref_incl_temps, self.starting_temps,self.x_Arai, self.t_Arai, self.x_add_check)
+    ptrm_actual = {}
+    for num, temp in enumerate(incl_temps):
+        starting_temp = starting_temps[num]
+        k = (starting_temps[num], temp)
+        ind_temp = t_Arai.index(temp)
+        ind_start_temp = t_Arai.index(starting_temp)
+        v = x_Arai[ind_start_temp] - x_add_check[num]
+        ptrm_actual[k] = v
+    return ptrm_actual
+
+def get_add_checks(ptrm_star, ptrm_actual):
+    add_checks = {}
+        
+    return {(2,1): 0, (3,2): 0, (4,3): 0}
 
 
 def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x, t_Arai, x_Arai):

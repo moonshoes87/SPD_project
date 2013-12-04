@@ -26,22 +26,8 @@ in lj_thellier_gui_spd
 
 added this into get_data()
 self.s = self.specimens[0]  # LORI WEIRD ADDITION 
-Will need to change this so that you can select which, or for all, specimens to get_data
-
-Current statistics are all correct between self.Data[self.s]['pars'] and self.pars, although there are fewer in self.pars.Possibly I should simplify what happens in get_data().  
 
 
-
-Next steps:
-It would be nice to take Data out of the PintPars object.  Figure out what is needed, and embed that more directly into the object.  DONE
-Walk through get PI parameters....DONE
-Walk through get data
-fix the thing between dir2cart, cart2dir, etc. DONE
-remove needless functions DONE
-figure out if need er_ages, etc.
-figure out version of EPD
-figure out difference betwixt read_magic_file()
-how does dec., inc., etc., get turned into x, y Arai coordinates??  this is probs done in sortarai()
 
 
 
@@ -192,6 +178,9 @@ documentation
 return to thellier_gui_spd editing.  definitely will want to rename, probably prune some unnecessary code
 maybe go through stats one at a time, checking them against their definition?  but really, probably it's better just to get matlab
 consider adding in a params checker so that you can actually run one statistic only.  or, run the stats in groups (by chapter)
+problem with DRATS statistic.  maybe just because of the slightly different method of selecting ptrm checks in thellier_gui vs. spd.  inconsistency with specimen MGH1
+check that new set of specimens are basically working correctly
+
 
 
 cart2dir

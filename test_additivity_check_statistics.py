@@ -16,34 +16,16 @@ class CheckAdditivity(unittest.TestCase):
     ref_incl_temps = [1, 2, 3]
     ref_n_add = 3
 
-
 #    x_arai at starting temp minus AC check and lower temp
 #    .1 - 0, .5 - .2, .8 - .4
 #    .1, .2, .4
 
-
     x_Arai =      [0, .1, .35, .5, .6,  .8,  1., 1.1]
     t_Arai =      [1,  2, 2.5,  3., 3.5, 4., 5., 6.]
-    
-#    ptrm_star = ptrm[2, 1]: .1, ptrm[3, 2]: .4, ptrm[4,3]: .3, ptrm[5,4]: .2, ptrm[6,5]: .1
-    ptrm_star = { (2,1): .1, (3,2): .4, (4,3): .3, (5,4): .2, (6,5): .1 } # where key[0] is the higher temp and key[1] the lower , value is the expected ptrm acquired between those temperatures 
 
-    incl_ptrm_star = { (2, 1): .1, (3, 2): .4,  (4, 3): .3 } # t_Arai, x_Arai, temps, starting temps, ptrm_check_x
+    ptrm_star = { (2, 1): .1, (3, 2): .4,  (4, 3): .3 } # where key[0] is the higher temp and key[1] the lower , value is the expected ptrm acquired between those temperatures 
 
-    new_ptrm_star = {}
-
-    for num, temp in enumerate(ref_incl_temps):
-        starting_temp = starting_temps[num]
-        k = (starting_temps[num], temp)
-        ind_temp = t_Arai.index(temp)
-        ind_start_temp = t_Arai.index(starting_temp)
-        v = x_Arai[ind_start_temp] - x_Arai[ind_temp]
-        new_ptrm_star[k] = v
-
-    print new_ptrm_star
-        
-
-    incl_ptrm_actual = { (2, 1):  .1, (3,2): .2, (4, 3): .4 }
+    ptrm_actual = { (2, 1):  .1, (3,2): .3, (4, 3): .4 }
 
     additivity_checks = { (2,1): 0, (3,2): .2, (4, 3): .1 }
 
@@ -78,8 +60,16 @@ class CheckAdditivity(unittest.TestCase):
             self.assertAlmostEqual(self.ptrm_star[k], v)
 
 
+    def test_pTRM_actual(self):
+        ptrm_actual = lib_add.get_ptrm_actual(self.ref_incl_temps, self.starting_temps, self.x_Arai, self.t_Arai, self.x_add_check)
+        for k, v in ptrm_actual.items():
+            self.assertAlmostEqual(self.ptrm_actual[k], v)
+        
     def test_ACs(self):
-        pass
+        additivity_checks = lib_add.get_add_checks(self.ptrm_star, self.ptrm_actual)
+        for key, check in additivity_checks.items():
+            self.assertAlmostEqual(self.additivity_checks[key], check)
+
 # get AC check diffs
 # think will be comparing x_Arai at that temp with x_Arai_add at that point
 
