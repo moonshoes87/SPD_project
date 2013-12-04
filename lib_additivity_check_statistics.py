@@ -14,11 +14,22 @@ def get_n_add(temps, starting_temps, tmax):
     return incl_temps, n_add
 
 
+def get_ptrm_star(incl_temps, starting_temps, x_Arai, t_Arai):
+    ptrm_star = {}
+    for num, temp in enumerate(incl_temps):
+        starting_temp = starting_temps[num]
+        k = (starting_temps[num], temp)
+        ind_temp = t_Arai.index(temp)
+        ind_start_temp = t_Arai.index(starting_temp)
+        v = x_Arai[ind_start_temp] - x_Arai[ind_temp]
+        ptrm_star[k] = v
+    return ptrm_star
+#    return {(2,1): 0, (3,2): 0, (4,3): 0}
+
 
 
 def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x, t_Arai, x_Arai):
-    """sorts through included ptrm_checks and finds the largest ptrm check diff, the sum of the total diffs, and the percentage of the lar
-gest check / original measurement at that temperature step"""
+    """sorts through included ptrm_checks and finds the largest ptrm check diff, the sum of the total diffs, and the percentage of the largest check / original measurement at that temperature step"""
     diffs = []
     abs_diffs = []
     x_Arai_compare = []
