@@ -111,7 +111,7 @@ class PintPars(object):
         self.NRMS = self.specimen_Data['NRMS']
         self.PTRM_Checks = self.specimen_Data['PTRM_Checks']
         self.TAIL_Checks = self.specimen_Data['TAIL_Checks']
-        self.ADD_Checks = self.specimen_Data['ADD_Checks']
+#        self.ADD_Checks = self.specimen_Data['ADD_Checks'] # removed this from new_lj_thellier_gui
 
         self.zijdblock=self.specimen_Data['zijdblock']        
         self.z_temperatures=self.specimen_Data['z_temp']

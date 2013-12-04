@@ -852,12 +852,10 @@ class Arai_GUI():
         #--------------------------------------------------------------     
         # collect additivity checks                                                                 
         #--------------------------------------------------------------      
-#        print "araiblock"
-#        print araiblock
-#        print "len araiblock", len(araiblock)
-#        print s
+
+
         additivity_checks = araiblock[6]
-        x_AC,y_AC,AC_temperatures=[],[],[]
+        x_AC,y_AC,AC_temperatures,AC=[],[],[],[]
         x_AC_starting_point,y_AC_starting_point,AC_starting_temperatures=[],[],[]
 
         tmp_data_block=list(copy(datablock))
@@ -869,28 +867,37 @@ class Arai_GUI():
                     del(tmp_data_block[i])
                     break
 
-            # find the infield step that comes before the additivity check                                                 
+            # find the infield step that comes before the additivity check                                               
             foundit=False
             for j in range(i-1,1,-1):
                 if "LT-T-I" in tmp_data_block[j]['magic_method_codes']:
-                  foundit=True
+                  found_starting_temperature=True
                   starting_temperature=float(tmp_data_block[j]['treatment_temp']);
                   break
-            if foundit:
-                    try:
-                        index=t_Arai.index(starting_temperature)
-                        x_AC_starting_point.append(x_Arai[index])
-                        y_AC_starting_point.append(y_Arai[index])
-                        AC_starting_temperatures.append(starting_temperature)
+            #for j in range(len(Data[s]['t_Arai'])):                        
+            #    print Data[s]['t_Arai'][j]                                                   
+            #    if float(Data[s]['t_Arai'][j])==additivity_checks[k][0]:                    
+            #      found_zerofield_step=True                                                           
+            #      pTRM=Data[s]['x_Arai'][j]                                                             
+            #      AC=Data[s]['x_Arai'][j]-additivity_checks[k][3]/NRM                           
+            #      break                                                                    
 
-                        index_zerofield=zerofield_temperatures.index(additivity_checks[k][0])
-                        x_AC.append(additivity_checks[k][3]/NRM)
-                        y_AC.append(zerofields[index_zerofield][3]/NRM)
-                        AC_temperatures.append(additivity_checks[k][0])
+            if found_starting_temperature:
+                try:
+                    index=t_Arai.index(starting_temperature)
+                    x_AC_starting_point.append(x_Arai[index])
+                    y_AC_starting_point.append(y_Arai[index])
+                    AC_starting_temperatures.append(starting_temperature)
 
-                    except:
-                        pass
+                    index_zerofield=zerofield_temperatures.index(additivity_checks[k][0])
+                    x_AC.append(additivity_checks[k][3]/NRM)
+                    y_AC.append(zerofields[index_zerofield][3]/NRM)
+                    AC_temperatures.append(additivity_checks[k][0])
+                    index_pTRMs=t_Arai.index(additivity_checks[k][0])
+                    AC.append(additivity_checks[k][3]/NRM - x_Arai[index_pTRMs])
 
+                except:
+                    pass
 
 
         x_AC=array(x_AC)
@@ -899,15 +906,20 @@ class Arai_GUI():
         x_AC_starting_point=array(x_AC_starting_point)
         y_AC_starting_point=array(y_AC_starting_point)
         AC_starting_temperatures=array(AC_starting_temperatures)
-        print "additivity checks", additivity_checks
+        AC=array(AC)
 
-        Data[s]['ADD_Checks'] = additivity_checks
+        Data[s]['AC']=AC
+        print s
+        print AC
         Data[s]['x_additivity_check']=x_AC
         Data[s]['y_additivity_check']=y_AC
         Data[s]['additivity_check_temperatures']=AC_temperatures
         Data[s]['x_additivity_check_starting_point']=x_AC_starting_point
         Data[s]['y_additivity_check_starting_point']=y_AC_starting_point
         Data[s]['additivity_check_starting_temperatures']=AC_starting_temperatures
+      
+
+
 
         
       print("-I- number of specimens in this project directory: %i\n"%len(self.specimens))
