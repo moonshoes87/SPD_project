@@ -13,7 +13,15 @@ def get_n_add(temps, starting_temps, tmax):
     print incl_temps
     return incl_temps, n_add
 
+#lib_add.get_delta_AC(self.ref_incl_temps, self.add_checks, self.x_int)
+def get_delta_AC(n_add, add_checks, x_int):
+    incl_add_checks = numpy.array(add_checks[ :n_add+1])
+    print "checks segment", incl_add_checks
+    print max(abs(incl_add_checks))
+    delta_AC = ( max(abs(incl_add_checks) ) / x_int)  * 100.
+    return delta_AC
 
+#probs ignore all below
 def get_ptrm_star(incl_temps, starting_temps, x_Arai, t_Arai):
     ptrm_star = {}
     for num, temp in enumerate(incl_temps):

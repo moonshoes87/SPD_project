@@ -29,6 +29,9 @@ class CheckAdditivity(unittest.TestCase):
 
     additivity_checks = { (2,1): 0, (3,2): .2, (4, 3): .1 }
 
+    add_checks = [0, .2, .1]
+    x_int = 2.
+    ref_delta_AC = (.2 / 2) * 100.
 
     # think I additionally need the check diffs.  what I have is just x check values.
     # I believe it will be: pTRM of start temperature - pTRM of additivity check step.  then I can compare those values.  
@@ -52,7 +55,13 @@ class CheckAdditivity(unittest.TestCase):
             self.assertEqual(temp, self.ref_incl_temps[num])
         self.assertEqual(n_add, self.ref_n_add)
 
+    def test_delta_AC(self):
+        delta_AC = lib_add.get_delta_AC(self.ref_n_add, self.add_checks, self.x_int)
+        self.assertAlmostEqual(self.ref_delta_AC, delta_AC)
 
+
+# ignore below
+if False:
     def test_pTRM_star(self):
 #        def get_ptrm_star(incl_temps, starting_temps, x_Arai, t_Arai):
         ptrm_star = lib_add.get_ptrm_star(self.ref_incl_temps, self.starting_temps, self.x_Arai, self.t_Arai)

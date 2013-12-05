@@ -178,8 +178,10 @@ documentation
 return to thellier_gui_spd editing.  definitely will want to rename, probably prune some unnecessary code
 maybe go through stats one at a time, checking them against their definition?  but really, probably it's better just to get matlab
 consider adding in a params checker so that you can actually run one statistic only.  or, run the stats in groups (by chapter)
-problem with DRATS statistic.  maybe just because of the slightly different method of selecting ptrm checks in thellier_gui vs. spd.  inconsistency with specimen MGH1
-check that new set of specimens are basically working correctly
+problem with DRATS statistic.  maybe just because of the slightly different method of selecting ptrm checks in thellier_gui vs. spd.  inconsistency with specimen MGH1 # confirmed as suspected
+check that new set of specimens are basically working correctly # DONE
+AC checks now available in specimen_Data, however must attend to tmax
+check for missing stats
 
 
 

@@ -111,6 +111,7 @@ class PintPars(object):
         self.NRMS = self.specimen_Data['NRMS']
         self.PTRM_Checks = self.specimen_Data['PTRM_Checks']
         self.TAIL_Checks = self.specimen_Data['TAIL_Checks']
+        self.AC_Diffs = self.specimen_Data['AC']
 #        self.ADD_Checks = self.specimen_Data['ADD_Checks'] # removed this from new_lj_thellier_gui
 
         self.zijdblock=self.specimen_Data['zijdblock']        
@@ -560,7 +561,7 @@ import new_lj_thellier_gui_spd as tgs
 gui = tgs.Arai_GUI()
 gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 specimens = gui2.Data.keys()
-new_thing = PintPars(gui2.Data, specimens[0], 473., 803.)
+new_thing = PintPars(gui2.Data, specimens[0], 473., 703.)
 newer_thing = PintPars(gui2.Data, specimens[1], 573., 833.)
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
