@@ -21,6 +21,7 @@ import lib_curvature as lib_k
 import lib_directional_statistics as lib_direct
 import lib_ptrm_statistics as lib_ptrm
 import lib_tail_check_statistics as lib_tail
+import lib_additivity_check_statistics as lib_add
 from scipy import * 
 
 
@@ -454,11 +455,24 @@ class PintPars(object):
         MD_VDS = lib_tail.get_MD_VDS(self.pars['tail_check_max'], self.pars['specimen_vds'])
         self.pars['MD_VDS'] = MD_VDS
         return MD_VDS
+
+    # additivity check statistics start here
+
+    def get_n_add(self):
+        n_add = lib_add.get_n_add(self.add_checks_temperatures, self.add_checks_starting_temperatures, self.tmax)[1]
+        self.pars['n_add'] = n_add
+        return n_add
+
+    def get_delta_AC(self):
+        print "doing delta AC"
+        delta_AC = lib_add.get_delta_AC(self.pars['n_add'], self.AC_Diffs, self.pars['specimen_XT'])
+        self.pars['delta_AC'] = delta_AC
+        return delta_AC
+
         
     def arai_plot_statistics(self):
         self.York_Regression()
         self.get_vds()
-        #
         self.get_FRAC()
         self.get_curve()
         self.get_SCAT()
@@ -511,7 +525,8 @@ class PintPars(object):
         self.get_MD_VDS()
 
     def additivity_check_statistics(self):
-        pass
+        self.get_n_add()
+        self.get_delta_AC()
 
 
     def calculate_all_statistics(self):
@@ -551,6 +566,8 @@ class PintPars(object):
         self.get_DRAT_tail()
         self.get_delta_TR()
         self.get_MD_VDS()
+        self.get_n_add()
+        self.get_delta_AC()
         print "done with calculate_all_statistics"
 
 
@@ -572,7 +589,7 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 #thing = PintPars(gui.Data, specimens[4], 273., 798.)
 #thing = PintPars(gui.Data, specimens[2], 273., 773.)
 
-#thing.calculate_all_statistics()
+thing.calculate_all_statistics()
 
 #try:
 #    thing.arai_plot_statistics()

@@ -29,7 +29,7 @@ class CheckAdditivity(unittest.TestCase):
 
     additivity_checks = { (2,1): 0, (3,2): .2, (4, 3): .1 }
 
-    add_checks = [0, .2, .1]
+    add_checks = [0, .2, .1, .6]
     x_int = 2.
     ref_delta_AC = (.2 / 2) * 100.
 
