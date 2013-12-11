@@ -128,7 +128,7 @@ class PintPars(object):
         self.B_lab_vector = [self.specimen_Data['Thellier_dc_field_phi'], self.specimen_Data['Thellier_dc_field_theta'], self.specimen_Data['Thellier_dc_field_uT']]  # although generally last one can be abstracted as 1
 
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
-        self.pars['specimen_int_n']=self.end-self.start+1
+        self.pars['specimen_n']=self.end-self.start+1
         self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K", "steps_Arai", "xy_Arai", "xy_Arai_segment", "B_lab_vector", "PTRMS"] # needs to be updated
  
         #LJ ADDING stats:
@@ -426,11 +426,11 @@ class PintPars(object):
     def get_n_tail(self):
 #        def get_n_tail(tmax, tail_temps):
         if len(self.tail_checks_temperatures) > 0:
-            tail_n = lib_tail.get_n_tail(self.tmax, self.tail_checks_temperatures)
+            n_tail = lib_tail.get_n_tail(self.tmax, self.tail_checks_temperatures)
         else:
-            tail_n = 0
-        self.pars['tail_n'] = tail_n
-        return tail_n
+            n_tail = 0
+        self.pars['n_tail'] = n_tail
+        return n_tail
 
     def get_max_tail_check(self):
         if len(self.y_tail_check) > 0:

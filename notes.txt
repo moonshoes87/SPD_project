@@ -239,3 +239,20 @@ cluded
 delta_pal.  really pays no attention to tmin, just tmax?  weird.  check this.
 
 
+Python tips and tricks:
+
+dir(spd) -- gives all methods/classes available in spd.  awesome.  
+
+pop, remove, and del -- useful stuff for lists
+
+*args
+
+if changing a list in your loop, it's better to iterate through indices.  i.e, for i in range(len(lst)), vs for i in list
+
+" ".join(row)
+
+list comprehensions
+
+filter() # takes two args, function and iterable.  works well with lambda.
+
+lambda
