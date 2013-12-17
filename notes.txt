@@ -256,3 +256,5 @@ list comprehensions
 filter() # takes two args, function and iterable.  works well with lambda.
 
 lambda
+
+overriding built in methods -- i.e., __repr__(), which determines how an object prints

@@ -254,7 +254,7 @@ class Arai_GUI():
       #print "done sorting meas data"
       
       self.specimens=Data.keys()
-      self.s = self.specimens[0]  # LORI convenience ADDITION
+#      self.s = self.specimens[0]  # LORI convenience ADDITION
       self.specimens.sort()
 
       

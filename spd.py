@@ -147,6 +147,9 @@ class PintPars(object):
         self.xy_Arai_segment = lib_arai.get_xy_array(self.x_Arai_segment, self.y_Arai_segment)
 
 
+    def __repr__(self):
+        return "PintPars object, specimen: " + str(self.s)
+
     def get_segments_and_means(self):
         pass # consider making this a real deal thing.  
         
@@ -434,7 +437,7 @@ class PintPars(object):
 
     def get_max_tail_check(self):
         if len(self.y_tail_check) > 0:
-            tail_check_max, tail_check_diffs = lib_tail.get_max_tail_check(self.y_Arai, self.y_tail_check, self.t_Arai, self.tail_checks_temperatures, self.pars['tail_n'])
+            tail_check_max, tail_check_diffs = lib_tail.get_max_tail_check(self.y_Arai, self.y_tail_check, self.t_Arai, self.tail_checks_temperatures, self.pars['n_tail'])
         else:
             tail_check_max, tail_check_diffs = 0, [0]
         self.pars['tail_check_max'], self.pars['tail_check_diffs'] = tail_check_max, tail_check_diffs
@@ -606,12 +609,12 @@ thing.calculate_all_statistics()
 #except:
 #    print "failed ptrm check statistics"
 
-try:
-    thing.tail_check_statistics()
-except:
-    print "failed tail check statistics"
+#try:
+#    thing.tail_check_statistics()
+#except:
+#    print "failed tail check statistics"
 
-thing.tail_check_statistics()
+#thing.tail_check_statistics()
 
 
 if False:
