@@ -307,7 +307,7 @@ class PintPars(object):
         MAD_Free = lib_direct.get_MAD(self.pars['tau_Free'])
         MAD_Anc = lib_direct.get_MAD(self.pars['tau_Anc'])
 #        MAD_Lisa_Free = lib_direct.Lisa_get_MAD(self.pars['tau_Free'])
-        self.pars['MAD_free'], self.pars['MAD_anc'] = MAD_Free, MAD_Anc
+        self.pars['MAD_Free'], self.pars['MAD_Anc'] = MAD_Free, MAD_Anc
 #        self.pars['Lisa_MAD'] = MAD_Anc_lisa
 #        self.pars['MAD_lisa_free'] = MAD_Lisa_Free
         return {'MAD_Free': MAD_Free, 'MAD_Anc': MAD_Anc }
@@ -397,6 +397,7 @@ class PintPars(object):
     def get_DRATS(self):
         DRATS, DRATS_prime = lib_ptrm.get_DRATS(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.x_Arai, self.end)
         self.pars['DRATS'] = DRATS
+        self.pars['DRATS_prime'] = DRATS_prime
         return DRATS
 
     def get_mean_DRAT(self):
@@ -584,6 +585,7 @@ specimens = gui2.Data.keys()
 new_thing = PintPars(gui2.Data, specimens[0], 473., 703.)
 newer_thing = PintPars(gui2.Data, specimens[1], 573., 833.)
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+thingee = PintPars(gui.Data, '0238x5721062', 273., 823.)
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
@@ -614,7 +616,7 @@ thing.calculate_all_statistics()
 #except:
 #    print "failed tail check statistics"
 
-#thing.tail_check_statistics()
+thing.tail_check_statistics()
 
 
 if False:
