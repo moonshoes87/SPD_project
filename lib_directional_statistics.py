@@ -127,10 +127,10 @@ def get_PD_direction(X1_prime, X2_prime, X3_prime, PD):
     elif dot > 1:
         dot = 1
     if numpy.arccos(dot) > numpy.pi / 2:
-        print "negative"
-        print PD
+       # print "negative"
+       # print PD
         PD = -1. * numpy.array(PD)
-        print PD
+       # print PD
     return PD
 
 
@@ -310,8 +310,8 @@ def get_gamma(B_lab_dir, pTRM_dir):
     if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
         return gamma1
     else:
-        print gamma1
-        print gamma2
+       # print gamma1
+       # print gamma2
         return False
 
 

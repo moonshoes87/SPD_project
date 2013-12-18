@@ -30,7 +30,6 @@ self.s = self.specimens[0]  # LORI WEIRD ADDITION
 
 
 
-
 read_magic_file()
   Neither does anything for me currently.  
 
@@ -239,6 +238,22 @@ cluded
 delta_pal.  really pays no attention to tmin, just tmax?  weird.  check this.
 
 
+
+projects for these times when you are missing information to actually work on your current project:
+
+	 study Python
+	 wx Python tutorial...(?) or possibly look at other gui frameworks
+	 improve new_lj_thellier_gui_spd.  at least rename.
+	 write a utility file that runs through all the tests....?  maybe this is unnecessary, though
+	 remove unnecessary output for all files
+
+
+to run all tests:
+
+$  python -m unittest test_arai_plot_statistics test_directional_statistics test_curvature test_ptrm_statistics test_tail_check_statistics test_additivity_check_statistics
+
+
+
 Python tips and tricks:
 
 dir(spd) -- gives all methods/classes available in spd.  awesome.  
@@ -258,3 +273,10 @@ filter() # takes two args, function and iterable.  works well with lambda.
 lambda
 
 overriding built in methods -- i.e., __repr__(), which determines how an object prints
+
+you can use *args thusly:  
+    a = [1,5]
+    range(*a)
+
+
+to use a list as a queue, use collections.dequeue, to grab off elements from the beginning of a list.  (for using a list as a stack, you can efficiently use append() and pop())

@@ -40,7 +40,6 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
 
 def get_vds(zdata, delta_y_prime, start, end):  # 
     """takes zdata array: [[1, 2, 3], [3, 4, 5]], delta_y_prime: 1, start value and end value.  gets vds and f_vds, etc. """
-    print "calling get_vds()"
     vector_diffs = []
     for k in range(len(zdata)-1):
             # gets diff between two vectors                                                                      
@@ -149,13 +148,13 @@ def get_SCAT(points, low_bound, high_bound, x_max, y_max):
     for point in points:
         result = in_SCAT_box(point[0], point[1], low_bound, high_bound, x_max, y_max)
         if result == False:
-            print "SCAT TEST FAILED"
+           # print "SCAT TEST FAILED"
             p = False
     if p:
-        print "SCAT TEST PASSED"
+#        print "SCAT TEST PASSED"
         SCAT = True
     else:
-        print "SCAT TEST FAILED"
+#        print "SCAT TEST FAILED"
         SCAT = False
     return SCAT
 
@@ -230,9 +229,6 @@ def get_Z(x_segment, y_segment, x_int, y_int, slope):
 
 def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
     """Arai plot zigzag parameter (alternate)"""
-#    for num, x in enumerate(x_segment):
-#        b_wiggle = get_b_wiggle(x, y_segment[num], y_int)
-    print "doing Zstar"
     total = 0
     first_time = True
     for num, x in enumerate(x_segment):
@@ -241,7 +237,6 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
         total += result
         first_time = False
     Zstar = (1. / (n - 1.)) * total
-    print "end Zstar"
     return Zstar
 
 # IZZI_MD (mainly)
@@ -429,7 +424,7 @@ def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
 
     IZZI_MD = get_area_sum(triangles, midpoints, ZI_line)
     
-    print "IZZI_MD:", IZZI_MD
+#    print "IZZI_MD:", IZZI_MD
     return IZZI_MD
 
 

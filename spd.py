@@ -291,8 +291,6 @@ class PintPars(object):
     # directional statistics begin here:
 
     def get_dec_and_inc(self):
-        print self.s
-        print "-"
         Dec_Anc, Inc_Anc, best_fit_Anc, tau_Anc, V_Anc, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=True)
         Dec_Free, Inc_Free, best_fit_Free, tau_Free, V_Free, mass_center = lib_direct.get_dec_and_inc(self.zdata, self.t_Arai, self.tmin, self.tmax, anchored=False)
         self.pars['Dec_Anc'], self.pars['Dec_Free'] = Dec_Anc, Dec_Free
@@ -332,9 +330,7 @@ class PintPars(object):
 
     def get_theta(self):
         b_lab_dir = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
-        print self.s
         ChRM = self.pars['best_fit_vector_Free']
-        print "in spd: b_lab_dir", b_lab_dir, "ChRM", ChRM
         theta = lib_direct.get_theta(b_lab_dir, ChRM)
         self.pars['theta'] = theta
         return theta
@@ -468,7 +464,7 @@ class PintPars(object):
         return n_add
 
     def get_delta_AC(self):
-        print "doing delta AC"
+#        print "doing delta AC"
         delta_AC = lib_add.get_delta_AC(self.pars['n_add'], self.AC_Diffs, self.pars['specimen_XT'])
         self.pars['delta_AC'] = delta_AC
         return delta_AC

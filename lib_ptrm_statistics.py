@@ -70,7 +70,7 @@ def get_CDRAT(L, sum_ptrm_checks, sum_abs_ptrm_checks):
 def get_DRATS(sum_ptrm_checks, sum_abs_ptrm_checks, x_Arai, end):
     DRATS = (sum_ptrm_checks / x_Arai[end]) * 100.
     DRATS_prime = (sum_abs_ptrm_checks / x_Arai[end]) * 100.
-    print "x_Arai[end]", x_Arai[end]
+    #print "x_Arai[end]", x_Arai[end]
     return DRATS, DRATS_prime
 
 def get_mean_DRAT(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, L):
@@ -171,8 +171,8 @@ def get_segments(ptrms, ptrm_checks, tmax):
     for check in ptrm_checks:
         if check[0] <= tmax:
             checks_included.append(check)
-    print "checks", ptrm_checks
-    print "checks_included", checks_included
+    #print "checks", ptrm_checks
+    #print "checks_included", checks_included
     return ptrms_included, checks_included
 
     
