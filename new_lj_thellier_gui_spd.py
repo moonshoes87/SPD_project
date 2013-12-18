@@ -909,8 +909,6 @@ class Arai_GUI():
         AC=array(AC)
 
         Data[s]['AC']=AC
-        print s
-        print AC
         Data[s]['x_additivity_check']=x_AC
         Data[s]['y_additivity_check']=y_AC
         Data[s]['additivity_check_temperatures']=AC_temperatures
@@ -1097,8 +1095,8 @@ class Arai_GUI():
             if len(magic_keys) != len(rec):
                 
                 print "Warning: Uneven record lengths detected: "
-                print magic_keys
-                print rec
+                #print magic_keys
+                #print rec
             for k in range(len(rec)):
                magic_record[magic_keys[k]]=rec[k].strip('\n')
             magic_data.append(magic_record)
@@ -1123,7 +1121,7 @@ class Arai_GUI():
           spec=rec["er_specimen_name"]
           if spec not in speclist:speclist.append(spec)
         speclist.sort()
-        print speclist
+        #print speclist
         return speclist
     
 

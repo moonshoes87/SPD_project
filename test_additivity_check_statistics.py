@@ -51,7 +51,7 @@ class CheckAdditivity(unittest.TestCase):
     def test_data_selection(self):
         incl_temps, n_add = lib_add.get_n_add(self.temps, self.starting_temps, self.tmax)
         for num, temp in enumerate(incl_temps):
-            print temp, self.ref_incl_temps[num]
+            #print temp, self.ref_incl_temps[num]
             self.assertEqual(temp, self.ref_incl_temps[num])
         self.assertEqual(n_add, self.ref_n_add)
 

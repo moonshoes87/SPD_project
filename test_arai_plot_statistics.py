@@ -25,7 +25,6 @@ import lib_arai_plot_statistics as lib_arai
 class CheckParams(unittest.TestCase):
 
     # no init
-    print "starting CheckParams test"
     ref = "reference"
     obj = copy.deepcopy(spd.thing)
     obj_pars = obj.pars.copy()  # prevents it from changing, yay
@@ -121,7 +120,7 @@ class CheckVDSsequence(unittest.TestCase): # adequate
     ref_partial_vds = 0.27572180625018161
     
     def test_against_known_values(self): # just testing with values verified in thellier_gui.  not a brilliant test, but fine
-        print self.result.keys()
+        #print self.result.keys()
         self.assertAlmostEqual(self.result['specimen_fvds'], self.ref_fvds)
         self.assertAlmostEqual(self.result['specimen_vds'], self.ref_vds)
         self.assertAlmostEqual(self.result['GAP-MAX'], self.ref_GAP_MAX)
@@ -156,9 +155,9 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         self.assertAlmostEqual(ref_high_bound_result, result[1](2.))
         self.assertAlmostEqual(ref_x_max, result[2])
         self.assertAlmostEqual(ref_y_max, result[3])
-        print result
-        print result[0](2) # low_bound
-        print result[1](2) # high bound
+        #print result
+        #print result[0](2) # low_bound
+        #print result[1](2) # high bound
 
     def test_in_SCAT_box(self):
         low_bound, high_bound, x_max, y_max = lib_arai.get_SCAT_box(self.b, self.x_mean, self.y_mean, self.beta_threshold)
@@ -189,7 +188,7 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         result = lib_arai.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temperatures, ptrm_checks_starting_temperatures, x_ptrm_check, y_ptrm_check, tail_checks_temperatures, tail_checks_starting_temperatures, x_tail_check, y_tail_check)
         for xy in result:
             self.assertIn(xy, ref_points)
-        print result, ref_points
+        #print result, ref_points
 
     def test_SCAT(self):
 #def get_SCAT(points, low_bound, high_bound, x_max, y_max):
@@ -217,12 +216,10 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
     def test_SCAT_real_data(self):
         thing = spd.PintPars(spd.gui.Data, '0238x6011044', 273., 673.) # 0, 400
         thing.York_Regression()
-        print "panda"
-        print thing.tmin_K, thing.tmax_K
+        #print thing.tmin_K, thing.tmax_K
         thing1 = spd.PintPars(spd.gui.Data, '0238x6011044', 273., 698.) # 0, 425
         thing1.York_Regression()
-        print "octopus"
-        print thing1.tmin_K, thing1.tmax_K
+        #print thing1.tmin_K, thing1.tmax_K
         self.assertFalse(thing.get_SCAT())
         self.assertTrue(thing1.get_SCAT())
         
@@ -380,7 +377,7 @@ class IZZI_MD(unittest.TestCase):
         ref_triangles = [((1, 2), (2, 4), (3, 6)), ((2, 4), (3, 6), (4, 8)), ((3,6), (4,8), (5, 10))]
         ref_midpoints = ['ZI', 'IZ', 'ZI']
         xy = lib_arai.get_xy_array(x, y)
-        print "xy", xy
+        #print "xy", xy
         reference = { 'triangles': ref_triangles, 'midpoints': ref_midpoints }
         result = lib_arai.get_triangles(xy, steps_Arai)
         # return { triangles: [((2, 4), (3, 6), (4, 8) ), ( (4, 8), ....)], midpoints: 'ZI'
@@ -399,7 +396,7 @@ class IZZI_MD(unittest.TestCase):
         ref_triangles = [((3,4),(9,10),(11, 12)),((9,10),(11,12),(13,14)),((11,12),(13,14),(17,18))]
         reference = {'triangles': ref_triangles, 'midpoints': ref_midpoints}
         result = lib_arai.get_triangles(xy_segment, steps)
-        print "reference triangles:", reference['triangles']
+        #print "reference triangles:", reference['triangles']
         for key, value in result.items():
             if type(value) == numpy.ndarray:
                 v = numpy.allclose(value, reference[key]) # assesses two arrays for if they are approximately equal 
@@ -418,12 +415,8 @@ class IZZI_MD(unittest.TestCase):
 
     def testTriangle(self): # still seems fine
         results = lib_arai.get_triangle(self.L1, self.L2, self.L3)
-        print "results", results
-        print "triangle", self.triangle
-#        phi = result['triangle_phi']
-#        H = result['triangle_height'] 
-#        A = result['triangle_area']
-#        results = {'triangle_phi': phi, 'triangle_H': H, 'triangle_A': A}
+       # print "results", results
+        #print "triangle", self.triangle
         for key, value in results.items():
             self.assertAlmostEqual(self.triangle[key], value)
 
@@ -441,8 +434,8 @@ class IZZI_MD(unittest.TestCase):
         self.assertEqual(result1['sign'], 1.)
         self.assertEqual(result2['sign'], -1.)
         keys = ['sign', 'slope', 'first_y_int', 'second_y_int']
-        print "reference1:", reference1
-        print "result1", result1
+        #print "reference1:", reference1
+        #print "result1", result1
         for key in keys:
             if type(reference1[key]) == list:
                 #pass

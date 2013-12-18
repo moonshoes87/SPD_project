@@ -234,9 +234,9 @@ class CheckDeltaPal(unittest.TestCase):
         
     def test_full_delta_pal(self):
         delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.y_err, self.y_mean, self.b_regular) 
-        print "ref PTRMS_cart", self.PTRMS_cart
-        print "reference C", self.correct_C
-        print "reference x_star", self.x_star
+        #print "ref PTRMS_cart", self.PTRMS_cart
+        #print "reference C", self.correct_C
+        #print "reference x_star", self.x_star
         self.assertAlmostEqual(self.delta_pal, delta_pal, places=3)
 
     

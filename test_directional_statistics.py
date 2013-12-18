@@ -65,8 +65,8 @@ class CheckDecInc(unittest.TestCase):
                                      [-2., -1.5, 1.25]])
         orient_tensor = orient_tensor
         result = lib_direct.get_orientation_tensor(X1_prime, X2_prime, X3_prime)
-        print "result", result
-        print "orient_tensor", orient_tensor
+        #print "result", result
+        #print "orient_tensor", orient_tensor
         v = numpy.allclose(result['orient_tensor'], orient_tensor) # assesses two arrays for if they are approximately eq
         self.assertTrue(v)
 
@@ -83,7 +83,7 @@ class CheckDecInc(unittest.TestCase):
         PD = [1., 2., 3.]
         result = lib_direct.get_PD_direction(X1_prime, X2_prime, X3_prime, PD)
         ref_PD = [-1., -2.,-3.]
-        print "ref, result", ref_PD, result
+        #print "ref, result", ref_PD, result
         for num, ref in enumerate(ref_PD):
             self.assertAlmostEqual(ref, result[num])
 
@@ -139,7 +139,7 @@ class CheckDang(unittest.TestCase):
     ref_real_DANG = 2.08192544535
    
     def test_DANG(self):
-        print "STARTING TEST"
+        #print "STARTING TEST"
         result = lib_direct.get_DANG(self.v1, self.v2)
         self.assertAlmostEqual(result, self.ref_Dang)
     
@@ -159,9 +159,9 @@ class CheckNRMdev(unittest.TestCase):
         result = lib_direct.get_NRM_dev(self.dang, self.X_avg, self.y_int)
         self.assertAlmostEqual(self.ref_NRM_dev, result)
 
-    def test_NRM_dev_real_values(self):
+    def test_NRM_dev_real_values(self): # not done....??
         r = thing.get_NRM_dev()
-        print r
+        #print r
     
 class CheckTheta(unittest.TestCase):  # need to understand dir2cart, cart2dir better before can sign off on this one.  however, I THINK it is right as is
 #    ChRM = [-0.00281948, -0.06360888,  0.99797092] # using free PCA example:   267.462012722 86.3494317628.  dir2cart: [-0.00281948, -0.06360888,  0.99797092]
@@ -170,9 +170,9 @@ class CheckTheta(unittest.TestCase):  # need to understand dir2cart, cart2dir be
     B_lab_dir = [0.0, 90.0, 1.] # different from B_lab_vector... ignore last value
 
     def test_theta(self):  # FINISH ME!!!!!
-        print "testing with, B_lab_dir", self.B_lab_dir, "ChRM", self.ChRM
+        #print "testing with, B_lab_dir", self.B_lab_dir, "ChRM", self.ChRM
         result = lib_direct.get_theta(self.B_lab_dir, self.ChRM)
-        print "test theta result", result
+        #print "test theta result", result
         self.assertAlmostEqual(result, thing.pars['theta'])
 
 
@@ -190,8 +190,6 @@ class CheckGamma(unittest.TestCase):
 
     def testGamma(self):
         result = lib_direct.get_gamma(self.B_lab_dir, self.pTRM_dir)
-        print "result of testGamma", result
-        print result, self.ref_gamma
         self.assertAlmostEqual(87.999999999999986, 88.)
         self.assertAlmostEqual(self.ref_gamma, result)
 

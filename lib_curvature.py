@@ -21,8 +21,8 @@ def TaubinSVD(XY = xy):
 #    print "centroid", centroid
 #    XY[:,0] = XY[:, 0] - centroid[0] # from each x, subtract x_avg
 #    XY[:,1] = XY[:, 1] - centroid[1] # from each y, subtract y_avg
-    print "XY", XY
-    print "X", X, "Y", Y
+    #print "XY", XY
+    #print "X", X, "Y", Y
     # Z is correct
     Z = X * X + Y * Y  # Z = X.*X + Y.*Y; .*   # in matlab, .* is equivalent to *, and * is equivalent to numpy.dot
 #    print "Z", Z
@@ -353,18 +353,18 @@ def AraiCurvature(x,y):
 #    print numpy.mean(X)
 
     if best_a <= numpy.mean(X) and best_b <= numpy.mean(Y):
-        print "-1/r"
+        #print "-1/r"
         k = -1./best_r
     else:
-        print "1/r"
+        #print "1/r"
         k = 1./best_r
 
     SSE = get_SSE(best_a, best_b, best_r, X, Y)
 
     #end
-    print "best_r", best_r
-    print "k, best_a, best_b, SSE"
-    print k, best_a, best_b, SSE
+    #print "best_r", best_r
+    #print "k, best_a, best_b, SSE"
+    #print k, best_a, best_b, SSE
     return k, best_a, best_b, SSE
 
 
@@ -382,7 +382,7 @@ def get_SSE(a,b,r,x,y):
         v = (numpy.sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
 #            print v                                                                                  
         SSE += v
-    print SSE
+    #print SSE
     return SSE
 
 
