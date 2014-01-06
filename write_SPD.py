@@ -13,8 +13,8 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-in_files = ['magic_measurements.txt']
-outfile = 'zee_output.txt'
+in_files = ['magic_measurements_ET1_Biggin_2007.txt']
+outfile = 'ET1_Biggin_2007_output.txt'
 
         
 basic_stats = ['s', 'specimen_n', 'start', 'end', 'tmin', 'tmax']
