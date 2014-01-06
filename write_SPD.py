@@ -13,8 +13,8 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-in_files = ['magic_measurements_ET1_Biggin_2007.txt']
-outfile = 'ET1_Biggin_2007_output.txt'
+in_files = ['magic_measurements_ET1_Biggin_2007_first.txt']
+outfile = 'ET1_Biggin_2007_output_first.txt'
 
         
 basic_stats = ['s', 'specimen_n', 'start', 'end', 'tmin', 'tmax']
@@ -57,7 +57,7 @@ for f in in_files:
     for s in specimen_names:
         spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][-1])
         spec.calculate_all_statistics()
-        out.write("s: {} \t n: {} \t start: {} \t end: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.start), str(spec.end), str(spec.tmin), str(spec.tmax)))
+        out.write("s: {} \t n: {} \t start: {} \t end: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.start), str(spec.end), str(spec.tmin_K), str(spec.tmax_K)))
         for stat in long_list:
             if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
                 out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')

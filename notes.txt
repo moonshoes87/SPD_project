@@ -333,3 +333,13 @@ my_cell(1) != my_cell{1}
 my_cell(1) is a cell object of length one.  my_cell{1} is the first item	
 
 
+next steps:
+figure out tmax difference
+maybe is only using data from first file?  would explain why tmax is 400 instead of 450
+
+
+questions for Ron, next meeting:
+
+pmag_criteria.txt
+norming.... is this causing some of my problems?
+some details about format of .tdt files
