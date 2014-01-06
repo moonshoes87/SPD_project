@@ -296,3 +296,40 @@ called like this:
 Params.Xpts
 
 
+Think I sould make a script to write Params in an orderly manner to a tab-delimited file for easy comparison with 
+
+cell array is similar to a Python list.  
+
+my_struct = struct('a', 'b', 'c', 4)
+	  a: b
+	  c: 4
+a = 'x'
+my_struct.(a) == my_struct.x
+my_struct.a == my_struct.a
+isfield(my_struct, 'a') == 1 
+fieldnames(my_struct) == [a, c]
+orderfields, rmfields
+
+
+
+my_cell = struct2cell(my_struct)
+	'b'
+	4
+
+
+
+my_fieldnames = fieldnames(my_struct)
+	      a
+	      c
+
+
+Restore data from a MAT-file into the workspace using load.  load myfile.mat.  also save myfile.mat puts workspace variables into a file
+
+
+num2str -- number to string, obviously.  also int2str
+
+my_cell(1) != my_cell{1}
+
+my_cell(1) is a cell object of length one.  my_cell{1} is the first item	
+
+
