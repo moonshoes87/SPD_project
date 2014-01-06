@@ -280,3 +280,19 @@ you can use *args thusly:
 
 
 to use a list as a queue, use collections.dequeue, to grab off elements from the beginning of a list.  (for using a list as a stack, you can efficiently use append() and pop())
+
+
+
+Notes for matlab:
+
+struct is a dictionary(ish)
+displays like this:
+Params = 
+
+               Xpts: [8x1 double]
+               Ypts: [8x1 double]
+
+called like this:
+Params.Xpts
+
+
