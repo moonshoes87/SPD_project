@@ -336,6 +336,9 @@ my_cell(1) is a cell object of length one.  my_cell{1} is the first item
 next steps:
 figure out tmax difference
 maybe is only using data from first file?  would explain why tmax is 400 instead of 450
+formats for data are too different to compare visually.  i.e., magic_measurements_ET1_Biggin_2007_first.txt & ET1_279BS_copy.tdt don't have the same numbers in them
+can compare with specimen_Data['zijdblock'] with matlab variables Dec and Inc
+the matlab values are being translated correctly from Params to the outfile used for comparison
 
 
 questions for Ron, next meeting:

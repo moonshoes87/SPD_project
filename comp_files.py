@@ -28,5 +28,12 @@ print l2
 if True:
     for num, i in enumerate(l1):
         print "--"
+        print type(i), type(l2[num])
+        try:
+            float(i)
+            print "ROUNDED", round(float(i))
+        except:
+            pass
+
         if i != l2[num]:
             print i, "-----",  l2[num]

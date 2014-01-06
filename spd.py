@@ -577,11 +577,11 @@ import new_lj_thellier_gui_spd as tgs
 
 gui = tgs.Arai_GUI()
 gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
+gui3 = tgs.Arai_GUI('magic_measurements_ET1_Biggin_2007_first.txt')
 specimens = gui2.Data.keys()
-new_thing = PintPars(gui2.Data, specimens[0], 473., 703.)
-newer_thing = PintPars(gui2.Data, specimens[1], 573., 833.)
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
-thingee = PintPars(gui.Data, '0238x5721062', 273., 823.)
+
+mat_thing = PintPars(gui3.Data, 'ET1_279BS', 273., 673.)
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
