@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-
+import numpy
 import spd
 
 
@@ -57,9 +57,13 @@ for f in in_files:
     for s in specimen_names:
         spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][-1])
         spec.calculate_all_statistics()
-        out.write(str(spec.s) + '\t' + str(spec.pars['specimen_n']) + '\t' + str(spec.start) + '\t' + str(spec.end) + '\t' + str(spec.tmin) + '\t' + str(spec.tmax) + '\t')
+        out.write(str(spec.s) + '\t' + str(spec.pars['specimen_n']) + '\t' + str(spec.start) + '\t' + str(spec.end) + '\t' + str(spec.tmin) + '\t' + str(spec.tmax) + '\t') 
         for stat in long_list:
-            out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
+            print type(stat)
+            if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
+                out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000))
+            else:
+                out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
         out.write('\n \n')
 out.close()
 

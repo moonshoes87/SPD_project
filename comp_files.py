@@ -14,4 +14,12 @@ file1 = open(sys.argv[f1+1], 'rU')
 file2 = open(sys.argv[f2+1], 'rU')
 
 data1 = file1.readlines()[1]
-print data1[:300]
+data2 = file2.readlines()[1]
+
+print data1
+print list(data1)
+
+if False:
+    for num, i in enumerate(data1):
+        if i != data2[num]:
+            print i, data2[num]

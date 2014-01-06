@@ -19,7 +19,7 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     x_tag=(y_segment - y_T ) / york_b # returns array of y points minus the y intercept, divided by slope
     y_tag=york_b*x_segment + y_T
     # intersect of the dashed square and the horizontal dahed line  next to delta-y-5 in figure 7, Coe (1978)
-    x_prime=(x_segment+x_tag) / 2
+    x_prime=(x_segment+x_tag) / 2  
     y_prime=(y_segment+y_tag) / 2
     delta_x_prime = abs(x_prime[-1] - x_prime[0]) #Lj add.  this is the TRM length of the best fit line
     delta_y_prime = abs(y_prime[-1] - y_prime[0]) # LJ add.  this is the NRM length of the best fit line 
