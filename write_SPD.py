@@ -23,7 +23,7 @@ arai_plot_stats = ['specimen_b', 'specimen_b_sigma', 'B_anc', 'B_anc_sigma', 'sp
 
 directional_stats = ['Dec_Free', 'Dec_Anc', 'Inc_Free', 'Inc_Anc', 'MAD_Free', 'MAD_Anc', 'alpha', 'theta', 'DANG', 'NRM_dev', 'gamma']
 
-ptrm_stats = ['n_ptrm', 'max_ptrm_check_percent', 'delta_CK', 'DRAT', 'max_DEV', 'CDRAT', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal']
+ptrm_stats = ['n_ptrm', 'max_ptrm_check_percent', 'delta_CK', 'DRAT', 'max_DEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal']
 
 tail_stats = ['n_tail', 'DRAT_tail', 'delta_TR', 'MD_VDS']
 
@@ -60,7 +60,7 @@ for f in in_files:
         out.write("s: {} \t n: {} \t start: {} \t end: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.start), str(spec.end), str(spec.tmin), str(spec.tmax)))
         for stat in long_list:
             if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
-                out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000))
+                out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')
             else:
                 out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
         out.write('\n \n')
