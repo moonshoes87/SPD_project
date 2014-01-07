@@ -26,14 +26,22 @@ print l2
 
 
 if True:
-    for num, i in enumerate(l1):
+    for num, i in enumerate(l1[:-1]): # last item is ''.  this may change
         print "--"
-        print type(i), type(l2[num])
+        #print type(i), type(l2[num])
+        #print i
+        n1 = i.split()[1]
+        n2 = l2[num].split()[1]
         try:
-            float(i)
-            print "ROUNDED", round(float(i))
-        except:
-            pass
-
-        if i != l2[num]:
+            float(n1)
+            r = round(float(n1), 1)
+            n1 = r
+            n2 = round(float(n2), 1)
+            #print "ROUNDED", r
+        except Exception as ex:
+            print ex
+        
+        if n1 != n2:
             print i, "-----",  l2[num]
+        else:
+            print i.split()[0][:-1], " SAME!"
