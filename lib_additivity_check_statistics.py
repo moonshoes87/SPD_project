@@ -10,6 +10,8 @@ def get_n_add(temps, starting_temps, tmax):
         if temp <= tmax and starting_temps[num] <= tmax:
             incl_temps.append(temp)
     n_add = len(incl_temps)
+    if n_add < 1:
+        n_add = float('NaN')
     return incl_temps, n_add
 
 #lib_add.get_delta_AC(self.ref_incl_temps, self.add_checks, self.x_int)

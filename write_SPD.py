@@ -63,6 +63,6 @@ for f in in_files:
                 out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')
             else:
                 out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
-        out.write('\n \n')
+        #out.write('\n \n')
 out.close()
 

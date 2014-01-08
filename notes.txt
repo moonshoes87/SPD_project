@@ -335,7 +335,9 @@ my_cell(1) is a cell object of length one.  my_cell{1} is the first item
 
 next steps:
 modify the read tdt program to be able to do more at one time
+       probably best not to write to individual file, but all pile into one
 check into data norming -- may be causing some of the discrepancies
+maybe reduce rounding of greig's stuff so that you can do a more rigorous comparison
 
 
 questions for Ron, next meeting:
