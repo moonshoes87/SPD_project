@@ -30,19 +30,26 @@ def parse_file(file_path):
     specimens = {}
     for line in lines[1:]: #
         d = line.split('\t')
-        print 'd        ', d
+        #print 'd        ', d
         data = []
         for i in d[:-1]: # empty space
             temp = i.split()
             data.append(temp[1])
-        print 'data', data
+        #print 'data', data
         specimens[data[0]] = data
     return specimens
     
 specs1 = parse_file(path1)
-#specs2 = parse_file(path2)
+specs2 = parse_file(path2)
 
-ignore = """
+print 'MINE:  ', specs1['ET1_279BS']
+print 'GREIG\'S:   ', specs2['ET1_279BS']
+print len(specs1['ET1_279BS'])
+print len(specs2['ET1_279BS'])
+
+
+
+
 if specs1.keys().sort() == specs2.keys().sort():
     print "yeya"
 else:
@@ -75,7 +82,6 @@ for specimen in specs1.keys():
             if v1 == v2:
                 pass
             else:
-                print 'v1', v1
                 print v1, "------", v2
               #  print "SAME"
         elif n1 != n2:
@@ -87,7 +93,6 @@ for specimen in specs1.keys():
          
     
 
-print specs1#['ET1_283E']
-print '*********'
-print specs2#['ET1_283E']
-"""
+#print specs1#['ET1_283E']
+#print '*********'
+#print specs2#['ET1_283E']
