@@ -353,3 +353,11 @@ questions for Ron, next meeting:
 pmag_criteria.txt
 norming.... is this causing some of my problems?
 some details about format of .tdt files
+
+
+
+
+
+problems and solutions:
+
+B_anc -- off by a factor of 6.   3.05933660143e-05 vs. 30.6

@@ -17,7 +17,7 @@ in_files = ['magic_measurements_ET1_Biggin_2007.txt']
 outfile = 'ET1_Biggin_2007_output.txt'
 
         
-basic_stats = ['s', 'specimen_n', 'start', 'end', 'tmin', 'tmax']
+basic_stats = ['s', 'specimen_n', 'tmin', 'tmax'] # start, end  # removed these two because no equivalent in Greig's code
 
 arai_plot_stats = ['specimen_b', 'specimen_b_sigma', 'B_anc', 'B_anc_sigma', 'specimen_YT', 'specimen_XT', 'specimen_vds',  'delta_x_prime', 'delta_y_prime', 'specimen_f', 'specimen_fvds', 'FRAC', 'specimen_b_beta', 'specimen_g', 'GAP-MAX', 'specimen_q', 'specimen_w', 'specimen_k', 'SSE', 'SCAT', 'R_corr2', 'R_det2', 'Z', 'Zstar', 'IZZI_MD']  #  'x_prime', 'y_prime',  # removed these two because they are listy and it sucks
 
@@ -57,7 +57,7 @@ for f in in_files:
     for s in specimen_names:
         spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][-1])
         spec.calculate_all_statistics()
-        out.write("s: {} \t n: {} \t start: {} \t end: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.start), str(spec.end), str(spec.tmin_K), str(spec.tmax_K)))
+        out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
         for stat in long_list:
             if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
                 out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')

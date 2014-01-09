@@ -15,16 +15,13 @@ f1 = sys.argv.index('-f1')
 f2 = sys.argv.index('-f2')
 path1 = sys.argv[f1+1]
 path2 = sys.argv[f2+1]
-#file1 = open(sys.argv[f1+1], 'rU')
-#file2 = open(sys.argv[f2+1], 'rU')
-
-#lines1 = file1.readlines()
 
 
 def parse_file(file_path):
     """takes file and returns dictionary...."""
     file = open(file_path, 'rU')
     lines = file.readlines()
+    categories = []
     data = []
     print len(lines)
     specimens = {}
@@ -34,31 +31,31 @@ def parse_file(file_path):
         data = []
         for i in d[:-1]: # empty space
             temp = i.split()
+            categories.append(temp[0])
             data.append(temp[1])
-        #print 'data', data
         specimens[data[0]] = data
-    return specimens
+    return specimens, categories
     
-specs1 = parse_file(path1)
-specs2 = parse_file(path2)
+specs1, categories1 = parse_file(path1)
+specs2, categories2 = parse_file(path2)
 
-print 'MINE:  ', specs1['ET1_279BS']
-print 'GREIG\'S:   ', specs2['ET1_279BS']
-print len(specs1['ET1_279BS'])
-print len(specs2['ET1_279BS'])
+#print 'MINE:  ', specs1['ET1_279BS']
+#print 'GREIG\'S:   ', specs2['ET1_279BS']
+#print len(specs1['ET1_279BS'])
+#print len(specs2['ET1_279BS'])
+
 
 
 
 
 if specs1.keys().sort() == specs2.keys().sort():
-    print "yeya"
+    pass
 else:
-    print "suck"
+    raise NameError('different specimens detected')
 
 for specimen in specs1.keys():
     print "SPECIMEN: ", specimen
     data1 = specs1[specimen]
-    print 'data1', data1
     data2 = specs2[specimen]
     for num, i in enumerate(data1):
         v1 = i
@@ -67,11 +64,10 @@ for specimen in specs1.keys():
         str = False
         try:
             float(v1)
-            r = round(float(v1), 1)
-            n1 = r
+            n1 = round(float(v1), 1)
             n2 = round(float(v2), 1)
             #print "ROUNDED", r
-        except Exception as ex:
+        except ValueError as ex: # could not convert string to float
             #print ex
             str = True
         if not str:
@@ -79,12 +75,20 @@ for specimen in specs1.keys():
              #   print " SAME!"
                 break
         if str:
-            if v1 == v2:
+            if categories1[num] == 'SCAT:':
+                if bool(v1) == bool(v2):
+                    pass
+                else:
+                    print categories1[num]
+                    print v1, "------", v2
+            elif v1 == v2:
                 pass
             else:
+                print categories1[num]
                 print v1, "------", v2
               #  print "SAME"
         elif n1 != n2:
+            print categories1[num]
             print v1, "-----",  v2
         else:
             pass
@@ -93,6 +97,4 @@ for specimen in specs1.keys():
          
     
 
-#print specs1#['ET1_283E']
-#print '*********'
-#print specs2#['ET1_283E']
+
