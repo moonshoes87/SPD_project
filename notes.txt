@@ -337,7 +337,14 @@ next steps:
 modify the read tdt program to be able to do more at one time
        probably best not to write to individual file, but all pile into one
 check into data norming -- may be causing some of the discrepancies
-maybe reduce rounding of greig's stuff so that you can do a more rigorous comparison
+maybe reduce rounding of greig's stuff so that you can do a more rigorous comparison.  
+      rounding is all at line 1290 of getPintParams_v5c.m
+the way comparisons work currently is if I only have one specimen and one sample with one specimen.  endeavering to fix that in lori_Read_TDT.m
+    ./comp_files.py -f1 ET1_Biggin_2007_output_first.txt -f2 ~/Documents/MATLAB/new_out.out 
+    works when only the BS file is available in the Data folder
+    problem with the list in a list thing.  meh.
+
+
 
 
 questions for Ron, next meeting:

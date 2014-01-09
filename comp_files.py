@@ -9,47 +9,80 @@
 import sys
 from numpy import isnan
 
+
+
 f1 = sys.argv.index('-f1')
 f2 = sys.argv.index('-f2')
-file1 = open(sys.argv[f1+1], 'rU')
-file2 = open(sys.argv[f2+1], 'rU')
+path1 = sys.argv[f1+1]
+path2 = sys.argv[f2+1]
+#file1 = open(sys.argv[f1+1], 'rU')
+#file2 = open(sys.argv[f2+1], 'rU')
 
-data1 = file1.readlines()[1]
-data2 = file2.readlines()[1]
-
-
-print file1
-l1 = data1.split('\t')
-print l1
-print "-"
-print file2
-l2 = data2.split('\t')
-print l2
+#lines1 = file1.readlines()
 
 
-if True:
-    for num, i in enumerate(l1[:-1]): # last item is ''.  this may change
-        print "--"
-        #print type(i), type(l2[num])
-        #print i
+def parse_file(file_path):
+    """takes file and returns dictionary.... I think"""
+    file = open(file_path, 'rU')
+    lines = file.readlines()
+    data = []
+    print len(lines)
+    specimens = {}
+    for line in lines[1:]: #
+        d = line.split('\t')
+        data = []
+        for i in d[:-1]: # empty space
+            temp = i.split()
+            data.append(temp[1])
+        print 'data', data
+        specimens[data[0]] = data
+    return specimens
+    
+specs1 = parse_file(path1)
+specs2 = parse_file(path2)
+
+if specs1.keys().sort() == specs2.keys().sort():
+    print "yeya"
+else:
+    print "suck"
+
+for specimen in specs1.keys():
+    print "SPECIMEN: ", specimen
+    data1 = specs1[specimen]
+    print 'data1', data1
+    data2 = specs2[specimen]
+    for num, i in enumerate(data1):
+        v1 = i
+        v2 = data2[num]
+        #print v1, v2
         str = False
-        category = i.split()[0][:-1]
-        n1 = i.split()[1]
-        n2 = l2[num].split()[1]
         try:
-            float(n1)
-            r = round(float(n1), 1)
+            float(v1)
+            r = round(float(v1), 1)
             n1 = r
-            n2 = round(float(n2), 1)
+            n2 = round(float(v2), 1)
             #print "ROUNDED", r
         except Exception as ex:
-            print ex
+            #print ex
             str = True
-        if str == False:
-            if isnan(n1) and isnan(n2):
-                print category + " SAME!"
+        if not str:
+            if isnan(float(v1)) and isnan(float(v2)):
+             #   print " SAME!"
                 break
-        if n1 != n2:
-            print i, "-----",  l2[num]
+        if str:
+            if v1 == v2:
+                pass
+            else:
+                print 'v1', v1
+                print v1, "------", v2
+              #  print "SAME"
+        elif n1 != n2:
+            print v1, "-----",  v2
         else:
-            print category +  " SAME!"
+            pass
+            #print "same"
+    print "--"
+         
+    
+
+

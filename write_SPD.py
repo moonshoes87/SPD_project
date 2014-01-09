@@ -13,8 +13,8 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-in_files = ['magic_measurements_ET1_Biggin_2007_first.txt']
-outfile = 'ET1_Biggin_2007_output_first.txt'
+in_files = ['magic_measurements_ET1_Biggin_2007.txt']
+outfile = 'ET1_Biggin_2007_output.txt'
 
         
 basic_stats = ['s', 'specimen_n', 'start', 'end', 'tmin', 'tmax']
@@ -63,6 +63,6 @@ for f in in_files:
                 out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')
             else:
                 out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
-        #out.write('\n \n')
+        out.write('\n')
 out.close()
 
