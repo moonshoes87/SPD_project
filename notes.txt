@@ -343,6 +343,7 @@ the way comparisons work currently is if I only have one specimen and one sample
     ./comp_files.py -f1 ET1_Biggin_2007_output_first.txt -f2 ~/Documents/MATLAB/new_out.out 
     works when only the BS file is available in the Data folder
     problem with the list in a list thing.  meh.
+            removing the list in a list.  I don't have a comparison for it, anyway.
 
 
 

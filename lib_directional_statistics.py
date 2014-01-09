@@ -308,7 +308,7 @@ def get_gamma(B_lab_dir, pTRM_dir):
     gamma2 = numpy.array([gamma2])
     boo = gamma1 == gamma2
     if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
-        return gamma1
+        return float(gamma1)
     else:
        # print gamma1
        # print gamma2

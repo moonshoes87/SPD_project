@@ -22,7 +22,7 @@ path2 = sys.argv[f2+1]
 
 
 def parse_file(file_path):
-    """takes file and returns dictionary.... I think"""
+    """takes file and returns dictionary...."""
     file = open(file_path, 'rU')
     lines = file.readlines()
     data = []
@@ -30,6 +30,7 @@ def parse_file(file_path):
     specimens = {}
     for line in lines[1:]: #
         d = line.split('\t')
+        print 'd        ', d
         data = []
         for i in d[:-1]: # empty space
             temp = i.split()
@@ -39,8 +40,9 @@ def parse_file(file_path):
     return specimens
     
 specs1 = parse_file(path1)
-specs2 = parse_file(path2)
+#specs2 = parse_file(path2)
 
+ignore = """
 if specs1.keys().sort() == specs2.keys().sort():
     print "yeya"
 else:
@@ -85,4 +87,7 @@ for specimen in specs1.keys():
          
     
 
-
+print specs1#['ET1_283E']
+print '*********'
+print specs2#['ET1_283E']
+"""
