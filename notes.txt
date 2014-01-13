@@ -355,9 +355,46 @@ norming.... is this causing some of my problems?
 some details about format of .tdt files
 
 
+I can find equivalent dec/inc data in the magic measurements vs. .tdt files, but I can't find intensity or magnetic moment data that lines up. 
 
 
+dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Greig's version returns only the first number of the cartesian coordinates.  (dir2cart is called in both programs to convert [dec, inc, int])
+
+
+how x points are attained in tgs:
+    [temp, dec, inc, int, other]
+    int is grabbed (magnetic intensity) from the infield data points, and normed by the original NRM of the untouched sample.
+    dir2cart([dec, inc, int])
+y points: 
+  same, but with zerofield data points.
 
 problems and solutions:
 
 B_anc -- off by a factor of 6.   3.05933660143e-05 vs. 30.6
+B_anc sigma -- same
+x_pts -- My SPD norms by NRM; Greig's does not
+y_pts -- My SPD norms by NRM; Greig's does not
+Y_int  ---  same
+x_int ---  same
+
+different possible units for
+
+mKs.  meter Kelvin seconds.  measurement unit for magnetic moment.  used in magic measurements format.
+
+should be normed by first NRM (full, pre-experiment)
+
+.tdt uses different measurement.  if b (slope) is the same, then it's fine.
+
+be careful with v. large or v. small numbers.  float, long, etc.  this can be significant.  
+
+try norming Greig's Xpts and Ypts by NRM
+    SUCCESS!!
+    xpts, ypts, x_int, and y_int now working
+
+Don't forget you will need to test everything with EVERY possible set of temperature bounds
+
+Params.xbar = mean(x_segment)
+
+Params.Rev_y is almost the same as y_prime.  but there's something off, maybe just because of the norming.  
+
+You need to go through Greig's output that DOESN'T match with your categories of output, and try to figure out what they are.  I.e., you should have Line_Len (length of best fit line) somewhere.  

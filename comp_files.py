@@ -60,6 +60,7 @@ for specimen in specs1.keys():
     for num, i in enumerate(data1):
         v1 = i
         v2 = data2[num]
+        #print categories1[num]
         #print v1, v2
         str = False
         try:
@@ -81,8 +82,10 @@ for specimen in specs1.keys():
                 else:
                     print categories1[num]
                     print v1, "------", v2
-            elif v1 == v2:
-                pass
+            elif v1 == v2: # turn this back to pass!
+                print categories1[num]
+                print v1, "-----",  v2
+                #pass
             else:
                 print categories1[num]
                 print v1, "------", v2
@@ -96,5 +99,3 @@ for specimen in specs1.keys():
     print "--"
          
     
-
-

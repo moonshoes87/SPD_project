@@ -702,12 +702,13 @@ class Arai_GUI():
 
         Data[s]['NRMS']=zerofields
         Data[s]['PTRMS']=infields
+        Data[s]['NRM']=NRM
         
         x_Arai,y_Arai=[],[] # all the data points               
         t_Arai=[]
         steps_Arai=[]              
 
-        #NRM=zerofields[0][3]   ??  #  this is the first measurement of NRM, before anything has been done to the sample
+        #NRM=zerofields[0][3]    #  this is the first measurement of NRM, before anything has been done to the sample
         infield_temperatures=[row[0] for row in infields]
 
         for k in range(len(zerofields)):                  
