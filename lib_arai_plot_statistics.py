@@ -31,7 +31,7 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     w_Coe = q_Coe / sqrt(n - 2)
     count_IZ= steps_Arai.count('IZ')
     count_ZI= steps_Arai.count('ZI')
-    B_lab = lab_dc_field
+    B_lab = lab_dc_field * 1e6
     B_anc = abs(york_b) * B_lab
     specimen_int = -1* lab_dc_field * york_b
     B_anc_sigma = york_sigma * B_lab

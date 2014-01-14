@@ -19,7 +19,7 @@ outfile = 'ET1_Biggin_2007_output.txt'
         
 basic_stats = ['s', 'specimen_n', 'tmin', 'tmax'] # start, end  # removed these two because no equivalent in Greig's code
 
-arai_plot_stats = ['specimen_b', 'specimen_b_sigma', 'B_anc', 'B_anc_sigma', 'specimen_YT', 'specimen_XT', 'specimen_vds',  'delta_x_prime', 'delta_y_prime', 'specimen_f', 'specimen_fvds', 'FRAC', 'specimen_b_beta', 'specimen_g', 'GAP-MAX', 'specimen_q', 'specimen_w', 'specimen_k', 'SSE', 'SCAT', 'R_corr2', 'R_det2', 'Z', 'Zstar', 'IZZI_MD']  #  'x_prime', 'y_prime',  # removed these two because they are listy and it sucks
+arai_plot_stats = ['specimen_b', 'specimen_b_sigma', 'B_lab', 'B_anc', 'B_anc_sigma', 'specimen_YT', 'specimen_XT', 'specimen_vds',  'delta_x_prime', 'delta_y_prime', 'specimen_f', 'specimen_fvds', 'FRAC', 'specimen_b_beta', 'specimen_g', 'GAP-MAX', 'specimen_q', 'specimen_w', 'specimen_k', 'SSE', 'SCAT', 'R_corr2', 'R_det2', 'Z', 'Zstar', 'IZZI_MD']  #  'x_prime', 'y_prime',  # removed these two because they are listy and it sucks
 
 directional_stats = ['Dec_Free', 'Dec_Anc', 'Inc_Free', 'Inc_Anc', 'MAD_Free', 'MAD_Anc', 'alpha', 'theta', 'DANG', 'NRM_dev', 'gamma']
 
