@@ -68,13 +68,11 @@ def compare_all(categories, specs1, specs2):
         for num, i in enumerate(data1):
             v1 = i
             v2 = data2[num]
-            #print categories1[num]
-            #print v1, v2
             str = False
             try:
                 float(v1)
-                n1 = round(float(v1), 1)
-                n2 = round(float(v2), 1)
+                n1 = round(float(v1), 4)
+                n2 = round(float(v2), 4)
                 #print "ROUNDED", r
             except ValueError as ex: # could not convert string to float
                 #print ex
@@ -91,9 +89,7 @@ def compare_all(categories, specs1, specs2):
                         print categories1[num]
                         print v1, "------", v2
                 elif v1 == v2: # turn this back to pass!
-                    print categories1[num]
-                    print v1, "-----",  v2
-                    #pass
+                    pass
                 else:
                     print categories1[num]
                     print v1, "------", v2
