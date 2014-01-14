@@ -40,7 +40,18 @@ def parse_file(file_path):
 #print 'GREIG\'S:   ', specs2['ET1_279BS']
 #print len(specs1['ET1_279BS'])
 #print len(specs2['ET1_279BS'])
-
+def print_all(categories, specs1, specs2):
+    for specimen in specs1.keys():
+        print "SPECIMEN: ", specimen
+        data1 = specs1[specimen]
+        data2 = specs2[specimen]
+        for num, i in enumerate(data1):
+            v1 = i
+            v2 = data2[num]
+            print categories1[num]
+            print v1, v2
+        print '--------'
+        print '--------'
 
 
 def compare_all(categories, specs1, specs2):
@@ -99,23 +110,31 @@ def compare_all(categories, specs1, specs2):
 
 def compare_one(stat, categories, specs1, specs2):
     print "comparing one"
-    print stat
+    specimens = specs1.keys()
     i = categories.index(stat + ':')
-    key = specs1.keys()[-1]
-    print specs1[key][i]
-    print specs2[key][i]
-    return True
+    for spec in specimens:
+        print str(spec) + ": " + str(stat)
+        print specs1[spec][i], specs2[spec][i]
+
 
 
 specs1, categories1 = parse_file(path1)
 specs2, categories2 = parse_file(path2)
-try:
+if ('-s' in sys.argv):
     single = sys.argv.index('-s')
     stat = sys.argv[single+1]
     compare_one(stat, categories1, specs1, specs2)
-except ValueError as ex:
-    print ex
+elif ('-a' in sys.argv):
+    print_all(categories1, specs1, specs2)
+else:
     compare_all(categories1, specs1, specs2)
+#try:
+#    single = sys.argv.index('-s')
+#    stat = sys.argv[single+1]
+#    compare_one(stat, categories1, specs1, specs2)
+#except ValueError as ex:
+#    print ex
+
          
     
 lori_only = ['y_prime', 'x_prime', 'delta_y_prime', 'delta_x_prime']

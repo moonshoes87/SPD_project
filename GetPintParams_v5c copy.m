@@ -500,14 +500,14 @@ Params.X_int=-Params.Y_int/Params.b;
 % Project the data onto the best-fit line
 Rev_x=(Params.Ypts-Params.Y_int)./Params.b; % The points reflected about the bes-fit line
 Rev_y=Params.b.*Params.Xpts+Params.Y_int;
-disp('Rev_x, Rev_y')
-Rev_x / 7.4372
-Rev_y / 7.4372
 Px=(Params.Xpts+Rev_x)./2; % Average the both sets to get the projected points
 Py=(Params.Ypts+Rev_y)./2;
 %lj
-Params.Rev_x = Rev_x
-Params.Rev_y = Rev_y
+Params.Rev_x = Rev_x;
+Params.Rev_y = Rev_y;
+Params.x_prime = Px;
+Params.y_prime = Py;
+
 %lj
 
 
@@ -1306,7 +1306,8 @@ Params.TEST=[Px, Py];
 Params.pTRM_Lines=Line_pts;
 
 %% Round the stats to the recommended SPD precisiion
-
+%lj -- turned off rounding!!!  just for now
+if(1==2)
 % Arai plot
 Params.b=round(1000*Params.b)/1000;
 Params.sigma_b=round(1000*Params.sigma_b)/1000;
@@ -1377,7 +1378,7 @@ Params.dAC=round(10*Params.dAC)/10;
 
 % Anis stats
 Params.Anis_c=round(1000*Params.Anis_c)/1000;
-
+end
 
 % NLT stats
 

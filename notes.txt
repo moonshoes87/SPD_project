@@ -395,6 +395,6 @@ Don't forget you will need to test everything with EVERY possible set of tempera
 
 Params.xbar = mean(x_segment)
 
-Params.Rev_y is almost the same as y_prime.  but there's something off, maybe just because of the norming.  
+Params.Py is the same as y_prime. (norming fixed!)
 
-Next step: work on y_prime
+Next step: work on delta_y_prime
