@@ -377,7 +377,7 @@ y_pts -- My SPD norms by NRM; Greig's does not
 Y_int  ---  same
 x_int ---  same
 
-different possible units for
+different possible units for magnetic moment:
 
 mKs.  meter Kelvin seconds.  measurement unit for magnetic moment.  used in magic measurements format.
 
@@ -397,4 +397,4 @@ Params.xbar = mean(x_segment)
 
 Params.Rev_y is almost the same as y_prime.  but there's something off, maybe just because of the norming.  
 
-You need to go through Greig's output that DOESN'T match with your categories of output, and try to figure out what they are.  I.e., you should have Line_Len (length of best fit line) somewhere.  
+Next step: work on y_prime
