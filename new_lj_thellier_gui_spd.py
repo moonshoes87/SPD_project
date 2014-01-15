@@ -249,7 +249,7 @@ class Arai_GUI():
 
           Data_hierarchy['specimens'][s]=sample
 
-#          ?? specimens vs. samples
+#          samples have many specimens.  
           
       #print "done sorting meas data"
       
@@ -654,7 +654,7 @@ class Arai_GUI():
         z_temperatures=[row[0] for row in zijdblock]
         zdata=[]
         vector_diffs=[]
-        NRM=zijdblock[0][3]  ## ?? why is this the NRM?
+        NRM=zijdblock[0][3]  ## NRM before anything has been done to the sample
 
         for k in range(len(zijdblock)):
             DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]

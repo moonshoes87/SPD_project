@@ -361,6 +361,17 @@ I can find equivalent dec/inc data in the magic measurements vs. .tdt files, but
 dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Greig's version returns only the first number of the cartesian coordinates.  (dir2cart is called in both programs to convert [dec, inc, int])
 
 
+
+    % Convert to x, y, z and put into Mvec
+    Mvec=NaN(length(Int), 3); %Create an empty matrix
+    [Mvec(:,1), Mvec(:,2), Mvec(:,3)]=dir2cart(Dec, Inc, Int);
+
+    % then NRMvec just grabs without changing the appropriate (zerofield) values
+
+
+    # in tgs, it is essentially the same BUT it does dir2cart([dec, inc]).  does not use int number. 
+
+
 how x points are attained in tgs:
     [temp, dec, inc, int, other]
     int is grabbed (magnetic intensity) from the infield data points, and normed by the original NRM of the untouched sample.
@@ -389,12 +400,15 @@ be careful with v. large or v. small numbers.  float, long, etc.  this can be si
 
 try norming Greig's Xpts and Ypts by NRM
     SUCCESS!!
-    xpts, ypts, x_int, and y_int now working
+    xpts, ypts, x_int, y_int, y_prime, x_prime, delta_y_prime, delta_x_prime -- working
 
 Don't forget you will need to test everything with EVERY possible set of temperature bounds
 
-Params.xbar = mean(x_segment)
+problem with GAP-MAX.  Greig uses raw data from the tdt files, which uses a different form for magnetic moment.  
+tdt -- uses milliamp / meter
+magic -- uses meter Kelvin seconds
 
-Params.Py is the same as y_prime. (norming fixed!)
+why this line?
+#vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
 
-Next step: work on delta_y_prime
+also, why partial_vds and vds aren't the same when tmax = t_Arai[-1] ?

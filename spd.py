@@ -582,6 +582,8 @@ specimens = gui2.Data.keys()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
 mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
+mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 573.)
+mat_thing.calculate_all_statistics()
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)

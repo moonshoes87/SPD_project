@@ -6261,7 +6261,7 @@ class Arai_GUI(wx.Frame):
 
 #        zstart=z_temperatures.index(tmin)
  #       zend=z_temperatures.index(tmax)
-
+#lj come here
         vector_diffs=self.Data[s]['vector_diffs']
         vector_diffs_segment=vector_diffs[zstart:zend]
 #        print "----"
