@@ -415,7 +415,7 @@ FRAC --- see above
 unsolved:
 
 g -- missing
-q -- wrong only in one instance
+when not using full bounds, much breaks.  delta_y_prime & delta_x_prime seem to be where it starts
 
 
 different possible units for magnetic moment:
@@ -428,9 +428,6 @@ should be normed by first NRM (full, pre-experiment)
 
 be careful with v. large or v. small numbers.  float, long, etc.  this can be significant.  
 
-try norming Greig's Xpts and Ypts by NRM
-    SUCCESS!!
-    xpts, ypts, x_int, y_int, y_prime, x_prime, delta_y_prime, delta_x_prime -- working
 
 Don't forget you will need to test everything with EVERY possible set of temperature bounds
 

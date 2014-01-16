@@ -129,7 +129,7 @@ class PintPars(object):
 
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         self.pars['specimen_n']=self.end-self.start+1
-        self.stuff = ["s", "datablock", "x_Arai", "y_Arai", "t_Arai", "x_Arai_segment", "y_Arai_segment", "x_Arai_mean", "y_Arai_mean", "x_tail_check", "y_tail_check", "tail_checks_temperatures", "tail_checks_starting_temperatures", "x_ptrm_check", "y_ptrm_check", "ptrm_checks_temperatures", "ptrm_checks_starting_temperatures", "zijdblock", "z_temperatures", "start", "end", "pars", "specimen_Data", "tmin", "tmax", "tmin_K", "tmax_K", "steps_Arai", "xy_Arai", "xy_Arai_segment", "B_lab_vector", "PTRMS"] # needs to be updated
+
  
         #LJ ADDING stats:
         self.steps_Arai = self.specimen_Data['steps_Arai']
@@ -583,7 +583,9 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
 mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
 #mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 573.)
+mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 273., 723.0)
 mat_thing.calculate_all_statistics()
+mat_thing1.calculate_all_statistics()
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)

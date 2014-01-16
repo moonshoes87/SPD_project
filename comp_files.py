@@ -71,8 +71,8 @@ def compare_all(categories, specs1, specs2):
             str = False
             try:
                 float(v1)
-                n1 = round(float(v1), 3)
-                n2 = round(float(v2), 3)
+                n1 = round(float(v1), 5)
+                n2 = round(float(v2), 5)
                 #print "ROUNDED", r
             except ValueError as ex: # could not convert string to float
                 #print ex
@@ -104,7 +104,7 @@ def compare_all(categories, specs1, specs2):
 
 
 
-def compare_one(stat, categories, specs1, specs2):
+def compare_one_stat(stat, categories, specs1, specs2):
     print "comparing one"
     specimens = specs1.keys()
     i = categories.index(stat + ':')
@@ -113,13 +113,25 @@ def compare_one(stat, categories, specs1, specs2):
         print specs1[spec][i], specs2[spec][i]
 
 
+def compare_one_spec(spec, categories, specs1, specs2):
+    print "mine, Greig's"
+    for num, stat in enumerate(specs1[spec]):
+        print categories[num]
+        print specs1[spec][num],
+        print specs2[spec][num]
+
+
 
 specs1, categories1 = parse_file(path1)
 specs2, categories2 = parse_file(path2)
-if ('-s' in sys.argv):
+if ('-spec' in sys.argv):
+    ind = sys.argv.index('-spec')
+    spec = sys.argv[ind+1]
+    compare_one_spec(spec, categories1, specs1, specs2)
+elif ('-s' in sys.argv):
     single = sys.argv.index('-s')
     stat = sys.argv[single+1]
-    compare_one(stat, categories1, specs1, specs2)
+    compare_one_stat(stat, categories1, specs1, specs2)
 elif ('-a' in sys.argv):
     print_all(categories1, specs1, specs2)
 else:
@@ -127,7 +139,7 @@ else:
 #try:
 #    single = sys.argv.index('-s')
 #    stat = sys.argv[single+1]
-#    compare_one(stat, categories1, specs1, specs2)
+#    compare_one_stat(stat, categories1, specs1, specs2)
 #except ValueError as ex:
 #    print ex
 

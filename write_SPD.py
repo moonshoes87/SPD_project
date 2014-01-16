@@ -55,7 +55,8 @@ for f in in_files:
     data = gui.Data
     specimen_names = gui.Data.keys()
     for s in specimen_names:
-        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][-1])
+        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][6])
+        print spec.s, spec.tmin, spec.tmax
         spec.calculate_all_statistics()
         out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
         for stat in long_list:

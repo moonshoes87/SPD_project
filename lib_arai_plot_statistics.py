@@ -13,6 +13,9 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     beta_Coe=abs(york_sigma/york_b) 
     # y_T is the intercept of the extrepolated line
     # through the center of mass (see figure 7 in Coe (1978))  
+
+#Params.Y_int=mean(Y_seg)-Params.b*mean(X_seg); # matlab
+
     y_T = y_mean - (york_b* x_mean)
     x_T = (-1 * y_T) / york_b  # x intercept
     # # calculate the extarplated data points for f and fvds
