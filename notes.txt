@@ -361,6 +361,7 @@ I can find equivalent dec/inc data in the magic measurements vs. .tdt files, but
 dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Greig's version returns only the first number of the cartesian coordinates.  (dir2cart is called in both programs to convert [dec, inc, int])
 
 
+    zdata difference:
 
     % Convert to x, y, z and put into Mvec
     Mvec=NaN(length(Int), 3); %Create an empty matrix
@@ -369,7 +370,22 @@ dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Grei
     % then NRMvec just grabs without changing the appropriate (zerofield) values
 
 
-    # in tgs, it is essentially the same BUT it does dir2cart([dec, inc]).  does not use int number. 
+    # in thellier_gui_spd, it is essentially the same BUT it does dir2cart([dec, inc, int / NRM]). 
+#NRM=zijdblock[0][3]
+#for k in range(len(zijdblock)):
+ #           DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]
+  #          cart=self.dir2cart(DIR)
+   #         zdata.append(array([cart[0],cart[1],cart[2]]))
+
+
+    This makes zdata quite challenging to compare.  
+
+    FRAC --  it sums zdata diffs and divides by vds
+
+    His NRMvec(1,:) / Int(1) == my zdata[0]
+    NRMvec(2,:) / Int(1) == my zdata[1]
+
+    So, his sum(diffs) != my sum(diffs)
 
 
 how x points are attained in tgs:
@@ -387,6 +403,8 @@ x_pts -- My SPD norms by NRM; Greig's does not
 y_pts -- My SPD norms by NRM; Greig's does not
 Y_int  ---  same
 x_int ---  same
+GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  
+
 
 different possible units for magnetic moment:
 

@@ -43,7 +43,8 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     vector_diffs = []
     for k in range(len(zdata)-1):
             # gets diff between two vectors                                                                      
-        vector_diffs.append(sqrt(sum((array(zdata[k + 1 ])-array(zdata[k]))**2)))
+        vector_diffs.append(sqrt( sum((array(zdata[k+1]) - array(zdata[k]))**2) ))
+#       vector_diffs.append ( sqrt (sum(( array(zdata[k+1]) - array(zdata[k]) )**2)))
     vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds                             
     last_vector = sqrt(sum(array(zdata[-1])**2))
     vds = sum(vector_diffs)
@@ -51,7 +52,8 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     vector_diffs_segment = vector_diffs[start:end]
     partial_vds = sum(vector_diffs_segment)
     max_diff = max(vector_diffs_segment)
-    GAP_MAX = max_diff / partial_vds
+#    GAP_MAX = max_diff / partial_vds # this is the way that's consistent with thellier_gui
+    GAP_MAX = max_diff / vds  # this is consistent with Greig's code
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 
