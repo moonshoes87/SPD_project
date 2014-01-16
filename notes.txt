@@ -387,6 +387,10 @@ dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Grei
 
     So, his sum(diffs) != my sum(diffs)
 
+    Also, he takes all but the last diff:  ...diff(NRMvec(seg_min:seg_max - 1,2:end)...
+
+    My FRAC agrees with thellier_gui FRAC
+
 
 how x points are attained in tgs:
     [temp, dec, inc, int, other]
@@ -397,6 +401,8 @@ y points:
 
 problems and solutions:
 
+solved:
+
 B_anc -- off by a factor of 6.   3.05933660143e-05 vs. 30.6
 B_anc sigma -- same
 x_pts -- My SPD norms by NRM; Greig's does not
@@ -404,6 +410,12 @@ y_pts -- My SPD norms by NRM; Greig's does not
 Y_int  ---  same
 x_int ---  same
 GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  
+FRAC --- see above
+
+unsolved:
+
+g -- missing
+q -- wrong only in one instance
 
 
 different possible units for magnetic moment:

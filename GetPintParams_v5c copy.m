@@ -213,6 +213,7 @@ if Exp_Flag==0
     NRMvec=[NRMvec; Temps(Treatment==0), Mvec(Treatment==0,:)]; %#ok<*AGROW>
     tail_vec=[Temps(Treatment==3), Mvec(Treatment==3, :)];
     
+
     
     % Calculate the tail differences
     %     MD_vec=tail_vec;
@@ -315,6 +316,7 @@ else
     
     Dirvec=[Temps(Treatment==1), Mvec(Treatment==1, :)];
     Dirvec(1,:)=[]; % Remove the first row, which is the initial NRM
+
     
     Invvec=[Temps(Treatment==5), Mvec(Treatment==5, :)];
     
@@ -380,11 +382,14 @@ else
 end
 
 %lj
+Params.NRMvec = NRMvec;
+Params.TRMvec = TRMvec;
 TRMvec;
 % dot carat (.^2) does elementwise exponentiation.
 % the second two means do the summing along the second dimension, so
 % horizontally
 % then takes square root of that
+
 %lj
 
 % all rows, columns 2 to end
@@ -395,6 +400,7 @@ Params.Xpts;
 Params.Ypts=sqrt(sum(NRMvec(:,2:end).^2,2));
 Params.nmax=length(Params.Xpts);
 Params.Temp_steps=TRMvec(:,1);
+
 
 Params.Blab=Blab;
 
@@ -516,6 +522,16 @@ Params.Line_Len=sqrt((min(Py(seg))-max(Py(seg)))^2+(min(Px(seg))-max(Px(seg)))^2
 
 TRM_Len=max(Px(seg))-min(Px(seg));
 
+
+%lj
+NRMvec;
+
+
+
+Params.vector_diffs = sqrt(sum(diff((NRMvec(seg_min:seg_max-1,2:end)).^2),2).^2);
+
+%lj
+
 % Get the VDS and fraction related stuff
 Params.VDS=sum(sqrt(sum((diff(NRMvec(:,2:end)).^2),2)))+sqrt(sum(NRMvec(end,2:end).^2));
 dyt=abs( max(Py(seg)) -  min( Py(seg) ) );
@@ -530,6 +546,7 @@ Params.qual=Params.f*Params.gap/Params.beta;
 Params.w=Params.qual/sqrt(Params.n-2);
 Params.R_corr=corr(X_seg, Y_seg)^2;
 Params.R_det=1 - (sum((Params.Ypts-Py).^2) / sum((Params.Ypts-Params.ybar).^2) );
+
 
 
 % Curvature
@@ -1378,6 +1395,7 @@ Params.dAC=round(10*Params.dAC)/10;
 
 % Anis stats
 Params.Anis_c=round(1000*Params.Anis_c)/1000;
+
 end
 
 % NLT stats

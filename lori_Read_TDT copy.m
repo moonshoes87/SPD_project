@@ -77,6 +77,7 @@ for f=1:n_files
     [Mvec(:,1), Mvec(:,2), Mvec(:,3)]=dir2cart(Dec, Inc, Int);
 
    
+   
     
     
     %% Setup the flags for the expected fields, anisotropy and NLT, methods, etc
@@ -311,7 +312,11 @@ for f=1:n_files
     Params.y_prime = Params.y_prime / NRM;
     Params.delta_x_prime = abs(Params.x_prime(end) - Params.x_prime(1));
     Params.delta_y_prime = abs(Params.y_prime(end) - Params.y_prime(1));
+    
+    Params.FRAC = Params.FRAC;
 
+    
+    
     %
     split = strsplit(files(f).name, '.');
     spec_name = split{1}; % removes .tdt from spec_name
@@ -333,10 +338,23 @@ toc
 
 % lori
 
+%lj how to make FRAC the same as in my code
+NRMint = Int(Treatment==0);
+NRMvec = Params.NRMvec(:,2:end);
+zdata = NRMvec(:,:) / NRM;
+seg_min = 1;
+seg_max = 7;
+FRAC=sum(sqrt(sum((diff(zdata(seg_min:seg_max,1:end)).^2),2)))/ Params.VDS;
+FRAC;
+vector_diffs = sqrt(sum((diff(zdata(seg_min:seg_max,1:end)).^2),2));
+%lj  that's it    
 
 
-    
-
+%for i=1:length(NRMint)
+%    NRMint(i)
+%    z = NRMvec(i,:) / NRMint(i)
+%    zdata = [zdata; z]
+%end
 
 
 % Greig's names for everything
@@ -346,7 +364,7 @@ directional_reqd = {'Dec_F', 'Dec_A', 'Inc_F', 'Inc_A', 'MAD_free', 'MAD_anc', '
 ptrm_reqd = {'n_pTRM', 'check', 'dCK', 'DRAT', 'maxDev', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'dpal'};
 tail_reqd = {'n_tail', 'DRATtail', 'dTR', 'MDvds'};
 additivity_reqd = {'n_add', 'dAC'};
-all_reqd = {'s', 'n', 'Tmin', 'Tmax', 'b', 'sigma_b', 'Banc', 'sigma_B', 'Y_int', 'X_int', 'VDS', 'delta_x_prime', 'delta_y_prime', 'f', 'f_vds', 'FRAC', 'beta', 'missing_g', 'GAP_MAX', 'qual', 'w', 'k', 'SSE', 'SCAT', 'R_corr', 'R_det', 'Z', 'Z_star', 'IZZI_MD', 'Dec_F', 'Dec_A', 'Inc_F', 'Inc_A', 'MAD_free', 'MAD_anc', 'alpha', 'missing_theta', 'DANG', 'NRM_dev', 'gamma', 'n_pTRM', 'check', 'dCK', 'DRAT', 'missing_maxDev', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'dpal', 'n_tail', 'DRATtail', 'dTR', 'MDvds', 'n_add', 'dAC'};
+all_reqd = {'s', 'n', 'Tmin', 'Tmax', 'b', 'sigma_b', 'Blab', 'Banc', 'sigma_B', 'Y_int', 'X_int', 'VDS', 'delta_x_prime', 'delta_y_prime', 'f', 'f_vds', 'FRAC', 'beta', 'missing_g', 'GAP_MAX', 'qual', 'w', 'k', 'SSE', 'SCAT', 'R_corr', 'R_det', 'Z', 'Z_star', 'IZZI_MD', 'Dec_F', 'Dec_A', 'Inc_F', 'Inc_A', 'MAD_free', 'MAD_anc', 'alpha', 'missing_theta', 'DANG', 'NRM_dev', 'gamma', 'n_pTRM', 'check', 'dCK', 'DRAT', 'missing_maxDev', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'dpal', 'n_tail', 'DRATtail', 'dTR', 'MDvds', 'n_add', 'dAC'};
 
 % my names for everything
 basic_stats = {'s', 'specimen_n', 'start', 'end', 'tmin', 'tmax'};
@@ -355,7 +373,7 @@ directional_stats = {'Dec_Free', 'Dec_Anc', 'Inc_Free', 'Inc_Anc', 'MAD_Free', '
 ptrm_stats = {'n_ptrm', 'max_ptrm_check_percent', 'delta_CK', 'DRAT', 'max_DEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal'};
 tail_stats = {'n_tail', 'DRAT_tail', 'delta_TR', 'MD_VDS'};
 additivity_stats = {'n_add', 'delta_AC'};
-all_stats = {'s', 'specimen_n', 'tmin', 'tmax', 'specimen_b', 'specimen_b_sigma', 'B_anc', 'B_anc_sigma', 'specimen_YT', 'specimen_XT', 'specimen_vds',  'delta_x_prime', 'delta_y_prime', 'specimen_f', 'specimen_fvds', 'FRAC', 'specimen_b_beta', 'specimen_g', 'GAP-MAX', 'specimen_q', 'specimen_w', 'specimen_k', 'SSE', 'SCAT', 'R_corr2', 'R_det2', 'Z', 'Zstar', 'IZZI_MD', 'Dec_Free', 'Dec_Anc', 'Inc_Free', 'Inc_Anc', 'MAD_Free', 'MAD_Anc', 'alpha', 'theta', 'DANG', 'NRM_dev', 'gamma', 'n_ptrm', 'max_ptrm_check_percent', 'delta_CK', 'DRAT', 'max_DEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal', 'n_tail', 'DRAT_tail', 'delta_TR', 'MD_VDS', 'n_add', 'delta_AC'}; 
+all_stats = {'s', 'specimen_n', 'tmin', 'tmax', 'specimen_b', 'specimen_b_sigma', 'B_lab', 'B_anc', 'B_anc_sigma', 'specimen_YT', 'specimen_XT', 'specimen_vds',  'delta_x_prime', 'delta_y_prime', 'specimen_f', 'specimen_fvds', 'FRAC', 'specimen_b_beta', 'specimen_g', 'GAP-MAX', 'specimen_q', 'specimen_w', 'specimen_k', 'SSE', 'SCAT', 'R_corr2', 'R_det2', 'Z', 'Zstar', 'IZZI_MD', 'Dec_Free', 'Dec_Anc', 'Inc_Free', 'Inc_Anc', 'MAD_Free', 'MAD_Anc', 'alpha', 'theta', 'DANG', 'NRM_dev', 'gamma', 'n_ptrm', 'max_ptrm_check_percent', 'delta_CK', 'DRAT', 'max_DEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal', 'n_tail', 'DRAT_tail', 'delta_TR', 'MD_VDS', 'n_add', 'delta_AC'}; 
 
 
 outfile = fopen('new_out.out', 'w');
