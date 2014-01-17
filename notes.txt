@@ -411,11 +411,19 @@ Y_int  ---  same
 x_int ---  same
 GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  
 FRAC --- see above
+many things breaking with taking different tmin, tmax -- my code uses x/y_segment to get x/y_prime.  Greig's uses full set of x/y points.
 
 unsolved:
 
-g -- missing
-when not using full bounds, much breaks.  delta_y_prime & delta_x_prime seem to be where it starts
+IZZI_MD:
+theta:
+NRM_dev:
+gamma:
+max_DEV:
+mean_DRAT_prime:
+delta_pal:
+
+
 
 
 different possible units for magnetic moment:

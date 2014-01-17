@@ -71,8 +71,8 @@ def compare_all(categories, specs1, specs2):
             str = False
             try:
                 float(v1)
-                n1 = round(float(v1), 5)
-                n2 = round(float(v2), 5)
+                n1 = round(float(v1), 3)
+                n2 = round(float(v2), 3)
                 #print "ROUNDED", r
             except ValueError as ex: # could not convert string to float
                 #print ex

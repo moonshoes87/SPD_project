@@ -583,7 +583,7 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
 mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
 #mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 573.)
-mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 273., 723.0)
+mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 273., 673.0)
 mat_thing.calculate_all_statistics()
 mat_thing1.calculate_all_statistics()
 
