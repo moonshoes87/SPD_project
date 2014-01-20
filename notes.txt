@@ -415,7 +415,13 @@ many things breaking with taking different tmin, tmax -- my code uses x/y_segmen
 
 unsolved:
 
-IZZI_MD:
+IZZI_MD -- believe will put IZZI_MD into its own module.  it's big. 
+        it's all   ['ZI', 'ZI', 'ZI', 'ZI', 'ZI', 'ZI', 'ZI'] in the new specimens.  in this case, it fails on the get_triangles segment.
+
+        My IZZI_MD and Ron's are not the same.  I think I will just use Ron's.  
+        But still, Ron's fails on specimen 'ET1_318A', where Greig's produces output.
+
+        In Greig's code, Treatment -- 0 = ZI, 1 = IZ, etc...
 theta:
 NRM_dev:
 gamma:

@@ -73,7 +73,7 @@ from scipy import *
 
 class PintPars(object):
     def __init__(self, Data,specimen_name,tmin,tmax):
-        print "calling __init__ PintPars object"
+        #print "calling __init__ PintPars object"
         self.s=specimen_name
         self.specimen_Data=Data[self.s]
         self.datablock = self.specimen_Data['datablock']
@@ -284,6 +284,7 @@ class PintPars(object):
         y_Arai = self.y_Arai
         steps_Arai = self.steps_Arai
         IZZI_MD = lib_arai.get_IZZI_MD(x_Arai, y_Arai, steps_Arai)
+#        print "get izzi_md( {}, {}, {} )".format(str(x_Arai), str(y_Arai), str(steps_Arai))
         self.pars['IZZI_MD'] = IZZI_MD
         return IZZI_MD
 

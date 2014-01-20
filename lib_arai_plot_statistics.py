@@ -267,12 +267,14 @@ def get_xy_array(x_segment, y_segment):
 xy_segment = [(1, 2), (3, 4), (5, 6), (7, 8), (9,10), (11, 12), (13, 14)]
 steps = ['IZ', 'ZI', 'ZI', 'IZ', 'IZ', 'ZI', 'IZ']
 
-def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # works!
+def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # is failing
     segment = xy_segment[1: ]
     no_repeat_segment = []
     no_repeat_steps = []
     last_step = ""
-    for i in segment:
+    print "segment", segment
+    print "Arai_steps", Arai_steps
+    for i in segment:  # problem is in this loop, somewhere
         index = xy_segment.index(i) # must be xy_segment to correspond to the Arai_steps, not the truncated segment
         step = Arai_steps[index]
         if step == last_step:
@@ -282,6 +284,7 @@ def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # works!
             no_repeat_segment.append(i)
             no_repeat_steps.append(step)
         last_step = step
+    print "no_repeat_segment", no_repeat_segment
     triangles = []
     midpoints = []
     for num, i in enumerate(no_repeat_segment[:-2]):
@@ -399,17 +402,23 @@ y_arai = [1., .8, .6, .4, .2, .1, .05]
 steps_arai = ['IZ', 'ZI', 'ZI', 'IZ', 'ZI', 'IZ', 'ZI']
 
 def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
-    norm = y_Arai[0] # initial NRM
+    norm = y_Arai[0] # initial NRM  # this is probs not necessary as it is already normed.  
+
    # def get_normed_points(point_array, norm): # good to go
     #return points
     
     x = get_normed_points(x_Arai, norm)
     y = get_normed_points(y_Arai, norm)
 
+    x = x_Arai
+    y = y_Arai
+
+
     #def get_xy_array(x_segment, y_segment): 
     #return xy_array
 
     xy_array = get_xy_array(x, y)
+    print "xy_array", xy_array
 
     #def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # works!
     #return {'triangles': triangles, 'midpoints': midpoints}
@@ -417,6 +426,8 @@ def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
     t = get_triangles(xy_array, steps_Arai)
     triangles = t['triangles']
     midpoints = t['midpoints']
+    print "triangles", triangles
+    print "midpoints", midpoints
     
     #def get_ZI_line(xy_array=xy, Arai_steps=steps): # seems to work.  only possible problem is not excluding repeat ZI points
     #return { 'ZI_line': ZI_line, 'ZI_points': ZI_points }
