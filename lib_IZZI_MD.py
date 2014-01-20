@@ -13,7 +13,7 @@ def rect_area(three_points):
    return area
 
 
-def IZZI_MD(X_arai,Y_arai,Step,start,end):
+def get_IZZI_MD(X_arai,Y_arai,Step,start,end):
 
     if end-start <4:
         return(9999.99)

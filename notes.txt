@@ -409,7 +409,8 @@ x_pts -- My SPD norms by NRM; Greig's does not
 y_pts -- My SPD norms by NRM; Greig's does not
 Y_int  ---  same
 x_int ---  same
-GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  
+GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  (mine & Ron's agree)
+       # GAP_MAX = max_diff / vds
 FRAC --- see above
 many things breaking with taking different tmin, tmax -- my code uses x/y_segment to get x/y_prime.  Greig's uses full set of x/y points.
 

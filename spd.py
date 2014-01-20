@@ -288,6 +288,17 @@ class PintPars(object):
         self.pars['IZZI_MD'] = IZZI_MD
         return IZZI_MD
 
+    def get_Ron_IZZI_MD(self):
+        import lib_IZZI_MD as lib_izzi
+        if ('IZ' in self.steps_Arai):
+            IZZI_MD = lib_izzi.get_IZZI_MD(self.x_Arai, self.y_Arai, self.steps_Arai, self.start, self.end)
+            self.pars['IZZI_MD'] = IZZI_MD
+            return IZZI_MD
+        else:
+            IZZI_MD = float('nan')
+            self.pars['IZZI_MD'] = IZZI_MD
+            return IZZI_MD
+
         
     # directional statistics begin here:
 
@@ -481,7 +492,9 @@ class PintPars(object):
         self.get_R_det2()
         self.get_Z()
         self.get_Zstar()
-        self.get_IZZI_MD()
+        self.get_Ron_IZZI_MD()
+#        self.get_IZZI_MD()
+
 
     def directional_statistics(self):
         self.York_Regression()
@@ -541,7 +554,7 @@ class PintPars(object):
         self.get_R_det2()
         self.get_Z()
         self.get_Zstar()
-        self.get_IZZI_MD()
+        self.get_Ron_IZZI_MD()
         # directional statistics
         self.get_dec_and_inc()
         self.get_MAD()
