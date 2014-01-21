@@ -283,6 +283,10 @@ to use a list as a queue, use collections.dequeue, to grab off elements from the
 
 use regex
 
+
+
+
+
 Notes for matlab:
 
 struct is a dictionary(ish)
@@ -409,12 +413,15 @@ x_pts -- My SPD norms by NRM; Greig's does not
 y_pts -- My SPD norms by NRM; Greig's does not
 Y_int  ---  same
 x_int ---  same
-GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  (mine & Ron's agree)
+GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  (mine & Ron's agree) CHANGE BACK
        # GAP_MAX = max_diff / vds
-FRAC --- see above
+FRAC --- TAKE OUT LAST POINT.  see if it then works.
 many things breaking with taking different tmin, tmax -- my code uses x/y_segment to get x/y_prime.  Greig's uses full set of x/y points.
+     -- GO BACK TO THIS.... need to be SURE.  Ron confirmed that it is the same calculation in his code and in spd document.  
 
 unsolved:
+
+update:  need to test with an IZZI type experiment.  for now, I don't have any in tdt format.  But that is ok.
 
 IZZI_MD -- believe will put IZZI_MD into its own module.  it's big. 
         it's all   ['ZI', 'ZI', 'ZI', 'ZI', 'ZI', 'ZI', 'ZI'] in the new specimens.  in this case, it fails on the get_triangles segment.
@@ -423,8 +430,6 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
         But still, Ron's fails on specimen 'ET1_318A', where Greig's produces output.
 
         In Greig's code, Treatment -- 0 = ZI, 1 = IZ, etc...
-
-        tgs gets ZI, IZ by checking if 'treatment_dc_field_theta' is 0 -- which makes it a zerofield step.   # no....
 
         for all of the Biggin specimens, I get only ZI steps.  however, the araiblock has: 
                 araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks,additivity_check)
@@ -439,7 +444,7 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
                 else:
                     ZI=1
 
-         LP-PI-TRM-IZ:  Paleointensity experiment: Using a laboratory TRM with an in-field step followed by a zero-field step. Heating the specimen to the desired temperature step and then cooling in known ambient magnetic field. Then heating to the same or lower temperature and then cooling in zero magnetic field to induce pTRM.
+         LP-PI-TRM-IZ:  Paleointensity experiment: Using a laboratory TRM with an in-field step followed by a zero-field step. Heating the specimen to the desired temperature step and then cooling in known ambient magnetic field. Then heating to the same or lower temperature and then cooling in zero magnetic nfield to induce pTRM.
          LP-PI-M-IZ:  Same-ish but with microwave
 
           if zerofields[k][4]==1:
@@ -453,13 +458,15 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
             first_Z.append([temp,DIR_zerofield[0],DIR_zerofield[1],DIR_zerofield[2],0])
             first_I.append([temp,DIR_infield[0],DIR_infield[1],DIR_infield[2],0])
 
-  Neither condition which would trigger ZI to be 0 is ever getting met.
+  Neither condition which would trigger ZI to be 0 is ever getting met.  In other words: in magic_measurements, the method codes for IZ step are not being found.  In the tdt files, there are clear IZ steps.  
+  Also, cross-checked with Lisa's thellier_magic, which also didn't grab any IZ points (only closed red circles in graph, no blue)
 
         in read_tdt:
            ET1_318A    150.1   6.457964075 214.5410563 -10.52823962
            treatment is:   1 
            etc. (0 is ZI, 1 is IZ, etc.)
 
+Possibly a totally fucked up indexing temperature system.  Greig uses: ...start point, end point...  vs. tmin, tmax
 
 
 theta:
