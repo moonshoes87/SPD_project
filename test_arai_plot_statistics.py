@@ -93,15 +93,15 @@ class CheckYorkRegression(unittest.TestCase):
         for key, value in self.known_values.iteritems():  # goes through all values
             if type(value) == int or type(value) == float: # can't iterate over int type or float
                # print type(value)
-                self.assertEqual(value, self.obj_pars[key])
+                self.assertAlmostEqual(value, self.obj_pars[key])
             elif value != None and type(value) != dict:
                # print type(value)
                 for num, item in enumerate(value):
                     message = "%s: known value = %s; obj_attribute = %s" %(key, value[:150], self.obj_pars[key][:150])
                     if type(item) == float or type(item) == numpy.float64:
-                        self.assertEqual(round(self.obj_pars[key][num], 8), round(item, 8), message)
+                        self.assertAlmostEqual(round(self.obj_pars[key][num], 8), round(item, 8), message)
                     else:
-                        self.assertEqual(self.obj_pars[key][num], item, message)
+                        self.assertAlmostEqual(self.obj_pars[key][num], item, message)
         
 
 
