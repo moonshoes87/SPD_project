@@ -596,7 +596,7 @@ specimens = gui2.Data.keys()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
 mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
-mat_thing = PintPars(gui3.Data, 'ET1_318A', 423., 523.)
+#mat_thing = PintPars(gui3.Data, 'ET1_318A', 423., 523.)
 #[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
 mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 423., 523.0)

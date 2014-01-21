@@ -389,9 +389,7 @@ dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Grei
     His NRMvec(1,:) / Int(1) == my zdata[0]
     NRMvec(2,:) / Int(1) == my zdata[1]
 
-    So, his sum(diffs) != my sum(diffs)
-
-    Also, he takes all but the last diff:  ...diff(NRMvec(seg_min:seg_max - 1,2:end)...
+    But the actual cause of the difference: he takes all but the last diff:  ...diff(NRMvec(seg_min:seg_max - 1,2:end)...
 
     My FRAC agrees with thellier_gui FRAC
 
@@ -415,7 +413,7 @@ Y_int  ---  same
 x_int ---  same
 GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  (mine & Ron's agree) CHANGE BACK
        # GAP_MAX = max_diff / vds
-FRAC --- TAKE OUT LAST POINT.  see if it then works.
+FRAC --- Greig's code does not take the final diff.  now mine doesn't either.  fixed.
 many things breaking with taking different tmin, tmax -- my code uses x/y_segment to get x/y_prime.  Greig's uses full set of x/y points.
      -- GO BACK TO THIS.... need to be SURE.  Ron confirmed that it is the same calculation in his code and in spd document.  
 
