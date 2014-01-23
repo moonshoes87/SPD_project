@@ -47,7 +47,6 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     for k in range(len(zdata)-1):
             # gets diff between two vectors                                                                      
         vector_diffs.append(sqrt( sum((array(zdata[k+1]) - array(zdata[k]))**2) ))
-#       vector_diffs.append ( sqrt (sum(( array(zdata[k+1]) - array(zdata[k]) )**2)))
     vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds                             
     last_vector = sqrt(sum(array(zdata[-1])**2))
     vds = sum(vector_diffs)

@@ -6264,6 +6264,7 @@ class Arai_GUI(wx.Frame):
 #lj come here
         vector_diffs=self.Data[s]['vector_diffs']
         vector_diffs_segment=vector_diffs[zstart:zend]
+        print vector_diffs_segment
 #        print "----"
 #        print "----"
 #        print "vector_diffs:", vector_diffs
@@ -6273,6 +6274,7 @@ class Arai_GUI(wx.Frame):
 #        print "segment max:", max(vector_diffs_segment)
 #        print "segment vds: ", sum(vector_diffs_segment)
         
+
         FRAC=sum(vector_diffs_segment)/self.Data[s]['vds']
         max_FRAC_gap=max(vector_diffs_segment/sum(vector_diffs_segment))
 #        print "GAP-MAX: ", max_FRAC_gap

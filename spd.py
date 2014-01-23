@@ -110,6 +110,7 @@ class PintPars(object):
 
         self.PTRMS = self.specimen_Data['PTRMS']
         self.NRMS = self.specimen_Data['NRMS']
+        self.NRM = self.specimen_Data['NRM']
         self.PTRM_Checks = self.specimen_Data['PTRM_Checks']
         self.TAIL_Checks = self.specimen_Data['TAIL_Checks']
         self.AC_Diffs = self.specimen_Data['AC']
@@ -342,6 +343,7 @@ class PintPars(object):
 
     def get_theta(self):
         b_lab_dir = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
+       # b_lab_dir = self.B_lab_vector  # doesn't make a difference
         ChRM = self.pars['best_fit_vector_Free']
         theta = lib_direct.get_theta(b_lab_dir, ChRM)
         self.pars['theta'] = theta
@@ -350,6 +352,7 @@ class PintPars(object):
     def get_gamma(self):
         lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.] # dir
         ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1] # dir
+        ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], self.PTRMS[-1][3] / self.specimen_Data['NRM']] # dir
         gamma = lib_direct.get_gamma(lab_vector, ptrm_vector)
         self.pars['gamma'] = gamma
         return gamma
@@ -423,8 +426,8 @@ class PintPars(object):
     def get_delta_pal(self): 
         # the diffs included appear not to take into consideration starting temps, although I'm not fully sure.  meh.  must check on this
         ptrms_segment, checks_segment = lib_ptrm.get_segments(self.PTRMS, self.PTRM_Checks, self.tmax)
-        delta_pal = lib_ptrm.get_full_delta_pal(ptrms_segment, checks_segment, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
-        delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
+        delta_pal = lib_ptrm.get_full_delta_pal(ptrms_segment, checks_segment, self.NRM, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
+        delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.NRM, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
         self.pars['delta_pal'] = delta_pal
 
 

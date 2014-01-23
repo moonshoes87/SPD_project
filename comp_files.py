@@ -71,8 +71,8 @@ def compare_all(categories, specs1, specs2):
             str = False
             try:
                 float(v1)
-                n1 = round(float(v1), 3)
-                n2 = round(float(v2), 3)
+                n1 = round(float(v1), 2)
+                n2 = round(float(v2), 2)
                 #print "ROUNDED", r
             except ValueError as ex: # could not convert string to float
                 #print ex
@@ -128,8 +128,8 @@ if ('-spec' in sys.argv):
     ind = sys.argv.index('-spec')
     spec = sys.argv[ind+1]
     compare_one_spec(spec, categories1, specs1, specs2)
-elif ('-s' in sys.argv):
-    single = sys.argv.index('-s')
+elif ('-stat' in sys.argv):
+    single = sys.argv.index('-stat')
     stat = sys.argv[single+1]
     compare_one_stat(stat, categories1, specs1, specs2)
 elif ('-a' in sys.argv):

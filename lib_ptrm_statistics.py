@@ -86,16 +86,24 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 
 #DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
     
-def get_delta_pal_vectors(PTRMS, PTRM_Checks):
+def get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM):
     """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """
     if type(PTRMS) != numpy.ndarray:
         PTRMS = numpy.array(PTRMS)
     if type(PTRM_Checks != numpy.ndarray):
         PTRM_Checks = numpy.array(PTRM_Checks)
     TRM_1 = lib_direct.dir2cart(PTRMS[0,1:3])
-    PTRMS_cart = lib_direct.dir2cart(PTRMS[1:,1:3])
-    checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])
-    return PTRMS_cart, checks, TRM_1
+#    PTRMS_cart = lib_direct.dir2cart(PTRMS[1:,1:3])   
+ #   checks = lib_direct.dir2cart(PTRM_Checks[:,1:3])  # used to end at thisn
+    PTRMS_cart = []
+    Checks_cart = []
+    for num, ptrm in enumerate(PTRMS):
+        ptrm_cart = lib_direct.dir2cart([PTRMS[num][1], PTRMS[num][2], PTRMS[num][3] / NRM])
+        PTRMS_cart.append(ptrm_cart)
+    for num, check in enumerate(PTRM_Checks):
+        check_cart = lib_direct.dir2cart([PTRM_Checks[num][1], PTRM_Checks[num][2], PTRM_Checks[num][3] / NRM])
+        Checks_cart.append(check_cart)
+    return PTRMS_cart, Checks_cart, TRM_1
 
 def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
     """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  requires both vector and original format of ptrms and checks for correct temperature indexing.  takes these in and returns diffs and C"""
@@ -147,9 +155,9 @@ def get_delta_pal(b, b_star):
     delta_pal = numpy.abs((b - b_star) / b) * 100
     return delta_pal
 
-def get_full_delta_pal(PTRMS, PTRM_Checks, y_err, y_mean, b):
+def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b):
 #    return 0
-    PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks)
+    PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM)
 #    print "PTRMS_Cart", PTRMS_cart
     diffs, C = get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
 #    print "C", C
