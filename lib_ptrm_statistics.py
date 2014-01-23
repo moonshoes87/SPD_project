@@ -86,6 +86,7 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 
 #DRATS = lib_ptrm.get_DRATS(self.ref_sum_ptrm_check, self.x_Arai, end)
     
+
 def get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM):
     """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """
     if type(PTRMS) != numpy.ndarray:
@@ -105,8 +106,44 @@ def get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM):
         Checks_cart.append(check_cart)
     return PTRMS_cart, Checks_cart, TRM_1
 
+
+
+def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
+    """
+    (ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
+    """
+#    print "ptrms_vectors", ptrms_vectors
+#    print "ptrm_checks_vectors", ptrm_checks_vectors
+#    print "ptrms_orig", ptrms_orig
+#    print "checks_orig", checks_orig
+    ptrm_temps = ptrms_orig[:,0]
+    check_temps = checks_orig[:,0]
+    index = numpy.zeros(len(ptrm_temps))
+    for num, temp in enumerate(ptrm_temps):
+        #print numpy.where(check_temps == temp)[0]
+        if len(numpy.where(check_temps == temp)[0]):
+           # print numpy.where(check_temps == temp)[0]
+           # print len(numpy.where(check_temps == temp)[0])
+           # print type(numpy.where(check_temps == temp)[0])
+            index[num] = numpy.where(check_temps == temp)[0]
+        else:
+            index[num] = float('nan')
+    diffs = numpy.zeros((len(ptrms_vectors), 3))
+    for num, ptrm in enumerate(ptrms_vectors):
+        if numpy.isnan(index[num]):
+            diffs[num] = numpy.array([0,0,0])
+        else:
+            diffs[num] = ptrm_checks_vectors[int(index[num])] - ptrm
+    C = numpy.cumsum(diffs, 0)
+    return diffs, C
+
+def new_get_TRM_star():
+    pass
+
+
 def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
     """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  requires both vector and original format of ptrms and checks for correct temperature indexing.  takes these in and returns diffs and C"""
+
 #    print "ptrms_vectors", ptrms_vectors
 #    print "ptrm_checks_vectors", ptrm_checks_vectors
 #    print "ptrms original", ptrms_orig
@@ -118,19 +155,20 @@ def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
         check_num = 0
         for num, ptrm in enumerate(ptrms_orig):
             if num == 0:
-#                print "first is zero"
+                print "first is zero"
                 diff = [0,0,0]
             elif len(checks_orig) <= check_num:  # if there are ptrms at higher temps than checks, this breaks the cycle
                 break
             elif ptrms_orig[num][0] == checks_orig[check_num][0]:
-#                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
+                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
                 diff = ptrms_vectors[num-1] - ptrm_checks_vectors[check_num]
+                print "diff", ptrms_vectors[num-1], " - ", ptrm_checks_vectors[check_num]
                 check_num += 1
             else:
-#                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
+                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
                 diff = [0,0,0]
             diffs[num-1] = diff
-#            print "diff:", diff
+            print "diff:", diff
     C = numpy.cumsum(diffs, axis=0)
     return diffs, C
 

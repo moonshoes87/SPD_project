@@ -492,6 +492,8 @@ mean_DRAT_prime:
 delta_pal:
         his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
         his pCheck / NRM == my dir2cart([PTRM_Checks[i][1], PTRM_Checks[i][2], PTRM_Checks[i][3] / NRM])
+        his to_sum / NRM == my diffs
+        his dpal_sum / NRM == my numpy.cumsum(diffs, 0)
 
 
 
