@@ -133,12 +133,13 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
     input: ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig
     output: vector diffs between original and ptrm check, C
     """
-#    print "ptrms_vectors", ptrms_vectors
-#    print "ptrm_checks_vectors", ptrm_checks_vectors
-#    print "ptrms_orig", ptrms_orig
-#    print "checks_orig", checks_orig
-    ptrm_temps = ptrms_orig[:,0]
-    check_temps = checks_orig[:,0]
+    #    print "ptrms_vectors", ptrms_vectors
+    #    print "ptrm_checks_vectors", ptrm_checks_vectors
+    #    print "ptrms_orig", ptrms_orig
+    #    print "checks_orig", checks_orig
+    
+    ptrm_temps = numpy.array(ptrms_orig)[:,0]
+    check_temps = numpy.array(checks_orig)[:,0]
     index = numpy.zeros(len(ptrm_temps))
     for num, temp in enumerate(ptrm_temps):
         if len(numpy.where(check_temps == temp)[0]):
@@ -155,50 +156,17 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
     return diffs, C
 
 def new_get_TRM_star(C, ptrms_vectors):
-    pass
-    
-
-
-def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
-    """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  requires both vector and original format of ptrms and checks for correct temperature indexing.  takes these in and returns diffs and C"""
-#    print "ptrms_vectors", ptrms_vectors
-#    print "ptrm_checks_vectors", ptrm_checks_vectors
-#    print "ptrms original", ptrms_orig
-#    print "checks original", checks_orig
-    if len(ptrms_vectors) == len(ptrm_checks_vectors):
-        diffs = ptrms_vectors - ptrm_checks_vectors
-    else:
-        diffs = numpy.zeros((len(ptrms_vectors), 3))
-        check_num = 0
-        for num, ptrm in enumerate(ptrms_orig):
-            if num == 0:
-                print "first is zero"
-                diff = [0,0,0]
-            elif len(checks_orig) <= check_num:  # if there are ptrms at higher temps than checks, this breaks the cycle
-                break
-            elif ptrms_orig[num][0] == checks_orig[check_num][0]:
-                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
-                diff = ptrms_vectors[num-1] - ptrm_checks_vectors[check_num]
-                print "diff", ptrms_vectors[num-1], " - ", ptrm_checks_vectors[check_num]
-                check_num += 1
-            else:
-                print "ptrm", ptrms_orig[num], "check", checks_orig[check_num]
-                diff = [0,0,0]
-            diffs[num-1] = diff
-            print "diff:", diff
-    C = numpy.cumsum(diffs, axis=0)
-    return diffs, C
-
-
-def get_TRM_star(PTRMS_cart, C, TRM_1):
-    TRM1 = TRM_1.reshape((1,3)) # ensures that TRM_1 is compatible to be concatenated
-    TRMS_adj = PTRMS_cart + C
-    TRM_star = numpy.concatenate((TRM1, TRMS_adj))
-    x_star = numpy.zeros(len(TRM_star))
+    TRM_star = numpy.zeros([len(ptrms_vectors), 3])
+    TRM_star[0] = [0., 0., 0.]
+    x_star = numpy.zeros(len(ptrms_vectors))
+    for num, vec in enumerate(ptrms_vectors[1:]):
+        TRM_star[num+1] = vec + C[num]
+        print 'vec', vec
+        print 'C', C[num]
     for num, trm in enumerate(TRM_star):
         x_star[num] = numpy.linalg.norm(trm)
     return TRM_star, x_star
-
+        
 def get_b_star(x_star, y_err, y_mean):
     """get corrected x segment and x_mean"""
     x_star_mean = numpy.mean(x_star)
@@ -214,9 +182,9 @@ def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b):
 #    return 0
     PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM)
 #    print "PTRMS_Cart", PTRMS_cart
-    diffs, C = get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
+    diffs, C = new_get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
 #    print "C", C
-    TRM_star, x_star = get_TRM_star(PTRMS_cart, C, TRM_1)
+    TRM_star, x_star = new_get_TRM_star(C, PTRMS_cart)
 #    print "x_star", x_star
 #    print type(x_star)
     b_star = get_b_star(x_star, y_err, y_mean)

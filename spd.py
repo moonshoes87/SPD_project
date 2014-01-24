@@ -151,7 +151,7 @@ class PintPars(object):
 
 
     def __repr__(self):
-        return "PintPars object, specimen: " + str(self.s)
+        return "PintPars object, specimen: {}, tmin_K: {}, tmax_K: {} ".format(self.s, self.tmin_K, self.tmax_K)
 
     def get_segments_and_means(self):
         pass # consider making this a real deal thing.  
