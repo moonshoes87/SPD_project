@@ -369,7 +369,7 @@ class IZZI_MD(unittest.TestCase):
         xy_array = lib_arai.get_xy_array(self.x, self.y)
         for num, i in enumerate(xy_array):
             self.assertAlmostEqual(i, self.ref_xy[num])
-
+    ignore = """
     def test_get_triangles_simple(self): # works
         x = [0, 1, 2, 3, 4, 5]
         y = [0, 2, 4, 6, 8, 10]
@@ -465,7 +465,7 @@ class IZZI_MD(unittest.TestCase):
 #        ref_IZZI_MD = 0
 #        result = lib_arai.get_IZZI_MD(A, L_ZI)
 #        self.assertEqual(result, ref_IZZI_MD)
-        
+        """
 
         
         

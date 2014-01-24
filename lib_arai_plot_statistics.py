@@ -4,7 +4,6 @@ from scipy import *
 import numpy
 
 
-
 def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps_Arai):
     x_err = x_segment - x_mean
     y_err = y_segment - y_mean
@@ -13,7 +12,6 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     beta_Coe=abs(york_sigma/york_b) 
     # y_T is the intercept of the extrepolated line
     # through the center of mass (see figure 7 in Coe (1978))  
-
     y_T = y_mean - (york_b* x_mean)
     x_T = (-1 * y_T) / york_b  # x intercept
     # # calculate the extarplated data points for f and fvds
@@ -24,10 +22,9 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     x_prime=(x_segment+x_tag) / 2  
     y_prime=(y_segment+y_tag) / 2
 
-    delta_x_prime = abs(x_prime[-1] - x_prime[0]) #Lj add.  this is the TRM length of the best fit line
-    delta_y_prime = abs(y_prime[-1] - y_prime[0]) # LJ add.  this is the NRM length of the best fit line 
-    f_Coe = delta_y_prime / y_T  # LJ added 
-#        g_Coe= 1 - (sum((y_prime[:-1]-y_prime[1:])**2) / sum((y_prime[:-1]-y_prime[1:]))**2 )  # old version 
+    delta_x_prime = abs(x_prime[-1] - x_prime[0]) #TRM length of the best fit line
+    delta_y_prime = abs(y_prime[-1] - y_prime[0]) #NRM length of the best fit line 
+    f_Coe = delta_y_prime / y_T 
     g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
     g_lim = (float(n) - 2) / (float(n) - 1) 
     q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
@@ -38,14 +35,19 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     B_anc = abs(york_b) * B_lab
     specimen_int = -1* lab_dc_field * york_b
     B_anc_sigma = york_sigma * B_lab
-    return {'x_err': x_err, 'y_err': y_err, 'x_tag': x_tag, 'y_tag': y_tag, 'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 'y_int': y_T, 'x_int': x_T, 'x_prime': x_prime, 'y_prime': y_prime, 'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'specimen_f': f_Coe, 'specimen_g': g_Coe, 'specimen_g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc, 'B_anc_sigma': B_anc_sigma, 'specimen_int': specimen_int}
-    
+    return {'x_err': x_err, 'y_err': y_err, 'x_tag': x_tag, 'y_tag': y_tag, 
+            'specimen_b': york_b, 'specimen_b_sigma': york_sigma, 'specimen_b_beta': beta_Coe, 
+            'y_int': y_T, 'x_int': x_T, 'x_prime': x_prime, 'y_prime': y_prime, 
+            'delta_x_prime': delta_x_prime, 'delta_y_prime': delta_y_prime, 'specimen_f': f_Coe, 
+            'specimen_g': g_Coe, 'specimen_g_lim': g_lim, 'specimen_q': q_Coe, 'specimen_w': w_Coe, 
+            'count_IZ': count_IZ, 'count_ZI': count_ZI, 'B_lab': B_lab, 'B_anc': B_anc, 
+            'B_anc_sigma': B_anc_sigma, 'specimen_int': specimen_int}
 
-def get_vds(zdata, delta_y_prime, start, end):  # 
-    """takes zdata array: [[1, 2, 3], [3, 4, 5]], delta_y_prime: 1, start value and end value.  gets vds and f_vds, etc. """
+def get_vds(zdata, delta_y_prime, start, end): 
+    """takes zdata array: [[1, 2, 3], [3, 4, 5]], 
+    delta_y_prime: 1, start value, and end value.  gets vds and f_vds, etc. """
     vector_diffs = []
-    for k in range(len(zdata)-1):
-            # gets diff between two vectors                                                                      
+    for k in range(len(zdata)-1): # gets diff between two vectors
         vector_diffs.append(sqrt( sum((array(zdata[k+1]) - array(zdata[k]))**2) ))
     last_vector = numpy.linalg.norm(zdata[-1])
     vector_diffs.append(last_vector)
@@ -56,12 +58,15 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     max_diff = max(vector_diffs_segment)
     GAP_MAX = max_diff / partial_vds # this is the way that's consistent with thellier_gui
 #    GAP_MAX = max_diff / vds  # this is consistent with Greig's code
-    return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
-
+    return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 
+            'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 
+            'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
 def get_SCAT_box(slope,  x_mean, y_mean, beta_threshold = .1): 
     """
-    takes in data and returns information about SCAT box: the largest possible x_value, the largest possible y_value, and functions for the two bounding lines of the box
+    takes in data and returns information about SCAT box: 
+    the largest possible x_value, the largest possible y_value, 
+    and functions for the two bounding lines of the box
     """
     slope_err_threshold = abs(slope) * beta_threshold
     x, y = x_mean, y_mean
@@ -83,43 +88,38 @@ def get_SCAT_box(slope,  x_mean, y_mean, beta_threshold = .1):
     x_max = high_bound[1][0]#              
     y_max = high_bound[0][1]
     # function for low_bound
-    low_slope = (low_bound[0][1] - low_bound[1][1]) / (low_bound[0][0] - low_bound[1][0]) # y_0 - y_1 / x_0 - x_1     
+    low_slope = (low_bound[0][1] - low_bound[1][1]) / (low_bound[0][0] - low_bound[1][0]) # y_0-y_1/x_0-x_1     
     low_y_int = low_bound[0][1]
-    def low_bound(x): # appears 
+    def low_bound(x): 
         y = low_slope * x + low_y_int
         return y
     # function for high_bound
-    high_slope = (high_bound[0][1] - high_bound[1][1]) / (high_bound[0][0] - high_bound[1][0]) # y_0 - y_1 / x_0 - x_1     
+    high_slope = (high_bound[0][1] - high_bound[1][1]) / (high_bound[0][0] - high_bound[1][0]) # y_0-y_1/x_0-x_1     
     high_y_int = high_bound[0][1]
     def high_bound(x): 
         y = high_slope * x + high_y_int
         return y
     return low_bound, high_bound, x_max, y_max
 
-
-
 def in_SCAT_box(x, y, low_bound, high_bound, x_max, y_max):
     """determines if a particular point falls within a box"""
     passing = True
     upper_limit = high_bound(x)
     lower_limit = low_bound(x)
-#    print "upper limit", upper_limit, "lower_limit", lower_limit
     if x > x_max or y > y_max:
-#        print "x or y greater than x or y_max"
         passing = False
     if x < 0 or y < 0:
-#        print "x or y smaller than zero: all data should be positive"
         passing = False
     if y > upper_limit:
-#        print "y > upper limit"
         passing = False
     if y < lower_limit:
-#        print "y < lower_limit"
         passing = False
     return passing
 
-
-def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temperatures, ptrm_checks_starting_temperatures, x_ptrm_check, y_ptrm_check, tail_checks_temperatures, tail_checks_starting_temperatures, x_tail_check, y_tail_check):
+def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temperatures, 
+                    ptrm_checks_starting_temperatures, x_ptrm_check, y_ptrm_check, 
+                    tail_checks_temperatures, tail_checks_starting_temperatures, 
+                    x_tail_check, y_tail_check):
     """returns relevant points for a SCAT test"""
     points = []
     for i in range(len(x_Arai_segment)): # uses only the best_fit segment, so no need for further selection
@@ -129,14 +129,16 @@ def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temp
 
     for num, temp in enumerate(ptrm_checks_temperatures): # 
         if temp >= tmin and temp <= tmax: # if temp is within selected range
-            if ptrm_checks_starting_temperatures[num] >= tmin and ptrm_checks_starting_temperatures[num] <= tmax: # and also if it was not done after an out-of-range temp
+            if (ptrm_checks_starting_temperatures[num] >= tmin and 
+                    ptrm_checks_starting_temperatures[num] <= tmax): # and also if it was not done after an out-of-range temp
                 x = x_ptrm_check[num]
                 y = y_ptrm_check[num]
                 points.append((x, y))
 
     for num, temp in enumerate(tail_checks_temperatures):  
         if temp >= tmin and temp <= tmax:
-            if tail_checks_starting_temperatures[num] >= tmin and tail_checks_starting_temperatures[num] <= tmax:
+            if (tail_checks_starting_temperatures[num] >= tmin and 
+                    tail_checks_starting_temperatures[num] <= tmax):
                 x = x_tail_check[num]
                 y = y_tail_check[num]
                 points.append((x, y))
@@ -162,16 +164,14 @@ def get_SCAT(points, low_bound, high_bound, x_max, y_max):
         SCAT = False
     return SCAT
 
-
-
-
 def get_FRAC(vds, vector_diffs_segment):   
     for num in vector_diffs_segment:
         if num < 0:
             raise ValueError('vector diffs should not be negative')
     if vds == 0:
         raise ValueError('attempting to divide by zero. vds should be a positive number')
-    FRAC=sum(vector_diffs_segment[:-1])/ vds # this now matches with Greig's FRAC.  for thellier_gui Ron uses the full vector_diffs_segment
+    FRAC=sum(vector_diffs_segment[:-1])/ vds 
+    # this now matches with Greig's FRAC.  for thellier_gui Ron uses the full vector_diffs_segment
     return FRAC
 
 def get_R_corr2(x_avg, y_avg, x_segment, y_segment): # 
@@ -181,14 +181,11 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
     for num, x in enumerate(x_segment):
         r = ((x - x_avg)  * (y_segment[num] - y_avg) )
         numerator += r
-#    print "numerator", numerator
     numerator = numerator**2
     for x in x_segment:
         denominator_x += ((x - x_avg) ** 2)
-#    print "den_x", denominator_x
     for y in y_segment:
         denominator_y += ((y - y_avg) ** 2)
-#    print "den_y", denominator_y
     denominator = denominator_x * denominator_y
     if denominator == 0: raise ValueError("get_R_corr2 attempted dividing by zero")
     R_corr2 = numerator / denominator
@@ -196,7 +193,8 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
 
 def get_R_det2(y_segment, y_avg, y_prime):
     """
-    takes in an array of y values, the mean of those values, and the array of y prime values.  returns R_det2
+    takes in an array of y values, the mean of those values, and the array of y prime values.  
+    returns R_det2
     """
     top = 0
     for num, y in enumerate(y_segment):
@@ -211,8 +209,6 @@ def get_R_det2(y_segment, y_avg, y_prime):
 
 def get_b_wiggle(x, y, y_int):
     """returns instantaneous slope from the ratio of NRM lost to TRM gained at the ith step"""
-#    print "(y_int - y) / x", 
-#    print "(", y_int,  "-", y, ") /",  x
     if x == 0:
         b_wiggle = 0
     else:
@@ -242,10 +238,13 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
     Zstar = (1. / (n - 1.)) * total
     return Zstar
 
+
+
 # IZZI_MD (mainly)
 
+
 def get_normed_points(point_array, norm): # good to go
-    """takes a set of points and norms them"""
+#    takes a set of points and norms them
     norm = float(norm)
     floated_array = []
     for p in point_array: # need to make sure each point is a float
@@ -254,18 +253,14 @@ def get_normed_points(point_array, norm): # good to go
     return points
 
 def get_xy_array(x_segment, y_segment): 
-    """takes lists of x and y coordiantes and combines them, returning: [(x, y), (x, y)]"""
+ #takes lists of x and y coordiantes and combines them, returning: [(x, y), (x, y)]
     xy_array = []
     for num, x in enumerate(x_segment):
         xy_array.append((x, y_segment[num]))
     return xy_array
 
-
-
-xy_segment = [(1, 2), (3, 4), (5, 6), (7, 8), (9,10), (11, 12), (13, 14)]
-steps = ['IZ', 'ZI', 'ZI', 'IZ', 'IZ', 'ZI', 'IZ']
-
-def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # is failing
+ignore = """
+def get_triangles(xy_segment, Arai_steps): 
     segment = xy_segment[1: ]
     no_repeat_segment = []
     no_repeat_steps = []
@@ -290,18 +285,16 @@ def get_triangles(xy_segment = xy_segment, Arai_steps = steps): # is failing
         midpoints.append(no_repeat_steps[num+1])
 #    print "triangles:", triangles
     return {'triangles': triangles, 'midpoints': midpoints}
-
     
 def get_triangle_sides(x_segment, y_segment):
-    """finds the length of the sides of a triangle from three sets of x, y coordinates"""
+   #finds the length of the sides of a triangle from three sets of x, y coordinates
     L1 = sqrt((x_segment[0] - x_segment[1])**2 + (y_segment[0] - y_segment[1])**2)
     L2 = sqrt((x_segment[1] - x_segment[2])**2 + (y_segment[1] - y_segment[2])**2)
     L3 = sqrt((x_segment[2] - x_segment[0])**2 + (y_segment[2] - y_segment[0])**2)
     return {'L1': L1, 'L2': L2, 'L3': L3}
 
-
 def get_triangle(line1, line2, line3):
-    """takes length of a triangle's lines and returns angle1, the triangle's height, and its area"""
+   #takes length of a triangle's lines and returns angle1, the triangle's height, and its area
 #    print "top of phi: ", (line2**2 + line3**2 - line1**2)
 #    print "bottom of phi: ", 2 * line2 * line3
 #    print "arccos of all that"
@@ -309,7 +302,6 @@ def get_triangle(line1, line2, line3):
     height = line3 * sin(phi)
     area = (line2 * line3 * sin(phi)) / 2
     return { 'triangle_phi': phi, 'triangle_H': height, 'triangle_A': area }
-       
 
 def get_sign(triangle, midpoint):
     first_line = [(triangle[0]), (triangle[2])]
@@ -335,15 +327,7 @@ def get_sign(triangle, midpoint):
 #    return sign
     return {'slope': first_slope, 'first_y_int': first_y_int, 'second_y_int': second_y_int, 'sign': sign }
 
-
-x = numpy.array([1., 1.5, 2., 3., 6., 8., 8.5, 8.5])
-y = numpy.array([8., 4., 3.9, 3.5, 3., 2.5, 2., 1.5])
-xy = []
-for num, x in enumerate(x):
-    xy.append((x, y[num]))
-norm = 2
-steps = ['ZI', 'IZ','ZI', 'IZ','ZI', 'IZ','ZI', 'IZ']
-def get_ZI_line(xy_array=xy, Arai_steps=steps): # seems to work.  only possible problem is not excluding repeat ZI points
+def get_ZI_line(xy_array, Arai_steps): # seems to work.  only possible problem is not excluding repeat ZI points
     ZI_points = []
     for num, point in enumerate(xy_array):
         if Arai_steps[num] == 'ZI':
@@ -440,6 +424,6 @@ def get_IZZI_MD(x_Arai=x_arai, y_Arai=y_arai, steps_Arai=steps_arai):
     
 #    print "IZZI_MD:", IZZI_MD
     return IZZI_MD
-
+"""
 
 
