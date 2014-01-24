@@ -235,19 +235,27 @@ def get_NRM_dev(dang, x_avg, y_int):
 
 def get_theta(B_lab_dir, ChRM): 
     B_lab_cart = dir2cart(B_lab_dir)
-#    print "B_lab_cart", B_lab_cart
-#    print "ChRM", ChRM
+    #    print "B_lab_cart", B_lab_cart
+    #    print "ChRM", ChRM
+    #print "b lab cart"
+    #print B_lab_cart
+    B_lab_cart = [0., 0., -1.] # adding this from Greig's code
+    #print "new b lab cart"
+    #print B_lab_cart
+    #print "ChRM"
+    #print ChRM
     theta = get_angle_difference(B_lab_cart, ChRM) # you should change it so that get_angle_difference can take dir or cart
     return theta
 
 def get_gamma(B_lab_dir, pTRM_dir):
     B_lab_cart = dir2cart(B_lab_dir)
     pTRM_cart = dir2cart(pTRM_dir)
-    print 'B_lab_dir', B_lab_dir
-    print 'pTRM_dir', pTRM_dir
-    print 'B_lab_cart', B_lab_cart
-    print 'pTRM_cart', pTRM_cart
+    #print 'B_lab_dir', B_lab_dir
+    #print 'pTRM_dir', pTRM_dir
+    #print 'B_lab_cart', B_lab_cart
+    #print 'pTRM_cart', pTRM_cart
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
+    B_lab_cart = [0., 0., -1.]
     gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
     # pmag_angle and get_angle difference are equivalent with non zero values
     gamma2 = numpy.array([gamma2])
@@ -255,6 +263,6 @@ def get_gamma(B_lab_dir, pTRM_dir):
     if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
         return float(gamma1)
     else:
-       # print gamma1
-       # print gamma2
-        return False
+        print gamma1
+        print gamma2
+        return float(gamma2)

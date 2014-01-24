@@ -161,8 +161,8 @@ def new_get_TRM_star(C, ptrms_vectors):
     x_star = numpy.zeros(len(ptrms_vectors))
     for num, vec in enumerate(ptrms_vectors[1:]):
         TRM_star[num+1] = vec + C[num]
-        print 'vec', vec
-        print 'C', C[num]
+       # print 'vec', vec
+       # print 'C', C[num]
     for num, trm in enumerate(TRM_star):
         x_star[num] = numpy.linalg.norm(trm)
     return TRM_star, x_star

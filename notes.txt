@@ -475,8 +475,7 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
 
 
 
-
-   
+  
 
 
 Possibly a totally fucked up indexing temperature system.  Greig uses: ...start point, end point...  vs. tmin, tmax
@@ -484,8 +483,9 @@ Possibly a totally fucked up indexing temperature system.  Greig uses: ...start 
 
 theta:
         B_lab vector disagrees.  must talk to Ron.
+        also, for ChRM value, Greig uses equivalent to my best_fit_vector_Anc, whereas I've been using best_fit_vector_Free.
 gamma:
-        also has B_lab problem
+        also has B_lab problem.  UPDATE: this is now the only problem
         his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
         (in gamma):       my ptrm_cart == his Params.TRMvec(seg_max,2:end) / NRM  (now.  so that's good).  (This is the vector edition of the max pTRM)
 mean_DRAT_prime:
@@ -495,6 +495,7 @@ delta_pal:
         his to_sum / NRM == my diffs
         his dpal_sum / NRM == my numpy.cumsum(diffs, 0) == my C
         his corr_TRM / NRM == my x_star
+        his delta_pal now == my delta_pal!!!!
 
 
 

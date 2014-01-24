@@ -340,8 +340,8 @@ class PintPars(object):
 
     def get_theta(self):
         b_lab_dir = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
-       # b_lab_dir = self.B_lab_vector  # doesn't make a difference
-        ChRM = self.pars['best_fit_vector_Free']
+        ChRM = self.pars['best_fit_vector_Free'] # WAS USING THIS
+        ChRM = self.pars['best_fit_vector_Anc'] # THIS AGREES WITH GREIG's CODE
         theta = lib_direct.get_theta(b_lab_dir, ChRM)
         self.pars['theta'] = theta
         return theta
