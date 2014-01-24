@@ -137,13 +137,13 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
     C = numpy.cumsum(diffs, 0)
     return diffs, C
 
-def new_get_TRM_star():
+def new_get_TRM_star(C, ptrms_vectors):
     pass
+    
 
 
 def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
     """presumes ptrms_orig & checks orig have format [[temp, dec, inc, moment, zi/iz], ...].  ptrms_vectors and ptrm_checks_vectors are cartesian [[x,y,z],...].  requires both vector and original format of ptrms and checks for correct temperature indexing.  takes these in and returns diffs and C"""
-
 #    print "ptrms_vectors", ptrms_vectors
 #    print "ptrm_checks_vectors", ptrm_checks_vectors
 #    print "ptrms original", ptrms_orig

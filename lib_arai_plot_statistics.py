@@ -47,8 +47,8 @@ def get_vds(zdata, delta_y_prime, start, end):  #
     for k in range(len(zdata)-1):
             # gets diff between two vectors                                                                      
         vector_diffs.append(sqrt( sum((array(zdata[k+1]) - array(zdata[k]))**2) ))
-    vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds                             
-    last_vector = sqrt(sum(array(zdata[-1])**2))
+    last_vector = numpy.linalg.norm(zdata[-1])
+    vector_diffs.append(last_vector)
     vds = sum(vector_diffs)
     f_vds = abs(delta_y_prime / vds) # fvds varies, because of delta_y_prime, but vds does not.              
     vector_diffs_segment = vector_diffs[start:end]
