@@ -128,7 +128,7 @@ class PintPars(object):
         self.pars={}
 
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
-        self.B_lab_vector = [self.specimen_Data['Thellier_dc_field_phi'], self.specimen_Data['Thellier_dc_field_theta'], self.specimen_Data['Thellier_dc_field_uT']]  # 
+        self.B_lab_dir = [self.specimen_Data['Thellier_dc_field_phi'], self.specimen_Data['Thellier_dc_field_theta'], self.specimen_Data['Thellier_dc_field_uT']]  # 
 
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         self.pars['specimen_n']=self.end-self.start+1
@@ -339,7 +339,7 @@ class PintPars(object):
         return NRM_dev
 
     def get_theta(self):
-        b_lab_dir = [self.B_lab_vector[0], self.B_lab_vector[1], 1.]
+        b_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.]
         ChRM = self.pars['best_fit_vector_Free'] # WAS USING THIS
         ChRM = self.pars['best_fit_vector_Anc'] # THIS AGREES WITH GREIG's CODE
         theta = lib_direct.get_theta(b_lab_dir, ChRM)
@@ -347,10 +347,10 @@ class PintPars(object):
         return theta
 
     def get_gamma(self):
-        lab_vector = [self.B_lab_vector[0], self.B_lab_vector[1], 1.] # dir
-        ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1] # dir
+        B_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.] # dir
+       # ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1] # dir
         ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], self.PTRMS[-1][3] / self.specimen_Data['NRM']] # dir
-        gamma = lib_direct.get_gamma(lab_vector, ptrm_vector)
+        gamma = lib_direct.get_gamma(B_lab_dir, ptrm_vector)
         self.pars['gamma'] = gamma
         return gamma
 

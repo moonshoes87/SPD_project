@@ -263,7 +263,7 @@ def get_gamma(B_lab_dir, pTRM_dir):
     print 'B_lab_cart', B_lab_cart
     print 'pTRM_cart', pTRM_cart
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
-    B_lab_cart = [0., 0., -1.]
+    #B_lab_cart = [0., 0., -1.]
     gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
     # pmag_angle and get_angle difference are equivalent with non zero values
     gamma2 = numpy.array([gamma2])
