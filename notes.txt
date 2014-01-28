@@ -476,7 +476,12 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
 
 
   
+Pending:
 
+        problem in Greig's IZZI_MD
+        problem with Greig's B_lab vector [0,0,-1] where should be [0,0,1]
+        GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code
+        for theta, whether to use best_fit_vector_Anc vs. free
 
 Possibly a totally problematic indexing temperature system.  Greig uses: ...start point, end point...  vs. tmin, tmax
 
@@ -505,12 +510,6 @@ delta_pal:
 
 
 
-to do now:
-   check about vds and which diffs are included
-
-
-
-
 
 different possible units for magnetic moment:
 
@@ -535,3 +534,13 @@ magic -- uses meter Kelvin seconds
 
 style notes:
       stop using tabs!  spaces!
+
+
+problems when changing temperature bounds:
+
+         gamma:
+problem: correct values go in, but my/Lisa's functions use the arccos instead of the arctan method of getting angles.  WRONG.  this is not why
+also not why: using B_lab vs. [0,0,1]
+WHY, for realsies: Greig's pTRM vector is pTRM acquired at Tmax of segment, while mine uses pTRM acquired at nmax.  
+our code now agrees, but should ask Ron
+#loses a little precision with norming, but this is not the main problem.  when I run his numbers through my function, we agree to 3 decimal points.

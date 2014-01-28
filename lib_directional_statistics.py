@@ -185,7 +185,7 @@ def dir2cart(d): # from pmag.py
             ints = numpy.array(d[2])
         else:
             ints = numpy.array([1.])
-    cart= numpy.array([ints * numpy.cos(decs) * numpy.cos(incs),
+    cart = numpy.array([ints * numpy.cos(decs) * numpy.cos(incs),
                        ints * numpy.sin(decs) * numpy.cos(incs),
                        ints * numpy.sin(incs)
                      ]).transpose()
@@ -211,6 +211,13 @@ def pmag_angle(D1,D2): # use this
         angle = angle%360.
         angles.append(angle)
     return numpy.array(angles)
+
+def new_get_angle_diff(v1,v2):
+    v1 = numpy.array(v1)
+    v2 = numpy.array(v2)
+    angle = numpy.arctan2(numpy.linalg.norm(numpy.cross(v1, v2)), numpy.dot(v1, v2))
+    return math.degrees(angle)
+    
 
 def get_angle_difference(v1, v2):
     """returns angular difference in degrees between two vectors.  takes in cartesian coordinates."""
@@ -251,8 +258,8 @@ def get_theta(B_lab_dir, ChRM_cart):
    # print 'ChRM (cart):', ChRM_cart
     theta1 = get_angle_difference(B_lab_cart, ChRM_cart) # you should change it so that get_angle_difference can take dir or cart
     theta2 = pmag_angle(B_lab_dir, ChRM_dir)
-   # print 'theta from cart:',  theta1
-   # print 'theta from dir:', theta2
+    print 'theta from cart:',  theta1
+    print 'theta from dir:', theta2
     return theta1
 
 def get_gamma(B_lab_dir, pTRM_dir):
@@ -263,14 +270,18 @@ def get_gamma(B_lab_dir, pTRM_dir):
     print 'B_lab_cart', B_lab_cart
     print 'pTRM_cart', pTRM_cart
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
-    #B_lab_cart = [0., 0., -1.]
     gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
     # pmag_angle and get_angle difference are equivalent with non zero values
     gamma2 = numpy.array([gamma2])
-    boo = gamma1 == gamma2
+    gamma3 = new_get_angle_diff(B_lab_cart, pTRM_cart)
+    print "gamma1 (from dir):", gamma1
+    print "gqmma2 (from cart):", gamma2
+    print "gamma3 ( with atan from cart): ", gamma3
+#    print "gamma3", gamma3
     if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
         return float(gamma1)
     else:
+        print "not equal with different methods"
         print gamma1
         print gamma2
         return float(gamma2)

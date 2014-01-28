@@ -349,8 +349,12 @@ class PintPars(object):
     def get_gamma(self):
         B_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.] # dir
        # ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1] # dir
-        ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], self.PTRMS[-1][3] / self.specimen_Data['NRM']] # dir
-        gamma = lib_direct.get_gamma(B_lab_dir, ptrm_vector)
+        ind = self.t_Arai.index(self.tmax)
+        alt_ptrm_dir = [self.PTRMS[ind][1], self.PTRMS[ind][2], self.PTRMS[ind][3] / self.specimen_Data['NRM']] # dir
+        alt_ptrm_cart = lib_direct.dir2cart(alt_ptrm_dir)
+        ptrm_dir = [self.PTRMS[-1][1], self.PTRMS[-1][2], self.PTRMS[-1][3] / self.specimen_Data['NRM']] # dir
+        gamma = lib_direct.get_gamma(B_lab_dir, alt_ptrm_dir) # this agrees with Greig's code.
+#        gamma = lib_direct.get_gamma(B_lab_dir, ptrm_dir) # what I have been using
         self.pars['gamma'] = gamma
         return gamma
 
@@ -596,7 +600,8 @@ thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
 #[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
-mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 423., 523.0)
+mat_thing1 = PintPars(gui3.Data, 'ET1_318A', 273., 623.)
+#mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 423., 523.0)
 mat_thing.calculate_all_statistics()
 mat_thing1.calculate_all_statistics()
 
