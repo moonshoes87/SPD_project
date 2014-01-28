@@ -478,7 +478,7 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
   
 
 
-Possibly a totally fucked up indexing temperature system.  Greig uses: ...start point, end point...  vs. tmin, tmax
+Possibly a totally problematic indexing temperature system.  Greig uses: ...start point, end point...  vs. tmin, tmax
 
 
 theta:
@@ -495,6 +495,10 @@ delta_pal:
         his to_sum / NRM == my diffs
         his dpal_sum / NRM == my numpy.cumsum(diffs, 0) == my C
         his corr_TRM / NRM == my x_star
+        # ABOVE IS SAME WITH VARYING TEMPS
+        
+        his corr_slope != my b_star
+
         his delta_pal now == my delta_pal!!!!
 
 
@@ -503,7 +507,7 @@ delta_pal:
 
 to do now:
    check about vds and which diffs are included
-   return to NRM_dev, etc.
+
 
 
 

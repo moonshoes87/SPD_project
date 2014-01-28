@@ -233,27 +233,35 @@ def get_NRM_dev(dang, x_avg, y_int):
     NRM_dev *= 100.
     return NRM_dev
 
-def get_theta(B_lab_dir, ChRM): 
+def get_theta(B_lab_dir, ChRM_cart): 
     B_lab_cart = dir2cart(B_lab_dir)
     #    print "B_lab_cart", B_lab_cart
     #    print "ChRM", ChRM
     #print "b lab cart"
     #print B_lab_cart
-    B_lab_cart = [0., 0., -1.] # adding this from Greig's code
+#    B_lab_cart = [0., 0., -1.] # adding this from Greig's code
     #print "new b lab cart"
     #print B_lab_cart
     #print "ChRM"
     #print ChRM
-    theta = get_angle_difference(B_lab_cart, ChRM) # you should change it so that get_angle_difference can take dir or cart
-    return theta
+    ChRM_dir = cart2dir(ChRM_cart)
+   # print 'B_lab_dir', B_lab_dir
+   # print 'ChRM (dir)', ChRM_dir
+   # print "B_lab_cart:", B_lab_cart
+   # print 'ChRM (cart):', ChRM_cart
+    theta1 = get_angle_difference(B_lab_cart, ChRM_cart) # you should change it so that get_angle_difference can take dir or cart
+    theta2 = pmag_angle(B_lab_dir, ChRM_dir)
+   # print 'theta from cart:',  theta1
+   # print 'theta from dir:', theta2
+    return theta1
 
 def get_gamma(B_lab_dir, pTRM_dir):
     B_lab_cart = dir2cart(B_lab_dir)
     pTRM_cart = dir2cart(pTRM_dir)
-    #print 'B_lab_dir', B_lab_dir
-    #print 'pTRM_dir', pTRM_dir
-    #print 'B_lab_cart', B_lab_cart
-    #print 'pTRM_cart', pTRM_cart
+    print 'B_lab_dir', B_lab_dir
+    print 'pTRM_dir', pTRM_dir
+    print 'B_lab_cart', B_lab_cart
+    print 'pTRM_cart', pTRM_cart
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
     B_lab_cart = [0., 0., -1.]
     gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab

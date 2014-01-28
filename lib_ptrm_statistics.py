@@ -133,6 +133,7 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
     input: ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig
     output: vector diffs between original and ptrm check, C
     """
+    print "calling new get_diffs"
     #    print "ptrms_vectors", ptrms_vectors
     #    print "ptrm_checks_vectors", ptrm_checks_vectors
     #    print "ptrms_orig", ptrms_orig
@@ -153,6 +154,10 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
         else:
             diffs[num] = ptrm_checks_vectors[int(index[num])] - ptrm
     C = numpy.cumsum(diffs, 0)
+    print "diffs (should be same as to_sum"
+    print diffs
+    print "C (should be same as dpal_sum)"
+    print C
     return diffs, C
 
 def new_get_TRM_star(C, ptrms_vectors):
@@ -165,6 +170,8 @@ def new_get_TRM_star(C, ptrms_vectors):
        # print 'C', C[num]
     for num, trm in enumerate(TRM_star):
         x_star[num] = numpy.linalg.norm(trm)
+    print "x_star (should match corr_TRM / NRM)"
+    print x_star
     return TRM_star, x_star
         
 def get_b_star(x_star, y_err, y_mean):
@@ -172,6 +179,8 @@ def get_b_star(x_star, y_err, y_mean):
     x_star_mean = numpy.mean(x_star)
     x_err = x_star - x_star_mean
     b_star = -1* numpy.sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
+    print "b_star (should be same as corr_slope)"
+    print b_star
     return b_star
 
 def get_delta_pal(b, b_star):
@@ -179,6 +188,7 @@ def get_delta_pal(b, b_star):
     return delta_pal
 
 def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b):
+    print "calling get_full_delta_pal in lib"
 #    return 0
     PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM)
 #    print "PTRMS_Cart", PTRMS_cart

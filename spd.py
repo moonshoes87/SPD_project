@@ -128,7 +128,7 @@ class PintPars(object):
         self.pars={}
 
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
-        self.B_lab_vector = [self.specimen_Data['Thellier_dc_field_phi'], self.specimen_Data['Thellier_dc_field_theta'], self.specimen_Data['Thellier_dc_field_uT']]  # although generally last one can be abstracted as 1
+        self.B_lab_vector = [self.specimen_Data['Thellier_dc_field_phi'], self.specimen_Data['Thellier_dc_field_theta'], self.specimen_Data['Thellier_dc_field_uT']]  # 
 
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         self.pars['specimen_n']=self.end-self.start+1
@@ -420,7 +420,7 @@ class PintPars(object):
     def get_delta_pal(self): 
         # the diffs included appear not to take into consideration starting temps, although I'm not fully sure.  meh.  must check on this
         ptrms_segment, checks_segment = lib_ptrm.get_segments(self.PTRMS, self.PTRM_Checks, self.tmax)
-        delta_pal = lib_ptrm.get_full_delta_pal(ptrms_segment, checks_segment, self.NRM, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
+        #delta_pal = lib_ptrm.get_full_delta_pal(ptrms_segment, checks_segment, self.NRM, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
         delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.NRM, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
         self.pars['delta_pal'] = delta_pal
 
@@ -592,8 +592,8 @@ gui3 = tgs.Arai_GUI('magic_measurements_ET1_Biggin_2007.txt')
 specimens = gui2.Data.keys()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
+#mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
 mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
-#mat_thing = PintPars(gui3.Data, 'ET1_318A', 423., 523.)
 #[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
 mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 423., 523.0)
