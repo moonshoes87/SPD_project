@@ -95,7 +95,7 @@ def compare_all(categories, specs1, specs2):
                     print v1, "------", v2
                     #  print "SAME"
             elif n1 != n2:
-                print categories1[num]
+                print categories1[num], categories2[num]
                 print v1, "-----",  v2
             else:
                 pass

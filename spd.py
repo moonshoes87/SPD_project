@@ -261,7 +261,8 @@ class PintPars(object):
         self.pars['R_det2'] = R_det2
 
     def get_Z(self):
-        x_segment, y_segment = self.x_Arai, self.y_Arai
+       # x_segment, y_segment = self.x_Arai, self.y_Arai  #was previously.  but should be segment, it seems.
+        x_segment, y_segment = self.x_Arai_segment, self.y_Arai_segment
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
         slope = self.pars['specimen_b']
         Z = lib_arai.get_Z(x_segment, y_segment, x_int, y_int, slope)
@@ -270,7 +271,7 @@ class PintPars(object):
 
 
     def get_Zstar(self):
-        x_segment, y_segment = self.x_Arai, self.y_Arai
+        x_segment, y_segment = self.x_Arai_segment, self.y_Arai_segment
         x_int, y_int = self.pars['specimen_XT'], self.pars['specimen_YT']
         slope, n = self.pars['specimen_b'], self.n
         Zstar = lib_arai.get_Zstar(x_segment, y_segment, x_int, y_int, slope, n)
