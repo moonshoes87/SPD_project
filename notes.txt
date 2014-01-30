@@ -283,6 +283,20 @@ to use a list as a queue, use collections.dequeue, to grab off elements from the
 
 use regex
 
+>>> try:
+...     1/0
+... except:
+...     print "exception"
+... else:
+...     print "else"
+... finally:
+...     print "finally"
+... 
+exception
+finally
+
+
+
 
 
 
@@ -480,8 +494,12 @@ Pending:
 
         problem in Greig's IZZI_MD
         problem with Greig's B_lab vector [0,0,-1] where should be [0,0,1]
-        GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code
+        GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code. 
+                update: partial is correct, but Greig hasn't updated his code yet
         for theta, whether to use best_fit_vector_Anc vs. free
+        FRAC now disagrees with thellier_gui FRAC.  talk to Ron
+        does my code need to be able to deal with someone selecting tmin = t[0], tmax = t[1] ?  Greig's produces output in this situation
+        magic_measurements is missing one of the Biggin et al .tdt files.  probs no big deal. 
 
 Possibly a totally problematic indexing temperature system.  Greig uses: ...start point, end point...  vs. tmin, tmax
 
@@ -543,8 +561,8 @@ problem: correct values go in, but my/Lisa's functions use the arccos instead of
 also not why: using B_lab vs. [0,0,1]
 WHY, for realsies: Greig's pTRM vector is pTRM acquired at Tmax of segment, while mine uses pTRM acquired at nmax.  
 our code now agrees, but should ask Ron
-#loses a little precision with norming, but this is not the main problem.  when I run his numbers through my function, we agree to 3 decimal points.
+#loses a little precision with norming, but this is not the main problem.  
 
-       r_det2 -- Greig uses full data, you use segment.  which is right?  fix this!!
+       r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  FIXED
 
        Z --  Greig uses segment, where I was using full data.  fixed.  

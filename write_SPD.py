@@ -2,6 +2,7 @@
 
 
 import numpy
+import sys
 import spd
 
 
@@ -13,9 +14,17 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-in_files = ['magic_measurements_ET1_Biggin_2007.txt']
-outfile = 'ET1_Biggin_2007_output.txt'
+in_files = ['magic_measurements_Biggin_etal_2007.txt']
+outfile = 'Biggin_etal_2007_output.txt'
 
+print sys.argv
+
+if '-f' in sys.argv:
+    print 'ffffffff'
+    in_file_ind = sys.argv.index('-f') + 1
+    in_files = [sys.argv[in_file_ind]]
+    
+print "in files", in_files
         
 basic_stats = ['s', 'specimen_n', 'tmin', 'tmax'] # start, end  # removed these two because no equivalent in Greig's code
 
@@ -55,7 +64,7 @@ for f in in_files:
     data = gui.Data
     specimen_names = gui.Data.keys()
     for s in specimen_names:
-        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][5])
+        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][3], gui.Data[s]['t_Arai'][6])
 #        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][1], gui.Data[s]['t_Arai'][3])
         print spec.s, spec.tmin, spec.tmax
         spec.calculate_all_statistics()

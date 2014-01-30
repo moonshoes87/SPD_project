@@ -94,9 +94,9 @@ def compare_all(categories, specs1, specs2):
                     print categories1[num]
                     print v1, "------", v2
                     #  print "SAME"
-            elif n1 != n2:
+            elif n1 != n2:  # it's not a string, and not nan, and the values don't match
                 print categories1[num], categories2[num]
-                print v1, "-----",  v2
+                #print v1, "-----",  v2
                 print n1, "-----", n2
             else:
                 pass

@@ -56,6 +56,7 @@ def get_vds(zdata, delta_y_prime, start, end):
     vector_diffs_segment = vector_diffs[start:end]
     partial_vds = sum(vector_diffs_segment)
     max_diff = max(vector_diffs_segment)
+    print "Vector diffs segment", vector_diffs_segment
     GAP_MAX = max_diff / partial_vds # this is the way that's consistent with thellier_gui
 #    GAP_MAX = max_diff / vds  # this is consistent with Greig's code
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 
@@ -170,8 +171,9 @@ def get_FRAC(vds, vector_diffs_segment):
             raise ValueError('vector diffs should not be negative')
     if vds == 0:
         raise ValueError('attempting to divide by zero. vds should be a positive number')
-    FRAC=sum(vector_diffs_segment[:-1])/ vds 
-    # this now matches with Greig's FRAC.  for thellier_gui Ron uses the full vector_diffs_segment
+    print "vector_diffs_segment", vector_diffs_segment
+    FRAC = sum(vector_diffs_segment[:-1])/ vds # matches Greig's code
+    #FRAC = sum(vector_diffs_segment) / vds # matches thellier_gui
     return FRAC
 
 def get_R_corr2(x_avg, y_avg, x_segment, y_segment): # 
