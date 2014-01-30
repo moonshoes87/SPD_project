@@ -545,6 +545,6 @@ WHY, for realsies: Greig's pTRM vector is pTRM acquired at Tmax of segment, whil
 our code now agrees, but should ask Ron
 #loses a little precision with norming, but this is not the main problem.  when I run his numbers through my function, we agree to 3 decimal points.
 
-       r_det2 -- Greig uses full data, you use segment.  which is right?
+       r_det2 -- Greig uses full data, you use segment.  which is right?  fix this!!
 
        Z --  Greig uses segment, where I was using full data.  fixed.  

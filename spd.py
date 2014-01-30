@@ -412,13 +412,15 @@ class PintPars(object):
         return DRATS
 
     def get_mean_DRAT(self):
-        mean_DRAT, mean_DRAT_prime = lib_ptrm.get_mean_DRAT(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['n_ptrm'], self.pars['length_best_fit_line'])
+        mean_DRAT, mean_DRAT_prime = lib_ptrm.get_mean_DRAT(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], 
+                                                            self.pars['n_ptrm'], self.pars['length_best_fit_line'])
         self.pars['mean_DRAT'] = mean_DRAT
         self.pars['mean_DRAT_prime'] = mean_DRAT_prime
         return mean_DRAT, mean_DRAT_prime
 
     def get_mean_DEV(self):
-        mean_DEV, mean_DEV_prime = lib_ptrm.get_mean_DEV(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], self.pars['n_ptrm'], self.pars['delta_x_prime'])
+        mean_DEV, mean_DEV_prime = lib_ptrm.get_mean_DEV(self.pars['sum_ptrm_checks'], self.pars['sum_abs_ptrm_checks'], 
+                                                         self.pars['n_ptrm'], self.pars['delta_x_prime'])
         self.pars['mean_DEV'] = mean_DEV
         self.pars['mean_DEV_prime'] = mean_DEV_prime
 
