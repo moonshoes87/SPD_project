@@ -113,6 +113,8 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 
 def get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM):
     """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """
+    print "PTRMS", len(PTRMS)
+    print PTRMS
     if type(PTRMS) != numpy.ndarray:
         PTRMS = numpy.array(PTRMS)
     if type(PTRM_Checks != numpy.ndarray):
@@ -134,7 +136,7 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
     output: vector diffs between original and ptrm check, C
     """
     print "calling new get_diffs"
-    #    print "ptrms_vectors", ptrms_vectors
+    print "ptrms_vectors", ptrms_vectors
     #    print "ptrm_checks_vectors", ptrm_checks_vectors
     #    print "ptrms_orig", ptrms_orig
     #    print "checks_orig", checks_orig
@@ -160,7 +162,7 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
     print C
     return diffs, C
 
-def new_get_TRM_star(C, ptrms_vectors):
+def new_get_TRM_star(C, ptrms_vectors, start, end):
     TRM_star = numpy.zeros([len(ptrms_vectors), 3])
     TRM_star[0] = [0., 0., 0.]
     x_star = numpy.zeros(len(ptrms_vectors))
@@ -171,8 +173,8 @@ def new_get_TRM_star(C, ptrms_vectors):
     for num, trm in enumerate(TRM_star):
         x_star[num] = numpy.linalg.norm(trm)
     print "x_star (should match corr_TRM / NRM)"
-    print x_star
-    return TRM_star, x_star
+    print x_star[start:end+1]
+    return TRM_star[start:end+1], x_star[start:end+1]
         
 def get_b_star(x_star, y_err, y_mean):
     """get corrected x segment and x_mean"""
@@ -187,14 +189,15 @@ def get_delta_pal(b, b_star):
     delta_pal = numpy.abs((b - b_star) / b) * 100
     return delta_pal
 
-def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b):
+def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b, start, end):
+    print "-------"
     print "calling get_full_delta_pal in lib"
 #    return 0
     PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM)
 #    print "PTRMS_Cart", PTRMS_cart
     diffs, C = new_get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
 #    print "C", C
-    TRM_star, x_star = new_get_TRM_star(C, PTRMS_cart)
+    TRM_star, x_star = new_get_TRM_star(C, PTRMS_cart, start, end)
 #    print "x_star", x_star
 #    print type(x_star)
     b_star = get_b_star(x_star, y_err, y_mean)

@@ -428,7 +428,8 @@ class PintPars(object):
         # the diffs included appear not to take into consideration starting temps, although I'm not fully sure.  meh.  must check on this
         ptrms_segment, checks_segment = lib_ptrm.get_segments(self.PTRMS, self.PTRM_Checks, self.tmax)
         #delta_pal = lib_ptrm.get_full_delta_pal(ptrms_segment, checks_segment, self.NRM, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
-        delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.NRM, self.pars['y_err'], self.y_Arai_mean, self.pars['specimen_b'])
+        delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.NRM, self.pars['y_err'], 
+                                                self.y_Arai_mean, self.pars['specimen_b'], self.start, self.end)
         self.pars['delta_pal'] = delta_pal
 
 
