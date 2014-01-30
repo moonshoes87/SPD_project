@@ -219,11 +219,8 @@ def get_Z(x_segment, y_segment, x_int, y_int, slope):
     """Arai plot zigzag parameter"""
     Z = 0
     first_time = True
-    print "x_segment", x_segment
-    print "y_segment", y_segment
     for num, x in enumerate(x_segment):
         b_wiggle = get_b_wiggle(x, y_segment[num], y_int)
-        print b_wiggle
         z = (x * abs(b_wiggle - abs(slope)) ) / x_int
         Z += z
         first_time = False
