@@ -14,8 +14,8 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-in_files = ['magic_measurements_Biggin_etal_2007.txt']
-outfile = 'Biggin_etal_2007_output.txt'
+in_files = ['consistency_tests/Biggin_etal_2007_magic_measurements.txt']
+outfile = 'consistency_tests/Biggin_etal_2007.out'
 
 print sys.argv
 
