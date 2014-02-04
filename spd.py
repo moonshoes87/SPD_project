@@ -576,7 +576,7 @@ import new_lj_thellier_gui_spd as tgs
 
 gui = tgs.Arai_GUI()
 gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
-gui3 = tgs.Arai_GUI('magic_measurements_ET1_Biggin_2007.txt')
+gui3 = tgs.Arai_GUI('magic_measurements_Biggin_etal_2007.txt')
 specimens = gui2.Data.keys()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 

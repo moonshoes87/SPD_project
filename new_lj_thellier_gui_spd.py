@@ -22,7 +22,7 @@ except:
 from pylab import *  # this stuff is being used, don't know all where
 #from scipy.optimize import curve_fit
 
-import thellier_consistency_test
+#import thellier_consistency_test
 
 
 class Arai_GUI():
