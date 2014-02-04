@@ -539,7 +539,7 @@ class PintPars(object):
         self.get_R_det2()
         self.get_Z()
         self.get_Zstar()
-        self.get_Ron_IZZI_MD()
+        self.get_IZZI_MD()
         # directional statistics
         self.get_dec_and_inc()
         self.get_MAD()

@@ -3,9 +3,11 @@
 import unittest
 import numpy
 import copy
-import spd
+#from .SPD_project import spd
+print "imported one"
+from ..lib import lib_arai_plot_statistics as lib_arai
 import known_values
-import lib_arai_plot_statistics as lib_arai
+
 
 
 # could use this directly in here:

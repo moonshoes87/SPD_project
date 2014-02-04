@@ -2,8 +2,8 @@
 
 import numpy
 import unittest
-import lib_curvature as lib_k
-
+import sys
+from ..lib import lib_curvature as lib_k
 
 
 class CheckCircle(unittest.TestCase):

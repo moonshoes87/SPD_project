@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-import lib_additivity_check_statistics as lib_add
+from ..lib.lib_additivity_check_statistics import get_n_add
 
 
 #class CheckTailSelection(unittest.TestCase):

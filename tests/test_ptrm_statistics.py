@@ -4,9 +4,10 @@
 
 import numpy
 import unittest
-import spd
-import lib_ptrm_statistics as lib_ptrm
-import lib_directional_statistics as lib_direct
+#import spd
+from SPD_project.lib import lib_ptrm_statistics as lib_ptrm
+#import lib_ptrm_statistics as lib_ptrm
+#import lib_directional_statistics as lib_direct
 
 
 
