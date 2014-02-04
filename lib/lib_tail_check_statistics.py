@@ -40,6 +40,8 @@ def get_DRAT_tail(max_check, L):
     input: tail_check_max, best fit line length
     output: DRAT_tail
     """
+    if max_check == 0:
+        return float('nan')
     DRAT_tail = (max_check / L) * 100.
     return DRAT_tail
 
@@ -48,6 +50,8 @@ def get_delta_TR(tail_check_max, y_int):
     input: tail_check_max, y_intercept
     output: delta_TR
     """
+    if tail_check_max == 0:
+        return float('nan')
     delta_TR = (tail_check_max / y_int) * 100.
     return delta_TR
 
@@ -56,5 +60,7 @@ def get_MD_VDS(tail_check_max, vds):
     input: tail_check_max, vector difference sum
     output: MD_VDS
     """    
+    if tail_check_max == 0:
+        return float('nan')
     MD_VDS = (tail_check_max / vds) * 100
     return MD_VDS

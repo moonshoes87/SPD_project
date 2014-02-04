@@ -14,8 +14,8 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-in_files = ['consistency_tests/Biggin_etal_2007_magic_measurements.txt']
-outfile = 'consistency_tests/Biggin_etal_2007.out'
+in_files = ['consistency_tests/Bowles_etal_2006_magic_measurements.txt']#['consistency_tests/Biggin_etal_2007_magic_measurements.txt']
+outfile = 'consistency_tests/Bowles_etal_2006.out'# ['consistency_tests/Biggin_etal_2007.out']
 
 print sys.argv
 
@@ -47,9 +47,9 @@ import new_lj_thellier_gui_spd as tgs
 
 print "starting thingee"
 
-
+print 'outfile', outfile
 # create tab file
-out = open(outfile, 'w')
+out = open(outfile, 'w+')
 for stat in basic_stats:
     out.write(stat + '\t')
 for stat in long_list:
@@ -64,8 +64,8 @@ for f in in_files:
     data = gui.Data
     specimen_names = gui.Data.keys()
     for s in specimen_names:
-        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][3], gui.Data[s]['t_Arai'][6])
-#        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][1], gui.Data[s]['t_Arai'][3])
+        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][6])
+        spec.s = spec.s.replace('-', '_')
         print spec.s, spec.tmin, spec.tmax
         spec.calculate_all_statistics()
         out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))

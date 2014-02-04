@@ -565,6 +565,7 @@ class PintPars(object):
         self.get_DRAT_tail()
         self.get_delta_TR()
         self.get_MD_VDS()
+        # additivity check statistics
         self.get_n_add()
         self.get_delta_AC()
         print "done with calculate_all_statistics"
@@ -576,18 +577,16 @@ import new_lj_thellier_gui_spd as tgs
 
 gui = tgs.Arai_GUI()
 gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
-gui3 = tgs.Arai_GUI('consistency_tests/Biggin_etal_2007_magic_measurements.txt')
+gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 specimens = gui2.Data.keys()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
 #mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
-mat_thing = PintPars(gui3.Data, 'ET1_318A', 273., 673.)
+mat_thing = PintPars(gui3.Data, 'AL2852-2c', 273., 673.)
 #[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
-mat_thing1 = PintPars(gui3.Data, 'ET1_318A', 273., 623.)
-#mat_thing1 = PintPars(gui3.Data, 'ET1_283E', 423., 523.0)
 mat_thing.calculate_all_statistics()
-mat_thing1.calculate_all_statistics()
+
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
