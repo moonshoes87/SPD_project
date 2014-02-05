@@ -1240,21 +1240,34 @@ class Arai_GUI():
                 str=float(zrec[momkey])
                 first_Z.append([temp,dec,inc,str,ZI])
         # sort out first_I records 
+                #print 'irec', irec # full data set for infield measurement
+                #print 'zrec', zrec # coresponding zerofield measurement
                 idec=float(irec["measurement_dec"])
                 iinc=float(irec["measurement_inc"])
                 istr=float(irec[momkey])
                 X=self.dir2cart([idec,iinc,istr])
                 BL=self.dir2cart([dec,inc,str])
+                print "X (infield)", X # lj
+                print "BL (zerofield)", BL #lj
                 I=[]
-                for c in range(3): I.append((X[c]-BL[c]))
-                if I[2]!=0:
+                for c in range(3): 
+                    I.append((X[c]-BL[c]))
+                print "I", I
+                #if I[2]!=0: # lj PUT THIS BACK
+                if True:
                     iDir=self.cart2dir(I)
                     if Zdiff==0:
+                        print "Zdiff == 0, appending to first_I" #lj
+                        print [temp,iDir[0],iDir[1],iDir[2],ZI] #lj
                         first_I.append([temp,iDir[0],iDir[1],iDir[2],ZI])
                     else:
+                        print "Zdiff != 0, appending to first_I" #lj
+                        print [temp,0.,0.,I[2],ZI]  #lj
                         first_I.append([temp,0.,0.,I[2],ZI])
 ##                    gamma=angle([iDir[0],iDir[1]],[phi,theta])
                 else:
+                    print "0,0,0 appending to first_I"
+                    print [temp,0.,0.,0.,ZI]
                     first_I.append([temp,0.,0.,0.,ZI])
 ##                    gamma=0.0
 ##    # put in Gamma check (infield trm versus lab field)
@@ -1295,6 +1308,8 @@ class Arai_GUI():
                         DIR_infield=self.cart2dir(infield)
 
                         first_Z.append([temp,DIR_zerofield[0],DIR_zerofield[1],DIR_zerofield[2],0])
+                        print "appending to first_I" # LJ remove this
+                        print [temp,DIR_infield[0],DIR_infield[1],DIR_infield[2],0] # LJ remove this
                         first_I.append([temp,DIR_infield[0],DIR_infield[1],DIR_infield[2],0])
     
 
@@ -1403,7 +1418,9 @@ class Arai_GUI():
                 for c in range(3): I.append(V1[c]-V0[c])
                 dir1=self.cart2dir(I)
                 additivity_check.append([temp,dir1[0],dir1[1],dir1[2]])
-
+        
+        print "first_I"
+        print first_I
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks,additivity_check)
 
 #        print "done with sortarai()"

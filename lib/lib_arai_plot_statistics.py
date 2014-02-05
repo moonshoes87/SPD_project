@@ -67,7 +67,7 @@ def get_vds(zdata, delta_y_prime, start, end):
     vector_diffs_segment = vector_diffs[start:end]
     partial_vds = sum(vector_diffs_segment)
     max_diff = max(vector_diffs_segment)
-    print "Vector diffs segment", vector_diffs_segment
+    #print "Vector diffs segment", vector_diffs_segment
     GAP_MAX = max_diff / partial_vds # this is the way that's consistent with thellier_gui, and that Greig will/should be changing to
 #    GAP_MAX = max_diff / vds  # this is consistent with Greig's code
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 

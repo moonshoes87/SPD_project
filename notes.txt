@@ -591,3 +591,14 @@ talk to Ron:
     occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
     see: Bowles etal 200? AL3023_1b
     what to do about this?  should I be calculating b as Greig does?
+
+    AL2360-1b  - xpts come out different in my code vs. Greig's.  Ypts are the same, though.   
+    AL2360_1d  - same
+               looks like PTRMS/araiblock is being set incorrectly to [0,0,0] for the second value.  
+
+
+problems:
+        DANG
+        NRM_dev
+        delta_ck
+        delta_pal

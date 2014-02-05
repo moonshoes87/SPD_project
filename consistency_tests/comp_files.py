@@ -55,8 +55,7 @@ def print_all(categories, specs1, specs2):
 
 
 def compare_all(categories, specs1, specs2):
-
-    if specs1.keys().sort() == specs2.keys().sort():
+    if sorted(specs1.keys()) == sorted(specs2.keys()):
         pass
     else:
         raise NameError('different specimens detected')
