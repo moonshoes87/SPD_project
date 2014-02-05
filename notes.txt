@@ -566,3 +566,28 @@ our code now agrees, but should ask Ron
        r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  FIXED
 
        Z --  Greig uses segment, where I was using full data.  fixed.  
+
+
+
+talk to Ron:
+
+    when x_prime is:
+    0.0517
+    0.0209
+    0.0521
+    0.0832
+    0.0990
+    0.1271
+    0.2638
+    min, max, first = .0209, .2638, .0517
+
+    Greig uses:    TRM_Len=max(Px(seg))-min(Px(seg));
+    where I use: delta_x_prime = abs(x_prime[-1] - x_prime[0])
+
+
+    GAP-MAX
+
+
+    occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
+    see: Bowles etal 200? AL3023_1b
+    what to do about this?  should I be calculating b as Greig does?

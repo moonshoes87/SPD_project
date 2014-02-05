@@ -8,6 +8,12 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     x_err = x_segment - x_mean
     y_err = y_segment - y_mean
     york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope
+
+    #Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);
+    b = sign(sum(x_err * y_err)) * std(y_segment, ddof=1)/std(x_segment, ddof=1)
+    york_b = b
+    # U is equivalent to x_err, v is equivalent to y_err
+
     york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
     beta_Coe=abs(york_sigma/york_b) 
     # y_T is the intercept of the extrepolated line
@@ -24,6 +30,11 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
 
     delta_x_prime = abs(x_prime[-1] - x_prime[0]) #TRM length of the best fit line
     delta_y_prime = abs(y_prime[-1] - y_prime[0]) #NRM length of the best fit line 
+
+    delta_x_prime = abs(max(x_prime) - min(x_prime))
+    delta_y_prime = abs(max(y_prime) - min(y_prime))
+
+
     f_Coe = delta_y_prime / y_T 
     g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
     g_lim = (float(n) - 2) / (float(n) - 1) 
@@ -57,7 +68,7 @@ def get_vds(zdata, delta_y_prime, start, end):
     partial_vds = sum(vector_diffs_segment)
     max_diff = max(vector_diffs_segment)
     print "Vector diffs segment", vector_diffs_segment
-    GAP_MAX = max_diff / partial_vds # this is the way that's consistent with thellier_gui
+    GAP_MAX = max_diff / partial_vds # this is the way that's consistent with thellier_gui, and that Greig will/should be changing to
 #    GAP_MAX = max_diff / vds  # this is consistent with Greig's code
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 
             'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 
@@ -172,8 +183,8 @@ def get_FRAC(vds, vector_diffs_segment):
     if vds == 0:
         raise ValueError('attempting to divide by zero. vds should be a positive number')
     print "vector_diffs_segment", vector_diffs_segment
-    FRAC = sum(vector_diffs_segment[:-1])/ vds # matches Greig's code
-    #FRAC = sum(vector_diffs_segment) / vds # matches thellier_gui
+#    FRAC = sum(vector_diffs_segment[:-1])/ vds # matches Greig's old code, which he will fix to be consistent with below
+    FRAC = sum(vector_diffs_segment) / vds # matches thellier_gui
     return FRAC
 
 def get_R_corr2(x_avg, y_avg, x_segment, y_segment): # 
