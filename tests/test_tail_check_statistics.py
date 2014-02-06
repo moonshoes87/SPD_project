@@ -3,8 +3,10 @@
 import numpy
 import unittest
 import copy
-import spd
-import lib_tail_check_statistics as lib_tail
+import sys
+sys.path.append('/Users/nebula/Python')
+from SPD_project import spd
+from SPD_project.lib import lib_tail_check_statistics as lib_tail
 
 
 #class CheckpTRMparams(unittest.TestCase): 

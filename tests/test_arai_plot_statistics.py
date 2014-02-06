@@ -4,8 +4,13 @@ import unittest
 import numpy
 import copy
 #from .SPD_project import spd
-print "imported one"
-from ..lib import lib_arai_plot_statistics as lib_arai
+#print "imported one"
+#from ..lib import lib_arai_plot_statistics as lib_arai
+import sys
+sys.path.append('/Users/nebula/Python')
+from SPD_project.lib import lib_arai_plot_statistics as lib_arai
+from SPD_project import spd
+
 import known_values
 
 

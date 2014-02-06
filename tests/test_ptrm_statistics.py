@@ -4,8 +4,10 @@
 
 import numpy
 import unittest
-#import spd
+import sys
+sys.path.append('/Users/nebula/Python')
 from SPD_project.lib import lib_ptrm_statistics as lib_ptrm
+from SPD_project import spd
 #import lib_ptrm_statistics as lib_ptrm
 #import lib_directional_statistics as lib_direct
 

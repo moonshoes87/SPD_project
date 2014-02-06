@@ -575,12 +575,12 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 
-#gui = tgs.Arai_GUI()
+gui = tgs.Arai_GUI()
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 #specimens = gui2.Data.keys()
-#thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
-
+thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+thing.calculate_all_statistics()
 
 #mat_thing = PintPars(gui3.Data, 'AL2360-1b', 273., 498.)
 #mat_thing.calculate_all_statistics()

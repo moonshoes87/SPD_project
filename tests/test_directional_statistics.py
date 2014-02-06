@@ -4,9 +4,12 @@ import unittest
 import numpy
 import copy
 import math
-import spd
+import sys
+sys.path.append('/Users/nebula/Python')
+from SPD_project.lib import lib_directional_statistics as lib_direct
+from SPD_project import spd
 #import known_values
-import lib_directional_statistics as lib_direct
+#import lib_directional_statistics as lib_direct
 
 
 thing = spd.thing
