@@ -578,7 +578,6 @@ import new_lj_thellier_gui_spd as tgs
 #gui = tgs.Arai_GUI()
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
-gui4 = tgs.Arai_GUI('consistency_tests/temp_magic_measurements.txt')
 #specimens = gui2.Data.keys()
 #thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 
@@ -588,8 +587,8 @@ gui4 = tgs.Arai_GUI('consistency_tests/temp_magic_measurements.txt')
 #[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
 
-spec = PintPars(gui4.Data, 'AL2360-1b', 273., 498.)
-spec2 = PintPars(gui4.Data, 'AL2360-1d', 273, 498.)
+spec = PintPars(gui3.Data, 'AL2360-1b', 273., 498.)
+spec2 = PintPars(gui3.Data, 'AL2360-1d', 273, 498.)
 spec.calculate_all_statistics()
 spec2.calculate_all_statistics()
 

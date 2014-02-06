@@ -1252,7 +1252,9 @@ class Arai_GUI():
                 I=[]
                 for c in range(3): 
                     I.append((X[c]-BL[c]))
-                print "I", I
+                iDir=self.cart2dir(I)
+                first_I.append([temp,iDir[0],iDir[1],iDir[2],ZI])
+                now_ignore = """
                 #if I[2]!=0: # lj PUT THIS BACK
                 if True:
                     iDir=self.cart2dir(I)
@@ -1274,7 +1276,7 @@ class Arai_GUI():
 ##                if 180.-gamma<gamma:
 ##                    gamma=180.-gamma
 ##                GammaChecks.append([temp-273.,gamma])
-
+                 """
 
         #---------------------
         # find Thellier Thellier protocol

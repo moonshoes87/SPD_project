@@ -583,6 +583,7 @@ talk to Ron:
 
     Greig uses:    TRM_Len=max(Px(seg))-min(Px(seg));
     where I use: delta_x_prime = abs(x_prime[-1] - x_prime[0])
+    Ron is ASKING LISA
 
 
     GAP-MAX
@@ -591,8 +592,17 @@ talk to Ron:
     occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
     see: Bowles etal 200? AL3023_1b
     what to do about this?  should I be calculating b as Greig does?
+         x_err = x_segment - x_mean
+         y_err = y_segment - y_mean
+         york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
+         # how Greig does it:
+         #Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);                                                   
+         b = sign(sum(x_err * y_err)) * std(y_segment, ddof=1)/std(x_segment, ddof=1)
+    ask Lisa
 
-    AL2360-1b  - xpts come out different in my code vs. Greig's.  Ypts are the same, though.   
+
+
+    AL2360-1b  - xpts come out different in my code vs. Greig's.  Ypts are the same, though.   p
     AL2360_1d  - same
                looks like PTRMS/araiblock is being set incorrectly to [0,0,0] for the second value.  
 
