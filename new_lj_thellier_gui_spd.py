@@ -1247,8 +1247,6 @@ class Arai_GUI():
                 istr=float(irec[momkey])
                 X=self.dir2cart([idec,iinc,istr])
                 BL=self.dir2cart([dec,inc,str])
-                print "X (infield)", X # lj
-                print "BL (zerofield)", BL #lj
                 I=[]
                 for c in range(3): 
                     I.append((X[c]-BL[c]))
@@ -1421,8 +1419,6 @@ class Arai_GUI():
                 dir1=self.cart2dir(I)
                 additivity_check.append([temp,dir1[0],dir1[1],dir1[2]])
         
-        print "first_I"
-        print first_I
         araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks,additivity_check)
 
 #        print "done with sortarai()"

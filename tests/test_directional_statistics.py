@@ -5,7 +5,8 @@ import numpy
 import copy
 import math
 import sys
-sys.path.append('/Users/nebula/Python')
+if '/Users/nebula/Python' not in sys.path:
+    sys.path.append('/Users/nebula/Python')
 from SPD_project.lib import lib_directional_statistics as lib_direct
 from SPD_project import spd
 #import known_values
@@ -152,7 +153,7 @@ class CheckDang(unittest.TestCase):
 
 
 class CheckNRMdev(unittest.TestCase):
-    dang = 2.
+    dang = 114.59155902616465 # rad2deg(2)
 #    X1_avg, X2_avg, X3_avg = 1.5, 5., 7
     X_avg = [1.5, 5., 7.]
     y_int = 7.
@@ -162,14 +163,10 @@ class CheckNRMdev(unittest.TestCase):
         result = lib_direct.get_NRM_dev(self.dang, self.X_avg, self.y_int)
         self.assertAlmostEqual(self.ref_NRM_dev, result)
 
-    def test_NRM_dev_real_values(self): # not done....??
-        r = thing.get_NRM_dev()
-        #print r
     
 class CheckTheta(unittest.TestCase):  # need to understand dir2cart, cart2dir better before can sign off on this one.  however, I THINK it is right as is
-#    ChRM = [-0.00281948, -0.06360888,  0.99797092] # using free PCA example:   267.462012722 86.3494317628.  dir2cart: [-0.00281948, -0.06360888,  0.99797092]
-    #ChRM = numpy.array([-0.00281948, -0.06360888,  0.99797092])
-    ChRM = numpy.array([-0.00281947815208591791, -0.06360887927605490821,  0.99797092193119241177])
+    ChRM = numpy.array([-0.00281947815208591791, -0.06360887927605490821,  0.99797092193119241177]) 
+    # ChRM Dir = ([ 267.46201272,   86.34943176,    1.        ])
     B_lab_dir = [0.0, 90.0, 1.] # different from B_lab_vector... ignore last value
 
     def test_theta(self):  # FINISH ME!!!!!

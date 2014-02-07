@@ -3,11 +3,11 @@
 import unittest
 import numpy
 import copy
-#from .SPD_project import spd
-#print "imported one"
-#from ..lib import lib_arai_plot_statistics as lib_arai
 import sys
-sys.path.append('/Users/nebula/Python')
+print sys.path
+if '/Users/nebula/Python' not in sys.path:
+    sys.path.append('/Users/nebula/Python')
+print sys.path
 from SPD_project.lib import lib_arai_plot_statistics as lib_arai
 from SPD_project import spd
 
@@ -303,12 +303,10 @@ class CheckZigzag(unittest.TestCase):
     n = len(x)
     reference_b_wiggle = [0, .25, 3./5.]
 
-
     slope = 1.2
     Z = 1.3599999999999999
 
 # above is correct
-
 
     Z_star = 113.33333333333333
 #    Z_star = 88.
@@ -327,19 +325,12 @@ class CheckZigzag(unittest.TestCase):
         result = lib_arai.get_Z(self.x, self.y, self.x_int, self.y_int, self.slope)
         self.assertAlmostEqual(self.Z, result)
 
-    def testPintParsZ(self):
-        result = self.obj.get_Z()
-        self.assertAlmostEqual(self.Z, result)
-
     def testZStar(self):
         result = lib_arai.get_Zstar(self.x, self.y, self.x_int, self.y_int, self.slope, self.n)
         self.assertAlmostEqual(self.Z_star, result)
 
-    def testPintParsZstar(self):
-        result = self.obj.get_Zstar()
-        self.assertAlmostEqual(self.Z_star, result)
 
-class IZZI_MD(unittest.TestCase):
+class CheckIZZI_MD(unittest.TestCase):
     points = numpy.array([1., 2., 3.])
     norm = 4.
     ref_normed_points = numpy.array([.25, .5, .75])
@@ -480,6 +471,25 @@ class IZZI_MD(unittest.TestCase):
 #  get actual points, make them triangles
 #  sum the areas, return IZZI_MD
 
+
+#print unittest.TestLoader().loadTestsFromTestCase.__doc__
+
+ignore = """
+suite = unittest.TestLoader().loadTestsFromTestCase(CheckParams)
+suite2 = unittest.TestLoader().loadTestsFromTestCase(CheckFrac)
+suite3 = unittest.TestLoader().loadTestsFromTestCase(CheckInitialAttributeValues)
+suite4 = unittest.TestLoader().loadTestsFromTestCase(CheckR_corr2)
+suite5 = unittest.TestLoader().loadTestsFromTestCase(CheckR_det2)
+suite6 = unittest.TestLoader().loadTestsFromTestCase(CheckSCAT)
+suite7 = unittest.TestLoader().loadTestsFromTestCase(CheckVDSsequence)
+suite8 = unittest.TestLoader().loadTestsFromTestCase(CheckYorkRegression)
+suite9 = unittest.TestLoader().loadTestsFromTestCase(CheckZigzag)
+suite10 = unittest.TestLoader().loadTestsFromTestCase(CheckIZZI_MD) 
+suite.addTests(suite2)
+suite.addTests(suite3)
+"""
+
+#unittest.TextTestRunner(verbosity=2).run(suite)
 
 if __name__ == "__main__":
     unittest.main()
