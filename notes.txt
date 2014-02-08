@@ -517,10 +517,13 @@ delta_pal:
         his pCheck / NRM == my dir2cart([PTRM_Checks[i][1], PTRM_Checks[i][2], PTRM_Checks[i][3] / NRM])
         his to_sum / NRM == my diffs
         his dpal_sum / NRM == my numpy.cumsum(diffs, 0) == my C
-        his corr_TRM / NRM == my x_star
-        # ABOVE IS SAME WITH VARYING TEMPS
+
+        his xcorr / NRM == my x_star (both segment)
+            above is good.  now check below.  (AL3031-1d)
         
-        his corr_slope != my b_star
+        here is the problem!!!  mine is positive, his is negative
+        his corr_slope == my b_star
+        
 
         his delta_pal now == my delta_pal!!!!
 
@@ -610,5 +613,7 @@ talk to Ron:
 problems:
         DANG
         NRM_dev
-        delta_ck
+        delta_ck -
+                 seems to be a bug in Greig's code with noisy data.  sometimes his delta_CK is negative, but this is wrong.  
+                 I am checking in with him about this
         delta_pal

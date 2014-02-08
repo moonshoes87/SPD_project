@@ -362,8 +362,9 @@ class PintPars(object):
         ptrm_checks = self.ptrm_checks_temperatures
         ptrm_x = self.x_ptrm_check
         x_Arai, t_Arai = self.x_Arai, self.t_Arai
-        max_ptrm_check, sum_ptrm_checks, check_percent, sum_abs_ptrm_checks = lib_ptrm.get_max_ptrm_check(ptrm_checks_included_temps, 
+        ptrm_checks, max_ptrm_check, sum_ptrm_checks, check_percent, sum_abs_ptrm_checks = lib_ptrm.get_max_ptrm_check(ptrm_checks_included_temps, 
             ptrm_checks, ptrm_x, t_Arai, x_Arai)
+        self.pars['ptrm_checks'] = ptrm_checks
         self.pars['max_ptrm_check_percent'] = check_percent
         self.pars['max_ptrm_check'] = max_ptrm_check
         self.pars['sum_ptrm_checks'] = sum_ptrm_checks
@@ -587,7 +588,7 @@ thing.calculate_all_statistics()
 #[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
 
-spec = PintPars(gui3.Data, 'AL2360-1b', 273., 498.)
+spec = PintPars(gui3.Data, 'AL3031-1d', 273., 498.)
 spec2 = PintPars(gui3.Data, 'AL2360-1d', 273, 498.)
 spec.calculate_all_statistics()
 spec2.calculate_all_statistics()

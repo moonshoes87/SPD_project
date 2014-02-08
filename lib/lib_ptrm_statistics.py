@@ -53,7 +53,7 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
     check_percent = max(check_percents)
     sum_diffs = abs(sum(diffs))
     sum_abs_diffs = sum(abs_diffs)
-    return max_diff, sum_diffs, check_percent, sum_abs_diffs
+    return diffs, max_diff, sum_diffs, check_percent, sum_abs_diffs
 
 def get_delta_CK(max_ptrm_check, x_int):
     """
@@ -152,10 +152,10 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
         else:
             diffs[num] = ptrm_checks_vectors[int(index[num])] - ptrm
     C = numpy.cumsum(diffs, 0)
-    #print "diffs (should be same as to_sum"
-    #print diffs
-    #print "C (should be same as dpal_sum)"
-    #print C
+    print "diffs (should be same as to_sum"
+    print diffs
+    print "C (should be same as dpal_sum)"
+    print C
     return diffs, C
 
 def new_get_TRM_star(C, ptrms_vectors, start, end):
@@ -174,11 +174,13 @@ def new_get_TRM_star(C, ptrms_vectors, start, end):
         
 def get_b_star(x_star, y_err, y_mean):
     """get corrected x segment and x_mean"""
+    print "x_star, should be same as corr_TRM / NRM"
+    print x_star
     x_star_mean = numpy.mean(x_star)
     x_err = x_star - x_star_mean
     b_star = -1* numpy.sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
-    #print "b_star (should be same as corr_slope)"
-    #print b_star
+    print "b_star (should be same as corr_slope)"
+    print b_star
     return b_star
 
 def get_delta_pal(b, b_star):
