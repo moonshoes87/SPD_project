@@ -313,12 +313,18 @@ class PintPars(object):
         free = self.pars['best_fit_vector_Free']
         anc = self.pars['best_fit_vector_Anc']
         alpha = lib_direct.get_alpha(anc, free)
+        if alpha > 90.:
+            alpha -= 90.
         self.pars['alpha'] = alpha
 
     def get_DANG(self):
         free = self.pars['best_fit_vector_Free']
         cm = self.pars['zdata_mass_center']
+        print "free", free
+        print "cm", cm
         DANG = lib_direct.get_angle_difference(free, cm)
+        if DANG > 90.:
+            DANG -= 90.
         self.pars['DANG'] = DANG
 
     def get_NRM_dev(self):
@@ -590,7 +596,7 @@ thing.calculate_all_statistics()
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
 
 spec = PintPars(gui3.Data, 'AL3031-1d', 273., 498.)
-spec2 = PintPars(gui3.Data, 'AL2360-1d', 273, 498.)
+spec2 = PintPars(gui3.Data, 'AL2844-2b', 273, 498.)
 spec.calculate_all_statistics()
 spec2.calculate_all_statistics()
 

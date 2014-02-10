@@ -60,7 +60,9 @@ def get_delta_CK(max_ptrm_check, x_int):
     Input: max_ptrm_check, x intercept.
     Output: delta_CK (max ptrm check normed by x intercept)
     """
-    return (max_ptrm_check / x_int) * 100.
+    #print "max_ptrm_check", max_ptrm_check
+    #print "x_int", x_int
+    return abs(max_ptrm_check / x_int) * 100.
 
 def get_DRAT(delta_x_prime, delta_y_prime, max_ptrm_check):
     """

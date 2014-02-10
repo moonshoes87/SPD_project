@@ -346,7 +346,9 @@ Pending:
         magic_measurements is missing one of the Biggin et al .tdt files.  probs no big deal. 
         check get_curve()
               determine whether norming should or should not be done
-       r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  should be fixed in next iteration of code.  
+        r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  should be fixed in next iteration of code.  
+        delta_ck - Greig's code is different from SPD document.  Currently, I am in agreement with his code.  This is only an issue for some edge cases.
+        delta_y_prime, delta_x_prime -- using first and last values of x_prime/y_prime vs min and max
 
        
 
@@ -378,7 +380,18 @@ delta_pal:
         his delta_pal now == my delta_pal!!!!
 
 
+GAP-MAX -- more problem. 
+        think it is a bug of his, have emailed him.
 
+DANG --
+     DANG = lib_direct.get_angle_difference(free, cm)
+     his dirfit == my free
+     his Centre == my cm
+     difference is: he subtracts 90 if DANG is larger than 90 (taking the smaller angle)
+
+Ask Ron:
+
+    subtracting from DANG
 
 
 
@@ -402,17 +415,10 @@ style notes:
       stop using tabs!  spaces!
 
 
-problems when changing temperature bounds:
-
-         gamma:
-WHY, for realsies: Greig's pTRM vector is pTRM acquired at Tmax of segment, while mine uses pTRM acquired at nmax.  
-our code now agrees, but should ask Ron
-#loses a little precision with norming, but this is not the main problem.  
-
 
 
 talk to Ron:
-
+delta_y_prime, delta_x_prime
     when x_prime is:
     0.0517
     0.0209
@@ -446,15 +452,6 @@ talk to Ron:
     AL2360-1b  - xpts come out different in my code vs. Greig's.  Ypts are the same, though.   p
     AL2360_1d  - same
                looks like PTRMS/araiblock is being set incorrectly to [0,0,0] for the second value.  
-
-
-problems:
-        DANG
-        NRM_dev
-        delta_ck -
-                 seems to be a bug in Greig's code with noisy data.  sometimes his delta_CK is negative, but this is wrong.  
-                 I am checking in with him about this
-        delta_pal
 
 
 
