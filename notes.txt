@@ -1,18 +1,3 @@
-
-
-  #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']                           
-        # for some reason missing any magic_method_codes.  possibly these would have been incorporated into the data from rmag_anisotr
-opy or something                                                                                                                     
-    # magic_method codes are locked up in datablock, not actually extracted.  not sure if this happens somewhere else in thellier_\
-gui or not                                         
-There's some stuff in the code like:
-
-        for rec in self.Data[self.s]['datablock']:
-          if "LT-NO" in rec['magic_method_codes']:
-              nrm0= "%.2e"%float(rec['measurement_magn_moment'])
-              break
-
-But nowhere do the magic_method codes get pulled out and organized
                                                                              
         # also, fix the weirdness of having to set the precise number for tmin and tmax    
 
@@ -26,7 +11,6 @@ in lj_thellier_gui_spd
 
 added this into get_data()
 self.s = self.specimens[0]  # LORI WEIRD ADDITION 
-
 
 
 
@@ -59,8 +43,6 @@ def get_specs(self,data):
         """                                                                                                                            
          takes a magic format file and returns a list of unique specimen names                                                         
         """
-
-
 
 
 
@@ -131,15 +113,6 @@ pTRM tail check -- ?? assess if pTRM gained at x temp is completely removed by r
 
 
 
-methods had by the average specimen:
-METHODS ['LT-T-I', 'LP-PI-TRM-ZI', 'LP-PI-TRM', 'LP-PI-ALT-PTRM', 'LP-PI-BT-MD', 'LP-PI-BT-IZZI']
-METHODS ['LT-PTRM-MD', 'LP-PI-TRM', 'LP-PI-ALT-PTRM', 'LP-PI-BT-MD', 'LP-PI-BT-IZZI']
-
-tgs.thing1.pars['magic_method_codes'], tgs.thing2.pars['magic_method_codes']
-('LP-PI-BT-IZZI:IE-TT:LP-PI-ALT-PTRM:LP-PI-BT-MD', 'LP-PI-ZI:IE-TT:LP-PI-ALT-PTRM')
-
-
-
 magic method codes:
 
 LT-T-I	     Lab Treatment	Specimen cooling: In laboratory field
@@ -167,23 +140,6 @@ LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory f
 
 
 
-to do:
-
-check get_curve()
-      determine whether norming should or should not be done
-ask Alex about last bit of VDS calculation
-maybe return to delta_pal, although I think it is working
-documentation
-return to thellier_gui_spd editing.  definitely will want to rename, probably prune some unnecessary code
-maybe go through stats one at a time, checking them against their definition?  but really, probably it's better just to get matlab
-consider adding in a params checker so that you can actually run one statistic only.  or, run the stats in groups (by chapter)
-problem with DRATS statistic.  maybe just because of the slightly different method of selecting ptrm checks in thellier_gui vs. spd.  inconsistency with specimen MGH1 # confirmed as suspected
-check that new set of specimens are basically working correctly # DONE
-AC checks now available in specimen_Data, however must attend to tmax
-check for missing stats
-
-
-
 cart2dir
 	require x,y,z
 dir2cart
@@ -194,20 +150,7 @@ dir2cart
 	
 
 thellier_gui Dec, Inc, and MAD are free.  lisa always uses free
-matlab SVD and numpy SVD produce nearly, but not exactly, identical output.  difference is in V, and also in the format for S (less important) # seems to be a rounding issue only
 Also, checked and numpy and matlab notation for slicing is the same, except that matlab indexing starts at 1, not 0
-
-
-
-meeting with lisa:
-
-need to figure out how we're doing testing.  I know matlab basic syntax now, but will need help parsing data to feed it into his code.  
-
-architecture and use scenarios
-	     paramater checking, to enable running just one statistic (with its dependencies)
-
-abstracting out the parsing portion of thellier_gui_spd further
-
 
 
 
@@ -216,15 +159,8 @@ new meeting notes:
 from greig's code:  % ChRM          - a (1 x 2) or a (1 x 3) vector describing an independent measure of the direction of Banc (can be a known direction).
 this would make one of my stats wrong.  
 
-how to do additivity
-
-which chapter to stop at??
-
-
 
 for meeting with Ron:
-
-norming of points in curvature.  are they already normed?  I guess it just matters for magnitude
 
 
 	This from thellier_gui is in contradiction to what's in spd.  this sometimes causes different results for pTRM check statistics
@@ -235,18 +171,6 @@ cluded
 
 
 
-delta_pal.  really pays no attention to tmin, just tmax?  weird.  check this.
-
-
-
-projects for these times when you are missing information to actually work on your current project:
-
-	 study Python
-	 wx Python tutorial...(?) or possibly look at other gui frameworks
-	 improve new_lj_thellier_gui_spd.  at least rename.
-	 write a utility file that runs through all the tests....?  maybe this is unnecessary, though
-	 remove unnecessary output for all files
-
 
 to run all tests:
 
@@ -254,7 +178,7 @@ $  python -m unittest test_arai_plot_statistics test_directional_statistics test
 
 
 
-Python tips and tricks:
+#####  Python tips and tricks:  #######
 
 dir(spd) -- gives all methods/classes available in spd.  awesome.  
 
@@ -296,12 +220,12 @@ exception
 finally
 
 
+###### end python notes ######
 
 
 
 
-
-Notes for matlab:
+###Notes for matlab:####
 
 struct is a dictionary(ish)
 displays like this:
@@ -329,20 +253,16 @@ fieldnames(my_struct) == [a, c]
 orderfields, rmfields
 
 
-
 my_cell = struct2cell(my_struct)
 	'b'
 	4
-
 
 
 my_fieldnames = fieldnames(my_struct)
 	      a
 	      c
 
-
 Restore data from a MAT-file into the workspace using load.  load myfile.mat.  also save myfile.mat puts workspace variables into a file
-
 
 num2str -- number to string, obviously.  also int2str
 
@@ -350,34 +270,15 @@ my_cell(1) != my_cell{1}
 
 my_cell(1) is a cell object of length one.  my_cell{1} is the first item	
 
-
-next steps:
-modify the read tdt program to be able to do more at one time
-       probably best not to write to individual file, but all pile into one
-check into data norming -- may be causing some of the discrepancies
-maybe reduce rounding of greig's stuff so that you can do a more rigorous comparison.  
-      rounding is all at line 1290 of getPintParams_v5c.m
-the way comparisons work currently is if I only have one specimen and one sample with one specimen.  endeavering to fix that in lori_Read_TDT.m
-    ./comp_files.py -f1 ET1_Biggin_2007_output_first.txt -f2 ~/Documents/MATLAB/new_out.out 
-    works when only the BS file is available in the Data folder
-    problem with the list in a list thing.  meh.
-            removing the list in a list.  I don't have a comparison for it, anyway.
+##### end matlab notes #####
 
 
 
+#### comparing my spd and Greig's spd #####
 
-questions for Ron, next meeting:
+I can find equivalent dec/inc data in the magic measurements vs. .tdt files, but I can't find intensity or magnetic moment data that lines up. Update: this is because it's in different units
 
-pmag_criteria.txt
-norming.... is this causing some of my problems?
-some details about format of .tdt files
-
-
-I can find equivalent dec/inc data in the magic measurements vs. .tdt files, but I can't find intensity or magnetic moment data that lines up. 
-
-
-dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Greig's version returns only the first number of the cartesian coordinates.  (dir2cart is called in both programs to convert [dec, inc, int])
-
+dir2cart function is the same in lib and in GetPintParams.tdt.  
 
     zdata difference:
 
@@ -398,14 +299,6 @@ dir2cart function is the same in lib and in GetPintParams.tdt.  Except that Grei
 
     This makes zdata quite challenging to compare.  
 
-    FRAC --  it sums zdata diffs and divides by vds
-
-    His NRMvec(1,:) / Int(1) == my zdata[0]
-    NRMvec(2,:) / Int(1) == my zdata[1]
-
-    But the actual cause of the difference: he takes all but the last diff:  ...diff(NRMvec(seg_min:seg_max - 1,2:end)...
-
-    My FRAC agrees with thellier_gui FRAC
 
 
 how x points are attained in tgs:
@@ -415,7 +308,7 @@ how x points are attained in tgs:
 y points: 
   same, but with zerofield data points.
 
-problems and solutions:
+######### problems and solutions: #############
 
 solved:
 
@@ -425,23 +318,151 @@ x_pts -- My SPD norms by NRM; Greig's does not
 y_pts -- My SPD norms by NRM; Greig's does not
 Y_int  ---  same
 x_int ---  same
-GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  have changed this.  (mine & Ron's agree) CHANGED BACK
+GAP_MAX -- my code norms by partial_vds, Greig's by full vds.  believe mine is correct
        # GAP_MAX = max_diff / vds -- Greig's
        # GAP_MAX = max_diff / partial_vds -- correct
-FRAC --- Greig's code does not take the final diff.  now mine doesn't either.  fixed.
-many things breaking with taking different tmin, tmax -- my code uses x/y_segment to get x/y_prime.  Greig's uses full set of x/y points.
-     -- GO BACK TO THIS.... need to be SURE.  Ron confirmed that it is the same calculation in his code and in spd document.  
-     -- this seems not to be true.  delta_y_prime is ok
+FRAC --- Greig's code does not take the final diff.  Greig will fix his.  
 IZZI_MD -- going to Greig to fix his code
 NRM_dev:
         radians vs degrees problem.  FIXED
 max_DEV:
         once was lost, now is found
+Z:
+        should use segment, where I was using full data set.  fixed.
 
 
-unsolved:
 
-update:  need to test with an IZZI type experiment.  for now, I don't have any in tdt format.  But that is ok.
+ 
+Pending:
+
+        problem in Greig's IZZI_MD, so he gets a value even when it is all IZ or ZI steps, not alternating.
+                update:  need to test with an IZZI type experiment.  for now, I don't have any in tdt format.  But that is ok.
+        problem with Greig's B_lab vector [0,0,-1] where should be [0,0,1]
+        GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code. 
+                update: partial is correct, but Greig hasn't updated his code yet
+        for theta, whether to use best_fit_vector_Anc vs. free
+        FRAC now disagrees with thellier_gui FRAC.  talk to Ron
+        does my code need to be able to deal with someone selecting tmin = t[0], tmax = t[1] ?  Greig's produces output in this situation
+        magic_measurements is missing one of the Biggin et al .tdt files.  probs no big deal. 
+        check get_curve()
+              determine whether norming should or should not be done
+       r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  should be fixed in next iteration of code.  
+
+       
+
+current:
+
+
+theta:
+        for ChRM value, Greig uses equivalent to my best_fit_vector_Anc, whereas I've been using best_fit_vector_Free.
+        also has slightly different B_lab
+gamma:
+        also has B_lab problem.  UPDATE: this is now the only problem
+        his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
+        (in gamma):       my ptrm_cart == his Params.TRMvec(seg_max,2:end) / NRM  (now.  so that's good).  (This is the vector edition of the max pTRM)
+mean_DRAT_prime:
+delta_pal:
+        his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
+        his pCheck / NRM == my dir2cart([PTRM_Checks[i][1], PTRM_Checks[i][2], PTRM_Checks[i][3] / NRM])
+        his to_sum / NRM == my diffs
+        his dpal_sum / NRM == my numpy.cumsum(diffs, 0) == my C
+
+        his xcorr / NRM == my x_star (both segment)
+            above is good.  now check below.  (AL3031-1d)
+        
+        here is the problem!!!  mine b_star is positive, his is negative       
+        his corr_slope == my b_star
+        
+
+        his delta_pal now == my delta_pal!!!!
+
+
+
+
+
+
+different possible units for magnetic moment:
+
+mKs.  meter Kelvin seconds.  measurement unit for magnetic moment.  used in magic measurements format.
+
+should be normed by first NRM (full, pre-experiment)
+
+.tdt uses different measurement.  if b (slope) is the same, then it's fine.
+
+be careful with v. large or v. small numbers.  float, long, etc.  this can be significant.  
+
+
+Don't forget you will need to test everything with EVERY possible set of temperature bounds
+
+
+
+
+style notes:
+      stop using tabs!  spaces!
+
+
+problems when changing temperature bounds:
+
+         gamma:
+WHY, for realsies: Greig's pTRM vector is pTRM acquired at Tmax of segment, while mine uses pTRM acquired at nmax.  
+our code now agrees, but should ask Ron
+#loses a little precision with norming, but this is not the main problem.  
+
+
+
+talk to Ron:
+
+    when x_prime is:
+    0.0517
+    0.0209
+    0.0521
+    0.0832
+    0.0990
+    0.1271
+    0.2638
+    min, max, first = .0209, .2638, .0517
+
+    Greig uses:    TRM_Len=max(Px(seg))-min(Px(seg));
+    where I use: delta_x_prime = abs(x_prime[-1] - x_prime[0])
+    Ron is ASKING LISA
+
+
+    GAP-MAX
+
+
+    occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
+    see: Bowles etal 200? AL3023_1b
+    what to do about this?  should I be calculating b as Greig does?
+         x_err = x_segment - x_mean
+         y_err = y_segment - y_mean
+         york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
+         # how Greig does it:
+         #Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);                                                   
+         b = sign(sum(x_err * y_err)) * std(y_segment, ddof=1)/std(x_segment, ddof=1)
+    ask Lisa
+
+
+    AL2360-1b  - xpts come out different in my code vs. Greig's.  Ypts are the same, though.   p
+    AL2360_1d  - same
+               looks like PTRMS/araiblock is being set incorrectly to [0,0,0] for the second value.  
+
+
+problems:
+        DANG
+        NRM_dev
+        delta_ck -
+                 seems to be a bug in Greig's code with noisy data.  sometimes his delta_CK is negative, but this is wrong.  
+                 I am checking in with him about this
+        delta_pal
+
+
+
+
+notes:
+        if we want, at some point, to really speed of code, consider PyPy
+
+
+##### Extra notes that might be useful again someday: #####
 
 IZZI_MD -- believe will put IZZI_MD into its own module.  it's big. 
         it's all   ['ZI', 'ZI', 'ZI', 'ZI', 'ZI', 'ZI', 'ZI'] in the new specimens.  in this case, it fails on the get_triangles segment.
@@ -485,135 +506,3 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
            ET1_318A    150.1   6.457964075 214.5410563 -10.52823962
            treatment is:   1 
            etc. (0 is ZI, 1 is IZ, etc.)
-
-
-
-
-  
-Pending:
-
-        problem in Greig's IZZI_MD
-        problem with Greig's B_lab vector [0,0,-1] where should be [0,0,1]
-        GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code. 
-                update: partial is correct, but Greig hasn't updated his code yet
-        for theta, whether to use best_fit_vector_Anc vs. free
-        FRAC now disagrees with thellier_gui FRAC.  talk to Ron
-        does my code need to be able to deal with someone selecting tmin = t[0], tmax = t[1] ?  Greig's produces output in this situation
-        magic_measurements is missing one of the Biggin et al .tdt files.  probs no big deal. 
-
-Possibly a totally problematic indexing temperature system.  Greig uses: ...start point, end point...  vs. tmin, tmax
-
-
-theta:
-        B_lab vector disagrees.  must talk to Ron.
-        also, for ChRM value, Greig uses equivalent to my best_fit_vector_Anc, whereas I've been using best_fit_vector_Free.
-gamma:
-        also has B_lab problem.  UPDATE: this is now the only problem
-        his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
-        (in gamma):       my ptrm_cart == his Params.TRMvec(seg_max,2:end) / NRM  (now.  so that's good).  (This is the vector edition of the max pTRM)
-mean_DRAT_prime:
-delta_pal:
-        his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
-        his pCheck / NRM == my dir2cart([PTRM_Checks[i][1], PTRM_Checks[i][2], PTRM_Checks[i][3] / NRM])
-        his to_sum / NRM == my diffs
-        his dpal_sum / NRM == my numpy.cumsum(diffs, 0) == my C
-
-        his xcorr / NRM == my x_star (both segment)
-            above is good.  now check below.  (AL3031-1d)
-        
-        here is the problem!!!  mine is positive, his is negative
-        his corr_slope == my b_star
-        
-
-        his delta_pal now == my delta_pal!!!!
-
-
-
-
-
-
-different possible units for magnetic moment:
-
-mKs.  meter Kelvin seconds.  measurement unit for magnetic moment.  used in magic measurements format.
-
-should be normed by first NRM (full, pre-experiment)
-
-.tdt uses different measurement.  if b (slope) is the same, then it's fine.
-
-be careful with v. large or v. small numbers.  float, long, etc.  this can be significant.  
-
-
-Don't forget you will need to test everything with EVERY possible set of temperature bounds
-
-problem with GAP-MAX.  Greig uses raw data from the tdt files, which uses a different form for magnetic moment.  
-tdt -- uses milliamp / meter
-magic -- uses meter Kelvin seconds
-
-
-
-
-
-style notes:
-      stop using tabs!  spaces!
-
-
-problems when changing temperature bounds:
-
-         gamma:
-problem: correct values go in, but my/Lisa's functions use the arccos instead of the arctan method of getting angles.  WRONG.  this is not why
-also not why: using B_lab vs. [0,0,1]
-WHY, for realsies: Greig's pTRM vector is pTRM acquired at Tmax of segment, while mine uses pTRM acquired at nmax.  
-our code now agrees, but should ask Ron
-#loses a little precision with norming, but this is not the main problem.  
-
-       r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  FIXED
-
-       Z --  Greig uses segment, where I was using full data.  fixed.  
-
-
-
-talk to Ron:
-
-    when x_prime is:
-    0.0517
-    0.0209
-    0.0521
-    0.0832
-    0.0990
-    0.1271
-    0.2638
-    min, max, first = .0209, .2638, .0517
-
-    Greig uses:    TRM_Len=max(Px(seg))-min(Px(seg));
-    where I use: delta_x_prime = abs(x_prime[-1] - x_prime[0])
-    Ron is ASKING LISA
-
-
-    GAP-MAX
-
-
-    occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
-    see: Bowles etal 200? AL3023_1b
-    what to do about this?  should I be calculating b as Greig does?
-         x_err = x_segment - x_mean
-         y_err = y_segment - y_mean
-         york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
-         # how Greig does it:
-         #Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);                                                   
-         b = sign(sum(x_err * y_err)) * std(y_segment, ddof=1)/std(x_segment, ddof=1)
-    ask Lisa
-
-
-
-    AL2360-1b  - xpts come out different in my code vs. Greig's.  Ypts are the same, though.   p
-    AL2360_1d  - same
-               looks like PTRMS/araiblock is being set incorrectly to [0,0,0] for the second value.  
-
-
-problems:
-        DANG
-        NRM_dev
-        delta_ck -
-                 seems to be a bug in Greig's code with noisy data.  sometimes his delta_CK is negative, but this is wrong.  
-                 I am checking in with him about this
-        delta_pal
