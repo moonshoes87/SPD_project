@@ -417,7 +417,8 @@ class PintPars(object):
     def get_delta_pal(self): 
         ptrms_segment, checks_segment = lib_ptrm.get_segments(self.PTRMS, self.PTRM_Checks, self.tmax)
         delta_pal = lib_ptrm.get_full_delta_pal(self.PTRMS, self.PTRM_Checks, self.NRM, self.pars['y_err'], 
-                                                self.y_Arai_mean, self.pars['specimen_b'], self.start, self.end)
+                                                self.y_Arai_mean, self.pars['specimen_b'], self.start, self.end,
+                                                self.y_Arai_segment)
         self.pars['delta_pal'] = delta_pal
 
 

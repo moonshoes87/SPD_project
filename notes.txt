@@ -371,6 +371,7 @@ delta_pal:
             above is good.  now check below.  (AL3031-1d)
         
         here is the problem!!!  mine b_star is positive, his is negative       
+        fixed corr_slope so that it is calculated correctly
         his corr_slope == my b_star
         
 

@@ -172,13 +172,16 @@ def new_get_TRM_star(C, ptrms_vectors, start, end):
     #print x_star[start:end+1]
     return TRM_star[start:end+1], x_star[start:end+1]
         
-def get_b_star(x_star, y_err, y_mean):
+def get_b_star(x_star, y_err, y_mean, y_segment):
     """get corrected x segment and x_mean"""
-    print "x_star, should be same as corr_TRM / NRM"
+    print "x_star, should be same as Xcorr / NRM"
     print x_star
     x_star_mean = numpy.mean(x_star)
     x_err = x_star - x_star_mean
     b_star = -1* numpy.sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
+    print "y_segment", y_segment
+    b_star = numpy.sign(sum(x_err * y_err)) * numpy.std(y_segment, ddof=1) / numpy.std(x_star, ddof=1)
+
     print "b_star (should be same as corr_slope)"
     print b_star
     return b_star
@@ -187,7 +190,7 @@ def get_delta_pal(b, b_star):
     delta_pal = numpy.abs((b - b_star) / b) * 100
     return delta_pal
 
-def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b, start, end):
+def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b, start, end, y_segment):
     print "-------"
     print "calling get_full_delta_pal in lib"
 #    return 0
@@ -198,7 +201,7 @@ def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b, start, end):
     TRM_star, x_star = new_get_TRM_star(C, PTRMS_cart, start, end)
 #    print "x_star", x_star
 #    print type(x_star)
-    b_star = get_b_star(x_star, y_err, y_mean)
+    b_star = get_b_star(x_star, y_err, y_mean, y_segment)
     delta_pal = get_delta_pal(b, b_star)
     return delta_pal
 
