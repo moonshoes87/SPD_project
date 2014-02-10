@@ -455,8 +455,12 @@ delta_y_prime, delta_x_prime
 
 
 
+to do:
+   automate testing at multiple temperatures
 
-notes:
+
+
+####  long term notes: ####
         if we want, at some point, to really speed of code, consider PyPy
 
 

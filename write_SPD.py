@@ -14,7 +14,7 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-in_files = ['consistency_tests/Bowles_etal_2006_magic_measurements.txt']#['consistency_tests/Biggin_etal_2007_magic_measurements.txt']
+infile = 'consistency_tests/Bowles_etal_2006_magic_measurements.txt'#['consistency_tests/Biggin_etal_2007_magic_measurements.txt']
 outfile = 'consistency_tests/Bowles_etal_2006.out'# ['consistency_tests/Biggin_etal_2007.out']
 
 print sys.argv
@@ -22,9 +22,9 @@ print sys.argv
 if '-f' in sys.argv:
     print 'ffffffff'
     in_file_ind = sys.argv.index('-f') + 1
-    in_files = [sys.argv[in_file_ind]]
+    in_file = [sys.argv[in_file_ind]]
     
-print "in files", in_files
+print "in file", infile
         
 basic_stats = ['s', 'specimen_n', 'tmin', 'tmax'] # start, end  # removed these two because no equivalent in Greig's code
 
@@ -49,16 +49,46 @@ print "starting thingee"
 
 print 'outfile', outfile
 # create tab file
-out = open(outfile, 'w+')
-for stat in basic_stats:
-    out.write(stat + '\t')
-for stat in long_list:
-    out.write(stat + '\t')
-out.write('\n')
+
+def init_outfile(outfile):
+    out = open(outfile, 'w+')
+    for stat in basic_stats:
+        out.write(stat + '\t')
+    for stat in long_list:
+        out.write(stat + '\t')
+    out.write('\n')
+    return out
 
 
 # iterate through list of magic_measurements files and fill outfile
 
+
+gui = tgs.Arai_GUI(infile)
+data = gui.Data
+
+def check_at_temperature(gui, out, tmin_index, tmax_index):
+    specimen_names = gui.Data.keys()
+    for s in specimen_names:
+        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][6])
+        spec.s = spec.s.replace('-', '_')
+        print spec.s, spec.tmin, spec.tmax
+        spec.calculate_all_statistics()
+        out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
+        for stat in long_list:
+            if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
+                out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')
+            else:
+                out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
+        out.write('\n')
+#out.close()
+
+out = init_outfile(outfile)
+print type(out)
+check_at_temperature(gui, out, 0, 6)
+#out.close()
+    
+
+ignore = """
 for f in in_files:
     gui = tgs.Arai_GUI(f)
     data = gui.Data
@@ -77,3 +107,4 @@ for f in in_files:
         out.write('\n')
 out.close()
 
+"""
