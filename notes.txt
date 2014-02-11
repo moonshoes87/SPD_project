@@ -346,7 +346,8 @@ Pending:
         problem with Greig's B_lab vector [0,0,-1] where should be [0,0,1]
         #GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code. 
                 # DONE -- Greig has changed his code
-        for theta, whether to use best_fit_vector_Anc vs. free
+        for theta, whether to use best_fit_vector_Anc vs. free.  
+                # DONE -- appears that Greig has switched to Free.  hoorah
         FRAC now disagrees with thellier_gui FRAC.  talk to Ron
         does my code need to be able to deal with someone selecting tmin = t[0], tmax = t[1] ?  Greig's produces output in this situation
         magic_measurements is missing one of the Biggin et al .tdt files.  probs no big deal. 
