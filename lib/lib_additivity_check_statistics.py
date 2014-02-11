@@ -23,7 +23,7 @@ def get_delta_AC(n_add, add_checks, x_int):
         #print "x_int", x_int
         #print "(abs(incl_add_checks)", (abs(incl_add_checks))
         #print "( max(abs(incl_add_checks) ) ", ( max(abs(incl_add_checks) ) )
-        delta_AC = ( max(abs(incl_add_checks) ) / x_int)  * 100.
+        delta_AC = ( max(abs(incl_add_checks) ) / abs(x_int))  * 100.
         #print delta_AC
     else:
         delta_AC = float('NaN')

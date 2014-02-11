@@ -220,6 +220,11 @@ exception
 finally
 
 
+os.getcwd()
+returns working directory, yay!
+
+
+
 ###### end python notes ######
 
 
@@ -335,11 +340,12 @@ Z:
  
 Pending:
 
+        δt∗  -- I have not coded this statistic
         problem in Greig's IZZI_MD, so he gets a value even when it is all IZ or ZI steps, not alternating.
                 update:  need to test with an IZZI type experiment.  for now, I don't have any in tdt format.  But that is ok.
         problem with Greig's B_lab vector [0,0,-1] where should be [0,0,1]
-        GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code. 
-                update: partial is correct, but Greig hasn't updated his code yet
+        #GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code. 
+                # DONE -- Greig has changed his code
         for theta, whether to use best_fit_vector_Anc vs. free
         FRAC now disagrees with thellier_gui FRAC.  talk to Ron
         does my code need to be able to deal with someone selecting tmin = t[0], tmax = t[1] ?  Greig's produces output in this situation
@@ -347,8 +353,11 @@ Pending:
         check get_curve()
               determine whether norming should or should not be done
         r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  should be fixed in next iteration of code.  
-        delta_ck - Greig's code is different from SPD document.  Currently, I am in agreement with his code.  This is only an issue for some edge cases.
-        delta_y_prime, delta_x_prime -- using first and last values of x_prime/y_prime vs min and max
+        delta_ck - Greig's code is different from SPD document.  Currently, I am in agreement with his code.  This is only an issue for some edge cases.   
+                 #  DONE -- SPD document has been changed
+        delta_y_prime, delta_x_prime -- using first and last values of x_prime/y_prime vs min and max 
+                 # DONE -- SPD document changed
+
 
        
 

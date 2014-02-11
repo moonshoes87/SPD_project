@@ -35,7 +35,7 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     delta_y_prime = abs(max(y_prime) - min(y_prime))
 
 
-    f_Coe = delta_y_prime / y_T 
+    f_Coe = delta_y_prime / abs(y_T)
     g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
     g_lim = (float(n) - 2) / (float(n) - 1) 
     q_Coe=abs(york_b)*f_Coe*g_Coe/york_sigma
@@ -236,7 +236,7 @@ def get_Z(x_segment, y_segment, x_int, y_int, slope):
     first_time = True
     for num, x in enumerate(x_segment):
         b_wiggle = get_b_wiggle(x, y_segment[num], y_int)
-        z = (x * abs(b_wiggle - abs(slope)) ) / x_int
+        z = (x * abs(b_wiggle - abs(slope)) ) / abs(x_int)
         Z += z
         first_time = False
     return Z
@@ -247,7 +247,7 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
     first_time = True
     for num, x in enumerate(x_segment):
         b_wiggle = get_b_wiggle(x, y_segment[num], y_int)
-        result = 100 * ( (x * abs(b_wiggle - abs(slope)) ) / y_int )
+        result = 100 * ( (x * abs(b_wiggle - abs(slope)) ) / abs(y_int) )
         total += result
         first_time = False
     Zstar = (1. / (n - 1.)) * total

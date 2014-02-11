@@ -236,7 +236,7 @@ def get_DANG(mass_center, free_best_fit_vector):
     return DANG
 
 def get_NRM_dev(dang, x_avg, y_int):
-    NRM_dev = (numpy.sin(numpy.deg2rad(dang)) * numpy.linalg.norm(x_avg)) / y_int
+    NRM_dev = (numpy.sin(numpy.deg2rad(dang)) * numpy.linalg.norm(x_avg)) / abs(y_int)
     NRM_dev *= 100.
     return NRM_dev
 
