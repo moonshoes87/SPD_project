@@ -1,13 +1,43 @@
-function [Params] = GetPintParams_v5c(Mvec, Temps, Treatment, start_pt, end_pt, T_orient, Blab, NRM_rot_flag, Az, Pl, ChRM, A_corr, s_tensor, NLT_corr, NLT_hat)
+function [Params] = GetPintParams_v6(Mvec, Temps, Treatment, start_pt, end_pt, Blab_orient, Blab, NRM_rot_flag, Az, Pl, ChRM, A_corr, s_tensor, NLT_corr, NLT_hat, beta_T)
+% function to return all paleointensity parameters for a sample
+% v5 combines all output into a structure for easily data handling. It also
+% now includes all custom subfunctions to increase portability.
 %
-% LAST UPDATE 23 Nov 2013
+%
+% LAST UPDATE 09-11 Feb 2014
+%
+% 09-11 Feb 2014 - GAP
+% 1) Updated version to v6
+% 2) Corrected R_det to use the segment and not all of the points
+% 3) Corrected the denominator for GAP_MAX
+% 4) Changed theta to use the free-floating PCA fit and not the anchored
+% 5) Corrected calculation for VDS, which affects FRAC and GAP_MAX
+% 7) Added Params.Plot_orth Params.Plot_line to output the NRM vector and best-fit Arai line for plotting
+% 8) Added Params.x_prime, Params.y_prime, Params.Delta_x_prime, and Params.Delta_y_prime, to replace Px, Py, TRM_len, and dyt, respectively.
+% 9) Added beta_T for the SCAT box as an input variable with a default value of 0.1
+% 10) Changed T_orient to Blab_orient
+% 11) Added PearsonCorr2 function to get the square of the Pearson Correlation (R_corr). This removes a dependency on the inbuilt MATLAB function
+% 12) Brought more variable names inline with SPD names
+% 13) Updated the IZZI_MD calculation to follow the pseudo-code outline in SPD (logic rearrangement, no calculation change)
+% 14) Removed Params.alpha(Params.alpha>90)=Params.alpha-90 for alpha, alpha_prime, DANG, and alpha_TRM. Legacy from early version of the models 
+%     when direction of PCA was not constrained in the PmagPCA routine
+% 15) Changed Ints(j) to Params.Ypts(j) in the calculation of CRM(j) for CRM_R. This SPD notation.
+% 16) Made Params.Mean_DRAT calculation explicit (removed the use of CDRAT).
+% 17) Added Params.dpal_ratio (= log(corrected_slope/measured_slope)) and Params.dpal_signed (signed dpal) to test later - I think dpal is biased
+% 18) Change the anisotropy correction to use the free-floating PCA fit instead of the vector mean
+% 19) Simplified the calculation of tstar(j) (part of dt*) in the last IF segment - it included terms that cancelled
+% 20) Corrected parameters that use a normalizer that can be negative. Now they use the absolute value of the normalizer (f, Z, Zstar, NRM_dev, dCK, dt_star, dAC).
+% 21) Added additional comment lines that are added for the SPD.m version of this code
+% 22) Corrected several spelling mistakes in the comments and updated the descriptions for the output statistics
+% 23) v6 of the code will be the basis for the version to made publicly available (as SPD.m). The public version will remove extra functions and
+%     statistics that are not in SPD (e.g., tests for common slopes/elevations, commented code, etc.). The plotting outputs will also be removed.
 %
 % 23/24 Nov. 2013 - GAP
 % 1) Added Params.pTRM_Lines to output the lines for plotting pTRM checks
 % on Arai plots
 % 2) Clarified orientation convention in subfunction dirot (rotates from core to geographic coords)
 %
-% 25 Spet. 2013 - GAP
+% 25 Sept. 2013 - GAP
 % 1) Added Params.pTRM_sign, the sign of the maximum pTRM check stats
 % 2) Added Params.CpTRM_sign, the sign of the cumulative pTRM check stats
 % 3) Added Params.tail_sign, the sign of the maximum pTRM tail check stats
@@ -29,43 +59,46 @@ function [Params] = GetPintParams_v5c(Mvec, Temps, Treatment, start_pt, end_pt, 
 % 8) Updated IZZI_MD to correct the calculation of the the ZI curve length
 %
 
-% function to return all paleointensity parameters for a sample
-% v5 combines all output into a structure for easily data handling. It also
-% now includes all custom subfunctions to increase portability.
-%
 %% Input
 
 % Mvec          - a (n x 3) matrix of magnetization values when n is the total number of steps, which includes NRM, TRM, and all check measurements (i.e., the raw data measurements)
 % Temps         - a (n x 1) vector of the temperature of each treatment
-% Treatment     - a (n x 1) vector of integer values describing the treatment type at each step, this follows the convetion of the ThellierTool
+% Treatment     - a (n x 1) vector of integer values describing the treatment type at each step, this follows the convention of the ThellierTool
 %                 (0=NRM demag, 1=TRM remag, 2=pTRM check, 3=pTRM tail check, 4=additivity check, 5=inverse TRM step). If any Treatment is set to '5' all data are treated as a Thellier experiment
 % start_pt      - the temperature of the start point for the Arai plot best-fit line - ONLY THE INDEX IS CODED, NOT THE TEMPERATURE. THIS IS BETTER FOR TESTING
 % end_pt        - the temperature of the end point for the Arai plot best-fit line - ONLY THE INDEX IS CODED, NOT THE TEMPERATURE. THIS IS BETTER FOR TESTING
-% T_orient      - a (1 x 3) unit vector containing the x, y, z values for a know Blab orientation.
-% Blab          - the strength of the laboratry field in muT
+% Blab_orient      - a (1 x 3) unit vector containing the x, y, z values for a know Blab orientation.
+% Blab          - the strength of the laboratory field in muT
 % NRM_rot_flag  - flag for directional rotation from core coords to stratigraphic coords (0 or []=no rotation, 1=apply rotation)
 % Az            - the sample azimuth in degrees
-% Pl            - the sample plunge in degrees
+% Pl            - the sample plunge in degrees - angle from horizontal, positive down
 % ChRM          - a (1 x 2) or a (1 x 3) vector describing an independent measure of the direction of Banc (can be a known direction).
 %                 If ChRM is a (1 x 2) vector it is assumed to be a Dec/Inc direction and converted to a Cartesian vector.
 %                 If rotation is applied ChRM is assumed to already be in the final coordinate system
 % A_corr        - flag for anisotropy correction (0=no correction, 1=apply correction)
 % s_tensor      - a (1 x 6) vector with the six unique elements that describe an anisotropy tensor
 % NLT_corr      - flag for non-linear TRM correction (0=no correction, 1=apply correction)
-% NLT_hat       - a (1 x 2) vector containing the coefficients of the best-fit hyperbolic tanget funtion
+% NLT_hat       - a (1 x 2) vector containing the coefficients of the best-fit hyperbolic tangent function
+% beta_T        - a (1 x 1) scalar for the beta threshold for defining the SCAT box, if missing the default value is beta_T=0.1
 
 %% Output
-% 
+% Output is a MATLAB structure with fields listed below. Use Params.Xpts to access Xpts, for example.
+% See the Standard Paleointensity Definitions for full details of the statistics.
+%
 % Xpts         -   TRM points on the Arai plot
 % Ypts         -   NRM points on the Arai plot
 % N            -   number of points for the best-fit line on the Arai plot
 % nmax         - the total number of NRM-TRM points on the Arai plot
 % Seg_Ends     -   the indices for the start and end of the best-fit line [2x1]
 % b            -   the slope of the best-fit line
-% sigma_b      -   the stadard error of the slope
+% sigma_b      -   the standard error of the slope
 % beta         -   sigma_b/b
 % X_int        -   the intercept of the best-fit line of the TRM axis
 % Y_int        -   the intercept of the best-fit line of the NRM axis
+% x_prime      -   the Arai plot TRM points projected onto the best-fit line
+% y_prime      -   the Arai plot NRM points projected onto the best-fit line
+% Delta_x_prime -   the TRM length of the best-fit line
+% Delta_y_prime -   the NRM length of the best-fit line
 % VDS          -   the vector difference sum of the NRM vector
 % f            -   the fraction of NRM used for the best-fit line
 % f_vds        -   the NRM fraction normalized by the VDS
@@ -74,31 +107,38 @@ function [Params] = GetPintParams_v5c(Mvec, Temps, Treatment, start_pt, end_pt, 
 % GAP_MAX      -   the maximum gap (Shaar & Tauxe, 2013; G-Cubed)
 % qual         -   the quality factor
 % w            -   the weighting factor of Prevot et al. (1985; JGR)
-% R_coeff      -   Linear correlation coefficient (Pearson correlation)
-% R_deter      -   Coefficient of determination of the SMA linear model fit
-% Line_Len     -   the lenght of the best-fit line
+% R_corr      -   Linear correlation coefficient (Pearson correlation)
+% R_det        -   Coefficient of determination of the SMA linear model fit
+% Line_Len     -   the length of the best-fit line
 % f_vds        -   the fraction of vector difference sum NRM used for the best-fit line
+% k            -   the curvature of the Arai plot following Paterson (2012; JGR)
+% SSE          -   the fit of the circle used to determine curvature (Paterson, 2012; JGR)
+
 % MAD_anc      -   the maximum angular deviation of the anchored PCA directional fit
 % MAD_free     -   the maximum angular deviation of the free-floating PCA directional fit
 % alpha        -   the angle between the anchored and free-floating PCA directional fits
 % alpha_prime  -   the angle between the anchored PCA directional fit and the true NRM direction (assumed to be well known)
 % alpha_TRM    -   the angle between the applied field and the acquire TRM direction (determined as an anchored PCA fit to the TRM vector)
 % DANG         -   the deviation angle (Tauxe & Staudigel, 2004; G-Cubed)
-% k            -   the curvature of the Arai plot following Paterson (2012; JGR)
-% SSE          -   the fit of the circle used to determine curvature (Paterson, 2012; JGR)
-% Theta        -   the angle between the applied field and the true NRM direction
+% Theta        -   the angle between the applied field and the NRM direction (determined as a free-floating PCA fit to the TRM vector)
 % a95          -   the alpha95 of the Fisher mean of the NRM direction of the best-fit segment
-% NRM_dev      -   the intensity deviaiton of the free-floating principal component from the origin, normalized by Y_int (Tanaka & Kobayashi, 2003; EPS)
+% NRM_dev      -   the intensity deviation of the free-floating principal component from the origin, normalized by Y_int (Tanaka & Kobayashi, 2003; EPS)
 % CRM_R        -   the potential CRM% as defined by Coe et al. (1984; JGR)
+
+% BY_Z       -   the zigzag parameter of Ben-Yosef et al. (2008; JGR)
+% Z          -   the zigzag parameter of Yu & Tauxe (2005; G-Cubed)
+% Z_star     -   the zigzag parameter of Yu (2012; JGR)
+% IZZI_MD    -   the zigzag parameter of Shaar et al. (2011, EPSL)
+% MD_area    -   the unsigned Arai plot area normalized by the length of the best-fit line (following the triangle method of Shaar et al. (2011, EPSL))
 
 % N_alt           -   the number of pTRM checks used to the maximum temperature of the best-fit segment
 % PCpoints        -   (N_alt x 3) array. First column is temperature the check is to (Ti), second is the temperature the check is from (Tj), third is total pTRM gained at each pTRM check (= pTRM_check_i,j in SPD)
 % check           -   the maximum pTRM difference when normalized by pTRM acquired at each check step
 % dCK             -   pTRM check normalized by the total TRM (i.e., X_int) (Leonhardt et al., 2004; G-Cubed)
-% DRAT            -   pTRM check normalized by the length of the best-fit line (Selking & Tauxe, 2000; Phil Trans R Soc London)
+% DRAT            -   pTRM check normalized by the length of the best-fit line (Selkin & Tauxe, 2000; Phil Trans R Soc London)
 % maxDEV          -  maximum pTRM difference normalized by the length of the TRM segment used for the best-fit slope (Blanco et al., 2012; PEPI)
-% CDRAT           -   cumuative DRAT (Kissel & Laj, 2004; PEPI)
-% CDRAT_prime     -   cumuative absolute DRAT
+% CDRAT           -   cumulative DRAT (Kissel & Laj, 2004; PEPI)
+% CDRAT_prime     -   cumulative absolute DRAT
 % DRATS           -   cumulative pTRM check normalized by the maximum pTRM of the best-fit line segment (REF - Tauxe...)
 % DRATS_prime     -   cumulative absolute pTRM check normalized by the maximum pTRM of the best-fit line segment
 % mean_DRAT       -   CDRAT divided by number of checks
@@ -111,23 +151,18 @@ function [Params] = GetPintParams_v5c(Mvec, Temps, Treatment, start_pt, end_pt, 
 % MDpoints   -   (N_MD x 2) array. First column is temperature, second is the remanence remaining after the demagnetization step for a pTRM tail check (= tail_check_i in SPD)
 % dTR        -   tail check normalized by the total NRM (i.e., Y_int) (Leonhardt et al., 2004; G-Cubed)
 % DRATtail   -   tail check normalized by the length of the best-fit line (Biggin et al., 2007; EPSL)
-% MDvds      -   tail check normalized by the vectoy difference sum corrected NRM (REF - Tauxe...)
+% MDvds      -   tail check normalized by the vector difference sum corrected NRM (REF - Tauxe...)
 % dt_star    -   pTRM tail after correction for angular dependence (Leonhardt et al., 2004; G-Cubed)
-% BY_Z       -   the zigzag parameter of Ben-Yosef et al. (2008; JGR)
-% Z          -   the zigzag parameter of Yu & Tauxe (2005; G-Cubed)
-% Z_star     -   the zigzag parameter of Yu (2012; JGR)
-% IZZI_IZZI  -   the zigzag parameter of Shaar et al. (2011, EPSL)
-% MD_area    -   the unsigned Arai plot area normalized by the lenght of the best-fit line (following the triangle method of Shaar et al. (2011, EPSL))
 
 % N_AC       - the number of additivity checks used to the maximum temperature of the best-fit segment
 % ADpoints   - (N_AC x 3) array. First 2 columns are lower and upper temperatures for remaining pTRM, third is the remanence remaining after a repeat demagnetization additivity check (= Mrem in SPD)
 % d_AC       - maximum additivity check normalized by the total TRM (i.e., X_int) (Leonhardt et al., 2004; G-Cubed)
 
-% SCAT            - SCAT parameters of Shaar & Tauxe (2013)
+% SCAT            - SCAT parameters of Shaar & Tauxe (2013). N.B. the beta threshold is hard-wired to 0.1
 % com_slope_pval  - the probability of a common slope when comparing the NRM-TRM slope, with that defined by pTRM and pTRM tail checks (Warton et al., 2006; Biol. Rev.)
 % com_elev_pval   - the probability of a common elevation (intercept) when comparing the NRM-TRM slope, with that defined by pTRM and pTRM tail checks (Warton et al., 2006; Biol. Rev.)
 
-% Hanc         -   the unit vector in the direction of Fanc as calculated by Selkin et al. (2000; EPSL) for the correction of anisotropy
+% Hanc         -   the unit vector in the direction of Banc as calculated by Selkin et al. (2000; EPSL) for the correction of anisotropy
 % anis_scale   -   factor used to scale the TRM vectors to correct for the effects of anisotropy
 % IMG_flag     -   flag to determine if non-linear TRM correction returns a complex number (1 if true, 0 if false)
 
@@ -165,7 +200,7 @@ if ~isempty(ChRM)
         % a 3D unit vector, but normalize just in case it is not a unit vector
         ChRM=ChRM./norm(ChRM);
     else
-        warning('GetPintParams:Input', 'Unrecognized ChRM format. Statictics that require ChRM will be ignored')
+        warning('GetPintParams:Input', 'Unrecognised ChRM format. Statistics that require ChRM will be ignored')
         ChRM=[];
     end
 end
@@ -192,13 +227,19 @@ if NLT_corr==1 && isempty(NLT_hat)
     warning('GetPintParams:Input', 'Non-linear TRM correction is desired, but no linearity estimate is provided. No correction will be applied')
 end
 
-% Set the experimental flag
+if isempty(beta_T)
+    beta_T=0.1;
+end
+
+% Set the experimental flag for separating the data
 % Exp_Flag=0 for Coe, Aitken, and IZZI
 % Exp_Flag>0 for Thellier
 Exp_Flag=sum(Treatment==5);
 
 %% Input data handling
 % Separate the data into NRM, TRM, pTRM and tail measurements etc
+% For the TRM, NRM, and tail check  matrices, the first column is the temperature
+% For pTRM and additivity checks, the first column is the temperature the check is TO, the second is the temperature the check is FROM
 
 if Exp_Flag==0
     % Coe/Aitken/IZZI Experiment
@@ -206,14 +247,13 @@ if Exp_Flag==0
     NRMvec=[];
     
     % solves differences between model and real data - for model data the
-    % intial NRM has Axis=1 (generates the intial NRM), but for real data Axis=0
+    % initial NRM has Axis=1 (generates the initial NRM), but for real data Axis=0
     if Treatment(1) ~=0
         NRMvec(1,:)=[0, Mvec(1,:)];
     end
     NRMvec=[NRMvec; Temps(Treatment==0), Mvec(Treatment==0,:)]; %#ok<*AGROW>
     tail_vec=[Temps(Treatment==3), Mvec(Treatment==3, :)];
     
-
     
     % Calculate the tail differences
     %     MD_vec=tail_vec;
@@ -226,8 +266,8 @@ if Exp_Flag==0
     end
     
     
-    TRMvec=[0,0,0,0]; %Set the first step to zeros
-    pCheck=[];%NaN(nAlt,3); % the full vector check
+    TRMvec=[0,0,0,0]; % Set the first step to zeros
+    pCheck=[]; % the full vector check
     SCAT_check=[];% a matrix for the SCAT parameter
     ALT_vec=[]; % the pTRM check difference
     ALT_scalar=[]; % the pTRM check difference as a scalar
@@ -235,30 +275,23 @@ if Exp_Flag==0
     ADD_vec=[]; % the matrix for additivity check vectors
     ADD_scalar=[];
     for n=2:length(Treatment)
+        
         if Treatment(n)==1 %TRM step
-            %              Mvec(n,:)
-            %              NRMvec(NRMvec(:,1)==Temps(n),2:end)
-            %              Temps(n)
             TRMvec=[TRMvec; Temps(n), Mvec(n,:)-NRMvec(NRMvec(:,1)==Temps(n),2:end)];
         end
-        
         
         if Treatment(n)==2 % pTRM check
             % In this experiment they are always performed after a
             % demagnetization experiment Axis==0 || ==3
             if Treatment(n-1) ~=0 && Treatment(n-1)~=3
                 disp(['Temperature step ', num2str(Temps(n))])
-                error('Unsuported experiment')
+                error('Unsupported experiment')
             end
             % Since it is a repeat TRM we can search TRMvec for the correct
-            % temp
+            % temperature
             pCheck_vec=Mvec(n,:)-Mvec(n-1,:);
             pCheck=[pCheck; pCheck_vec];
             SCAT_check=[SCAT_check;Temps(n), Temps(n-1), sqrt(sum(pCheck_vec.^2, 2))]; 
-            
-            %             TRMvec(TRMvec(:,1)==Temps(n),2:end)
-            %             Temps(n)
-            
             ALT_vec=[ALT_vec; Temps(n), Temps(n-1), pCheck_vec-TRMvec(TRMvec(:,1)==Temps(n),2:end)];
             ALT_scalar=[ALT_scalar; Temps(n), Temps(n-1), sqrt(sum(pCheck_vec.^2, 2)) - sqrt(sum( TRMvec(TRMvec(:,1)==Temps(n),2:end).^2, 2) )];
             check_pct =[check_pct; Temps(n), Temps(n-1), (sqrt(sum(pCheck_vec.^2, 2)) - sqrt(sum( TRMvec(TRMvec(:,1)==Temps(n),2:end).^2, 2) )) / sqrt(sum( TRMvec(TRMvec(:,1)==Temps(n),2:end).^2, 2))];
@@ -271,15 +304,14 @@ if Exp_Flag==0
             
             switch Treatment(n-1)
                 
-                case 1
+                case 1 % Previous step was a TRM step
                     %                                      total vec  -     previous NRM
                     ADD_vec=[ADD_vec; Temps(n), Temps(n-1), Mvec(n,:) - Mvec(Temps==Temps(n-1) & Treatment==0, :)]; % This observed Mrem
                     ADD_scalar=[ADD_scalar; Temps(n), Temps(n-1), sqrt(sum(Mvec(n,:).^2,2)) - sqrt(sum( Mvec(Temps==Temps(n-1) & Treatment==0, :).^2,2 ) ) ];
-                case 2
-%                     warning('GetPintParams:Additivity', 'Ignoring additivity check following a pTRM check - if required contact GAP')
+                    
+                case 2 % Previous step was a pTRM check step
                     
                     if Treatment(n-2)==0
-%                         warning('GetPintParams:Additivity', 'Ignoring additivity check: Unsported for IZZI or Aitken - if required contact GAP')
                         ADD_vec=[ADD_vec; Temps(n), Temps(n-2), Mvec(n,:) - Mvec(n-2, :)]; % This observed Mrem
                         ADD_scalar=[ADD_scalar; Temps(n), Temps(n-2), sqrt(sum(Mvec(n,:).^2,2)) - sqrt(sum( Mvec(n-2, :).^2,2 ) ) ];
                     elseif Treatment(n-2)==1 || Treatment(n-2)==3
@@ -287,7 +319,7 @@ if Exp_Flag==0
                         ADD_vec=[ADD_vec; Temps(n), Temps(n-2), Mvec(n,:) - Mvec(Temps==Temps(n-2) & Treatment==0, :)]; % This observed Mrem
                         ADD_scalar=[ADD_scalar; Temps(n), Temps(n-2), sqrt(sum(Mvec(n,:).^2,2)) - sqrt(sum( Mvec(Temps==Temps(n-2) & Treatment==0, :).^2,2 ) ) ];
                     else
-                        warning('GetPintParams:Additivity', 'Ignoring additivity check: Unsuported additivity check sequence')
+                        warning('GetPintParams:Additivity', 'Ignoring additivity check: Unsupported additivity check sequence')
                     end
                     
                     
@@ -302,8 +334,8 @@ if Exp_Flag==0
                     end
                     
                 otherwise
-                    disp(['Temsperature step ', num2str(Temps(n))])
-                    error('GetPintParams:Additivity', 'Unsuported additivity check sequence')
+                    disp(['Temperature step ', num2str(Temps(n))])
+                    error('GetPintParams:Additivity', 'Unsupported additivity check sequence')
                     
             end
             
@@ -316,7 +348,6 @@ else
     
     Dirvec=[Temps(Treatment==1), Mvec(Treatment==1, :)];
     Dirvec(1,:)=[]; % Remove the first row, which is the initial NRM
-
     
     Invvec=[Temps(Treatment==5), Mvec(Treatment==5, :)];
     
@@ -343,7 +374,7 @@ else
         MD_scalar(n,2)=sqrt(sum( tail_vec(n, 2:end).^2, 2)) - sqrt(sum( NRMvec( NRMvec(:,1)==tail_vec(n,1), 2:end ).^2, 2) );
     end
     
-    pCheck=[];%NaN(nAlt,3); % the full vector check
+    pCheck=[];% NaN(nAlt,3); % the full vector check
     SCAT_check=[];% a matrix for the SCAT parameter
     ALT_vec=[]; % the pTRM check difference
     ALT_scalar=[]; % the pTRM check difference as a scalar
@@ -352,7 +383,7 @@ else
         
         if Treatment(n)==2 % pTRM check
             % In this experiment they are always performed after an inverse
-            % TRM acquistion Axis==5 or a pTRM tail check Axis==3
+            % TRM acquisition Axis==5 or a pTRM tail check Axis==3
             % Since it is a repeat TRM we can search TRMvec for the correct
             % temp
             if Treatment(n-1)==5
@@ -360,7 +391,7 @@ else
             elseif Treatment(n-1)==3
                 pCheck_vec=(Mvec(n,:)-Mvec(n-1,:));
             else
-                error('Thellier:pTRM', 'Should not be here!\nTreatments: %f and %f\nTemperature: %f and %f', Treatment(n), Treatment(n-1), Temps(n), Temps(n-1));
+                error('GetPintParams:Thellier_pTRM', 'Should not be here!\nTreatments: %f and %f\nTemperature: %f and %f', Treatment(n), Treatment(n-1), Temps(n), Temps(n-1));
             end
             
             ALT_vec=[ALT_vec; Temps(n), Temps(n-1), pCheck_vec-TRMvec(TRMvec(:,1)==Temps(n),2:end)];
@@ -381,26 +412,11 @@ else
     
 end
 
-%lj
-Params.NRMvec = NRMvec;
-Params.TRMvec = TRMvec;
-TRMvec;
-% dot carat (.^2) does elementwise exponentiation.
-% the second two means do the summing along the second dimension, so
-% horizontally
-% then takes square root of that
-
-%lj
-
-% all rows, columns 2 to end
-
 
 Params.Xpts=sqrt(sum(TRMvec(:,2:end).^2,2));
-Params.Xpts;
 Params.Ypts=sqrt(sum(NRMvec(:,2:end).^2,2));
 Params.nmax=length(Params.Xpts);
 Params.Temp_steps=TRMvec(:,1);
-
 
 Params.Blab=Blab;
 
@@ -434,17 +450,13 @@ Params.Anis_c=NaN;
 Params.Hanc=NaN(1,3);
 if A_corr==1
     % Follows the method of Veitch et al(1984; Arch. Sci., 37, 359-373) as recommended by 
-    % Paterson (2013; Geophys. J. int.; 193, 684-710, doi: 10.1093/gji/ggt033)   
+    % Paterson (2013; Geophys. J. Int.; 193, 684-710, doi: 10.1093/gji/ggt033)   
     
     % Find the anisotropy corrected NRM direction
     % Get the NRM Decs and Incs then PCA the mean unit vector  (mX, mY, mZ)
-%     [Ds, Is, Iint]=cart2dir(NRMvec(seg,2), NRMvec(seg,3), NRMvec(seg,4));
-%     [mD, mI]=PmagPCA(Ds, Is, Iint, 'anc');
-%     [mX, mY, mZ]=dir2cart(mD, mI, 1); % Mhat_ChRM
-    
-    mX=mean(NRMvec(seg,2));
-    mY=mean(NRMvec(seg,3));
-    mZ=mean(NRMvec(seg,4));
+    [Ds, Is, Int]=cart2dir(NRMvec(seg,2), NRMvec(seg,3), NRMvec(seg,4));
+    [mD, mI]=PmagPCA(Ds, Is, Int, 'free');
+    [mX, mY, mZ]=dir2cart(mD, mI, 1); % Mhat_ChRM
     
     A=Anis_mat(s_tensor); % The anisotropy tensor
     
@@ -452,14 +464,12 @@ if A_corr==1
     Params.Hanc=Params.Hanc./norm(Params.Hanc); % Unit vector in the direction of the ancient field
     
     Manc=(A*Params.Hanc')';
-    Mlab=(A*T_orient')';
+    Mlab=(A*Blab_orient')';
     
     Params.Anis_c=norm(Mlab)/norm(Manc);
 end
 
 %% Arai stats
-
-
 
 Params.n=length(seg);
 Params.Seg_Ends=[seg_min, seg_max];
@@ -474,6 +484,14 @@ Params.xbar=mean(X_seg);
 Params.ybar=mean(Y_seg);
 U=detrend(X_seg,0); % (Xi-Xbar)
 V=detrend(Y_seg,0); % (Yi-Ybar)
+
+%lj 
+Params.x_err = U;
+Params.y_err = V;
+Params.NRMvec = NRMvec;
+Params.TRMvec = TRMvec;
+%lj
+
 
 % Get the paleointensity estimate
 Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);
@@ -496,7 +514,7 @@ end
 % end
 
 
-Params.sigma_b=sqrt ((2*sum(V.^2)-2*(Params.b)*sum(U.*V))/( (Params.n-2)*sum(U.^2)));
+Params.sigma_b=sqrt( (2*sum(V.^2)-2*(Params.b)*sum(U.*V)) / ( (Params.n-2)*sum(U.^2)) );
 Params.beta=abs(Params.sigma_b/Params.b);
 Params.sigma_B=Blab*Params.sigma_b;
 
@@ -506,47 +524,31 @@ Params.X_int=-Params.Y_int/Params.b;
 % Project the data onto the best-fit line
 Rev_x=(Params.Ypts-Params.Y_int)./Params.b; % The points reflected about the bes-fit line
 Rev_y=Params.b.*Params.Xpts+Params.Y_int;
-Px=(Params.Xpts+Rev_x)./2; % Average the both sets to get the projected points
-Py=(Params.Ypts+Rev_y)./2;
+Params.x_prime=(Params.Xpts+Rev_x)./2; % Average the both sets to get the projected points
+Params.y_prime=(Params.Ypts+Rev_y)./2;
+
+% Get the TRM, NRM, and line lengths
+Params.Delta_x_prime=abs( max(Params.x_prime(seg))-min(Params.x_prime(seg)) );
+Params.Delta_y_prime=abs( max(Params.y_prime(seg))-min(Params.y_prime(seg)) );
 %lj
-Params.Rev_x = Rev_x;
-Params.Rev_y = Rev_y;
-Params.x_prime = Px;
-Params.y_prime = Py;
-
+Params.delta_y_prime = Params.Delta_y_prime;
+Params.delta_x_prime = Params.Delta_x_prime;
 %lj
-
-
-% When projected on to the best-fit line the points are sequential, so we can just use max/mins
-Params.Line_Len=sqrt((min(Py(seg))-max(Py(seg)))^2+(min(Px(seg))-max(Px(seg)))^2);
-
-TRM_Len=max(Px(seg))-min(Px(seg));
-
-
-%lj
-NRMvec;
-
-
-
-Params.vector_diffs = sqrt(sum(diff((NRMvec(seg_min:seg_max-1,2:end)).^2),2).^2);
-
-%lj
+Params.Line_Len=sqrt(Params.Delta_x_prime^2 + Params.Delta_y_prime^2);
 
 % Get the VDS and fraction related stuff
 Params.VDS=sum(sqrt(sum((diff(NRMvec(:,2:end)).^2),2)))+sqrt(sum(NRMvec(end,2:end).^2));
-dyt=abs( max(Py(seg)) -  min( Py(seg) ) );
-sumdy=sum( diff( Py(seg) ).^2);
+sumdy=sum( diff( Params.y_prime(seg) ).^2);
 
-Params.f=abs(dyt/Params.Y_int);
-Params.f_vds=abs(dyt/Params.VDS);
-Params.FRAC=sum(sqrt(sum((diff(NRMvec(seg_min:seg_max-1,2:end)).^2),2)))/Params.VDS;
-Params.gap=1-(sumdy/(dyt^2));
-Params.GAP_MAX=max( sqrt( sum( diff(NRMvec(seg_min:seg_max-1,2:end)).^2, 2 ) ) )/Params.VDS;
+Params.f=abs(Params.Delta_y_prime/Params.Y_int);
+Params.f_vds=abs(Params.Delta_y_prime/Params.VDS);
+Params.FRAC=sum( sqrt( sum( (diff(NRMvec(seg_min:seg_max,2:end)).^2), 2 ) ) ) /Params.VDS;
+Params.gap=1-(sumdy/(Params.Delta_y_prime^2));
+Params.GAP_MAX=max( sqrt( sum( diff(NRMvec(seg_min:seg_max,2:end)).^2, 2 ) ) ) / sum(sqrt(sum((diff(NRMvec(seg_min:seg_max,2:end)).^2),2)));
 Params.qual=Params.f*Params.gap/Params.beta;
 Params.w=Params.qual/sqrt(Params.n-2);
-Params.R_corr=corr(X_seg, Y_seg)^2;
-Params.R_det=1 - (sum((Params.Ypts-Py).^2) / sum((Params.Ypts-Params.ybar).^2) );
-
+Params.R_corr=PearsonCorr2(X_seg, Y_seg);
+Params.R_det=1 - (sum((Y_seg-Params.y_prime(seg)).^2) / sum((Y_seg-Params.ybar).^2) );
 
 
 % Curvature
@@ -583,7 +585,7 @@ else
     [Params.Dec_F, Params.Inc_F, Params.MAD_free]=PmagPCA(Decs, Incs, Ints, 'free');
     
     Params.alpha=calc_angle([Params.Dec_A, Params.Inc_A], [Params.Dec_F, Params.Inc_F]);
-    Params.alpha(Params.alpha>90)=Params.alpha-90; % Take the smaller angle
+%     Params.alpha(Params.alpha>90)=Params.alpha-90; % Take the smaller angle
     
     if isempty(ChRM)
         Params.alpha_prime=NaN;
@@ -593,7 +595,7 @@ else
         [Rot_Dec_A, Rot_Inc_A, ~]=PmagPCA(Rot_Decs, Rot_Incs, Ints, 'anc');
         [NRM_dec, NRM_inc]=cart2dir(ChRM(1), ChRM(2), ChRM(3));
         Params.alpha_prime=calc_angle([Rot_Dec_A, Rot_Inc_A], [NRM_dec, NRM_inc]);
-        Params.alpha_prime(Params.alpha_prime>90)=Params.alpha_prime-90; % Take the smaller angle
+%         Params.alpha_prime(Params.alpha_prime>90)=Params.alpha_prime-90; % Take the smaller angle
     end
     
     
@@ -602,9 +604,9 @@ else
     [dirfit(1), dirfit(2), dirfit(3)]=dir2cart(Params.Dec_F, Params.Inc_F, 1);
     Centre=mean(NRMvec(seg, 2:end)); %Centre of mass
     Params.DANG=rad2deg( atan2(norm(cross(dirfit, Centre)), dot(dirfit, Centre)) );
-    Params.DANG(Params.DANG>90)=Params.DANG-90; % Take the smaller angle
+%     Params.DANG(Params.DANG>90)=Params.DANG-90; % Take the smaller angle
     
-    Params.NRM_dev=(norm(Centre)*sin(deg2rad(Params.DANG))) / Params.Y_int * 100;
+    Params.NRM_dev=(norm(Centre)*sin(deg2rad(Params.DANG))) / abs(Params.Y_int) * 100;
     
 end
 % Get the Fisher Mean and stats [Mdec, Minc, k, a95, R]
@@ -613,7 +615,7 @@ end
 
 % Do some directional stats on the TRM data
 
-%PmagPCA can't handle NaN or inf, so remove - only affects models with no noise
+%PmagPCA can't handle NaN or inf, so remove - THIS IS FOR THE STOCHASTIC MODELS ONLY - only affects models with no noise
 Bad_data=unique([find(isnan(TIncs)), find(isnan(TDecs)), find(isinf(TIncs)), find(isinf(TDecs)) ]);
 
 TIncs(Bad_data)=[];
@@ -624,20 +626,25 @@ if length(TIncs)< 3 %PmagPCA can't handle NaN or inf, so skip - should only affe
     Params.alpha_TRM=NaN;
 else
     [Dec_TA, Inc_TA]=PmagPCA(flipud(TDecs), flipud(TIncs), flipud(TInts), 'anc'); % flip the data up/down (reverses order) so it behaves like demag data
-    [TRM_dec, TRM_inc]=cart2dir(T_orient(1), T_orient(2), T_orient(3));
+    [TRM_dec, TRM_inc]=cart2dir(Blab_orient(1), Blab_orient(2), Blab_orient(3));
     Params.alpha_TRM=calc_angle([Dec_TA, Inc_TA], [TRM_dec, TRM_inc]);
-    Params.alpha_TRM(Params.alpha_TRM>90)=Params.alpha_TRM-90; % Take the smaller angle
+%     Params.alpha_TRM(Params.alpha_TRM>90)=Params.alpha_TRM-90; % Take the smaller angle
 end
 
 
-% Anisotropy check
-Params.gamma=rad2deg( atan2(norm(cross(TRMvec(seg_max,2:end), T_orient)), dot(TRMvec(seg_max,2:end), T_orient)) );
+% AnisotroParams.y_prime check
+Params.gamma=rad2deg( atan2(norm(cross(TRMvec(seg_max,2:end), Blab_orient)), dot(TRMvec(seg_max,2:end), Blab_orient)) );
 
 
 % Angle between measured NRM and Blab
-[NRMhat(1), NRMhat(2), NRMhat(3)]=dir2cart(Params.Dec_A, Params.Inc_A);
-Params.Theta=rad2deg( atan2(norm(cross(NRMhat, T_orient)), dot(NRMhat, T_orient)) );
-
+[NRMhat(1), NRMhat(2), NRMhat(3)]=dir2cart(Params.Dec_F, Params.Inc_F);
+Params.Theta=rad2deg( atan2(norm(cross(NRMhat, Blab_orient)), dot(NRMhat, Blab_orient)) );
+%lj -- old version from v5c
+Params.NRMhat = NRMhat;
+Params.Blab_orient = Blab_orient;
+%seems to be the same, but renamed T_orient
+%Params.Theta=rad2deg( atan2(norm(cross(NRMhat, T_orient)), dot(NRMhat, T_orient)) );
+%lj
 
 % Coe et al. (1984) CRM parameter
 if isempty(ChRM)
@@ -645,24 +652,24 @@ if isempty(ChRM)
     Params.CRM_R=NaN;
 else
     
-    if NRM_rot_flag==1 % We need to also rotate the Blab vector into stratigraphic coords
-        [tmp_D, tmp_I]=cart2dir(T_orient(1), T_orient(2), T_orient(3));
+    if NRM_rot_flag==1 % We need to also rotate the Blab vector into geographic coords
+        [tmp_D, tmp_I]=cart2dir(Blab_orient(1), Blab_orient(2), Blab_orient(3));
         [tmp_D, tmp_I]=dirot(tmp_D, tmp_I, Az, Pl);
         [tmp_O(1),tmp_O(2),tmp_O(3)]=dir2cart(tmp_D, tmp_I, 1);
         phi2=( atan2(norm(cross(ChRM, tmp_O)), dot(ChRM, tmp_O)) );
     else
-        phi2=( atan2(norm(cross(ChRM, T_orient)), dot(ChRM, T_orient)) );
+        phi2=( atan2(norm(cross(ChRM, Blab_orient)), dot(ChRM, Blab_orient)) );
     end
     
-    [fit_vec(:,1), fit_vec(:,2), fit_vec(:,3)]=dir2cart(Rot_Decs, Rot_Incs, 1);
+    [fit_vec(:,1), fit_vec(:,2), fit_vec(:,3)]=dir2cart(Rot_Decs, Rot_Incs, 1); % Even if we don't rotate Rot_Decs/Incs contains the unrotated directions
     CRM=NaN(size(fit_vec,2),1); % create an empty vector
     
     for j=1:1:size(fit_vec,2)
         phi1=( atan2(norm(cross(fit_vec(j,:), ChRM)), dot(fit_vec(j,:), ChRM)) );
-        CRM(j)=Ints(j)*sin(phi1)/sin((phi2));
+        CRM(j)=Params.Ypts(j)*sin(phi1)/sin((phi2));
     end
     
-    Params.CRM_R=100*max(CRM)/(TRM_Len);
+    Params.CRM_R=100*max(CRM)/(Params.Delta_x_prime);
     
 end
 
@@ -672,7 +679,7 @@ end
 % Ben-Yosef (2008; JGR) method %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Based on PmagPy implementation
+% Based on PmagParams.y_prime implementation
 %
 
 % Preallocate variable
@@ -707,7 +714,7 @@ b_izzi=dy./dx;
 b1=b_izzi(1:2:end);
 b2=b_izzi(2:2:end);
 
-% Supress noise ala Tauxe
+% Suppress noise ala Tauxe
 r1=sqrt( dy(1:2:end).^2 + dx(1:2:end).^2 );
 r2=sqrt( dy(2:2:end).^2 + dx(2:2:end).^2 );
 
@@ -732,11 +739,10 @@ end
 
 bi=(Params.Y_int-Params.Ypts)./Params.Xpts;
 bi(1)=0;
-ri=Params.Xpts;
-dummy_var=abs( (bi-abs(Params.b)).*ri);
+dummy_var=abs( (bi-abs(Params.b)).*Params.Xpts);
 
-Params.Z=sum( dummy_var(seg_min:seg_max)./Params.X_int);
-Params.Z_star=sum(100.*sum( dummy_var(seg_min:seg_max))./Params.Y_int)/(Params.n-1);
+Params.Z=sum( dummy_var(seg_min:seg_max)./abs(Params.X_int)); % Yu & Tauxe (2005; G-Cubed)
+Params.Z_star=sum(100.*sum( dummy_var(seg_min:seg_max))./abs(Params.Y_int))/(Params.n-1);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -777,8 +783,10 @@ for j=1:1:length(Xn)-2
     % Determine the best-fit line of the endpoints (of the 3 used for the triangle)and use the
     % intercept of this best-fit line (EP_fit(2) and the intercept of the line with the same slope, 
     % but through the middle point (Mid_int) to determine which points are higher
-    EP_fit=polyfit(Xn([j,j+2]), Yn([j,j+2]), 1); % calcualte the endpoint fit
-    Mid_int=Yn(j+1)-EP_fit(1)*Xn(j+1);
+    EP_fit=polyfit(Xn([j,j+2]), Yn([j,j+2]), 1); % calculate the endpoint fit
+    
+    a1=EP_fit(2);
+    a2=Yn(j+1)-EP_fit(1)*Xn(j+1); % Intercept when the line is passed through the midpoint
     
     if IZZI_flag==1
         
@@ -790,7 +798,7 @@ for j=1:1:length(Xn)-2
             ZI_steps(j)=1;
             ZI_steps(j+2)=1;
             
-            if Mid_int < EP_fit(2) % Midpoint is below
+            if a1 < a2 % Midpoint is above
                 Zsign(j)=-1;
             else % midpoint is above
                 Zsign(j)=1;
@@ -802,10 +810,10 @@ for j=1:1:length(Xn)-2
             % Assign midpoint as a ZI step
             ZI_steps(j+1)=1;
             
-            if Mid_int > EP_fit(2) % Midpoint is below
-                Zsign(j)=-1;
-            else % midpoint is above
+            if a1 < a2 % Midpoint is above
                 Zsign(j)=1;
+            else % midpoint is above
+                Zsign(j)=-1;
             end
             
         else
@@ -834,7 +842,6 @@ Params.IZZI_MD=sum(Zsign.*Tri_area)/ZI_len;
 
 %% SCAT
 
-beta_T=0.1; %Hardwired in for this version - Not currently used in any any analyses
 sigma_T=beta_T*abs(Params.b);
 b1=Params.b - 2*sigma_T;
 b2=Params.b + 2*sigma_T;
@@ -909,10 +916,10 @@ end
 clear vars tmp_x tmp_y tmp_inds;
 
 % Create an array with the points to test
-Params.SCAT_points=[X_seg, Y_seg; Check_points]; % Add the TRM-NRM arai plot points
+Params.SCAT_points=[X_seg, Y_seg; Check_points]; % Add the TRM-NRM Arai plot points
 
 IN=inpolygon(Params.SCAT_points(:,1), Params.SCAT_points(:,2), Params.SCAT_BOX(:,1), Params.SCAT_BOX(:,2));
-Params.SCAT=floor(sum(IN)/length(IN)); % The ratio ranges from 0 to 1, the floor command rounds down to nearest integer, i.e., rounds to 0 or 1
+Params.SCAT=floor(sum(IN)/length(IN)); % The ratio ranges from 0 to 1, the floor command rounds down to nearest integer (i.e., rounds to 0 or 1)
 
 %% Common slope and common elevation tests
 % Based on the algorithms of Warton et al. (2006; Biol. Rev.)
@@ -938,7 +945,7 @@ if ~isempty(Check_points) % do the test
     Params.check_slope=sign(sum(cU.*cV))*std(Check_points(:,2))/std(Check_points(:,1));
     Params.check_int=barY(2)-Params.check_slope*barX(2);
     
-    % make intial guess - the average of the two slopes
+    % make initial guess - the average of the two slopes
     bhat=mean([Params.b, Params.check_slope]);
     b_com=fminsearch(@(x) abs(common_slope(x, varX, varY, varXY, Ns)), bhat, optimset('TolX', 1e-10, 'TolFun', 1e-10, 'MaxIter', 1e3, 'Display', 'off'));
     
@@ -1021,7 +1028,7 @@ if ~isempty(ALT_scalar)
     Params.check=100*max(abs(check_pct(check_pct(:,1)<=Params.Tmax & check_pct(:,2)<=Params.Tmax, 3)));
     Params.dCK=100*max(abs(pTRM_checks/Params.X_int));
     Params.DRAT=100*max(abs(pTRM_checks/Params.Line_Len));
-    Params.maxDEV=100*max(abs(pTRM_checks/TRM_Len));
+    Params.maxDEV=100*max(abs(pTRM_checks/Params.Delta_x_prime));
 
     Params.CDRAT=abs( 100*sum(pTRM_checks)/Params.Line_Len );
     Params.CDRAT_prime=abs( 100*sum(abs(pTRM_checks))/Params.Line_Len );
@@ -1029,12 +1036,11 @@ if ~isempty(ALT_scalar)
     Params.DRATS=abs( 100*sum(pTRM_checks)/Params.Xpts(seg(end)) );
     Params.DRATS_prime=abs( 100*sum(abs(pTRM_checks))/Params.Xpts(seg(end)) );
 
-    Params.mean_DRAT=Params.CDRAT./Params.n_pTRM;
-    Params.mean_DRAT_prime=100*mean(abs(pTRM_checks/Params.Line_Len));
+    Params.mean_DRAT=100*abs(mean(pTRM_checks./Params.Line_Len));
+    Params.mean_DRAT_prime=100*mean(abs(pTRM_checks./Params.Line_Len));
     
-    Params.mean_DEV=100*abs(mean((pTRM_checks/TRM_Len)));
-    Params.mean_DEV_prime=100*mean(abs(pTRM_checks/TRM_Len));
-    
+    Params.mean_DEV=100*abs(mean((pTRM_checks./Params.Delta_x_prime)));
+    Params.mean_DEV_prime=100*mean(abs(pTRM_checks./Params.Delta_x_prime));    
     
     Params.pTRM_sign=sign(pTRM_checks(abs(pTRM_checks)==max(abs(pTRM_checks))));
     Params.CpTRM_sign=sign(sum(pTRM_checks));
@@ -1046,9 +1052,9 @@ if ~isempty(ALT_scalar)
     
     % The matrix for the cumulative sum needs to be padded with zeros where
     % no pTRM checks were performed
-    to_sum=zeros(length(TRMvec),3); %create empty matrix
+    to_sum=zeros(length(TRMvec),3); %create empty matrix of zeros
     for j=1:size(ALT_vec,1)
-        ind= TRMvec(:,1)==ALT_vec(j,1);%%%%%
+        ind= TRMvec(:,1)==ALT_vec(j,1);
         to_sum(ind,:)=ALT_vec(j,3:end);
     end
     
@@ -1064,6 +1070,9 @@ if ~isempty(ALT_scalar)
     Ucorr=detrend(Xcorr,0);
     corr_slope=sign(sum(Ucorr.*V))*std(Y_seg)/std(Xcorr);
     Params.dpal=abs(100*(Params.b-corr_slope)/Params.b);
+    
+    Params.dpal_signed=(100*(Params.b-corr_slope)/Params.b);
+    Params.dpal_ratio=log(corr_slope/Params.b);
     
     
 end
@@ -1085,6 +1094,8 @@ if Params.n_pTRM==0
     Params.mean_DEV_prime=NaN;
     
     Params.dpal=NaN;
+    Params.dpal_signed=NaN;
+    Params.dpal_ratio=NaN;
     
     Params.pTRM_sign=NaN;
     Params.CpTRM_sign=NaN;
@@ -1120,7 +1131,7 @@ if ~isempty(MD_scalar)
         elseif sum((NRMvec(j,1)==tail_vec(:,1))) > 1
             % should not be true - multiple tail checks to the same
             % temperature
-            error('SD_model:tails', 'Too many tailchecks?');
+            error('GetPintParams:tails', 'Too many tail checks?');
             
         else % We have a tail check
             tind=find(tail_vec(:,1)==NRMvec(j,1)); % the index of the tail check
@@ -1130,36 +1141,35 @@ if ~isempty(MD_scalar)
             MDz=tail_vec(tind,4);
             
             % This is more accurate than dot product when theta is small
-            theta_dt = atan2(norm(cross(NRMvec(j,2:end)./Params.Ypts(j),T_orient)),dot(NRMvec(j,2:end)./Params.Ypts(j), T_orient));
+            theta_dt = atan2(norm(cross(NRMvec(j,2:end)./Params.Ypts(j),Blab_orient)),dot(NRMvec(j,2:end)./Params.Ypts(j), Blab_orient));
             
-            % Define horizontal and vertical according to T_orient
-            if abs(T_orient(1)/norm(T_orient))==1
+            % Define horizontal and vertical according to Blab_orient, such that Blab_orient is always "vertical"
+            if abs(Blab_orient(1)/norm(Blab_orient))==1 % Blab is along x
                 dH=sqrt(sum(NRMvec(j,2:3).^2))-sqrt(MDy^2+MDz^2);
                 dZ=NRMvec(j,2)-MDx;
-                [~, F_inc]=cart2dir(T_orient(2), T_orient(3), T_orient(1));
+                [~, F_inc]=cart2dir(Blab_orient(2), Blab_orient(3), Blab_orient(1));
                 [~, N_inc]=cart2dir(NRMvec(j,3), NRMvec(j,4), NRMvec(j,2));
                 inc_diff=F_inc-N_inc;
-            elseif abs(T_orient(2)/norm(T_orient))==1
+            elseif abs(Blab_orient(2)/norm(Blab_orient))==1 % Blab is along y
                 dH=sqrt(sum(NRMvec(j,2,4).^2))-sqrt(MDx^2+MDz^2);
                 dZ=NRMvec(j,3)-MDy;
-                [~, F_inc]=cart2dir(T_orient(2), T_orient(1), T_orient(2));
+                [~, F_inc]=cart2dir(Blab_orient(2), Blab_orient(1), Blab_orient(2));
                 [~, N_inc]=cart2dir(NRMvec(j,4), NRMvec(j,2), NRMvec(j,3));
                 inc_diff=F_inc-N_inc;
-            elseif abs(T_orient(3)/norm(T_orient))==1
+            elseif abs(Blab_orient(3)/norm(Blab_orient))==1 % Blab is along z
                 dH=sqrt(sum(NRMvec(j,2:3).^2,2))-sqrt(MDx^2+MDy^2);
                 dZ=NRMvec(j,4)-MDz;
-                [~, F_inc]=cart2dir(T_orient(1), T_orient(2), T_orient(3));
+                [~, F_inc]=cart2dir(Blab_orient(1), Blab_orient(2), Blab_orient(3));
                 [~, N_inc]=cart2dir(NRMvec(j,2), NRMvec(j,3), NRMvec(j,4));
                 inc_diff=F_inc-N_inc;
             else
-                error('GetPintParams:dt_star', 'Something funky is going on - should no be here right now.');
+                error('GetPintParams:dt_star', 'Blab is expected to be along either x, y, or z. If you see this contact GAP.');
                 
-                % THIS IN NOT FULLY TESTED YET
-                
-                % In this case T_orient is at an angle to x, y and z
-                % to calculate dt* we transform coordinates such that T_orient
-                % is along z, and we rotate teh NRM and MD vector
-%                 Rot_params=vrrotvec(T_orient./norm(T_orient), [0,0,1]); % The parameters needed to rotate the field vector to z
+                % THIS IN NOT FULLY TESTED YET              
+                % In this case Blab_orient is at an angle to x, y and z
+                % to calculate dt* we transform coordinates such that Blab_orient
+                % is along z, and we rotate the NRM and MD vector
+%                 Rot_params=vrrotvec(Blab_orient./norm(Blab_orient), [0,0,1]); % The parameters needed to rotate the field vector to z
 %                 
 %                 % rotate the NRM
 %                 if mod(Rot_params(4), pi/2)==0 % fields along x/y/z should be dealt with above
@@ -1177,7 +1187,7 @@ if ~isempty(MD_scalar)
 %                 
 %                 dH=sqrt(sum(NRMrot(1:2).^2,2))-sqrt(MDx^2+MDy^2);
 %                 dZ=NRMrot(3)-MDz;
-%                 [~, F_inc]=cart2dir(T_orient(1), T_orient(2), T_orient(3));
+%                 [~, F_inc]=cart2dir(Blab_orient(1), Blab_orient(2), Blab_orient(3));
 %                 [~, N_inc]=cart2dir(NRMrot(1), NRMrot(2), NRMrot(3));
 %                 inc_diff=F_inc-N_inc;
                 
@@ -1188,22 +1198,22 @@ if ~isempty(MD_scalar)
             %             dZ=NRMvec(j,4)-MDz;
             B=dH./(tan(theta_dt));
             
-            %             [~, F_inc]=cart2dir(T_orient(1), T_orient(2), T_orient(3));
+            %             [~, F_inc]=cart2dir(Blab_orient(1), Blab_orient(2), Blab_orient(3));
             %             [~, N_inc]=cart2dir(NRMvec(j,2), NRMvec(j,3), NRMvec(j,4));
             %             inc_diff=F_inc-N_inc; % Inclination difference in degrees
             
             % Roman Leonhardt's dt* implementation - as of v4.2
             if (floor(theta_dt*1000) < 2968 && floor(theta_dt*1000) > 175) %% TT Version 4.1
                 if (inc_diff > 0)
-                    tstar(j) = (-dZ + B) * abs(Params.b) * 100.0/Params.Y_int; %% sign dependent  diff (new in Vers. 1.8)
+                    tstar(j) = (-dZ + B) * abs(Params.b) * 100.0/abs(Params.Y_int); %% sign dependent  diff (new in Vers. 1.8)
                 else
-                    tstar(j) = (dZ - B) * abs(Params.b) * 100.0/Params.Y_int; %% sign dependent  diff (new in Vers. 1.8)
+                    tstar(j) = (dZ - B) * abs(Params.b) * 100.0/abs(Params.Y_int); %% sign dependent  diff (new in Vers. 1.8)
                 end
             else
                 if (floor(theta_dt*1000) <= 175)
                     tstar(j) = 0;
                 elseif (floor(theta_dt*1000) >= 2968) %% TT Version 4.1
-                    tstar(j) =-Params.Y_int/(Params.Y_int+Params.X_int)*dZ*100.0/Params.Y_int;% -minmax.maxmagTH/(minmax.maxmagTH+minmax.maxmagPT)*dZ * 100.0/minmax.maxmagTH;
+                    tstar(j) =-dZ*100.0/(abs(Params.X_int)+abs(Params.Y_int));% -minmax.maxmagTH/(minmax.maxmagTH+minmax.maxmagPT)*dZ * 100.0/minmax.maxmagTH;
                 end
             end
             
@@ -1260,7 +1270,7 @@ if ~isempty(ADD_vec)
 %         AC(j) = sqrt( sum( (Mrem - (TRM2 - TRM1)).^2, 2 ) );
         
         
-        % Calculate it by scalar difference - this is consisitent with pTRM and pTRM tail checks
+        % Calculate it by scalar difference - this is consistent with pTRM and pTRM tail checks
         AC(j) = (ADD_scalar(j,3) - (Params.Xpts(Params.Temp_steps==ADD_vec(j,2)) - Params.Xpts(Params.Temp_steps==ADD_vec(j,1))) );
         
         
@@ -1271,7 +1281,7 @@ if ~isempty(ADD_vec)
 %         AC=AC(ADD_vec(:,1) < Params.Tmax, 1); % I believe that this is the selection used by the ThellierTool
 
     
-    Params.dAC=100*max(abs(AC))/Params.X_int;
+    Params.dAC=100*max(abs(AC))/abs(Params.X_int);
     
     Params.n_add=length(AC);
     
@@ -1316,15 +1326,26 @@ for i=1:Params.nmax
     end
         
 end
-Params.PLOT=[Params.Temp_steps, Params.Xpts, Params.Ypts, pTRM_plot, tail_plot];
+Params.Plot_Arai=[Params.Temp_steps, Params.Xpts, Params.Ypts, pTRM_plot, tail_plot];
+Params.Plot_Line=[Params.x_prime([Params.Seg_Ends]), Params.y_prime([Params.Seg_Ends])];
 
-Params.TEST=[Px, Py];
+Params.Plot_pTRM_Lines=Line_pts;
 
-Params.pTRM_Lines=Line_pts;
+Params.Plot_orth=NRMvec;
 
-%% Round the stats to the recommended SPD precisiion
-%lj -- turned off rounding!!!  just for now
-if(1==2)
+% Get the Cartesian coords of the best fits
+[x_a, y_a, z_a]=dir2cart(Params.Dec_A, Params.Inc_A, 1); % Get the unit vector for the anchored PCA fit
+Params.Plot_PCA_anc=repmat([x_a, y_a, z_a], Params.n, 1).*repmat(Params.Ypts(seg), 1,3); % Replicate n times and scale by the selected segment
+% Params.Plot_PCA_anc=[0, 0, 0; x_a, y_a, z_a].*max(Params.Ypts); % Replicate n times and scale by the selected segment
+
+[x_f, y_f, z_f]=dir2cart(Params.Dec_F, Params.Inc_F, 1); % Get the unit vector for the free-floating PCA fit
+Params.Plot_PCA_free=repmat([x_f, y_f, z_f], Params.n, 1).*repmat(Params.Ypts(seg), 1,3); % Replicate n times and scale by the selected segment
+% Params.Plot_PCA_anc=[0, 0, 0; x_f, y_f, z_f].*max(Params.Ypts); % Replicate n times and scale by the selected segment
+
+
+
+%% Round the stats to the recommended SPD precision
+
 % Arai plot
 Params.b=round(1000*Params.b)/1000;
 Params.sigma_b=round(1000*Params.sigma_b)/1000;
@@ -1389,14 +1410,13 @@ Params.MDvds=round(10*Params.MDvds)/10;
 Params.dt_star=round(10*Params.dt_star)/10;
 
 
-% Aditivity checks
+% Additivity checks
 Params.dAC=round(10*Params.dAC)/10;
 
 
 % Anis stats
 Params.Anis_c=round(1000*Params.Anis_c)/1000;
 
-end
 
 % NLT stats
 
@@ -1406,10 +1426,38 @@ end
 
 %% Required functions
 
+
+function [R2]=PearsonCorr2(X, Y)
+%
+% function to determine the Pearson linear correlation between two input
+% vector, X and Y
+
+Xd=detrend(X, 0); % (x-xbar)
+Yd=detrend(Y, 0); % (y-ybar)
+
+R2 = sum((Xd.*Yd))^2 ./ ( sum(Xd.^2).*sum(Yd.^2) );
+
+end
+
+function [InRadians]=deg2rad(InDegrees)
+%
+% Convert an angle in degrees to radians
+
+InRadians = (pi/180) .* InDegrees;
+
+end
+
+function [InDegrees]=rad2deg(InRadians)
+%
+% Convert an angle in radians to degree
+
+InDegrees = (180/pi) .* InRadians;
+
+end
+
 function [A]=Anis_mat(s)
 %
-%Build the anisotropy tensor
-%
+% Build the anisotroParams.y_prime tensor
 
 A(1,1)=s(1);
 A(2,2)=s(2);
@@ -1421,7 +1469,7 @@ A(1,2)=A(2,1);
 A(1,3)=A(3,1);
 A(2,3)=A(3,2);
 
-end % Anisotropy matrix
+end % AnisotroParams.y_prime matrix
 
 function [theta]=calc_angle(Dir1, Dir2)
 %
@@ -1462,8 +1510,7 @@ function [parameters]=AraiCurvature(x,y)
 % Function for calculating the radius of the best fit circle to a set of 
 % x-y coordinates.
 % Paterson, G. A., (2011), A simple test for the presence of multidomain
-% behaviour during paleointensity experiments, J. Geophys. Res., in press,
-% doi: 10.1029/2011JB008369
+% behaviour during paleointensity experiments, J. Geophys. Res., doi: 10.1029/2011JB008369
 %
 % parameters(1) = k
 % parameters(2) = a
@@ -1474,11 +1521,11 @@ function [parameters]=AraiCurvature(x,y)
 x=reshape(x, length(x), 1);
 y=reshape(y, length(y), 1);
 
-% Normalizevectors
+% Normalize vectors
 x=x./max(x);
 y=y./max(y);
 
-% Provide the intitial estimate
+% Provide the initial estimate
 E1=TaubinSVD([x,y]);
 
 % Determine the iterative solution
@@ -1802,7 +1849,7 @@ end % 3-D vector rotation
 
 function [x, y, z]=dir2cart(Dec, Inc, Mag)
 %
-% Converts a paleomagmetic direction to cartesian coordinates
+% Converts a paleomagnetic direction to Cartesian coordinates
 %
 
 if nargin <3
@@ -1820,7 +1867,7 @@ end % convert a direction to a Cartesian vector
 
 function [Dec, Inc, R]=cart2dir(x, y, z)
 %
-% Convert cartesian coordinates to declination/inclination
+% Convert Cartesian coordinates to declination/inclination
 % 
 
 if nargin <3
@@ -1848,29 +1895,23 @@ Inc(R==0)=NaN;
 
 end % convert a Cartesian vector to a direction
 
-function [Dgeo, Igeo]=dirot(Dec, Inc, Az, Plz)
-%
-% Converts a direction to geographic coordinates using az,plz as azimuth and
-% plunge of Z direction (from horizontal)
-% Based on PyMag by Lisa Tauxe
-%
+function [Dgeo, Igeo]=dirot(Dec, Inc, Az, Pl)
 
-Plx=Plz-90; %Get the plunge of the X direction
+% Converts a direction to geographic coordinates using az,pl as azimuth and
+% plunge (inclination) of Z direction
+% Based on 2G software which uses the strike for the calculations 
+% Strike = Az +90
 
-A1=[];
-A2=[];
-A3=[];
+
 [x,y,z]=dir2cart(Dec, Inc, 1);
 
-% Set up rotation matrix
-[A1(1), A1(2),A1(3)]=dir2cart(Az, Plx, 1);
-[A2(1), A2(2),A2(3)]=dir2cart(Az+90, 0, 1);
-[A3(1), A3(2),A3(3)]=dir2cart(Az-180, 90-Plx, 1);
+str_rad=deg2rad(Az+90); % Here add 90 to get the strike
+pl_rad=deg2rad(Pl);
 
-% Do rotaion
-xp=A1(1).*x+A2(1).*y+A3(1).*z;
-yp=A1(2).*x+A2(2).*y+A3(2).*z;
-zp=A1(3).*x+A2(3).*y+A3(3).*z;
+xp=(x.*sin(pl_rad) + z.*cos(pl_rad)).*sin(str_rad) + y.*cos(str_rad);
+yp=-(x.*sin(pl_rad) + z.*cos(pl_rad)).*cos(str_rad) + y.*sin(str_rad);
+zp=-x.*cos(pl_rad) + z.*sin(pl_rad);
+
 
 [Dgeo, Igeo]=cart2dir(xp, yp, zp);
 
@@ -1935,9 +1976,9 @@ function [Mdec, Minc, MAD]=PmagPCA(Dec, Inc, Int, type)
 % Note: This only fits lines, not planes
 %
 
-% Varaible checking
+% Variable checking
 if nargin < 4
-    type='free';
+    type='free'; % Default fitting method
 end
 
 % Setup input
@@ -1952,7 +1993,7 @@ elseif strcmpi(type, 'origin')  % Free fit with the origin
     input=[input; 0, 0, 0];
     bars=[mean(X), mean(Y), mean(Z)];
 else
-    error('PCADir:Fit_Type', 'Fit type unrecongnozed');
+    error('PCADir:Fit_Type', 'Fit type unrecognised');
 end
 
 n=size(input,1);
@@ -1962,7 +2003,7 @@ for j=1:1:n
 end
 
 % Perform PCA
-% based on PmagPy
+% based on PmagParams.y_prime
 
 T=Tmatrix(x);
 [V,tau]=eig(T);

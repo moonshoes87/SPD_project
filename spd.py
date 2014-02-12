@@ -595,6 +595,8 @@ thing.calculate_all_statistics()
 #[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
 #[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
 
+specimens = gui3.Data.keys()
+data = gui3.Data
 spec = PintPars(gui3.Data, 'AL3031-1d', 273., 498.)
 spec2 = PintPars(gui3.Data, 'AL2844-2b', 273, 498.)
 spec.calculate_all_statistics()

@@ -75,7 +75,11 @@ for f=1:n_files
     % Convert to x, y, z and put into Mvec
     Mvec=NaN(length(Int), 3); %Create an empty matrix
     [Mvec(:,1), Mvec(:,2), Mvec(:,3)]=dir2cart(Dec, Inc, Int);
-
+    
+    % a is the same as spec.pars['zijdblock'][0]
+    a=[Temps(1), Dec(1), Inc(1), Int(1)];
+    b=[Temps(2), Dec(2), Inc(2), Int(2)];
+    
    
    
     
@@ -94,6 +98,10 @@ for f=1:n_files
     
     % Lab Field orientation - Default assumes negative z-axis
     F_orient=[0,0,-1];
+    % lj for debugging
+    F_orient = [0,0,1];
+    %lj
+    
     
     flags.Anis=0;
     s_tensor=[];
@@ -301,8 +309,20 @@ for f=1:n_files
     %% Call GetPintParams
     % Get the params from point 1 to 7
     
-    Params=GetPintParams_v5c(Mvec, Temps, Treatment, 1, 7, F_orient, Flab, flags.Rot, Az, Pl, N_orient, flags.Anis, s_tensor, flags.NLT, NLT_hat);
+    max_tmax = length(Temps(Treatment==0));
+    
+    
+    %for i=1:max_tmax:
+    
+    
+    Params=GetPintParams_v6(Mvec, Temps, Treatment, 1, 7, F_orient, Flab, flags.Rot, Az, Pl, N_orient, flags.Anis, s_tensor, flags.NLT, NLT_hat, .1);
+    %Params=GetPintParams_v5c(Mvec, Temps, Treatment, 1, 7, F_orient, Flab, flags.Rot, Az, Pl, N_orient, flags.Anis, s_tensor, flags.NLT, NLT_hat);
+           %GetPintParams_v6(Mvec, Temps, Treatment, start_pt, end_pt, Blab_orient, Blab, NRM_rot_flag, Az, Pl, ChRM, A_corr, s_tensor, NLT_corr, NLT_hat, beta_T)
+
+    
+    % norming by NRM
     NRM = Params.Ypts(1);
+    Params.NRM = NRM;
     Params.Xpts = Params.Xpts / NRM;
     Params.Ypts = Params.Ypts / NRM;
     Params.Y_int = Params.Y_int / NRM;
@@ -310,20 +330,34 @@ for f=1:n_files
     Params.VDS = Params.VDS / NRM;
     Params.x_prime = Params.x_prime / NRM;
     Params.y_prime = Params.y_prime / NRM;
-    Params.delta_x_prime = abs(Params.x_prime(end) - Params.x_prime(1));
-    Params.delta_y_prime = abs(Params.y_prime(end) - Params.y_prime(1));
+    %extra
+    Params.x_err = Params.x_err / NRM;
+    Params.y_err = Params.y_err / NRM;
+    %Params.x_tag = Params.x_tag / NRM;
+    %Params.y_tag = Params.y_tag / NRM;
     
-    Params.FRAC = Params.FRAC;
+    % end extra
+    Params.delta_x_prime = Params.delta_x_prime / NRM;
+    Params.delta_y_prime = Params.delta_y_prime / NRM;
+    %Params.lj_delta_x_prime = abs(Params.x_prime(end) - Params.x_prime(1));
+    %Params.lj_delta_y_prime = abs(Params.y_prime(end) - Params.y_prime(1));
+    
+    
+    
+    % norming ends
+
 
     
     
     %
     split = strsplit(files(f).name, '.');
     spec_name = split{1}; % removes .tdt from spec_name
+    Params.s = spec_name;
+    spec_name = strrep(spec_name, '-', '_'); % - in name will cause matlab error
+    spec_name = strcat(spec_name, '_', '1', '_', '7');
     Specimens.(spec_name) = Params;
-    
-    
-    
+
+    %end
     
     
     
@@ -339,14 +373,16 @@ toc
 % lori
 
 %lj how to make FRAC the same as in my code
-NRMint = Int(Treatment==0);
-NRMvec = Params.NRMvec(:,2:end);
-zdata = NRMvec(:,:) / NRM;
-seg_min = 1;
-seg_max = 7;
-FRAC=sum(sqrt(sum((diff(zdata(seg_min:seg_max,1:end)).^2),2)))/ Params.VDS;
-FRAC;
-vector_diffs = sqrt(sum((diff(zdata(seg_min:seg_max,1:end)).^2),2));
+% basically, NRMvec is normed and one addition vector diff is included
+% compared to Greig's code
+%NRMint = Int(Treatment==0);
+%NRMvec = Params.NRMvec(:,2:end);
+%zdata = NRMvec(:,:) / NRM;
+%seg_min = 1;
+%seg_max = 7;
+%FRAC=sum(sqrt(sum((diff(zdata(seg_min:seg_max,1:end)).^2),2)))/ Params.VDS;
+%FRAC;
+%vector_diffs = sqrt(sum((diff(zdata(seg_min:seg_max,1:end)).^2),2));
 %lj  that's it    
 
 
@@ -359,12 +395,12 @@ vector_diffs = sqrt(sum((diff(zdata(seg_min:seg_max,1:end)).^2),2));
 
 % Greig's names for everything
 basic_reqd = {'s', 'n', 'missing start', 'missing end', 'Tmin', 'Tmax'};
-arai_reqd = {'b', 'sigma_b', 'Banc', 'sigma_B', 'Y_int', 'X_int', 'VDS', 'delta_x_prime', 'delta_y_prime', 'f', 'f_vds', 'frac', 'beta', 'missing g', 'GAP-MAX', 'qual', 'w', 'k', 'SSE', 'SCAT', 'R_corr', 'R_det', 'Z', 'Z_star', 'IZZI_MD'};
+arai_reqd = {'x_err', 'y_err', 'b', 'sigma_b', 'Banc', 'sigma_B', 'Y_int', 'X_int', 'VDS', 'delta_x_prime', 'delta_y_prime', 'f', 'f_vds', 'frac', 'beta', 'missing g', 'GAP-MAX', 'qual', 'w', 'k', 'SSE', 'SCAT', 'R_corr', 'R_det', 'Z', 'Z_star', 'IZZI_MD'};
 directional_reqd = {'Dec_F', 'Dec_A', 'Inc_F', 'Inc_A', 'MAD_free', 'MAD_anc', 'alpha', 'missing theta', 'DANG', 'NRM_dev', 'gamma' };
 ptrm_reqd = {'n_pTRM', 'check', 'dCK', 'DRAT', 'maxDev', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'dpal'};
 tail_reqd = {'n_tail', 'DRATtail', 'dTR', 'MDvds'};
 additivity_reqd = {'n_add', 'dAC'};
-all_reqd = {'s', 'n', 'Tmin', 'Tmax', 'b', 'sigma_b', 'Blab', 'Banc', 'sigma_B', 'Y_int', 'X_int', 'VDS', 'delta_x_prime', 'delta_y_prime', 'f', 'f_vds', 'FRAC', 'beta', 'missing_g', 'GAP_MAX', 'qual', 'w', 'k', 'SSE', 'SCAT', 'R_corr', 'R_det', 'Z', 'Z_star', 'IZZI_MD', 'Dec_F', 'Dec_A', 'Inc_F', 'Inc_A', 'MAD_free', 'MAD_anc', 'alpha', 'missing_theta', 'DANG', 'NRM_dev', 'gamma', 'n_pTRM', 'check', 'dCK', 'DRAT', 'missing_maxDev', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'dpal', 'n_tail', 'DRATtail', 'dTR', 'MDvds', 'n_add', 'dAC'};
+all_reqd = {'s', 'n', 'Tmin', 'Tmax', 'b', 'sigma_b', 'Blab', 'Banc', 'sigma_B', 'Y_int', 'X_int', 'VDS', 'delta_x_prime', 'delta_y_prime', 'f', 'f_vds', 'FRAC', 'beta', 'gap', 'GAP_MAX', 'qual', 'w', 'k', 'SSE', 'SCAT', 'R_corr', 'R_det', 'Z', 'Z_star', 'IZZI_MD', 'Dec_F', 'Dec_A', 'Inc_F', 'Inc_A', 'MAD_free', 'MAD_anc', 'alpha', 'Theta', 'DANG', 'NRM_dev', 'gamma', 'n_pTRM', 'check', 'dCK', 'DRAT', 'maxDEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'dpal', 'n_tail', 'DRATtail', 'dTR', 'MDvds', 'n_add', 'dAC'};
 
 % my names for everything
 basic_stats = {'s', 'specimen_n', 'start', 'end', 'tmin', 'tmax'};
@@ -376,7 +412,7 @@ additivity_stats = {'n_add', 'delta_AC'};
 all_stats = {'s', 'specimen_n', 'tmin', 'tmax', 'specimen_b', 'specimen_b_sigma', 'B_lab', 'B_anc', 'B_anc_sigma', 'specimen_YT', 'specimen_XT', 'specimen_vds',  'delta_x_prime', 'delta_y_prime', 'specimen_f', 'specimen_fvds', 'FRAC', 'specimen_b_beta', 'specimen_g', 'GAP-MAX', 'specimen_q', 'specimen_w', 'specimen_k', 'SSE', 'SCAT', 'R_corr2', 'R_det2', 'Z', 'Zstar', 'IZZI_MD', 'Dec_Free', 'Dec_Anc', 'Inc_Free', 'Inc_Anc', 'MAD_Free', 'MAD_Anc', 'alpha', 'theta', 'DANG', 'NRM_dev', 'gamma', 'n_ptrm', 'max_ptrm_check_percent', 'delta_CK', 'DRAT', 'max_DEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal', 'n_tail', 'DRAT_tail', 'delta_TR', 'MD_VDS', 'n_add', 'delta_AC'}; 
 
 
-outfile = fopen('new_out.out', 'w');
+outfile = fopen('Bowles_etal_2006_matlab.out', 'w');
 
 
 % prints column names at top of outfile
