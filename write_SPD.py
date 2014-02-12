@@ -67,12 +67,15 @@ def init_outfile(outfile):
 gui = tgs.Arai_GUI(infile)
 data = gui.Data
 
-def check_at_temperature(gui, out, tmin_index, tmax_index):
+def check_at_temperature(gui, out, tmin_index, tmax_index, rep=0):
+    print "checking at tmin: {}, tmax: {}".format(tmin_index, tmax_index)
     specimen_names = gui.Data.keys()
     for s in specimen_names:
         try:
             spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][tmin_index], gui.Data[s]['t_Arai'][tmax_index])
             spec.s = spec.s.replace('-', '_')
+            #spec.s = spec.s + "_rep_" + str(rep)
+            spec.s = spec.s + "_" + str(tmin_index) + "_" + str(tmax_index)
             print spec.s, spec.tmin, spec.tmax
             spec.calculate_all_statistics()
             out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
@@ -95,32 +98,31 @@ out = init_outfile(outfile)
 print type(out)
 #check_at_temperature(gui, out, 0, 6)
 
-#check_at_temperature(gui, out, 0, 18)
+#check_at_temperature(gui, out, 0, 19)
 #out.close()
 
-out.close()    
 
 
-def run_all_temperatures(gui, outfile):
-    pass
 
+def get_combos(nmax=20):
+    lst = range(nmax)
+    combos = []
+    for i in lst:
+        start = i
+        for n in lst[i+2:]:
+            combos.append((start, n))
+    return combos
 
-lst = range(10)
-i = 0
-combos = []
-go = True
-try:
-    ind = lst.index(i)
-    start = lst[i]
-    for n in lst[ind+2:]:
-        combos.append((start, n))
-    i += 1
-    if i > 20:
-        print "20"
-        go = False
-except Exception as ex:
-    print ex
+combos = get_combos()
 print combos
+
+
+for num, c in enumerate(combos):
+    check_at_temperature(gui, out, c[0], c[1], num)
+
+out.close()
+
+
         
 ignore = """
 lst = range(10)
