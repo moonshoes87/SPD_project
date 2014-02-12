@@ -190,6 +190,11 @@ def get_FRAC(vds, vector_diffs_segment):
     return FRAC
 
 def get_R_corr2(x_avg, y_avg, x_segment, y_segment): # 
+    xd = x_segment - x_avg # detrend x_segment
+    yd = y_segment - y_avg # detrend y_segment
+    rcorr = sum((xd * yd))**2 / (sum(xd**2) * sum(yd**2))
+    ignore = """
+    print rcorr
     numerator = 0
     denominator_x = 0
     denominator_y = 0
@@ -204,7 +209,8 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
     denominator = denominator_x * denominator_y
     if denominator == 0: raise ValueError("get_R_corr2 attempted dividing by zero")
     R_corr2 = numerator / denominator
-    return R_corr2
+    return R_corr2"""
+    return rcorr
 
 def get_R_det2(y_segment, y_avg, y_prime):
     """
