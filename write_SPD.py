@@ -3,6 +3,7 @@
 
 import numpy
 import sys
+from itertools import combinations
 import spd
 
 
@@ -15,7 +16,7 @@ import spd
 
 
 infile = 'consistency_tests/Bowles_etal_2006_magic_measurements.txt'#['consistency_tests/Biggin_etal_2007_magic_measurements.txt']
-outfile = 'consistency_tests/Bowles_etal_2006.out'# ['consistency_tests/Biggin_etal_2007.out']
+outfile = 'consistency_tests/Bowles_etal_2006.out.csv'# ['consistency_tests/Biggin_etal_2007.out']
 
 print sys.argv
 
@@ -69,42 +70,66 @@ data = gui.Data
 def check_at_temperature(gui, out, tmin_index, tmax_index):
     specimen_names = gui.Data.keys()
     for s in specimen_names:
-        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][6])
-        spec.s = spec.s.replace('-', '_')
-        print spec.s, spec.tmin, spec.tmax
-        spec.calculate_all_statistics()
-        out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
-        for stat in long_list:
-            if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
-                out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')
-            else:
-                out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
-        out.write('\n')
+        try:
+            spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][tmin_index], gui.Data[s]['t_Arai'][tmax_index])
+            spec.s = spec.s.replace('-', '_')
+            print spec.s, spec.tmin, spec.tmax
+            spec.calculate_all_statistics()
+            out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
+            for stat in long_list:
+                if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
+                    out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')
+                else:
+                    out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
+            out.write('\n')
+        except IndexError as ex:
+            print ex
+            print type(ex)
+    out.write('Next temperature\n')
 #out.close()
+
+
+
 
 out = init_outfile(outfile)
 print type(out)
-check_at_temperature(gui, out, 0, 6)
+#check_at_temperature(gui, out, 0, 6)
+
+#check_at_temperature(gui, out, 0, 18)
 #out.close()
-    
 
+out.close()    
+
+
+def run_all_temperatures(gui, outfile):
+    pass
+
+
+lst = range(10)
+i = 0
+combos = []
+go = True
+try:
+    ind = lst.index(i)
+    start = lst[i]
+    for n in lst[ind+2:]:
+        combos.append((start, n))
+    i += 1
+    if i > 20:
+        print "20"
+        go = False
+except Exception as ex:
+    print ex
+print combos
+        
 ignore = """
-for f in in_files:
-    gui = tgs.Arai_GUI(f)
-    data = gui.Data
-    specimen_names = gui.Data.keys()
-    for s in specimen_names:
-        spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][0], gui.Data[s]['t_Arai'][6])
-        spec.s = spec.s.replace('-', '_')
-        print spec.s, spec.tmin, spec.tmax
-        spec.calculate_all_statistics()
-        out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
-        for stat in long_list:
-            if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
-                out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')
-            else:
-                out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
-        out.write('\n')
-out.close()
-
+lst = range(10)
+combinations = []
+for n, i in enumerate(lst):
+    ind = lst.index(i)
+    for z in lst[ind+2:]:
+        combinations.append((i,z))
+print combinations
+    
+    
 """

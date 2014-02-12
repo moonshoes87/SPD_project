@@ -467,6 +467,7 @@ delta_y_prime, delta_x_prime
 
 to do:
    automate testing at multiple temperatures
+   add in custom exception if someone tries to pass in temperatures beyond upper or lower bounds
 
 
 

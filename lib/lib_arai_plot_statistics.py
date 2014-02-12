@@ -69,8 +69,8 @@ def get_vds(zdata, delta_y_prime, start, end):
     max_diff = max(vector_diffs_segment)
     #print "Vector diffs segment", vector_diffs_segment
     GAP_MAX = max_diff / partial_vds # this is the way that's consistent with thellier_gui, and that Greig will/should be changing to
-    print "max_diff", max_diff
-    print "partial_vds", partial_vds
+    #print "max_diff", max_diff
+    #print "partial_vds", partial_vds
 #    GAP_MAX = max_diff / vds  # this is consistent with Greig's code
     return {'max_diff': max_diff, 'vector_diffs': vector_diffs, 'specimen_vds': vds, 
             'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 
@@ -184,7 +184,7 @@ def get_FRAC(vds, vector_diffs_segment):
             raise ValueError('vector diffs should not be negative')
     if vds == 0:
         raise ValueError('attempting to divide by zero. vds should be a positive number')
-    print "vector_diffs_segment", vector_diffs_segment
+    #print "vector_diffs_segment", vector_diffs_segment
 #    FRAC = sum(vector_diffs_segment[:-1])/ vds # matches Greig's old code, which he will fix to be consistent with below
     FRAC = sum(vector_diffs_segment) / vds # matches thellier_gui
     return FRAC

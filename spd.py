@@ -320,8 +320,8 @@ class PintPars(object):
     def get_DANG(self):
         free = self.pars['best_fit_vector_Free']
         cm = self.pars['zdata_mass_center']
-        print "free", free
-        print "cm", cm
+        #print "free", free
+        #print "cm", cm
         DANG = lib_direct.get_angle_difference(free, cm)
         if DANG > 90.:
             DANG -= 90.

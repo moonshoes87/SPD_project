@@ -6,4 +6,4 @@
 copy_pmag.py
 for_magic/*
 for_magic/
-*.out
+*.out*
