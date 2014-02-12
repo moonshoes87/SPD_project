@@ -32,6 +32,9 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
     and the percentage of the largest check / original measurement at that temperature step
     output: max_diff, sum_diffs, check_percent, sum_abs_diffs.
     """
+    print "incl temps", ptrm_checks_included_temps
+    if not ptrm_checks_included_temps:
+        return [], float('nan'), float('nan'), float('nan'), float('nan')
     diffs = []
     abs_diffs = []
     x_Arai_compare = []
@@ -54,6 +57,7 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
     sum_diffs = abs(sum(diffs))
     sum_abs_diffs = sum(abs_diffs)
     return diffs, max_diff, sum_diffs, check_percent, sum_abs_diffs
+    
 
 def get_delta_CK(max_ptrm_check, x_int):
     """
@@ -104,11 +108,15 @@ def get_DRATS(sum_ptrm_checks, sum_abs_ptrm_checks, x_Arai, end):
     return DRATS, DRATS_prime
 
 def get_mean_DRAT(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, L):
+    if not n_pTRM:
+        return float('nan'), float('nan')
     mean_DRAT = ((1. / n_pTRM) * (sum_ptrm_checks / L)) * 100
     mean_DRAT_prime = ((1./ n_pTRM) * (sum_abs_ptrm_checks / L)) * 100
     return mean_DRAT, mean_DRAT_prime
 
 def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
+    if not n_pTRM:
+        return float('nan'), float('nan')
     mean_DEV = ((1. / n_pTRM) * (sum_ptrm_checks / delta_x_prime)) * 100
     mean_DEV_prime= ((1. / n_pTRM) * (sum_abs_ptrm_checks / delta_x_prime)) * 100
     return mean_DEV, mean_DEV_prime
