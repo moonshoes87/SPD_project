@@ -223,6 +223,9 @@ finally
 os.getcwd()
 returns working directory, yay!
 
+python -i module
+runs module then goes into interactive mode, so you can find end values of variables, play around, etc.  
+
 
 
 ###### end python notes ######

@@ -54,12 +54,30 @@ def print_all(categories, specs1, specs2):
         print '--------'
 
 
+def append_if_not_present(lst, item):
+    if item in lst:
+        pass
+    else:
+        lst.append(item)
+
+def add_to_dict(dct, item, value):
+    try:
+        dct[item]
+    except KeyError:
+        dct[item] = []
+    dct[item].append(value)
+
+
+problems = {}
 def compare_all(categories, specs1, specs2):
     if sorted(specs1.keys()) == sorted(specs2.keys()):
         pass
     else:
+        print len(sorted([i for i in specs1.keys() if 'AL2360_1a' in i]))
+        print sorted([i for i in specs1.keys() if 'AL2360_1a' in i])
+        print len( sorted([i for i in specs2.keys() if 'AL2360_1a' in i]))
+        print sorted([i for i in specs2.keys() if 'AL2360_1a' in i])
         raise NameError('different specimens detected')
-
     for specimen in specs1.keys():
         print "SPECIMEN: ", specimen
         data1 = specs1[specimen]
@@ -85,15 +103,18 @@ def compare_all(categories, specs1, specs2):
                     if bool(v1) == bool(v2):
                         pass
                     else:
+                        add_to_dict(problems, categories1[num], specimen)
                         print categories1[num]
                         print v1, "------", v2
-                elif v1 == v2: # turn this back to pass!
+                elif v1 == v2:
                     pass
                 else:
+                    add_to_dict(problems, categories1[num], specimen)
                     print categories1[num]
                     print v1, "------", v2
                     #  print "SAME"
             elif n1 != n2:  # it's not a string, and not nan, and the values don't match
+                add_to_dict(problems, categories1[num], specimen)
                 print categories1[num], categories2[num]
                 #print v1, "-----",  v2
                 print n1, "-----", n2
@@ -101,6 +122,8 @@ def compare_all(categories, specs1, specs2):
                 pass
                 #print "same"
         print "--"
+    print "problems: {}".format(problems.keys())
+    return problems
 
 
 

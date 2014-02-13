@@ -88,7 +88,7 @@ def check_at_temperature(gui, out, tmin_index, tmax_index, rep=0):
         except IndexError as ex:
             print ex
             print type(ex)
-    out.write('Next temperature\n')
+    #out.write('Next temperature\n')
 #out.close()
 
 
