@@ -313,8 +313,6 @@ class PintPars(object):
         free = self.pars['best_fit_vector_Free']
         anc = self.pars['best_fit_vector_Anc']
         alpha = lib_direct.get_alpha(anc, free)
-        if alpha > 90.:
-            alpha -= 90.
         self.pars['alpha'] = alpha
 
     def get_DANG(self):
@@ -323,8 +321,6 @@ class PintPars(object):
         #print "free", free
         #print "cm", cm
         DANG = lib_direct.get_angle_difference(free, cm)
-        if DANG > 90.:
-            DANG -= 90.
         self.pars['DANG'] = DANG
 
     def get_NRM_dev(self):
@@ -335,7 +331,6 @@ class PintPars(object):
     def get_theta(self):
         b_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.]
         ChRM = self.pars['best_fit_vector_Free'] # GREIG switched to this
-        #ChRM = self.pars['best_fit_vector_Anc'] # THIS AGREES WITH GREIG's old CODE
         theta = lib_direct.get_theta(b_lab_dir, ChRM)
         self.pars['theta'] = theta
         return theta
