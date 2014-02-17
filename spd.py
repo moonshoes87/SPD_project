@@ -468,8 +468,9 @@ class PintPars(object):
 
     def get_delta_AC(self):
 #        print "doing delta AC"
-        delta_AC = lib_add.get_delta_AC(self.pars['n_add'], self.AC_Diffs, self.pars['specimen_XT'])
+        delta_AC, incl_AC_checks = lib_add.get_delta_AC(self.pars['n_add'], self.AC_Diffs, self.pars['specimen_XT'])
         self.pars['delta_AC'] = delta_AC
+        self.pars['AC_Checks_segment'] = incl_AC_checks
         return delta_AC
       
     def arai_plot_statistics(self):
@@ -580,22 +581,16 @@ import new_lj_thellier_gui_spd as tgs
 
 gui = tgs.Arai_GUI()
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
-gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
-#specimens = gui2.Data.keys()
+#gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
+#gui4 = tgs.Arai_GUI('consistency_tests/Donadini_etal_2007_magic_measurements.txt')
+gui5 = tgs.Arai_GUI('consistency_tests/W1_Krasa_2000_magic_measurements.txt')
+
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 thing.calculate_all_statistics()
 
-#mat_thing = PintPars(gui3.Data, 'AL2360-1b', 273., 498.)
-#mat_thing.calculate_all_statistics()
-#[  273, 423.0, 473.0, 523.0, 573.0, 623.0, 673.0]
-#[   0.,  150.,  200.,  250.,  300.,  350.,  400.]
-
-specimens = gui3.Data.keys()
-data = gui3.Data
-spec = PintPars(gui3.Data, 'AL3031-1d', 273., 498.)
-spec2 = PintPars(gui3.Data, 'AL2844-2b', 273, 498.)
+spec = PintPars(gui5.Data, 'W1', 273., 273. + 520)
 spec.calculate_all_statistics()
-spec2.calculate_all_statistics()
+
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
 #thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)

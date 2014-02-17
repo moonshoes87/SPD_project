@@ -26,10 +26,11 @@ def parse_file(file_path):
     specimens = {}
     for line in lines[1:]: #
         d = line.split('\t')
-        #print 'd        ', d
+        print 'd        ', d
         data = []
         for i in d[:-1]: # empty space
             temp = i.split()
+            print "temp", temp
             categories.append(temp[0])
             data.append(temp[1])
         specimens[data[0]] = data
@@ -73,10 +74,12 @@ def compare_all(categories, specs1, specs2):
     if sorted(specs1.keys()) == sorted(specs2.keys()):
         pass
     else:
-        print len(sorted([i for i in specs1.keys() if 'AL2360_1a' in i]))
-        print sorted([i for i in specs1.keys() if 'AL2360_1a' in i])
-        print len( sorted([i for i in specs2.keys() if 'AL2360_1a' in i]))
-        print sorted([i for i in specs2.keys() if 'AL2360_1a' in i])
+        print len(sorted(specs1.keys()))
+        print len(sorted(specs2.keys()))
+        print [spec for spec in specs1.keys() if spec not in specs2.keys()]
+        print "--"
+        print "--"
+        print specs2.keys()
         raise NameError('different specimens detected')
     for specimen in specs1.keys():
         print "SPECIMEN: ", specimen
@@ -110,18 +113,21 @@ def compare_all(categories, specs1, specs2):
                     pass
                 else:
                     add_to_dict(problems, categories1[num], specimen)
+                    print "SPECIMEN: ", specimen
                     print categories1[num]
                     print v1, "------", v2
-                    #  print "SAME"
-            elif n1 != n2:  # it's not a string, and not nan, and the values don't match
+                    print "--"
+            elif n1 != n2 and abs(n1 - n2) > .2:  # it's not a string, and not nan, and the values don't match
                 add_to_dict(problems, categories1[num], specimen)
+                print "SPECIMEN: ", specimen
                 print categories1[num], categories2[num]
-                #print v1, "-----",  v2
+                print v1, "-----",  v2
                 print n1, "-----", n2
+                print "--"
             else:
                 pass
                 #print "same"
-        print "--"
+        #print "--"
     print "problems: {}".format(problems.keys())
     return problems
 

@@ -858,7 +858,14 @@ class Arai_GUI():
         additivity_checks = araiblock[6]
         x_AC,y_AC,AC_temperatures,AC=[],[],[],[]
         x_AC_starting_point,y_AC_starting_point,AC_starting_temperatures=[],[],[]
-
+        #lj
+        add_c = scipy.array(additivity_checks)
+        add_checks = []
+        for c in add_c:
+            add_checks.append(self.dir2cart([c[1], c[2], c[3] / NRM]))
+        Data[s]['add_checks_vector'] = add_checks
+        #lj
+        
         tmp_data_block=list(copy(datablock))
         for k in range(len(additivity_checks)):
           if additivity_checks[k][0] in zerofield_temperatures:

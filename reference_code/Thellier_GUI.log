@@ -1,0 +1,73 @@
+-I- thellier_gui.preferences imported
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory
+-I- Read magic file  ./magic_measurements.txt
+-I- Anisotropy data read  ./from rmag_anisotropy.txt
+-I- Anisotropy data read  ./from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 0
+-I- number of samples in this project directory: 0
+-I- Read pmag_specimens.txt for previouse interpretation-I- Read magic file  /Users/nebula/Python/SPD_project/consistency_tests/Bowles_etal_2006_magic_measurements.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 53
+-I- number of samples in this project directory: 16
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory
+-I- Read magic file  /Users/nebula/Python/SPD_project/consistency_tests/Biggin_etal_2007_magic_measurements.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 17
+-I- number of samples in this project directory: 3
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory
+-I- Read magic file  /Users/nebula/Python/SPD_project/consistency_tests/Donadini_etal_2007_magic_measurements.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 3
+-I- number of samples in this project directory: 1
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory
+-I- Read magic file  /Users/nebula/Python/SPD_project/consistency_tests/Krasa_2000_magic_measurements.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 7
+-I- number of samples in this project directory: 7
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory
+-I- Read magic file  /Users/nebula/Python/SPD_project/consistency_tests/Krasa_2000_magic_measurements.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 7
+-I- number of samples in this project directory: 7
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory
+-I- Read magic file  /Users/nebula/Python/SPD_project/consistency_tests/Donadini_etal_2007_magic_measurements.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 3
+-I- number of samples in this project directory: 1
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory
+-I- Read magic file  /Users/nebula/Python/SPD_project/consistency_tests/W1_Krasa_2000_magic_measurements.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Anisotropy data read  /Users/nebula/Python/SPD_project/consistency_tests//from rmag_anisotropy.txt
+-I- Done calculating non linear TRM parameters for all specimens
+-I- number of specimens in this project directory: 1
+-I- number of samples in this project directory: 1
+-W- Cant find er_sample.txt in project directory
+-W- Cant find er_sites.txt in project directory
+-W- Cant find er_ages in project directory

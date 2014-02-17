@@ -160,14 +160,6 @@ from greig's code:  % ChRM          - a (1 x 2) or a (1 x 3) vector describing a
 this would make one of my stats wrong.  
 
 
-for meeting with Ron:
-
-
-	This from thellier_gui is in contradiction to what's in spd.  this sometimes causes different results for pTRM check statistics
-          # If triangle is within the interval but started after the upper temperature bound, then one pTRM check is in
-cluded                                                                                                               
-          # For example: if T_max=480, the traingle in 450 fall far, and it started at 500, then it is included  
-          # the ateration occured between 450 and 500, we dont know when. 
 
 
 
@@ -225,6 +217,18 @@ returns working directory, yay!
 
 python -i module
 runs module then goes into interactive mode, so you can find end values of variables, play around, etc.  
+
+list comprehensions
+     comprehensions also work for dictionaries, sets, and generators:
+>>> r = range(5)
+>>> {i**2: i for i in r}
+{0: 0, 1: 1, 4: 2, 16: 4, 9: 3}
+>>> 
+
+
+
+
+
 
 
 
@@ -393,18 +397,40 @@ delta_pal:
         his delta_pal now == my delta_pal!!!!
 
 
-GAP-MAX -- more problem. 
-        think it is a bug of his, have emailed him.
-
 DANG --
-     DANG = lib_direct.get_angle_difference(free, cm)
-     his dirfit == my free
-     his Centre == my cm
      difference is: he subtracts 90 if DANG is larger than 90 (taking the smaller angle)
+     UPDATE: not doing this anymore.  We are good. 
+
+delta_AC:
+        our AC_diffs are different.  (my spec.AC_diffs != his spec.AC)
+        magic_measurements file does agree with .tdt file (dec/inc numbers line up for the add check steps)
+        my add_check_starting_temps and add_check_temps == his spec.ADD_vec(:,1) and spec.ADD_vec(:,2)
+        my n_add == his n_add
+        this is the first data that actually uses additivity checks.  
+        
 
 Ask Ron:
+    precision in testing
+    should I use Greig's rounding scheme?
+    pmag_criteria.txt files....?  
+    different AC values
+    B_lab_vector (see below)
 
-    subtracting from DANG
+    BR06 series, our B_lab_vectors disagree
+
+        elseif (strcmp(files(f).name(1:3), 'HEL') || strcmp(files(f).name(1:3), 'BR0'))
+            % +X-axis
+            F_exp=49.6;
+            F_orient=[1,0,0];
+            Meth=1;    
+
+        PintPars object, specimen: BR06-5F, tmin_K: 320.0, tmax_K: 410.0 
+        >>> spec.B_lab_dir
+        [0.0, 90.0, 5.025e-05]
+        >>> lib.dir2cart(spec.B_lab_dir)
+        array([  3.076925082857725e-21,   0.000000000000000e+00,
+         5.025000000000000e-05])
+         0, 0, .00005025
 
 
 
@@ -468,9 +494,15 @@ delta_y_prime, delta_x_prime
 
 
 
+
+
+
+
+
 to do:
    automate testing at multiple temperatures
    add in custom exception if someone tries to pass in temperatures beyond upper or lower bounds
+   make module awesome
 
 
 

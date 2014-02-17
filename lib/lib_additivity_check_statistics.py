@@ -18,16 +18,17 @@ def get_n_add(temps, starting_temps, tmax):
 def get_delta_AC(n_add, add_checks, x_int):
     if n_add > 0:
         incl_add_checks = numpy.array(add_checks[ :n_add])
-        #print "checks segment", incl_add_checks
-        #print "n_add", n_add
-        #print "x_int", x_int
-        #print "(abs(incl_add_checks)", (abs(incl_add_checks))
-        #print "( max(abs(incl_add_checks) ) ", ( max(abs(incl_add_checks) ) )
+        print "checks segment", incl_add_checks
+        print "n_add", n_add
+        print "x_int", x_int
+        print "(abs(incl_add_checks)", (abs(incl_add_checks))
+        print "( max(abs(incl_add_checks) ) ", ( max(abs(incl_add_checks) ) )
         delta_AC = ( max(abs(incl_add_checks) ) / abs(x_int))  * 100.
         #print delta_AC
     else:
+        incl_add_checks = 0
         delta_AC = float('NaN')
-    return delta_AC
+    return delta_AC, incl_add_checks
 
 #probs ignore all below
 def get_ptrm_star(incl_temps, starting_temps, x_Arai, t_Arai):
