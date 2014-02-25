@@ -151,7 +151,8 @@ class PintPars(object):
 
 
     def __repr__(self):
-        return "PintPars object, specimen: {}, tmin_K: {}, tmax_K: {} ".format(self.s, self.tmin_K, self.tmax_K)
+        index = (self.t_Arai.index(self.tmin), self.t_Arai.index(self.tmax))
+        return "PintPars object, specimen: {}, tmin_K: {}, tmax_K: {}, temperature index: {} ".format(self.s, self.tmin_K, self.tmax_K, index)
 
     def get_segments_and_means(self):
         pass # consider making this a real deal thing.  
@@ -579,16 +580,19 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 
-gui = tgs.Arai_GUI()
+#gui = tgs.Arai_GUI()
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 #gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 #gui4 = tgs.Arai_GUI('consistency_tests/Donadini_etal_2007_magic_measurements.txt')
-gui5 = tgs.Arai_GUI('consistency_tests/W1_Krasa_2000_magic_measurements.txt')
+#gui5 = tgs.Arai_GUI('consistency_tests/Krasa_2000_magic_measurements.txt')
+gui6 = tgs.Arai_GUI('consistency_tests/Muxworthy_etal_2011_magic_measurements.txt')
 
-thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
-thing.calculate_all_statistics()
+#thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+#thing.calculate_all_statistics()
 
-spec = PintPars(gui5.Data, 'W1', 273., 273. + 520)
+spec = PintPars(gui6.Data, 'p2na_u', 275.+ 273., 350. + 273.)
+#spec1 = PintPars(gui5.Data, 'W3', 300 + 273., 480. + 273.)
+#spec2 = PintPars(gui5.Data, 'W3',  0 + 273., 600 + 273.)
 spec.calculate_all_statistics()
 
 

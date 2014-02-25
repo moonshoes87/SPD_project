@@ -406,14 +406,28 @@ delta_AC:
         magic_measurements file does agree with .tdt file (dec/inc numbers line up for the add check steps)
         my add_check_starting_temps and add_check_temps == his spec.ADD_vec(:,1) and spec.ADD_vec(:,2)
         my n_add == his n_add
-        this is the first data that actually uses additivity checks.  
+        this is the first data that actually uses additivity checks, so we don't have any specimens where our AC checks agree.
         
 
 Ask Ron:
     precision in testing
     should I use Greig's rounding scheme?
     pmag_criteria.txt files....?  
+    at very small temperature intervals, Ron's x_Arai differs from Greigs Xpts.  
+
+    Matlab Xpts (normed):        v.      Python
+   0.060244431120923                     0.0602445218843
+   0.093109426319904                     0.0931094537109
+   0.123564044710377                     0.123563866231
+
+   In 3-4 out of 600 or so permutations, a few of the statistics ['Zstar:', 'NRM_dev:', 'delta_TR:', 'delta_AC:', 'Z:', 'specimen_w:', 'delta_CK:', 'specimen_q:'] will be slightly off.  i.e., w ==  42.0444353742 ----- 41.6691.  
+   This pretty much only happens when the temperature bounds are very tight (3 points).  I think this is due to the difference in calculation of x/y above.  Problem?  The difference between x point values is present even with specimens that produce correct results.  I think this lack of precision is ok...
+
     different AC values
+              see email exchange
+
+
+
     B_lab_vector (see below)
 
     BR06 series, our B_lab_vectors disagree
@@ -456,25 +470,8 @@ style notes:
 
 
 
-talk to Ron:
-delta_y_prime, delta_x_prime
-    when x_prime is:
-    0.0517
-    0.0209
-    0.0521
-    0.0832
-    0.0990
-    0.1271
-    0.2638
-    min, max, first = .0209, .2638, .0517
-
-    Greig uses:    TRM_Len=max(Px(seg))-min(Px(seg));
-    where I use: delta_x_prime = abs(x_prime[-1] - x_prime[0])
-    Ron is ASKING LISA
-
 
     GAP-MAX
-
 
     occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
     see: Bowles etal 200? AL3023_1b

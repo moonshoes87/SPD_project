@@ -26,24 +26,21 @@ def parse_file(file_path):
     specimens = {}
     for line in lines[1:]: #
         d = line.split('\t')
-        print 'd        ', d
+        #print 'd        ', d
         data = []
         for i in d[:-1]: # empty space
             temp = i.split()
-            print "temp", temp
+            #print "temp", temp
             categories.append(temp[0])
             data.append(temp[1])
         specimens[data[0]] = data
     return specimens, categories
     
 
-#print 'MINE:  ', specs1['ET1_279BS']
-#print 'GREIG\'S:   ', specs2['ET1_279BS']
-#print len(specs1['ET1_279BS'])
-#print len(specs2['ET1_279BS'])
+
 def print_all(categories, specs1, specs2):
     for specimen in specs1.keys():
-        print "SPECIMEN: ", specimen
+        #print "SPECIMEN: ", specimen
         data1 = specs1[specimen]
         data2 = specs2[specimen]
         for num, i in enumerate(data1):
@@ -72,17 +69,18 @@ def add_to_dict(dct, item, value):
 problems = {}
 def compare_all(categories, specs1, specs2):
     if sorted(specs1.keys()) == sorted(specs2.keys()):
-        pass
+        print "{} specimens compared".format(len(specs1.keys()))
+        #pass
     else:
-        print len(sorted(specs1.keys()))
-        print len(sorted(specs2.keys()))
-        print [spec for spec in specs1.keys() if spec not in specs2.keys()]
+        print "first file specimens:", len(sorted(specs1.keys()))
+        print "second file specimens:", len(sorted(specs2.keys()))
+        print "specimens in file1 but not file2:", [spec for spec in specs1.keys() if spec not in specs2.keys()]
+        print "specimens in file2 but not file1:", [spec for spec in specs2.keys() if spec not in specs1.keys()]
         print "--"
         print "--"
-        print specs2.keys()
         raise NameError('different specimens detected')
     for specimen in specs1.keys():
-        print "SPECIMEN: ", specimen
+        #print "SPECIMEN: ", specimen
         data1 = specs1[specimen]
         data2 = specs2[specimen]
         for num, i in enumerate(data1):
@@ -129,6 +127,11 @@ def compare_all(categories, specs1, specs2):
                 #print "same"
         #print "--"
     print "problems: {}".format(problems.keys())
+    for k, v in problems.items():
+        if len(v) < 100:
+            print k, len(v)
+        else:
+            print k, ": lots"
     return problems
 
 

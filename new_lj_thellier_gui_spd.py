@@ -854,17 +854,10 @@ class Arai_GUI():
         # collect additivity checks                                                                 
         #--------------------------------------------------------------      
 
-
+        
         additivity_checks = araiblock[6]
         x_AC,y_AC,AC_temperatures,AC=[],[],[],[]
         x_AC_starting_point,y_AC_starting_point,AC_starting_temperatures=[],[],[]
-        #lj
-        add_c = scipy.array(additivity_checks)
-        add_checks = []
-        for c in add_c:
-            add_checks.append(self.dir2cart([c[1], c[2], c[3] / NRM]))
-        Data[s]['add_checks_vector'] = add_checks
-        #lj
         
         tmp_data_block=list(copy(datablock))
         for k in range(len(additivity_checks)):
@@ -902,11 +895,21 @@ class Arai_GUI():
                     y_AC.append(zerofields[index_zerofield][3]/NRM)
                     AC_temperatures.append(additivity_checks[k][0])
                     index_pTRMs=t_Arai.index(additivity_checks[k][0])
-                    AC.append(additivity_checks[k][3]/NRM - x_Arai[index_pTRMs])
+                    AC.append(additivity_checks[k][3]/NRM - x_Arai[index_pTRMs]) 
+                    # above is not using pTRM_star, but x_add_check -  pTRM(Ti)
+                    #lj
+                    # this is the intensity from the additivity checks araiblock normed by the initial nrm, - the equivalent ptrm value from the previous infield step (I think).  x_Arai is also taken directly from direction (intensity)
+                    #print " "
+                    #print "x_AC_starting_point", x_AC_starting_point[-1]
+                    #print "x_AC", x_AC[-1]
+                    #print 'additivity_checks[k][3]/NRM - x_Arai[index_pTRMs]'
+                    #print 'index_pTRMs', index_pTRMs
+                    #print 'AC = ', additivity_checks[k][3]/NRM, '-', x_Arai[index_pTRMs]
+                    #print ""
+                    #lj
 
                 except:
                     pass
-
 
         x_AC=array(x_AC)
         y_AC=array(y_AC)
@@ -916,6 +919,7 @@ class Arai_GUI():
         AC_starting_temperatures=array(AC_starting_temperatures)
         AC=array(AC)
 
+        Data[s]['additivity_checks'] = additivity_checks
         Data[s]['AC']=AC
         Data[s]['x_additivity_check']=x_AC
         Data[s]['y_additivity_check']=y_AC
@@ -1419,9 +1423,19 @@ class Arai_GUI():
                 dec1=float(datablock[j]["measurement_dec"])
                 inc1=float(datablock[j]["measurement_inc"])
                 moment1=float(datablock[j]['measurement_magn_moment'])
-                V1=self.dir2cart([dec1,inc1,moment1])
+                #lj
+                start_temp=float(datablock[j]['treatment_temp']);
+                #lj
+                V1=self.dir2cart([dec1,inc1,moment1]) 
 
                 I=[]
+                #print "temp (K)", temp - 273
+                #print "start_temp (K)", start_temp - 273
+                #print "dec0: {}, inc0: {}, moment0: {}".format(dec0, inc0, moment0)
+                #print "V0: ", V0
+                #print "dec1: {}, inc1: {}, moment1: {}".format(dec1, inc1,moment1)
+                #print "V1: ", V1
+                #print "---"
                 for c in range(3): I.append(V1[c]-V0[c])
                 dir1=self.cart2dir(I)
                 additivity_check.append([temp,dir1[0],dir1[1],dir1[2]])
@@ -1447,8 +1461,8 @@ class Arai_GUI():
 #        print "field ", field
         return araiblock,field
 
-if True:
-    gui = Arai_GUI('new_magic_measurements.txt')
+#if True:
+#    gui = Arai_GUI('new_magic_measurements.txt')
 if False:
     gui = Arai_GUI()
     specimens = gui.Data.keys()

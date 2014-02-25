@@ -15,8 +15,8 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-infile = 'consistency_tests/W1_Krasa_2000_magic_measurements.txt'#'consistency_tests/Donadini_etal_2007_magic_measurements.txt' #'consistency_tests/Biggin_etal_2007_magic_measurements.txt'#'consistency_tests/Bowles_etal_2006_magic_measurements.txt'#
-outfile = 'consistency_tests/Krasa_2000.out.csv'#'consistency_tests/Donadini_etal_2007.out.csv' #'consistency_tests/Biggin_etal_2007.out.csv'# 'consistency_tests/Bowles_etal_2006.out.csv'# 
+infile = 'consistency_tests/Muxworthy_etal_2011_magic_measurements.txt' #'consistency_tests/Krasa_2000_magic_measurements.txt'#'consistency_tests/Donadini_etal_2007_magic_measurements.txt' #'consistency_tests/Biggin_etal_2007_magic_measurements.txt'#'consistency_tests/Bowles_etal_2006_magic_measurements.txt'#
+outfile = 'consistency_tests/Muxworthy_etal_2011.out.csv' #consistency_tests/Krasa_2000.out.csv'#'consistency_tests/Donadini_etal_2007.out.csv' #'consistency_tests/Biggin_etal_2007.out.csv'# 'consistency_tests/Bowles_etal_2006.out.csv'# 
 
 print sys.argv
 
@@ -84,7 +84,7 @@ def check_at_temperature(gui, out, tmin_index, tmax_index, rep=0):
             spec.s = spec.s + "_" + str(tmin_index) + "_" + str(tmax_index)
             print spec.s, spec.tmin, spec.tmax
             spec.calculate_all_statistics()
-            out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format('Krasa_'+ str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
+            out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
             for stat in long_list:
                 if type(spec.pars[stat]) == numpy.ndarray:  # catches arrays to prevent extra newlines being auto-inserted
                     out.write(str(stat) + ": " + numpy.array_str(spec.pars[stat], max_line_width=10000000) + '\t')

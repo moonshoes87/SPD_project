@@ -57,7 +57,7 @@ def get_delta_TR(tail_check_max, y_int):
     """
     if tail_check_max == 0 or numpy.isnan(tail_check_max):
         return float('nan')
-    delta_TR = (tail_check_max / y_int) * 100.
+    delta_TR = (tail_check_max / abs(y_int)) * 100.
     return delta_TR
 
 def get_MD_VDS(tail_check_max, vds):
