@@ -3,4 +3,4 @@ python:
   - "2.7"
   - "2.6"
 
-script:  python -m tests.test_arai_plot_statistics
+script:  python -m tests.test_fake
