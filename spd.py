@@ -305,10 +305,7 @@ class PintPars(object):
     def get_MAD(self):
         MAD_Free = lib_direct.get_MAD(self.pars['tau_Free'])
         MAD_Anc = lib_direct.get_MAD(self.pars['tau_Anc'])
-#        MAD_Lisa_Free = lib_direct.Lisa_get_MAD(self.pars['tau_Free'])
         self.pars['MAD_Free'], self.pars['MAD_Anc'] = MAD_Free, MAD_Anc
-#        self.pars['Lisa_MAD'] = MAD_Anc_lisa
-#        self.pars['MAD_lisa_free'] = MAD_Lisa_Free
         return {'MAD_Free': MAD_Free, 'MAD_Anc': MAD_Anc }
    
     def get_alpha(self): # need Int_Free and Int_Anc
@@ -320,8 +317,6 @@ class PintPars(object):
     def get_DANG(self):
         free = self.pars['best_fit_vector_Free']
         cm = self.pars['zdata_mass_center']
-        #print "free", free
-        #print "cm", cm
         DANG = lib_direct.get_angle_difference(free, cm)
         self.pars['DANG'] = DANG
 

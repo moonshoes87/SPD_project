@@ -2,41 +2,12 @@
 
 import numpy
 import math
-#import spd
 
 def get_zdata_segment(zdata, t_Arai, tmin, tmax):  # 
     lower_bound = t_Arai.index(tmin)
     upper_bound = t_Arai.index(tmax)
     zdata_segment = zdata[lower_bound:upper_bound + 1] # inclusive of upper bound
     return zdata_segment
-
-#       get center of mass for principal components (
-
-#def get_organized(X):# from pmag.py
-#    cm = [0., 0., 0.]
-#    print "X", X
-#    for cart in X:
-#        print "cm", cm
-#        print "cart", cart
-#        for l in range(3):
-#            cm[l]+=cart[l]/len(X) # this division may be wrong
-#    for k in range(len(X)):
-#        for l in range(3):
-#            X[k][l]=X[k][l]-cm[l]
-#    print "final cm", cm
-#    print "final X", X
-#    return list(X), cm
-
-#def Tmatrix(X): 
-#    """      
-#    gets the orientation matrix (T) from data in X      
-#    """
-#    T=[[0.,0.,0.],[0.,0.,0.],[0.,0.,0.]]
-#    for row in X:
-#        for k in range(3):
-#            for l in range(3):
-#                T[k][l] += row[k]*row[l]
-#    return T
 
 def get_cart_primes_and_means(zdata_segment, anchored=True):
 # seek simpler syntax
@@ -46,7 +17,7 @@ def get_cart_primes_and_means(zdata_segment, anchored=True):
     X3 = zdata[:,2]
     means = list(numpy.mean(zdata.T,axis=1))
     if anchored == False:
-        X1_prime = list(X1 - means[0])#X1_mean)
+        X1_prime = list(X1 - means[0])
         X2_prime = list(X2 - means[1])
         X3_prime = list(X3 - means[2])
     else:
@@ -146,30 +117,13 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     return dec, inc, vector, tau, V, means
 
 def get_MAD(tau):
+    """
+    input: eigenvalues of PCA matrix
+    output: Maximum Angular Deviation
+    """
     # tau is ordered so that tau[0] > tau[1] > tau[2]
     MAD = math.degrees(numpy.arctan(numpy.sqrt((tau[1] + tau[2]) / tau[0])) )# / rad # should work, AND DOES!!
     return MAD
-
-def Lisa_get_MAD(t):
-    rad = numpy.pi / 180.
-    s1=numpy.sqrt(t[0])
-    MAD=numpy.arctan(numpy.sqrt(t[1] + t[2])/s1) / rad
-    return MAD
-
-# cm same as ...pars['zdata_mass_center']
-def Lisa_get_DANG(cm, Dir): # working
-    CMdir=cart2dir(cm)
-    Dirp=cart2dir([Dir[0],Dir[1], Dir[2]])
-    dang=pmag_angle(CMdir,Dirp) 
-    return dang
-
-def Ron_get_DANG(cm, best_fit_vector):
-    """gets deviation angle between center of mass and the free-float best-fit vector"""
-    cmdir = cm
-    dirp = best_fit_vector
-    DANG = math.degrees(numpy.arccos((numpy.dot(cmdir, dirp)) / 
-            (numpy.sqrt(sum(cmdir**2)) * numpy.sqrt(sum(dirp**2)))))
-    return DANG
 
 def dir2cart(d): # from pmag.py
     """converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z form """
@@ -213,6 +167,7 @@ def pmag_angle(D1,D2): # use this
     return numpy.array(angles)
 
 def new_get_angle_diff(v1,v2):
+    """returns angular difference in degrees between two vectors.  may be more precise in certain cases.  see SPD"""
     v1 = numpy.array(v1)
     v2 = numpy.array(v2)
     angle = numpy.arctan2(numpy.linalg.norm(numpy.cross(v1, v2)), numpy.dot(v1, v2))
@@ -226,7 +181,7 @@ def get_angle_difference(v1, v2):
     angle=numpy.arccos((numpy.dot(v1, v2) ) / (numpy.sqrt(math.fsum(v1**2)) * numpy.sqrt(math.fsum(v2**2))))    
     return math.degrees(angle)
 
-def get_alpha(anc_fit, free_fit): # 
+def get_alpha(anc_fit, free_fit): 
     """returns angle between anchored best fit vector and free best fit vector"""
     alpha_deg = get_angle_difference(anc_fit, free_fit)
     return alpha_deg
@@ -242,45 +197,25 @@ def get_NRM_dev(dang, x_avg, y_int):
 
 def get_theta(B_lab_dir, ChRM_cart): 
     B_lab_cart = dir2cart(B_lab_dir)
-    #    print "B_lab_cart", B_lab_cart
-    #    print "ChRM", ChRM
-    #print "b lab cart"
-    #print B_lab_cart
-#    B_lab_cart = [0., 0., -1.] # adding this from Greig's code
-    #print "new b lab cart"
-    #print B_lab_cart
-    #print "ChRM"
-    #print ChRM
     ChRM_dir = cart2dir(ChRM_cart)
-   # print 'B_lab_dir', B_lab_dir
-   # print 'ChRM (dir)', ChRM_dir
-   # print "B_lab_cart:", B_lab_cart
-   # print 'ChRM (cart):', ChRM_cart
     theta1 = get_angle_difference(B_lab_cart, ChRM_cart) # you should change it so that get_angle_difference can take dir or cart
-    theta2 = pmag_angle(B_lab_dir, ChRM_dir)
-    #print 'theta from cart:',  theta1
-    #print 'theta from dir:', theta2
+    #theta2 = pmag_angle(B_lab_dir, ChRM_dir)
     return theta1
 
 def get_gamma(B_lab_dir, pTRM_dir):
     B_lab_cart = dir2cart(B_lab_dir)
     pTRM_cart = dir2cart(pTRM_dir)
-    #print 'B_lab_dir', B_lab_dir
-    #print 'pTRM_dir', pTRM_dir
-    #print 'B_lab_cart', B_lab_cart
-    #print 'pTRM_cart', pTRM_cart
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
-    gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
+    #gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
     # pmag_angle and get_angle difference are equivalent with non zero values
-    gamma2 = numpy.array([gamma2])
-    gamma3 = new_get_angle_diff(B_lab_cart, pTRM_cart)
-   # print "gamma1 (from dir):", gamma1
-   # print "gqmma2 (from cart):", gamma2
-   # print "gamma3 ( with atan from cart): ", gamma3
-    if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
-        return float(gamma1)
-    else:
-        print "not equal with different methods"
+    #gamma2 = numpy.array([gamma2])
+    #gamma3 = new_get_angle_diff(B_lab_cart, pTRM_cart)
+    #if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
+    return float(gamma1)
+    #else:
+        #print "not equal with different methods"
         #print gamma1
         #print gamma2
-        return float(gamma2)
+        #return float(gamma2)
+
+
