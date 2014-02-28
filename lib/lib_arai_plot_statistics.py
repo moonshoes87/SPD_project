@@ -5,6 +5,13 @@ import numpy
 
 
 def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps_Arai):
+    """
+    input: x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps_Arai
+    output: x_err,  y_err, x_tag, y_tag, b, b_sigma, specimen_b_beta, y_intercept, 
+            x_intercept, x_prime, y_prime, delta_x_prime, delta_y_prime, f_Coe, 
+            g_Coe, g_lim, specimen_q, specimen_w, count_IZ, count_ZI, B_lab, B_anc, 
+            B_anc_sigma, specimen_int
+    """
     x_err = x_segment - x_mean
     y_err = y_segment - y_mean
     york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope
@@ -163,6 +170,10 @@ def get_SCAT(points, low_bound, high_bound, x_max, y_max):
     return SCAT
 
 def get_FRAC(vds, vector_diffs_segment):   
+    """
+    input: vds, vector_diffs_segment
+    output: FRAC
+    """
     for num in vector_diffs_segment:
         if num < 0:
             raise ValueError('vector diffs should not be negative')
@@ -172,13 +183,15 @@ def get_FRAC(vds, vector_diffs_segment):
     return FRAC
 
 def get_R_corr2(x_avg, y_avg, x_segment, y_segment): # 
+    """
+    input: x_avg, y_avg, x_segment, y_segment
+    output: R_corr2
+    """
     xd = x_segment - x_avg # detrend x_segment
     yd = y_segment - y_avg # detrend y_segment
     if sum(xd**2) * sum(yd**2) == 0:
         raise ValueError('attempting to divide by zero')
     rcorr = sum((xd * yd))**2 / (sum(xd**2) * sum(yd**2))
-    print 'xd', xd
-    print 'yd', yd
     return rcorr
 
 def get_R_det2(y_segment, y_avg, y_prime):
@@ -200,7 +213,10 @@ def get_b_wiggle(x, y, y_int):
     return b_wiggle
 
 def get_Z(x_segment, y_segment, x_int, y_int, slope):
-    """Arai plot zigzag parameter"""
+    """
+    input: x_segment, y_segment, x_int, y_int, slope
+    output: Z (Arai plot zigzag parameter)
+    """
     Z = 0
     first_time = True
     for num, x in enumerate(x_segment):
@@ -211,7 +227,10 @@ def get_Z(x_segment, y_segment, x_int, y_int, slope):
     return Z
 
 def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
-    """Arai plot zigzag parameter (alternate)"""
+    """
+    input: x_segment, y_segment, x_int, y_int, slope, n
+    output: Z* (Arai plot zigzag parameter (alternate))
+    """
     total = 0
     first_time = True
     for num, x in enumerate(x_segment):
@@ -226,16 +245,22 @@ def get_Zstar(x_segment, y_segment, x_int, y_int, slope, n):
 # IZZI_MD (mainly)
 
 def get_normed_points(point_array, norm): # good to go
-#    takes a set of points and norms them
+    """
+    input: point_array, norm
+    output: normed array
+    """
     norm = float(norm)
     floated_array = []
-    for p in point_array: # need to make sure each point is a float
-        floated_array.append(float(p))
+    #for p in point_array: # need to make sure each point is a float
+        #floated_array.append(float(p))
     points = numpy.array(floated_array) / norm
     return points
 
 def get_xy_array(x_segment, y_segment): 
- #takes lists of x and y coordiantes and combines them, returning: [(x, y), (x, y)]
+    """
+    input: x_segment, y_segment
+    output: xy_segment, ( format: [(x[0], y[0]), (x[1], y[1])]
+    """
     xy_array = []
     for num, x in enumerate(x_segment):
         xy_array.append((x, y_segment[num]))

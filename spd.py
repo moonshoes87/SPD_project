@@ -593,6 +593,7 @@ thing.calculate_all_statistics()
 #spec = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
 #spec1 = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
 spec = PintPars(gui10.Data, 'C-1-3', 560. + 273., 600. + 273.)
+spec1 = PintPars(gui10.Data, 'C-1-3', 250. + 273., 600. + 273.)
 
 spec.calculate_all_statistics()
 

@@ -55,3 +55,7 @@ class CheckAraiCurvature(unittest.TestCase):
         self.assertAlmostEqual(ref_a, result[1])
         self.assertAlmostEqual(ref_b, result[2])
         self.assertAlmostEqual(ref_SSE, result[3])
+
+
+if __name__ == "__main__":
+    unittest.main()

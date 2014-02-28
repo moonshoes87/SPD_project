@@ -5,7 +5,6 @@ import lib_directional_statistics as lib_direct
 
 numpy.set_printoptions(precision=15)
 
-
 def get_n_ptrm(tmin, tmax, ptrm_temps, ptrm_starting_temps):
     """
     input: tmin, tmax, ptrm_temps, ptrm_starting_temps
@@ -32,7 +31,6 @@ def get_max_ptrm_check(ptrm_checks_included_temps, ptrm_checks_all_temps, ptrm_x
     and the percentage of the largest check / original measurement at that temperature step
     output: max_diff, sum_diffs, check_percent, sum_abs_diffs.
     """
-    print "incl temps", ptrm_checks_included_temps
     if not ptrm_checks_included_temps:
         return [], float('nan'), float('nan'), float('nan'), float('nan')
     diffs = []
@@ -64,8 +62,6 @@ def get_delta_CK(max_ptrm_check, x_int):
     Input: max_ptrm_check, x intercept.
     Output: delta_CK (max ptrm check normed by x intercept)
     """
-    #print "max_ptrm_check", max_ptrm_check
-    #print "x_int", x_int
     return abs(max_ptrm_check / x_int) * 100.
 
 def get_DRAT(delta_x_prime, delta_y_prime, max_ptrm_check):
@@ -108,6 +104,11 @@ def get_DRATS(sum_ptrm_checks, sum_abs_ptrm_checks, x_Arai, end):
     return DRATS, DRATS_prime
 
 def get_mean_DRAT(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, L):
+    """
+    input: sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, L
+    output: mean DRAT (the average difference produced by a pTRM check, 
+    normalized by the length of the best-fit line)
+    """
     if not n_pTRM:
         return float('nan'), float('nan')
     mean_DRAT = ((1. / n_pTRM) * (sum_ptrm_checks / L)) * 100
@@ -115,6 +116,10 @@ def get_mean_DRAT(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, L):
     return mean_DRAT, mean_DRAT_prime
 
 def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
+    """
+    input: sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime
+    output: Mean deviation of a pTRM check
+    """
     if not n_pTRM:
         return float('nan'), float('nan')
     mean_DEV = ((1. / n_pTRM) * (sum_ptrm_checks / delta_x_prime)) * 100
@@ -123,10 +128,8 @@ def get_mean_DEV(sum_ptrm_checks, sum_abs_ptrm_checks, n_pTRM, delta_x_prime):
 
 def get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM):
     """ takes in PTRM data in this format: [temp, dec, inc, moment, ZI or IZ] -- and PTRM_check data in this format: [temp, dec, inc, moment].  Returns them in vector form (cartesian). """
-    if type(PTRMS) != numpy.ndarray:
-        PTRMS = numpy.array(PTRMS)
-    if type(PTRM_Checks != numpy.ndarray):
-        PTRM_Checks = numpy.array(PTRM_Checks)
+    PTRMS = numpy.array(PTRMS)
+    PTRM_Checks = numpy.array(PTRM_Checks)
     TRM_1 = lib_direct.dir2cart(PTRMS[0,1:3])
     PTRMS_cart = []
     Checks_cart = []
@@ -138,15 +141,11 @@ def get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM):
         Checks_cart.append(check_cart)
     return PTRMS_cart, Checks_cart, TRM_1
 
-def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
+def get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):  
     """
     input: ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig
     output: vector diffs between original and ptrm check, C
     """
-    #    print "ptrm_checks_vectors", ptrm_checks_vectors
-    #    print "ptrms_orig", ptrms_orig
-    #    print "checks_orig", checks_orig
-    
     ptrm_temps = numpy.array(ptrms_orig)[:,0]
     check_temps = numpy.array(checks_orig)[:,0]
     index = numpy.zeros(len(ptrm_temps))
@@ -168,7 +167,11 @@ def new_get_diffs(ptrms_vectors, ptrm_checks_vectors, ptrms_orig, checks_orig):
     #print C
     return diffs, C
 
-def new_get_TRM_star(C, ptrms_vectors, start, end):
+def get_TRM_star(C, ptrms_vectors, start, end):
+    """
+    input: C, ptrms_vectors, start, end
+    output: TRM_star, x_star (for delta_pal statistic)
+    """
     TRM_star = numpy.zeros([len(ptrms_vectors), 3])
     TRM_star[0] = [0., 0., 0.]
     x_star = numpy.zeros(len(ptrms_vectors))
@@ -183,12 +186,15 @@ def new_get_TRM_star(C, ptrms_vectors, start, end):
     return TRM_star[start:end+1], x_star[start:end+1]
         
 def get_b_star(x_star, y_err, y_mean, y_segment):
-    """get corrected x segment and x_mean"""
+    """
+    input: x_star, y_err, y_mean, y_segment
+    output: b_star (corrected slope for delta_pal statistic)
+    """
     #print "x_star, should be same as Xcorr / NRM"
     #print x_star
     x_star_mean = numpy.mean(x_star)
     x_err = x_star - x_star_mean
-    b_star = -1* numpy.sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
+    b_star = -1* numpy.sqrt( sum(numpy.array(y_err)**2) / sum(numpy.array(x_err)**2) )  # averaged slope 
     #print "y_segment", y_segment
     b_star = numpy.sign(sum(x_err * y_err)) * numpy.std(y_segment, ddof=1) / numpy.std(x_star, ddof=1)
     #print "b_star (should be same as corr_slope)"
@@ -196,18 +202,26 @@ def get_b_star(x_star, y_err, y_mean, y_segment):
     return b_star
 
 def get_delta_pal(b, b_star):
+    """
+    input: b, b_star (actual and corrected slope)
+    output: delta_pal
+    """
     delta_pal = numpy.abs((b - b_star) / b) * 100
     return delta_pal
 
 def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b, start, end, y_segment):
+    """
+    input: PTRMS, PTRM_Checks, NRM, y_err, y_mean, b, start, end, y_segment
+    runs full sequence necessary to get delta_pal
+    """
     #print "-------"
     #print "calling get_full_delta_pal in lib"
 #    return 0
     PTRMS_cart, checks, TRM_1 = get_delta_pal_vectors(PTRMS, PTRM_Checks, NRM)
 #    print "PTRMS_Cart", PTRMS_cart
-    diffs, C = new_get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
+    diffs, C = get_diffs(PTRMS_cart, checks, PTRMS, PTRM_Checks)
 #    print "C", C
-    TRM_star, x_star = new_get_TRM_star(C, PTRMS_cart, start, end)
+    TRM_star, x_star = get_TRM_star(C, PTRMS_cart, start, end)
 #    print "x_star", x_star
 #    print type(x_star)
     b_star = get_b_star(x_star, y_err, y_mean, y_segment)
@@ -215,6 +229,12 @@ def get_full_delta_pal(PTRMS, PTRM_Checks, NRM, y_err, y_mean, b, start, end, y_
     return delta_pal
 
 def get_segments(ptrms, ptrm_checks, tmax):
+    """
+    input: ptrms, ptrm_checks, tmax
+    grabs ptrms that are done below tmax
+    grabs ptrm checks that are done below tmax AND whose starting temp is below tmax
+    output: ptrms_included, checks_included
+    """
     ptrms_included = []
     checks_included = []
     ptrms = numpy.array(ptrms)
@@ -227,11 +247,6 @@ def get_segments(ptrms, ptrm_checks, tmax):
     #print "checks", ptrm_checks
     #print "checks_included", checks_included
     return ptrms_included, checks_included
-
-# york b code
-#    x_err = x_segment - x_mean
-#    y_err = y_segment - y_mean
-#    york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
 
 
 
