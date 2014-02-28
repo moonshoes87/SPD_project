@@ -1,0 +1,4 @@
+bad_company.txt: -*- Text -*-  DESCRIPTIVE TEXT.
+
+Copyright (c) 2014 Lori Jonestrask
+Author: Lori Jonestrask (mintblue87@gmail.com) .
