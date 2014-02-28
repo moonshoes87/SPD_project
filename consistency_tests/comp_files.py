@@ -132,6 +132,7 @@ def compare_all(categories, specs1, specs2):
             print k, len(v)
         else:
             print k, ": lots"
+    print "{} specimens compared".format(len(specs1.keys()))
     return problems
 
 

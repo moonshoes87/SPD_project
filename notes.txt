@@ -149,20 +149,6 @@ dir2cart
 	dir2cart(Dec, Inc, 2) --> 2x,2y,z
 	
 
-thellier_gui Dec, Inc, and MAD are free.  lisa always uses free
-Also, checked and numpy and matlab notation for slicing is the same, except that matlab indexing starts at 1, not 0
-
-
-
-new meeting notes:
-
-from greig's code:  % ChRM          - a (1 x 2) or a (1 x 3) vector describing an independent measure of the direction of Banc (can be a known direction).
-this would make one of my stats wrong.  
-
-
-
-
-
 
 to run all tests:
 
@@ -420,7 +406,7 @@ Ask Ron:
    0.093109426319904                     0.0931094537109
    0.123564044710377                     0.123563866231
 
-   In 3-4 out of 600 or so permutations, a few of the statistics ['Zstar:', 'NRM_dev:', 'delta_TR:', 'delta_AC:', 'Z:', 'specimen_w:', 'delta_CK:', 'specimen_q:'] will be slightly off.  i.e., w ==  42.0444353742 ----- 41.6691.  
+   In 3-4 out of 600 or so permutations, a few of the statistics ['Zstar:', 'NRM_dev:', 'delta_TR:', 'delta_AC:', 'Z:', 'specimen_w:', 'delta_CK:', 'specimen_q:'] will be slightly off.  i.e., w ==  42.0444353742 ----- 41.6691.  w & q seem to be the most prone. 
    This pretty much only happens when the temperature bounds are very tight (3 points).  I think this is due to the difference in calculation of x/y above.  Problem?  The difference between x point values is present even with specimens that produce correct results.  I think this lack of precision is ok...
 
     different AC values
@@ -445,6 +431,71 @@ Ask Ron:
         array([  3.076925082857725e-21,   0.000000000000000e+00,
          5.025000000000000e-05])
          0, 0, .00005025
+
+
+
+
+
+
+
+working examples:
+Biggin etal -- 0 bad stats in 267 specimens
+Bowles etal -- ~20 bad stats in 6416 specimens
+Donadini etal -- theta and gamma wrong (BR0 series, Greig has ).  234 specimens compared
+Krasa etal -- ~10 bad stats in 605 specimens
+Muxworthy etal -- 6 bad stats in 3826 specimens
+Paterson etal -- lots of bad stats.  COME BACK TO THIS ONE
+Pick Tauxe -- 2 bad stats in 1632 specimens
+Selkin et al -- big problem with B_anc
+Tanaka etal -- 0 bad stats in 198 specimens
+Yamamoto etal -- same as Donadini.  theta and gamma wrong, because of how B_lab_orient is set.
+Yamamoto part 2 -- same as above
+
+troubleshooting Paterson:
+
+    looking at specimen LV3B3:
+        Dec/Inc is the same between matlab and python
+    problem appears to be in Xpts/Ypts.  Subtle parsing differences result in a reasonable difference in many important statistics.
+    somehow zdata & NRMvec are different.  How?
+    dir2cart functions are the same.  
+
+    in read_tdt (see also below for PintPars portion)
+    if (strcmp(files(f).name(1:2), 'LV')) % Paterson Lascar
+        % -Z-axis
+        F_exp=24.0;
+        Meth=1;
+        flags.Rot=1;
+        [N_orient(1), N_orient(2), N_orient(3)]=dir2cart(385.5, -18.7, 1);
+
+
+troubleshooting Selkin etal:
+
+    my B_anc agrees with thellier_gui.  however, Greig does a correction that produces a very different B_anc
+
+    Greig does a correction (flags.Anis, flags.Rot) that I do not
+    in read_tdt:
+    elseif (strcmp(files(f).name(1:4), 'm428'))
+        % +z-axis
+        F_orient=[0, 0, 1];
+        flags.Anis=1;
+        flags.Rot=1;
+        N_orient=F_orient;
+        F_exp=25;
+        Meth=1;
+
+in GetPintPars:
+% Get the paleointensity estimate
+Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);
+if A_corr==1 && NLT_corr==0
+    Params.Banc = Blab * abs( Params.Anis_c*Params.b );
+elseif A_corr==0 && NLT_corr==1
+    Params.Banc = real( atanh( abs(Params.b) * tanh(NLT_hat(2)*Blab) ) / NLT_hat(2) );
+elseif A_corr==1 && NLT_corr==1
+    Params.Banc = real( atanh( abs(Params.Anis_c*Params.b) * tanh(NLT_hat(2)*Blab) ) / NLT_hat(2) );
+else
+    Params.Banc = abs(Params.b)*Blab;
+end
+
 
 
 
@@ -551,3 +602,20 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
            ET1_318A    150.1   6.457964075 214.5410563 -10.52823962
            treatment is:   1 
            etc. (0 is ZI, 1 is IZ, etc.)
+
+
+
+
+
+
+
+
+travis CI
+github gui for fun help
+integration with thellier_gui
+wxpython magic_gui.py
+pmag.py -- replace functions where appropriate (GetPintPars for start)
+        talk to Ron, who has been mucking about in PintPars
+cookbook documentation -- links to thellier gui, spd document, etc.
+         how to get going with pmag.py
+         import scripts already exist in various forms

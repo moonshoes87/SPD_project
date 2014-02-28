@@ -15,8 +15,8 @@ import spd
 # make sure you use the correct files (the ones that you have comparisons for)
 
 
-infile = 'consistency_tests/Muxworthy_etal_2011_magic_measurements.txt' #'consistency_tests/Krasa_2000_magic_measurements.txt'#'consistency_tests/Donadini_etal_2007_magic_measurements.txt' #'consistency_tests/Biggin_etal_2007_magic_measurements.txt'#'consistency_tests/Bowles_etal_2006_magic_measurements.txt'#
-outfile = 'consistency_tests/Muxworthy_etal_2011.out.csv' #consistency_tests/Krasa_2000.out.csv'#'consistency_tests/Donadini_etal_2007.out.csv' #'consistency_tests/Biggin_etal_2007.out.csv'# 'consistency_tests/Bowles_etal_2006.out.csv'# 
+infile = 'consistency_tests/Yamamoto_Hushi_2008_magic_measurements.txt' #'consistency_tests/Yamamoto_etal_2003_magic_measurements.txt' #'consistency_tests/Tanaka_etal_2012_magic_measurements.txt' #'consistency_tests/Selkin_etal_2000_magic_measurements.txt'#'consistency_tests/Pick_Tauxe_93_magic_measurements.txt'#'consistency_tests/Paterson_etal_2010_magic_measurements.txt' #'consistency_tests/Muxworthy_etal_2011_magic_measurements.txt' #'consistency_tests/Krasa_2000_magic_measurements.txt'#'consistency_tests/Donadini_etal_2007_magic_measurements.txt' #'consistency_tests/Biggin_etal_2007_magic_measurements.txt'#'consistency_tests/Bowles_etal_2006_magic_measurements.txt'#
+outfile ='consistency_tests/Yamamoto_Hushi_2008.out.csv' #'consistency_tests/Yamamoto_etal_2003.out.csv' #'consistency_tests/Tanaka_etal_2012.out.csv'#'consistency_tests/Selkin_etal_2000.out.csv' #'consistency_tests/Pick_Tauxe_93.out.csv' #'consistency_tests/Paterson_etal_2010.out.csv' #'consistency_tests/Muxworthy_etal_2011.out.csv' #consistency_tests/Krasa_2000.out.csv'#'consistency_tests/Donadini_etal_2007.out.csv' #'consistency_tests/Biggin_etal_2007.out.csv'# 'consistency_tests/Bowles_etal_2006.out.csv'# 
 
 print sys.argv
 

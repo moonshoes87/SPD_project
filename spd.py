@@ -129,6 +129,7 @@ class PintPars(object):
         self.pars['lab_dc_field']=self.specimen_Data['pars']['lab_dc_field']
         self.B_lab_dir = [self.specimen_Data['Thellier_dc_field_phi'], self.specimen_Data['Thellier_dc_field_theta'], 
                           self.specimen_Data['Thellier_dc_field_uT']]  # 
+        self.B_lab_cart = lib_direct.dir2cart(self.B_lab_dir)
 
   #      self.pars['magic_method_codes']=Data[self.s]['pars']['magic_method_codes']
         self.pars['specimen_n']=self.end-self.start+1
@@ -585,14 +586,19 @@ import new_lj_thellier_gui_spd as tgs
 #gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 #gui4 = tgs.Arai_GUI('consistency_tests/Donadini_etal_2007_magic_measurements.txt')
 #gui5 = tgs.Arai_GUI('consistency_tests/Krasa_2000_magic_measurements.txt')
-gui6 = tgs.Arai_GUI('consistency_tests/Muxworthy_etal_2011_magic_measurements.txt')
+#gui6 = tgs.Arai_GUI('consistency_tests/Muxworthy_etal_2011_magic_measurements.txt')
+#gui7 = tgs.Arai_GUI('consistency_tests/Paterson_etal_2010_magic_measurements.txt')
+#gui8 = tgs.Arai_GUI('consistency_tests/Selkin_etal_2000_magic_measurements.txt')
+
+gui10 = tgs.Arai_GUI('consistency_tests/Yamamoto_etal_2003_magic_measurements.txt')
 
 #thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 #thing.calculate_all_statistics()
 
-spec = PintPars(gui6.Data, 'p2na_u', 275.+ 273., 350. + 273.)
-#spec1 = PintPars(gui5.Data, 'W3', 300 + 273., 480. + 273.)
-#spec2 = PintPars(gui5.Data, 'W3',  0 + 273., 600 + 273.)
+#spec = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
+#spec1 = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
+spec = PintPars(gui10.Data, 'C-1-3', 560. + 273., 600. + 273.)
+
 spec.calculate_all_statistics()
 
 
