@@ -11,7 +11,7 @@
 
 path = 'Users/nebula/Python'
 
-ignore = """
+"""
 import unittest
 import sys
 sys.path.append('/Users/nebula/Python')
@@ -31,5 +31,4 @@ from SPD_project.tests import test_additivity_check_statistics as test_add
 new_arai_suite = unittest.TestLoader().loadTestsFromModule(test_arai)
 
 
-#unittest.main()
 """
