@@ -69,3 +69,12 @@ def get_MD_VDS(tail_check_max, vds):
         return float('nan')
     MD_VDS = (tail_check_max / vds) * 100
     return MD_VDS
+
+
+
+
+
+
+if __name__ == '__main__':
+    unittest.main()
+
