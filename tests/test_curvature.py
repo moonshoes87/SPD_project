@@ -2,10 +2,10 @@
 
 import numpy
 import unittest
-import sys
-sys.path.append('/Users/nebula/Python')
-from SPD_project.lib import lib_curvature as lib_k
-#from ..lib import lib_curvature as lib_k
+#import sys
+#sys.path.append('/Users/nebula/Python')
+#from SPD_project.lib import lib_curvature as lib_k
+import lib.lib_curvature as lib_k
 
 
 class CheckCircle(unittest.TestCase):
