@@ -5,8 +5,8 @@
 #  Copyright (c) 2014 Lori Jonestrask
 #  Author: Lori Jonestrask (mintblue87@gmail.com) .
 
-
-
+import tests.test_additivity_check_statistics as test
+print test
 
 
 path = 'Users/nebula/Python'

@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import unittest
-import sys
-sys.path.append('/Users/nebula/Python')
-from SPD_project.lib import lib_additivity_check_statistics as lib_add
+#import sys
+#sys.path.append('/Users/nebula/Python')
+#from SPD_project.lib import lib_additivity_check_statistics as lib_add
+import lib.lib_additivity_check_statistics as lib_add
 
 
 #class CheckTailSelection(unittest.TestCase):
@@ -58,7 +59,7 @@ class CheckAdditivity(unittest.TestCase):
         self.assertEqual(n_add, self.ref_n_add)
 
     def test_delta_AC(self):
-        delta_AC = lib_add.get_delta_AC(self.ref_n_add, self.add_checks, self.x_int)
+        delta_AC, included_add_checks = lib_add.get_delta_AC(self.ref_n_add, self.add_checks, self.x_int)
         self.assertAlmostEqual(self.ref_delta_AC, delta_AC)
 
 
