@@ -9,7 +9,9 @@
 import os
 import unittest
 
+print "monkeying around"
 print os.getcwd()
+print "end of monkey time"
 
 class DoThings(unittest.TestCase):
     
