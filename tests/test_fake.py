@@ -16,7 +16,7 @@ print "end of monkey time"
 class DoThings(unittest.TestCase):
     
     def test_for_true(self):
-        self.assertEqual(True, True)
+        self.assertEqual(True, False)
 
     def test_for_false(self):
         self.assertFalse(False)
