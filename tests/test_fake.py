@@ -1,10 +1,15 @@
 #!/usr/bin/env python
-import unittest
+
 
 # test_fake.py: -*- Python -*-  DESCRIPTIVE TEXT.
 # 
 #  Copyright (c) 2014 Lori Jonestrask
 #  Author: Lori Jonestrask (mintblue87@gmail.com) .
+
+import os
+import unittest
+
+print os.getcwd()
 
 class DoThings(unittest.TestCase):
     
