@@ -4,9 +4,10 @@ import numpy
 import unittest
 import copy
 import sys
-sys.path.append('/Users/nebula/Python')
-from SPD_project import spd
-from SPD_project.lib import lib_tail_check_statistics as lib_tail
+#sys.path.append('/Users/nebula/Python')
+#from SPD_project import spd
+#from SPD_project.lib import lib_tail_check_statistics as lib_tail
+import lib.lib_tail_check_statistics as lib_tail
 
 
 #class CheckpTRMparams(unittest.TestCase): 
@@ -18,7 +19,7 @@ class CheckTailSelection(unittest.TestCase):
     t_Arai = [10, 20, 30, 40, 50, 60]
     y_tail = [3.5, 4.2, 3., 1.4, .6 ]
     tail_temps = [10, 30, 40, 50, 60]
-    obj = copy.deepcopy(spd.thing)
+    #obj = copy.deepcopy(spd.thing)
     ref_n_tail = 4
 
 #                [4,    3.5, 3,  2.,   1., .5]
@@ -37,9 +38,9 @@ class CheckTailSelection(unittest.TestCase):
         n_tail = lib_tail.get_n_tail(self.tmax, self.tail_temps)
         self.assertEqual(ref_n_tail, n_tail)
 
-    def test_n_tail_real_data(self):
-        n_tail = self.obj.get_n_tail()
-        self.assertEqual(self.ref_n_tail, n_tail)
+    #def test_n_tail_real_data(self):
+    #    n_tail = self.obj.get_n_tail()
+    #    self.assertEqual(self.ref_n_tail, n_tail)
               
     def test_max_tail_check(self):
         tail_check_max, tail_check_diffs = lib_tail.get_max_tail_check(self.y_Arai, self.y_tail, self.t_Arai, self.tail_temps, self.ref_n_tail)
@@ -64,3 +65,6 @@ class CheckTailSelection(unittest.TestCase):
         MD_VDS = lib_tail.get_MD_VDS(self.ref_tail_check_max, self.vds)
         self.assertAlmostEqual(ref_MD_VDS, MD_VDS)
         
+
+if __name__ == '__main__':
+    unittest.main()
