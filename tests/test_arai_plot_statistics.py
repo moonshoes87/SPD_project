@@ -341,7 +341,11 @@ class CheckIZZI_MD(unittest.TestCase):
     x = numpy.array([4, 6, 12])
     y = numpy.array([8, 4, 2])
     norm_x = lib_arai.get_normed_points(x, norm)
+    print "x", x
+    print "norm", norm
+    print "norm_x", norm_x
     norm_y = lib_arai.get_normed_points(y, norm)
+    print "norm_y", norm_y
     ref_xy = [(4, 8), (6, 4), (12, 2)] # not normed
 
     L1 = numpy.sqrt(1.25)

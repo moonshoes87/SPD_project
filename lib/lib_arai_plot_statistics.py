@@ -14,12 +14,12 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     """
     x_err = x_segment - x_mean
     y_err = y_segment - y_mean
-    york_b = -1* numpy.sqrt sum(y_err**2) / sum(x_err**2) )  # averaged slope
+    york_b = -1* numpy.sqrt(sum(y_err**2) / sum(x_err**2) )  # averaged slope
 
-    b = sign(sum(x_err * y_err)) * std(y_segment, ddof=1)/std(x_segment, ddof=1) # ddof is degrees of freedom
+    b = numpy.sign(sum(x_err * y_err)) * numpy.std(y_segment, ddof=1)/numpy.std(x_segment, ddof=1) # ddof is degrees of freedom
     york_b = b
 
-    york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
+    york_sigma= numpy.sqrt( (2 * sum(y_err**2) - 2*york_b* sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
     beta_Coe=abs(york_sigma/york_b) 
     # y_T is the intercept of the extrepolated line
     # through the center of mass (see figure 7 in Coe (1978))  
@@ -40,7 +40,7 @@ def York_Regression(x_segment, y_segment, x_mean, y_mean, n, lab_dc_field, steps
     g_Coe =  1 - (sum((y_prime[:-1]-y_prime[1:])**2) / delta_y_prime ** 2)  # gap factor
     g_lim = (float(n) - 2) / (float(n) - 1) 
     q_Coe = abs(york_b)*f_Coe*g_Coe/york_sigma
-    w_Coe = q_Coe / numpy.sqrtn - 2)
+    w_Coe = q_Coe / numpy.sqrt(n - 2)
     count_IZ = steps_Arai.count('IZ')
     count_ZI = steps_Arai.count('ZI')
     B_lab = lab_dc_field * 1e6
@@ -60,7 +60,7 @@ def get_vds(zdata, delta_y_prime, start, end):
     delta_y_prime: 1, start value, and end value.  gets vds and f_vds, etc. """
     vector_diffs = []
     for k in range(len(zdata)-1): # gets diff between two vectors
-        vector_diffs.append(numpy.sqrt sum((array(zdata[k+1]) - array(zdata[k]))**2) ))
+        vector_diffs.append(numpy.sqrt(sum((numpy.array(zdata[k+1]) - numpy.array(zdata[k]))**2) ))
     last_vector = numpy.linalg.norm(zdata[-1])
     vector_diffs.append(last_vector)
     vds = sum(vector_diffs)
@@ -250,10 +250,10 @@ def get_normed_points(point_array, norm): # good to go
     output: normed array
     """
     norm = float(norm)
-    floated_array = []
+    #floated_array = []
     #for p in point_array: # need to make sure each point is a float
         #floated_array.append(float(p))
-    points = numpy.array(floated_array) / norm
+    points = numpy.array(point_array) / norm
     return points
 
 def get_xy_array(x_segment, y_segment): 
