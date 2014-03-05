@@ -577,7 +577,8 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 
-gui = tgs.Arai_GUI()
+gui = tgs.Arai_GUI('magic_measurements.txt')
+print 'gui', gui
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 #gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 #gui4 = tgs.Arai_GUI('consistency_tests/Donadini_etal_2007_magic_measurements.txt')
@@ -586,17 +587,18 @@ gui = tgs.Arai_GUI()
 #gui7 = tgs.Arai_GUI('consistency_tests/Paterson_etal_2010_magic_measurements.txt')
 #gui8 = tgs.Arai_GUI('consistency_tests/Selkin_etal_2000_magic_measurements.txt')
 
-gui10 = tgs.Arai_GUI('consistency_tests/Yamamoto_etal_2003_magic_measurements.txt')
+#gui10 = tgs.Arai_GUI('consistency_tests/Yamamoto_etal_2003_magic_measurements.txt')
 
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+print 'thing', thing
 thing.calculate_all_statistics()
 
 #spec = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
 #spec1 = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
-spec = PintPars(gui10.Data, 'C-1-3', 560. + 273., 600. + 273.)
-spec1 = PintPars(gui10.Data, 'C-1-3', 250. + 273., 600. + 273.)
+#spec = PintPars(gui10.Data, 'C-1-3', 560. + 273., 600. + 273.)
+#spec1 = PintPars(gui10.Data, 'C-1-3', 250. + 273., 600. + 273.)
 
-spec.calculate_all_statistics()
+#spec.calculate_all_statistics()
 
 
 #thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
