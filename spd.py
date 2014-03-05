@@ -579,6 +579,7 @@ import new_lj_thellier_gui_spd as tgs
 
 gui = tgs.Arai_GUI('magic_measurements.txt')
 print 'gui', gui
+print 'gui.Data.keys()', gui.Data.keys()
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 #gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 #gui4 = tgs.Arai_GUI('consistency_tests/Donadini_etal_2007_magic_measurements.txt')
