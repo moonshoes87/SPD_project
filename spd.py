@@ -17,6 +17,7 @@
 
 import sys
 import numpy
+import os
 #import pylab
 #import scipy
 #from scipy import * 
@@ -590,6 +591,13 @@ print 'gui.Data.keys()', gui.Data.keys()
 
 #gui10 = tgs.Arai_GUI('consistency_tests/Yamamoto_etal_2003_magic_measurements.txt')
 
+f = open('magic_measurements.txt', 'rU')
+cwd = os.getcwd()
+print 'cwd', cwd
+f2 = open(cwd+'magic_measurements.txt', 'rU')
+print "f", f
+print "f2", f2
+print "listdir", os.listdir(os.getcwd())
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 print 'thing', thing
 thing.calculate_all_statistics()
