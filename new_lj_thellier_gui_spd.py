@@ -1,7 +1,7 @@
 #============================================================================================
 global CURRENT_VRSION
 CURRENT_VRSION = "v.2.03"
-import matplotlib
+#import matplotlib
 
 
 import sys,pylab,scipy,os
