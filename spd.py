@@ -578,7 +578,7 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 cwd = os.getcwd()
-gui = tgs.Arai_GUI(cwd+'/magic_measurements.txt')
+gui = tgs.Arai_GUI('/magic_measurements.txt', cwd)
 print 'gui', gui
 print 'gui.Data.keys()', gui.Data.keys()
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
