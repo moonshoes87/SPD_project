@@ -594,9 +594,9 @@ print 'gui.Data.keys()', gui.Data.keys()
 f = open('magic_measurements.txt', 'rU')
 cwd = os.getcwd()
 print 'cwd', cwd
-f2 = open(cwd+'magic_measurements.txt', 'rU')
-print "f", f
-print "f2", f2
+f2 = open(cwd+'/magic_measurements.txt', 'rU')
+print "first file", f
+print "second file", f2
 print "listdir", os.listdir(os.getcwd())
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 print 'thing', thing
