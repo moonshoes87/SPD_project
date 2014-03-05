@@ -3,7 +3,7 @@ global CURRENT_VRSION
 CURRENT_VRSION = "v.2.03"
 #import matplotlib
 
-
+import numpy
 import sys,pylab,scipy,os
 ##try:
 ##    import pmag
@@ -19,7 +19,9 @@ except:
 #import time
 #import random
 #import copy
-from pylab import *  # this stuff is being used, don't know all where
+
+#from pylab import *  # this stuff is being used, don't know all where
+
 #from scipy.optimize import curve_fit
 
 #import thellier_consistency_test
@@ -400,11 +402,11 @@ class Arai_GUI():
                   M_baseline=mean(m_tmp)
               
 
-          ####  Ron dont delete it ### print "-I- Found %i NLT datapoints for specimen %s: B="%(len(B_NLT),s),array(B_NLT)*1e6
+          ####  Ron dont delete it ### print "-I- Found %i NLT datapoints for specimen %s: B="%(len(B_NLT),s),numpy.numpy.array(B_NLT)*1e6
     
           #substitute baseline
-          M_NLT=array(M_NLT)-M_baseline
-          B_NLT=array(B_NLT)  
+          M_NLT = numpy.array(M_NLT)-M_baseline
+          B_NLT = numpy.array(B_NLT)  
           # calculate M/B ratio for each step, and compare them
           # If cant do NLT correction: check a difference in M/B ratio
           # > 5% : WARNING
@@ -540,7 +542,7 @@ class Arai_GUI():
               moments.append(cooling_rate_data['alteration_check'][1])        
 
               lab_fast_cr_moment=mean(lab_fast_cr_moments)
-              moment_norm=array(moments)/lab_fast_cr_moment
+              moment_norm=numpy.array(moments)/lab_fast_cr_moment
               (a,b)=polyfit(lan_cooling_rates, moment_norm, 1)
               #ancient_cooling_rate=0.41
               x0=math.log(lab_cooling_rate/ancient_cooling_rate)
@@ -659,14 +661,14 @@ class Arai_GUI():
         for k in range(len(zijdblock)):
             DIR=[zijdblock[k][1],zijdblock[k][2],zijdblock[k][3]/NRM]
             cart=self.dir2cart(DIR)
-            zdata.append(array([cart[0],cart[1],cart[2]]))
+            zdata.append(numpy.array([cart[0],cart[1],cart[2]]))
             if k>0:
-                vector_diffs.append(sqrt(sum((array(zdata[-2])-array(zdata[-1]))**2)))
-        vector_diffs.append(sqrt(sum(array(zdata[-1])**2))) # last vector of the vds
+                vector_diffs.append(numpy.sqrt(sum((numpy.array(zdata[-2])-numpy.array(zdata[-1]))**2)))
+        vector_diffs.append(numpy.sqrt(sum(numpy.array(zdata[-1])**2))) # last vector of the vds
         vds=sum(vector_diffs)  # vds calculation       
-        zdata=array(zdata)
+        zdata=numpy.array(zdata)
     
-        Data[s]['vector_diffs']=array(vector_diffs)
+        Data[s]['vector_diffs']=numpy.array(vector_diffs)
         Data[s]['vds']=vds
         Data[s]['zdata']=zdata
         Data[s]['z_temp']=z_temperatures
@@ -688,10 +690,10 @@ class Arai_GUI():
         for i in range(1,len(Data[s]['zdata'])):
           DIR=self.cart2dir(Data[s]['zdata'][i])
           DIR[0]=DIR[0]-NRM_dec
-          CART_rot.append(array(self.dir2cart(DIR)))
-          #print array(dir2cart(DIR))
+          CART_rot.append(numpy.array(self.dir2cart(DIR)))
+          #print numpy.array(dir2cart(DIR))
           
-        CART_rot=array(CART_rot)
+        CART_rot=numpy.array(CART_rot)
         Data[s]['zij_rotated']=CART_rot
         #--------------------------------------------------------------
         # collect all Arai plot data points to array 
@@ -720,8 +722,8 @@ class Arai_GUI():
             steps_Arai.append('ZI')
           else:
             steps_Arai.append('IZ')        
-        x_Arai=array(x_Arai)
-        y_Arai=array(y_Arai)
+        x_Arai=numpy.array(x_Arai)
+        y_Arai=numpy.array(y_Arai)
         #else:
         #    Data[s]['pars']['magic_method_codes']=""
         Data[s]['x_Arai']=x_Arai
@@ -778,16 +780,16 @@ class Arai_GUI():
                         pass
 
                     
-        x_ptrm_check=array(x_ptrm_check)  
-        ptrm_check=array(y_ptrm_check)
-        ptrm_checks_temperatures=array(ptrm_checks_temperatures)
+        x_ptrm_check=numpy.array(x_ptrm_check)  
+        ptrm_check=numpy.array(y_ptrm_check)
+        ptrm_checks_temperatures=numpy.array(ptrm_checks_temperatures)
         Data[s]['PTRM_Checks'] = ptrm_checks
         Data[s]['x_ptrm_check']=x_ptrm_check
         Data[s]['y_ptrm_check']=y_ptrm_check        
         Data[s]['ptrm_checks_temperatures']=ptrm_checks_temperatures
-        Data[s]['x_ptrm_check_starting_point']=array(x_ptrm_check_starting_point)
-        Data[s]['y_ptrm_check_starting_point']=array(y_ptrm_check_starting_point)               
-        Data[s]['ptrm_checks_starting_temperatures']=array(ptrm_checks_starting_temperatures)
+        Data[s]['x_ptrm_check_starting_point']=numpy.array(x_ptrm_check_starting_point)
+        Data[s]['y_ptrm_check_starting_point']=numpy.array(y_ptrm_check_starting_point)               
+        Data[s]['ptrm_checks_starting_temperatures']=numpy.array(ptrm_checks_starting_temperatures)
 ##        if len(ptrm_checks_starting_temperatures) != len(ptrm_checks_temperatures):
 ##            print s
 ##            print Data[s]['ptrm_checks_temperatures']
@@ -834,12 +836,12 @@ class Arai_GUI():
 ##              y_tail_check.append(ptrm_tail[k][3]/NRM + zerofields[index_infield][3]/NRM)
 ##              tail_check_temperatures.append(ptrm_tail[k][0])
 
-        x_tail_check=array(x_tail_check)  
-        y_tail_check=array(y_tail_check)
-        tail_check_temperatures=array(tail_check_temperatures)
-        x_tail_check_starting_point=array(x_tail_check_starting_point)
-        y_tail_check_starting_point=array(y_tail_check_starting_point)
-        tail_checks_starting_temperatures=array(tail_checks_starting_temperatures)
+        x_tail_check=numpy.array(x_tail_check)  
+        y_tail_check=numpy.array(y_tail_check)
+        tail_check_temperatures=numpy.array(tail_check_temperatures)
+        x_tail_check_starting_point=numpy.array(x_tail_check_starting_point)
+        y_tail_check_starting_point=numpy.array(y_tail_check_starting_point)
+        tail_checks_starting_temperatures=numpy.array(tail_checks_starting_temperatures)
         
         Data[s]['TAIL_Checks'] = ptrm_tail
         Data[s]['x_tail_check']=x_tail_check
@@ -859,7 +861,7 @@ class Arai_GUI():
         x_AC,y_AC,AC_temperatures,AC=[],[],[],[]
         x_AC_starting_point,y_AC_starting_point,AC_starting_temperatures=[],[],[]
         
-        tmp_data_block=list(copy(datablock))
+        tmp_data_block=list(numpy.array(datablock, copy=True))
         for k in range(len(additivity_checks)):
           if additivity_checks[k][0] in zerofield_temperatures:
             for i in range(len(tmp_data_block)):
@@ -911,13 +913,13 @@ class Arai_GUI():
                 except:
                     pass
 
-        x_AC=array(x_AC)
-        y_AC=array(y_AC)
-        AC_temperatures=array(AC_temperatures)
-        x_AC_starting_point=array(x_AC_starting_point)
-        y_AC_starting_point=array(y_AC_starting_point)
-        AC_starting_temperatures=array(AC_starting_temperatures)
-        AC=array(AC)
+        x_AC=numpy.array(x_AC)
+        y_AC=numpy.array(y_AC)
+        AC_temperatures=numpy.array(AC_temperatures)
+        x_AC_starting_point=numpy.array(x_AC_starting_point)
+        y_AC_starting_point=numpy.array(y_AC_starting_point)
+        AC_starting_temperatures=numpy.array(AC_starting_temperatures)
+        AC=numpy.array(AC)
 
         Data[s]['additivity_checks'] = additivity_checks
         Data[s]['AC']=AC
@@ -1028,39 +1030,39 @@ class Arai_GUI():
         converts a direction to cartesian coordinates
         """
 #        print "calling cart2dir(), not in anything"
-        cart=array(cart)
-        rad=pi/180. # constant to convert degrees to radians
+        cart=numpy.array(cart)
+        rad=numpy.pi/180. # constant to convert degrees to radians
         if len(cart.shape)>1:
             Xs,Ys,Zs=cart[:,0],cart[:,1],cart[:,2]
         else: #single vector
             Xs,Ys,Zs=cart[0],cart[1],cart[2]
-        Rs=sqrt(Xs**2+Ys**2+Zs**2) # calculate resultant vector length
-        Decs=(arctan2(Ys,Xs)/rad)%360. # calculate declination taking care of correct quadrants (arctan2) and making modulo 360.
+        Rs=numpy.sqrt(Xs**2+Ys**2+Zs**2) # calculate resultant vector length
+        Decs=(numpy.arctan2(Ys,Xs)/rad)%360. # calculate declination taking care of correct quadrants (arctan2) and making modulo 360.
         try:
-            Incs=arcsin(Zs/Rs)/rad # calculate inclination (converting to degrees) # 
+            Incs=numpy.arcsin(Zs/Rs)/rad # calculate inclination (converting to degrees) # 
         except:
             print 'trouble in cart2dir' # most likely division by zero somewhere
-            return zeros(3)
+            return numpy.zeros(3)
             
-        return array([Decs,Incs,Rs]).transpose() # return the directions list
+        return numpy.array([Decs,Incs,Rs]).transpose() # return the directions list
 
 
     def dir2cart(self,d):
 #        print "calling dir2cart(), not in anything"
        # converts list or array of vector directions, in degrees, to array of cartesian coordinates, in x,y,z
-        ints=ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
-        d=array(d)
-        rad=pi/180.
+        ints=numpy.ones(len(d)).transpose() # get an array of ones to plug into dec,inc pairs
+        d = numpy.array(d)
+        rad=numpy.pi/180.
         if len(d.shape)>1: # array of vectors
             decs,incs=d[:,0]*rad,d[:,1]*rad
             if d.shape[1]==3: ints=d[:,2] # take the given lengths
         else: # single vector
-            decs,incs=array(d[0])*rad,array(d[1])*rad
+            decs,incs=numpy.array(d[0])*rad,numpy.array(d[1])*rad
             if len(d)==3: 
-                ints=array(d[2])
+                ints=numpy.array(d[2])
             else:
-                ints=array([1.])
-        cart= array([ints*cos(decs)*cos(incs),ints*sin(decs)*cos(incs),ints*sin(incs)]).transpose()
+                ints=numpy.array([1.])
+        cart= numpy.array([ints*numpy.cos(decs)*numpy.cos(incs),ints*numpy.sin(decs)*numpy.cos(incs),ints*numpy.sin(incs)]).transpose()
         return cart
 
 
@@ -1301,12 +1303,12 @@ class Arai_GUI():
                     moment1=float(irec1["measurement_magn_moment"])
                     if len(first_I)<2:
                         dec_initial=dec1;inc_initial=inc1
-                    cart1=array(self.dir2cart([dec1,inc1,moment1]))
+                    cart1=numpy.array(self.dir2cart([dec1,inc1,moment1]))
                     irec2=datablock[ISteps[i]]
                     dec2=float(irec2["measurement_dec"])
                     inc2=float(irec2["measurement_inc"])
                     moment2=float(irec2["measurement_magn_moment"])
-                    cart2=array(self.dir2cart([dec2,inc2,moment2]))
+                    cart2=numpy.array(self.dir2cart([dec2,inc2,moment2]))
 
                     # check if its in the same treatment
                     if Treat_I[i] == Treat_I[i-2] and dec2!=dec_initial and inc2!=inc_initial:
@@ -1356,8 +1358,8 @@ class Arai_GUI():
                 moment=float(rec["measurement_magn_moment"])
                 for zerofield in first_Z:
                     if zerofield[0]==temp:
-                        M1=array(self.dir2cart([dec,inc,moment]))
-                        M2=array(self.dir2cart([zerofield[1],zerofield[2],zerofield[3]]))
+                        M1=numpy.array(self.dir2cart([dec,inc,moment]))
+                        M2=numpy.array(self.dir2cart([zerofield[1],zerofield[2],zerofield[3]]))
                         diff=M1-M2
                         diff_cart=self.cart2dir(diff)
                         ptrm_check.append([temp,diff_cart[0],diff_cart[1],diff_cart[2]])
@@ -1508,7 +1510,7 @@ if False:
         def calculate_ftest(s,sigma,nf):
             print "calling calculate_ftest() in get_PI_parameters()"
             chibar=(s[0][0]+s[1][1]+s[2][2])/3.
-            t=array(linalg.eigvals(s))
+            t=numpy.array(linalg.eigvals(s))
             F=0.4*(t[0]**2+t[1]**2+t[2]**2 - 3*chibar**2)/(float(sigma)**2)
 
             return(F)
@@ -1583,17 +1585,17 @@ if False:
         t1=max(eigenvalues);index_t1=eigenvalues.index(t1);tmp.remove(index_t1)
         t3=min(eigenvalues);index_t3=eigenvalues.index(t3);tmp.remove(index_t3)
         index_t2=tmp[0];t2=eigenvalues[index_t2]
-        v1=real(array(eigenvectors[:,index_t1]))
-        v2=real(array(eigenvectors[:,index_t2]))
-        v3=real(array(eigenvectors[:,index_t3]))
+        v1=real(numpy.array(eigenvectors[:,index_t1]))
+        v2=real(numpy.array(eigenvectors[:,index_t2]))
+        v3=real(numpy.array(eigenvectors[:,index_t3]))
 
         # chech if v1 is the "right" polarity
-        cm=array(mean(zdata_segment.T,axis=1)) # center of mass
-        v1_plus=v1*sqrt(sum(cm**2))
-        v1_minus=v1*-1*sqrt(sum(cm**2))
+        cm=numpy.array(mean(zdata_segment.T,axis=1)) # center of mass
+        v1_plus=v1*numpy.sqrt(sum(cm**2))
+        v1_minus=v1*-1*numpy.sqrt(sum(cm**2))
         test_v=zdata_segment[0]-zdata_segment[-1]
 
-        if sqrt(sum((v1_minus-test_v)**2)) < sqrt(sum((v1_plus-test_v)**2)):
+        if numpy.sqrt(sum((v1_minus-test_v)**2)) < numpy.sqrt(sum((v1_plus-test_v)**2)):
          DIR_PCA=self.cart2dir(v1*-1)
          best_fit_vector=v1*-1
         else:
@@ -1601,10 +1603,10 @@ if False:
          best_fit_vector=v1
 
         # MAD Kirschvink (1980)
-        MAD=math.degrees(arctan(sqrt((t2+t3)/t1)))
+        MAD=math.degrees(arctan(numpy.sqrt((t2+t3)/t1)))
 
         # DANG Tauxe and Staudigel 2004
-        DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( sqrt(sum(cm**2)) * sqrt(sum(best_fit_vector**2)))))
+        DANG=math.degrees( arccos( ( dot(cm, best_fit_vector) )/( numpy.sqrt(sum(cm**2)) * numpy.sqrt(sum(best_fit_vector**2)))))
 
 
         # best fit PCA direction
@@ -1618,9 +1620,9 @@ if False:
         if t3 <0 or t3==0:
             t3=1e-10
             
-        pars["specimen_PCA_sigma_max"] =  sqrt(t1)
-        pars["specimen_PCA_sigma_int"] =  sqrt(t2)
-        pars["specimen_PCA_sigma_min"] =  sqrt(t3)
+        pars["specimen_PCA_sigma_max"] =  numpy.sqrt(t1)
+        pars["specimen_PCA_sigma_int"] =  numpy.sqrt(t2)
+        pars["specimen_PCA_sigma_min"] =  numpy.sqrt(t3)
             
 
         # MAD Kirschvink (1980)
@@ -1635,8 +1637,8 @@ if False:
         #-------------------------------------------------
         
         PTRMS = self.Data[s]['PTRMS'][1:]
-        CART_pTRMS_orig=array([self.dir2cart(row[1:4]) for row in PTRMS])
-        #CART_pTRMS=[row/sqrt(sum((array(row)**2))) for row in CART_pTRMS_orig]
+        CART_pTRMS_orig=numpy.array([self.dir2cart(row[1:4]) for row in PTRMS])
+        #CART_pTRMS=[row/numpy.sqrt(sum((numpy.array(row)**2))) for row in CART_pTRMS_orig]
 ##        print "CART_pTRMS_orig",CART_pTRMS_orig
 ##        print "----"
         
@@ -1650,17 +1652,17 @@ if False:
         t1=max(eigenvalues);index_t1=eigenvalues.index(t1);tmp.remove(index_t1)
         t3=min(eigenvalues);index_t3=eigenvalues.index(t3);tmp.remove(index_t3)
         index_t2=tmp[0];t2=eigenvalues[index_t2]
-        v1=real(array(eigenvectors[:,index_t1]))
-        v2=real(array(eigenvectors[:,index_t2]))
-        v3=real(array(eigenvectors[:,index_t3]))
+        v1=real(numpy.array(eigenvectors[:,index_t1]))
+        v2=real(numpy.array(eigenvectors[:,index_t2]))
+        v3=real(numpy.array(eigenvectors[:,index_t3]))
 
         # chech if v1 is the "right" polarity
-        cm=array(mean(CART_pTRMS_orig.T,axis=1)) # center of mass
-        v1_plus=v1*sqrt(sum(cm**2))
-        v1_minus=v1*-1*sqrt(sum(cm**2))
+        cm=numpy.array(mean(CART_pTRMS_orig.T,axis=1)) # center of mass
+        v1_plus=v1*numpy.sqrt(sum(cm**2))
+        v1_minus=v1*-1*numpy.sqrt(sum(cm**2))
         test_v=CART_pTRMS_orig[0]-CART_pTRMS_orig[-1]
 
-        if sqrt(sum((v1_minus-test_v)**2)) > sqrt(sum((v1_plus-test_v)**2)):
+        if numpy.sqrt(sum((v1_minus-test_v)**2)) > numpy.sqrt(sum((v1_plus-test_v)**2)):
          DIR_PCA=self.cart2dir(v1*-1)
          best_fit_vector=v1*-1
         else:
@@ -1668,7 +1670,7 @@ if False:
          best_fit_vector=v1
 
         # MAD Kirschvink (1980)
-        MAD=math.degrees(arctan(sqrt((t2+t3)/t1)))
+        MAD=math.degrees(arctan(numpy.sqrt((t2+t3)/t1)))
 
 
         # best fit PCA direction
@@ -1676,7 +1678,7 @@ if False:
         pars["specimen_ptrms_inc"] =  DIR_PCA[1]
         pars["specimen_ptrms_mad"]=MAD
         B_lab_unit=self.dir2cart([ self.Data[s]['Thellier_dc_field_phi'], self.Data[s]['Thellier_dc_field_theta'],1])
-        pars["specimen_ptrms_angle"]=math.degrees(math.acos(dot(best_fit_vector,B_lab_unit)/(sqrt(sum(best_fit_vector**2)) * sqrt(sum(B_lab_unit**2)))))
+        pars["specimen_ptrms_angle"]=math.degrees(math.acos(dot(best_fit_vector,B_lab_unit)/(numpy.sqrt(sum(best_fit_vector**2)) * numpy.sqrt(sum(B_lab_unit**2)))))
 
 ##        print "specimen_ptrms_dec",pars["specimen_ptrms_dec"]
 ##        print "specimen_ptrms_inc",pars["specimen_ptrms_inc"]
@@ -1699,7 +1701,7 @@ if False:
 ##                CM_x=mean(zdata_segment[:,0])
 ##                CM_y=mean(zdata_segment[:,1])
 ##                CM_z=mean(zdata_segment[:,2])
-##                CM=array([CM_x,CM_y,CM_z])
+##                CM=numpy.array([CM_x,CM_y,CM_z])
 ##
 ##                # threshold value for the distance of the point from a line:
 ##                # this is depends of MAD
@@ -1719,14 +1721,14 @@ if False:
 ##                    #print "P_CM",P_CM
 ##                    
 ##                    #  the dot product of vector P_CM with the unit direction vector of the best-fit liene. That's the projection of P_CM on the PCA line 
-##                    best_fit_vector_unit=best_fit_vector/sqrt(sum(best_fit_vector**2))
+##                    best_fit_vector_unit=best_fit_vector/numpy.sqrt(sum(best_fit_vector**2))
 ##                    #print "best_fit_vector_unit",best_fit_vector_unit
 ##                    CM_P_projection_on_PCA_line=dot(best_fit_vector_unit,P_CM)
 ##                    #print "CM_P_projection_on_PCA_line",CM_P_projection_on_PCA_line
 ##
 ##                    # Pythagoras
-##                    P_CM_length=sqrt(sum((P_CM)**2))
-##                    Point_2_PCA_Distance=sqrt((P_CM_length**2-CM_P_projection_on_PCA_line**2))
+##                    P_CM_length=numpy.sqrt(sum((P_CM)**2))
+##                    Point_2_PCA_Distance=numpy.sqrt((P_CM_length**2-CM_P_projection_on_PCA_line**2))
 ##                    #print "Point_2_PCA_Distance",Point_2_PCA_Distance
 ##
 ##
@@ -1743,7 +1745,7 @@ if False:
 ##                        
 ##                    
 ##                    
-##                    #CM_P_projection_on_PCA_line_length=sqrt(sum((CM_P_projection_on_PCA_line_length)**2))
+##                    #CM_P_projection_on_PCA_line_length=numpy.sqrt(sum((CM_P_projection_on_PCA_line_length)**2))
         
 
         #-------------------------------------------------
@@ -1764,10 +1766,10 @@ if False:
         y_err=y_Arai_segment-y_Arai_mean
 
         # York b
-        york_b=-1* sqrt( sum(y_err**2) / sum(x_err**2) )
+        york_b=-1* numpy.sqrt( sum(y_err**2) / sum(x_err**2) )
 
         # york sigma
-        york_sigma= sqrt ( (2 * sum(y_err**2) - 2*york_b*sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
+        york_sigma= numpy.sqrt ( (2 * sum(y_err**2) - 2*york_b*sum(x_err*y_err)) / ( (n-2) * sum(x_err**2) ) )
 
         # beta  parameter                
         beta_Coe=abs(york_sigma/york_b)
@@ -1862,13 +1864,13 @@ if False:
         # scat uses a different definistion":
         # use only pTRM that STARTED before the last temperatire step.
         
-        x_ptrm_check_in_0_to_end=array(x_ptrm_check_in_0_to_end)  
-        y_ptrm_check_in_0_to_end=array(y_ptrm_check_in_0_to_end)
-        x_Arai_compare=array(x_Arai_compare)
-        x_ptrm_check_in_start_to_end=array(x_ptrm_check_in_start_to_end)
-        y_ptrm_check_in_start_to_end=array(y_ptrm_check_in_start_to_end)
-        x_ptrm_check_for_SCAT=array(x_ptrm_check_for_SCAT)
-        y_ptrm_check_for_SCAT=array(y_ptrm_check_for_SCAT)
+        x_ptrm_check_in_0_to_end=numpy.array(x_ptrm_check_in_0_to_end)  
+        y_ptrm_check_in_0_to_end=numpy.array(y_ptrm_check_in_0_to_end)
+        x_Arai_compare=numpy.array(x_Arai_compare)
+        x_ptrm_check_in_start_to_end=numpy.array(x_ptrm_check_in_start_to_end)
+        y_ptrm_check_in_start_to_end=numpy.array(y_ptrm_check_in_start_to_end)
+        x_ptrm_check_for_SCAT=numpy.array(x_ptrm_check_for_SCAT)
+        y_ptrm_check_for_SCAT=numpy.array(y_ptrm_check_for_SCAT)
                                
         DRATS=100*(abs(sum(x_ptrm_check_in_0_to_end-x_Arai_compare))/(x_Arai[end]))
         int_ptrm_n=len(x_ptrm_check_in_0_to_end)
@@ -1897,10 +1899,10 @@ if False:
                 y_tail_check_for_SCAT.append(self.Data[s]['y_tail_check'][k])
 
                 
-        x_tail_check_start_to_end=array(x_tail_check_start_to_end)
-        y_tail_check_start_to_end=array(y_tail_check_start_to_end)
-        x_tail_check_for_SCAT=array(x_tail_check_for_SCAT)
-        y_tail_check_for_SCAT=array(y_tail_check_for_SCAT)
+        x_tail_check_start_to_end=numpy.array(x_tail_check_start_to_end)
+        y_tail_check_start_to_end=numpy.array(y_tail_check_start_to_end)
+        x_tail_check_for_SCAT=numpy.array(x_tail_check_for_SCAT)
+        y_tail_check_for_SCAT=numpy.array(y_tail_check_for_SCAT)
 
         #-------------------------------------------------                     
         # Tail check : TO DO !
@@ -1921,8 +1923,8 @@ if False:
             
             # best fit line 
             b=pars['specimen_b']
-            cm_x=mean(array(x_Arai_segment))
-            cm_y=mean(array(y_Arai_segment))
+            cm_x=mean(numpy.array(x_Arai_segment))
+            cm_y=mean(numpy.array(y_Arai_segment))
             a=cm_y-b*cm_x
 
             # lines with slope = slope +/- 2*(specimen_b_beta)
@@ -1956,8 +1958,8 @@ if False:
             
             # check if the Arai data points are in the 'box'
 
-            x_Arai_segment=array(x_Arai_segment)
-            y_Arai_segment=array(y_Arai_segment)
+            x_Arai_segment=numpy.array(x_Arai_segment)
+            y_Arai_segment=numpy.array(y_Arai_segment)
 
             # the two bounding lines
             ymin=intercept1+x_Arai_segment*slop1
@@ -2082,7 +2084,7 @@ if False:
                TYPES=self.Data[s]["AniSpec"].keys()
            for TYPE in TYPES:
                red_flag=False
-               S_matrix=zeros((3,3),'f')
+               S_matrix=numpy.zeros((3,3),'f')
                S_matrix[0,0]=self.Data[s]['AniSpec'][TYPE]['anisotropy_s1']
                S_matrix[1,1]=self.Data[s]['AniSpec'][TYPE]['anisotropy_s2']
                S_matrix[2,2]=self.Data[s]['AniSpec'][TYPE]['anisotropy_s3']
@@ -2143,9 +2145,9 @@ if False:
                    break
                else:
                    pass
-           TRM_anc_unit=array(pars['specimen_PCA_v1'])/sqrt(pars['specimen_PCA_v1'][0]**2+pars['specimen_PCA_v1'][1]**2+pars['specimen_PCA_v1'][2]**2)
+           TRM_anc_unit=numpy.array(pars['specimen_PCA_v1'])/numpy.sqrt(pars['specimen_PCA_v1'][0]**2+pars['specimen_PCA_v1'][1]**2+pars['specimen_PCA_v1'][2]**2)
            B_lab_unit=self.dir2cart([ self.Data[s]['Thellier_dc_field_phi'], self.Data[s]['Thellier_dc_field_theta'],1])
-           #B_lab_unit=array([0,0,-1])
+           #B_lab_unit=numpy.array([0,0,-1])
            Anisotropy_correction_factor=linalg.norm(dot(inv(S_matrix),TRM_anc_unit.transpose()))*norm(dot(S_matrix,B_lab_unit))
            pars["Anisotropy_correction_factor"]=Anisotropy_correction_factor
            pars["AC_specimen_int"]= pars["Anisotropy_correction_factor"] * float(pars["specimen_int"])
