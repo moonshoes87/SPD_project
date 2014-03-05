@@ -1,17 +1,11 @@
 #!/usr/bin/env python 
 
 import numpy
-import lib_arai_plot_statistics as lib_arai
+#import lib_arai_plot_statistics as lib_arai
 
 
-xy_real = [[0.12182379795523131, 0.98795180722891562], [0.1876743181924827, 0.95783132530120485], [0.21711848591334654, 0.96987951807228912], [0.32091411888460553, 0.98192771084337338], [0.48291503240724426, 0.9337349397590361], [0.72423703304017273, 0.90361445783132521], [1.0313987625711432, 0.81325301204819278]]    
 
-x_real = numpy.array([ 0.1218238 ,  0.18767432,  0.21711849,  0.32091412,  0.48291503, 0.72423703,  1.03139876])
-y_real = numpy.array([ 0.98795181,  0.95783133,  0.96987952,  0.98192771,  0.93373494, 0.90361446,  0.81325301])
-
-xy = [[0.,-2.], [2.5,3.], [4., 5.]]
-
-def TaubinSVD(XY = xy):
+def TaubinSVD(XY):
     XY = numpy.array(XY)
 #    print "XY", XY
     X = XY[:,0] - numpy.mean(XY[:,0]) # norming points by x avg
@@ -52,12 +46,7 @@ def TaubinSVD(XY = xy):
 #    return { 'a':a,'b': b, 'r': r } #, XY[:,0], XY[:,1]
     return a,b,r
     
-#    return (-1 * numpy.transpose((A[1:2]))) / A[0] / 2 + centroid
-    
 
-
-xy = numpy.array([[1,3],[0,2], [3,7], [8,10], [9,12]])
-par = [1,2,7]
 
 def VarCircle(XY, Par):  # must have at least 4 sets of xy points or else division by zero occurs
     """
@@ -82,10 +71,7 @@ def VarCircle(XY, Par):  # must have at least 4 sets of xy points or else divisi
     return result
 
 
-xy = numpy.array([[1,1],[0.,-2.], [.5,3.], [4., 5.]])
-par_ini = [21.2500,   -9.5000,   22.5347]
-
-def LMA(XY=xy,ParIni=par_ini):
+def LMA(XY,ParIni):
     """
     %     Geometric circle fit (minimizing orthogonal distances)  
     %     based on the Levenberg-Marquardt scheme in the
@@ -302,11 +288,6 @@ def LMA(XY=xy,ParIni=par_ini):
     return result_a, result_b, result_r
 
 
-new_xy = numpy.array([[.4, 6], [.3, 5.5], [.51, 5], [.7, 4.2], [.3, 3], [.8, 2.1]])
-new_par_ini = [58.4404, 8.2870, 58.0924]
-#a, b, r = LMA(new_xy, new_par_ini)
-#print "new results"
-#print a, b, r
 
 
 def AraiCurvature(x,y):
@@ -367,9 +348,6 @@ def AraiCurvature(x,y):
     return k, best_a, best_b, SSE
 
 
-a, b, r = 1,2, 3
-x = [0.1, 0.2, 0.5]
-y = [6.0, 4.0, 3.0]
 
 def get_SSE(a,b,r,x,y):
     SSE = 0
@@ -386,8 +364,4 @@ def get_SSE(a,b,r,x,y):
 
 
 
-xy = [[1,1],[0.,-2.], [.5,3.], [4., 5.]]
-x_arai = [1,0.,.5,4.]
-y_arai = [1., -2., 4., 5.]
-#AraiCurvature(x_arai, y_arai)
 

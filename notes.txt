@@ -1,17 +1,4 @@
                                                                              
-        # also, fix the weirdness of having to set the precise number for tmin and tmax    
-
-       
-
-The temperature selector bar thing is in kelvin, but tmin, tmax are in C.  hahahahaha.  
-
-don't forget array behavior options (linspace, arange, etc.)
-
-in lj_thellier_gui_spd
-
-added this into get_data()
-self.s = self.specimens[0]  # LORI WEIRD ADDITION 
-
 
 
 read_magic_file()
@@ -107,13 +94,7 @@ data info:  {'er_sites': {}, 'er_samples': {}, 'er_ages': {}} # last print call 
 
 
 
-pTRM check -- going back to a cooler temperature to see if specimen still has the same capacity to take on pTRM, or if it has been altered
-pTRM tail check -- ?? assess if pTRM gained at x temp is completely removed by reheating to the same temperature.  why does this one matter??
-
-
-
-
-magic method codes:
+***** magic method codes: *****
 
 LT-T-I	     Lab Treatment	Specimen cooling: In laboratory field
 
@@ -124,7 +105,7 @@ LP-TRM	     Lab Protocol			 TRM acquisition.
 LT-M-I	     Lab Treatment			Using microwave radiation: In laboratory field. Walton et al. 1993.
 
 LP-PI-M	     Lab Protocol		       	Paleointensity experiment: Microwave demagnetization. 
-
+ 
 LT-NO	     Lab Treatment			No treatments applied before measurement.
 
 LT-T-Z	     Lab Treatment			Specimen cooling: In zero field. Heating the specimen to the desired temperature step and then cooling in zero ambient magnetic field. Wilson 1961, Collinson 1983.
@@ -138,6 +119,8 @@ LT-PTRM-I    Lab Treatment			 pTRM check: After zero field step, perform an in f
 LT-PTRM-MD   Lab Treatment			       	     pTRM tail check: After in laboratory field step, perform a zero field cooling at same temperature. A check carried out during Thellier procedures to detect multidomain grains. Additional zero field heating steps are used to remove a previously placed pTRM. The ability to remove a prior pTRM step at the same temperature imparted is used as an indicator of reversal. Riisager & Riisager 2001, Scherbakov et al. 1993.
 
 
+****end magic codes****
+
 
 
 cart2dir
@@ -148,11 +131,6 @@ dir2cart
 	dir2cart(Dec, Inc, 1) --> x,y,z
 	dir2cart(Dec, Inc, 2) --> 2x,2y,z
 	
-
-
-to run all tests:
-
-$  python -m unittest test_arai_plot_statistics test_directional_statistics test_curvature test_ptrm_statistics test_tail_check_statistics test_additivity_check_statistics
 
 
 
@@ -210,11 +188,6 @@ list comprehensions
 >>> {i**2: i for i in r}
 {0: 0, 1: 1, 4: 2, 16: 4, 9: 3}
 >>> 
-
-
-
-
-
 
 
 
@@ -327,7 +300,13 @@ max_DEV:
         once was lost, now is found
 Z:
         should use segment, where I was using full data set.  fixed.
+delta_y_prime, delta_x_prime -- using first and last values of x_prime/y_prime vs min and max 
+        # DONE -- SPD document changed
+r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  should be fixed in next iteration of code.  
+       # DONE -- Greig's code fixed
 
+theta ---  whether to use best_fit_vector_Anc vs. free.  
+                # DONE -- appears that Greig has switched to Free.  hoorah
 
 
  
@@ -337,55 +316,50 @@ Pending:
         problem in Greig's IZZI_MD, so he gets a value even when it is all IZ or ZI steps, not alternating.
                 update:  need to test with an IZZI type experiment.  for now, I don't have any in tdt format.  But that is ok.
         problem with Greig's B_lab vector [0,0,-1] where should be [0,0,1]
-        #GAP-MAX is normed by partial vds according to thellier_gui, but full vds in Greig's current code. 
-                # DONE -- Greig has changed his code
-        for theta, whether to use best_fit_vector_Anc vs. free.  
-                # DONE -- appears that Greig has switched to Free.  hoorah
         FRAC now disagrees with thellier_gui FRAC.  talk to Ron
         does my code need to be able to deal with someone selecting tmin = t[0], tmax = t[1] ?  Greig's produces output in this situation
         magic_measurements is missing one of the Biggin et al .tdt files.  probs no big deal. 
-        check get_curve()
-              determine whether norming should or should not be done
-        r_det2 -- Greig uses full data, you use segment.  which is right?  Greig's was wrong.  should be fixed in next iteration of code.  
+        
         delta_ck - Greig's code is different from SPD document.  Currently, I am in agreement with his code.  This is only an issue for some edge cases.   
                  #  DONE -- SPD document has been changed
-        delta_y_prime, delta_x_prime -- using first and last values of x_prime/y_prime vs min and max 
-                 # DONE -- SPD document changed
 
 
        
 
 current:
 
+    GAP-MAX
 
-theta:
-        for ChRM value, Greig uses equivalent to my best_fit_vector_Anc, whereas I've been using best_fit_vector_Free.
-        also has slightly different B_lab
+    occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
+    see: Bowles etal 200? AL3023_1b
+    what to do about this?  should I be calculating b as Greig does?
+         x_err = x_segment - x_mean
+         y_err = y_segment - y_mean
+         york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
+         # how Greig does it:
+         #Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);                                                   
+         b = sign(sum(x_err * y_err)) * std(y_segment, ddof=1)/std(x_segment, ddof=1)
+    ask Lisa
+
+
+theta -- B_lab is different
 gamma:
         also has B_lab problem.  UPDATE: this is now the only problem
         his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
         (in gamma):       my ptrm_cart == his Params.TRMvec(seg_max,2:end) / NRM  (now.  so that's good).  (This is the vector edition of the max pTRM)
 mean_DRAT_prime:
+        ???
 delta_pal:
         his TRMvec / NRM == my dir2cart([PTRMS[i][1], PTRMS[i][2], PTRMS[i][3] / NRM])
         his pCheck / NRM == my dir2cart([PTRM_Checks[i][1], PTRM_Checks[i][2], PTRM_Checks[i][3] / NRM])
         his to_sum / NRM == my diffs
         his dpal_sum / NRM == my numpy.cumsum(diffs, 0) == my C
-
         his xcorr / NRM == my x_star (both segment)
-            above is good.  now check below.  (AL3031-1d)
-        
         here is the problem!!!  mine b_star is positive, his is negative       
         fixed corr_slope so that it is calculated correctly
         his corr_slope == my b_star
-        
-
         his delta_pal now == my delta_pal!!!!
 
-
-DANG --
-     difference is: he subtracts 90 if DANG is larger than 90 (taking the smaller angle)
-     UPDATE: not doing this anymore.  We are good. 
 
 delta_AC:
         our AC_diffs are different.  (my spec.AC_diffs != his spec.AC)
@@ -393,6 +367,7 @@ delta_AC:
         my add_check_starting_temps and add_check_temps == his spec.ADD_vec(:,1) and spec.ADD_vec(:,2)
         my n_add == his n_add
         this is the first data that actually uses additivity checks, so we don't have any specimens where our AC checks agree.
+        # this is now mostly fixed
         
 
 Ask Ron:
@@ -499,46 +474,6 @@ end
 
 
 
-different possible units for magnetic moment:
-
-mKs.  meter Kelvin seconds.  measurement unit for magnetic moment.  used in magic measurements format.
-
-should be normed by first NRM (full, pre-experiment)
-
-.tdt uses different measurement.  if b (slope) is the same, then it's fine.
-
-be careful with v. large or v. small numbers.  float, long, etc.  this can be significant.  
-
-
-Don't forget you will need to test everything with EVERY possible set of temperature bounds
-
-
-
-
-style notes:
-      stop using tabs!  spaces!
-
-
-
-
-
-    GAP-MAX
-
-    occasionally with fucked up data and the wrong of temperature bound, b is not in fact negative
-    see: Bowles etal 200? AL3023_1b
-    what to do about this?  should I be calculating b as Greig does?
-         x_err = x_segment - x_mean
-         y_err = y_segment - y_mean
-         york_b = -1* sqrt( sum(y_err**2) / sum(x_err**2) )  # averaged slope 
-         # how Greig does it:
-         #Params.b=sign(sum(U.*V))*std(Y_seg)/std(X_seg);                                                   
-         b = sign(sum(x_err * y_err)) * std(y_segment, ddof=1)/std(x_segment, ddof=1)
-    ask Lisa
-
-
-    AL2360-1b  - xpts come out different in my code vs. Greig's.  Ypts are the same, though.   p
-    AL2360_1d  - same
-               looks like PTRMS/araiblock is being set incorrectly to [0,0,0] for the second value.  
 
 
 
@@ -547,10 +482,9 @@ style notes:
 
 
 
-to do:
-   automate testing at multiple temperatures
-   add in custom exception if someone tries to pass in temperatures beyond upper or lower bounds
-   make module awesome
+
+
+
 
 
 
@@ -608,7 +542,7 @@ IZZI_MD -- believe will put IZZI_MD into its own module.  it's big.
 
 
 
-
+Lisa next steps:
 
 travis CI
 github gui for fun help
@@ -619,3 +553,9 @@ pmag.py -- replace functions where appropriate (GetPintPars for start)
 cookbook documentation -- links to thellier gui, spd document, etc.
          how to get going with pmag.py
          import scripts already exist in various forms
+
+
+
+lori to do:
+     email dude about curvature statistics
+     figure out how to package stuff correctly as a module
