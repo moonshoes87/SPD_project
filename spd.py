@@ -16,9 +16,10 @@
 #============================================================================================
 
 import sys
+import numpy
 #import pylab
 #import scipy
-from scipy import * 
+#from scipy import * 
 #import os
 import lib.lib_arai_plot_statistics as lib_arai
 import lib.lib_curvature as lib_k
@@ -145,8 +146,8 @@ class PintPars(object):
         self.tmax_K = tmax - 273
         self.x_Arai_segment = self.x_Arai[self.start:self.end+1] 
         self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
-        self.x_Arai_mean = mean(self.x_Arai_segment)
-        self.y_Arai_mean = mean(self.y_Arai_segment)
+        self.x_Arai_mean = numpy.mean(self.x_Arai_segment)
+        self.y_Arai_mean = numpy.mean(self.y_Arai_segment)
         self.xy_Arai = lib_arai.get_xy_array(self.x_Arai, self.y_Arai)
         self.xy_Arai_segment = lib_arai.get_xy_array(self.x_Arai_segment, self.y_Arai_segment)
 
