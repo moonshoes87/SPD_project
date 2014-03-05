@@ -4,7 +4,9 @@ CURRENT_VRSION = "v.2.03"
 #import matplotlib
 
 import numpy
-import sys,pylab,scipy,os
+import sys
+import os
+#import pylab,scipy
 ##try:
 ##    import pmag
 ##except:
