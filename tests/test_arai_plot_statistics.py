@@ -5,11 +5,13 @@ import numpy
 import copy
 import sys
 print sys.path
-if '/Users/nebula/Python' not in sys.path:
-    sys.path.append('/Users/nebula/Python')
-print sys.path
-from SPD_project.lib import lib_arai_plot_statistics as lib_arai
-from SPD_project import spd
+#if '/Users/nebula/Python' not in sys.path:
+#    sys.path.append('/Users/nebula/Python')
+#print sys.path
+#from SPD_project.lib import lib_arai_plot_statistics as lib_arai
+#from SPD_project import spd
+import lib.lib_arai_plot_statistics as lib_arai
+import spd
 
 import known_values
 
