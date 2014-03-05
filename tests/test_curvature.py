@@ -40,9 +40,9 @@ class CheckLMA(unittest.TestCase):
         par_ini = [21.2500,   -9.5000,   22.5347]
         result = lib_k.LMA(xy, par_ini)
         ref_a, ref_b, ref_r = 6.4081037896973703, -0.7768791340451443, 6.3717959414186254
-        self.assertEqual(ref_a, result[0])
-        self.assertEqual(ref_b, result[1])
-        self.assertEqual(ref_r, result[2])
+        self.assertAlmostEqual(ref_a, result[0])
+        self.assertAlmostEqual(ref_b, result[1])
+        self.assertAlmostEqual(ref_r, result[2])
 
 class CheckAraiCurvature(unittest.TestCase):
 
