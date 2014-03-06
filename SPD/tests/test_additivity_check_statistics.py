@@ -4,7 +4,7 @@ import unittest
 #import sys
 #sys.path.append('/Users/nebula/Python')
 #from SPD_project.lib import lib_additivity_check_statistics as lib_add
-import lib.lib_additivity_check_statistics as lib_add
+import SPD.lib.lib_additivity_check_statistics as lib_add
 
 
 #class CheckTailSelection(unittest.TestCase):

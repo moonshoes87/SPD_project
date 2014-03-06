@@ -559,3 +559,6 @@ cookbook documentation -- links to thellier gui, spd document, etc.
 lori to do:
      email dude about curvature statistics
      figure out how to package stuff correctly as a module
+            problem is that top level directory is not in search path
+            this is ok if you only always work in that directory (see pg. 707)
+            alternatively, you can put it in your pythonpath, do a .pth file, or some such

@@ -7,8 +7,8 @@ import math
 import sys
 #if '/Users/nebula/Python' not in sys.path:
 #    sys.path.append('/Users/nebula/Python')
-import lib.lib_directional_statistics as lib_direct
-import spd
+import SPD.lib.lib_directional_statistics as lib_direct
+import SPD.spd as spd
 #import known_values
 #import lib_directional_statistics as lib_direct
 

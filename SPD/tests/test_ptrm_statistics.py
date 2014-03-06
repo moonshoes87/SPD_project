@@ -8,9 +8,9 @@ import unittest
 #sys.path.append('/Users/nebula/Python')
 #from SPD_project.lib import lib_ptrm_statistics as lib_ptrm
 #from SPD_project import spd
-import spd
-import lib.lib_ptrm_statistics as lib_ptrm
-import lib.lib_directional_statistics as lib_direct
+import SPD.spd
+import SPD.lib.lib_ptrm_statistics as lib_ptrm
+import SPD.lib.lib_directional_statistics as lib_direct
 
 
 

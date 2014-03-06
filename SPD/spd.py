@@ -22,12 +22,12 @@ import os
 #import scipy
 #from scipy import * 
 #import os
-import lib.lib_arai_plot_statistics as lib_arai
-import lib.lib_curvature as lib_k
-import lib.lib_directional_statistics as lib_direct
-import lib.lib_ptrm_statistics as lib_ptrm
-import lib.lib_tail_check_statistics as lib_tail
-import lib.lib_additivity_check_statistics as lib_add
+import SPD.lib.lib_arai_plot_statistics as lib_arai
+import SPD.lib.lib_curvature as lib_k
+import SPD.lib.lib_directional_statistics as lib_direct
+import SPD.lib.lib_ptrm_statistics as lib_ptrm
+import SPD.lib.lib_tail_check_statistics as lib_tail
+import SPD.lib.lib_additivity_check_statistics as lib_add
 
 
 # Data{} is a dictionary sorted by specimen name
@@ -578,9 +578,8 @@ class PintPars(object):
 # C temps: [273, 373.0, 423.0, 473.0, 498.0, 523.0, 548.0, 573.0, 598.0, 623.0, 648.0, 673.0, 698.0, 723.0, 748.0, 773.0, 798.0, 823.0]
 import new_lj_thellier_gui_spd as tgs
 cwd = os.getcwd()
-gui = tgs.Arai_GUI('/magic_measurements.txt', cwd)
-print 'gui', gui
-print 'gui.Data.keys()', gui.Data.keys()
+main_dir = cwd + '/SPD'
+gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 #gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 #gui4 = tgs.Arai_GUI('consistency_tests/Donadini_etal_2007_magic_measurements.txt')
@@ -591,18 +590,7 @@ print 'gui.Data.keys()', gui.Data.keys()
 
 #gui10 = tgs.Arai_GUI('consistency_tests/Yamamoto_etal_2003_magic_measurements.txt')
 
-f = open('magic_measurements.txt', 'rU')
-f_line = f.readline()
-print 'cwd', cwd
-f2 = open(cwd+'/magic_measurements.txt', 'rU')
-f2_line = f2.readline()
-print "first file", f
-print "first line", f_line
-print "second file", f2
-print "second line", f2_line
-print "listdir", os.listdir(os.getcwd())
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
-print 'thing', thing
 thing.calculate_all_statistics()
 
 #spec = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)

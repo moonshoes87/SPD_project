@@ -10,8 +10,8 @@ print sys.path
 #print sys.path
 #from SPD_project.lib import lib_arai_plot_statistics as lib_arai
 #from SPD_project import spd
-import lib.lib_arai_plot_statistics as lib_arai
-import spd
+import SPD.lib.lib_arai_plot_statistics as lib_arai
+import SPD.spd as spd
 
 import known_values
 
