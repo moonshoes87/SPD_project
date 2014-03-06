@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+print "my name is"
+print __name__
+
 import numpy
 import unittest
 #import sys
