@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+print "my name ", __name__
+
 import unittest
 import numpy
 import copy
 import sys
-print sys.path
 #if '/Users/nebula/Python' not in sys.path:
 #    sys.path.append('/Users/nebula/Python')
 #print sys.path
@@ -285,7 +286,7 @@ class CheckR_corr2(unittest.TestCase):
         
     def testDivideByZero(self):
         """should raise ValueError when attempting to divide by zero"""
-        print 'testing divide by zero'
+        #print 'testing divide by zero'
         self.assertRaises(ValueError, lib_arai.get_R_corr2, 1., 1., numpy.array([1.]), numpy.array([1.]))
 
 class CheckR_det2(unittest.TestCase): # acceptable working test
@@ -341,11 +342,11 @@ class CheckIZZI_MD(unittest.TestCase):
     x = numpy.array([4, 6, 12])
     y = numpy.array([8, 4, 2])
     norm_x = lib_arai.get_normed_points(x, norm)
-    print "x", x
-    print "norm", norm
-    print "norm_x", norm_x
+    #print "x", x
+    #print "norm", norm
+    #print "norm_x", norm_x
     norm_y = lib_arai.get_normed_points(y, norm)
-    print "norm_y", norm_y
+    #print "norm_y", norm_y
     ref_xy = [(4, 8), (6, 4), (12, 2)] # not normed
 
     L1 = numpy.sqrt(1.25)

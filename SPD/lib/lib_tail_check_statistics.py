@@ -4,7 +4,7 @@ import numpy
 
 def get_n_tail(tmax, tail_temps):
     """determines number of included tail checks in best fit segment"""
-    print "tail_temps: {0}, tmax: {0}".format(tail_temps, tmax)
+    #print "tail_temps: {0}, tmax: {0}".format(tail_temps, tmax)
     t_index = 0
     adj_tmax = 0
     if tmax < tail_temps[0]:

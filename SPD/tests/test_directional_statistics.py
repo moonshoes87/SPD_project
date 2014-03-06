@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+print "my name", __name__
+
 import unittest
 import numpy
 import copy

@@ -15,3 +15,5 @@ import test_directional_statistics
 import test_ptrm_statistics
 import test_tail_check_statistics
 import test_additivity_check_statistics
+
+print "done initializing tests"

@@ -3,8 +3,9 @@
 
 import numpy
 import sys
+import os
 from itertools import combinations
-import spd
+import SPD.spd as spd
 
 
 
@@ -29,7 +30,6 @@ if '-F' in sys.argv:
     outfile_ind = sys.argv.index('-F') + 1
     outfile = sys.argv[outfile_ind]
     
-print "in file", infile
 
 # will need to put IZZI_MD back in, theoretically
         
@@ -50,11 +50,18 @@ long_list = arai_plot_stats + directional_stats + ptrm_stats + tail_stats + addi
 
 
 
-import new_lj_thellier_gui_spd as tgs
+import SPD.new_lj_thellier_gui_spd as tgs
 
 print "starting thingee"
 
 print 'outfile', outfile
+print 'infile', infile
+read_in = open(infile, 'r')
+print read_in
+print read_in.readline()
+print read_in.readline()
+print read_in.readline()
+print read_in.readline()
 # create tab file
 
 def init_outfile(outfile):
@@ -69,8 +76,9 @@ def init_outfile(outfile):
 
 # iterate through list of magic_measurements files and fill outfile
 
-
-gui = tgs.Arai_GUI(infile)
+cwd = os.getcwd() + '/'
+directory = cwd + '/consistency_tests'
+gui = tgs.Arai_GUI(infile, cwd)
 data = gui.Data
 
 def check_at_temperature(gui, out, tmin_index, tmax_index, rep=0):
