@@ -41,7 +41,7 @@ class CheckParams(unittest.TestCase):
     obj.arai_plot_statistics()
     obj_new_pars = obj.pars
     pre_calculation_pars = ['specimen_n', 'lab_dc_field']
-    post_calculation_pars = ['B_lab', 'R_corr2', 'vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'V_Free', 'zdata_mass_center', 'B_anc', 'count_IZ', 'NRM_dev', 'SCAT', 'count_ZI', 'specimen_int', 'x_err', 'Z', 'specimen_b_sigma', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'Inc_Anc', 'Inc_Free', 'specimen_n', 'Zstar', 'max_diff', 'tau_Anc', 'MAD_Free', 'R_det2', 'Dec_Anc', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_vector_Free', 'delta_y_prime', 'Dec_Free', 'tau_Free', 'x_tag', 'B_anc_sigma', 'alpha', 'best_fit_vector_Anc', 'specimen_fvds', 'specimen_b_beta', 'MAD_Anc', 'V_Anc', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'y_tag', 'specimen_k', 'specimen_q', 'DANG', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'y_err', 'max_ptrm_check_percent', 'max_ptrm_check', 'sum_ptrm_checks', 'sum_abs_ptrm_checks', 'delta_CK', 'DRAT', 'length_best_fit_line', 'max_DEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal', 'n_tail', 'tail_check_max', 'tail_check_diffs', 'delta_TR', 'DRAT_tail', 'MD_VDS', 'theta', 'gamma', 'n_ptrm', 'IZZI_MD', 'ptrm_checks_included_temps', 'n_add', 'delta_AC', 'AC_Checks_segment', 'ptrm_checks']
+    post_calculation_pars = ['B_lab', 'R_corr2', 'vector_diffs_segment', 'delta_x_prime', 'partial_vds', 'V_Free', 'zdata_mass_center', 'B_anc', 'count_IZ', 'NRM_dev', 'SCAT', 'count_ZI', 'specimen_int', 'x_err', 'Z', 'specimen_b_sigma', 'vector_diffs', 'specimen_YT', 'specimen_vds', 'Inc_Anc', 'Inc_Free', 'specimen_n', 'Zstar', 'max_diff', 'tau_Anc', 'MAD_Free', 'R_det2', 'Dec_Anc', 'FRAC', 'GAP-MAX', 'y_prime', 'best_fit_vector_Free', 'delta_y_prime', 'Dec_Free', 'tau_Free', 'x_tag', 'B_anc_sigma', 'alpha', 'best_fit_vector_Anc', 'specimen_fvds', 'specimen_b_beta', 'MAD_Anc', 'V_Anc', 'specimen_b', 'specimen_g', 'specimen_XT', 'specimen_f', 'y_tag', 'specimen_k', 'specimen_q', 'DANG', 'lab_dc_field', 'specimen_w', 'x_prime', 'SSE', 'specimen_g_lim', 'y_err', 'max_ptrm_check_percent', 'max_ptrm_check', 'sum_ptrm_checks', 'sum_abs_ptrm_checks', 'delta_CK', 'DRAT', 'length_best_fit_line', 'max_DEV', 'CDRAT', 'CDRAT_prime', 'DRATS', 'DRATS_prime', 'mean_DRAT', 'mean_DRAT_prime', 'mean_DEV', 'mean_DEV_prime', 'delta_pal', 'n_tail', 'tail_check_max', 'tail_check_diffs', 'delta_TR', 'DRAT_tail', 'MD_VDS', 'theta', 'gamma', 'n_ptrm', 'IZZI_MD', 'ptrm_checks_included_temps', 'n_add', 'delta_AC', 'AC_Checks_segment', 'ptrm_checks', 'fail_arai_beta_box_scatter', "fail_ptrm_beta_box_scatter", "fail_tail_beta_box_scatter"]
 
 
     def test_for_params_before(self):
@@ -196,7 +196,8 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         y_tail_check = [4.5, 3.5, 2.5, 1.5]
         ref_points = [(1., 4.5), (2., 1.), (2., 3.), (3., 2.), (2.5, 3.5)]
         result = lib_arai.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temperatures, ptrm_checks_starting_temperatures, x_ptrm_check, y_ptrm_check, tail_checks_temperatures, tail_checks_starting_temperatures, x_tail_check, y_tail_check)
-        for xy in result:
+        print "result (in test_SCAT_points)", result
+        for xy in result[0]:
             self.assertIn(xy, ref_points)
         #print result, ref_points
 
