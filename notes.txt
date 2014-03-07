@@ -562,3 +562,9 @@ lori to do:
             problem is that top level directory is not in search path
             this is ok if you only always work in that directory (see pg. 707)
             alternatively, you can put it in your pythonpath, do a .pth file, or some such
+
+
+steps within thellier_gui
+      read over get_PI_parameters
+      put spd_project in python path
+      work spd into get_PI_parameters

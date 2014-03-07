@@ -237,13 +237,18 @@ class PintPars(object):
         x_ptrm_check, y_ptrm_check =  self.x_ptrm_check, self.y_ptrm_check
         tail_checks_temps, tail_checks_starting_temps =  self.tail_checks_temperatures, self.tail_checks_starting_temperatures
         x_tail_check, y_tail_check = self.x_tail_check, self.y_tail_check
-        points = lib_arai.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, 
+        points, fancy_points = lib_arai.get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, 
                                           ptrm_checks_temps, ptrm_checks_starting_temps, 
                                           x_ptrm_check, y_ptrm_check, tail_checks_temps, 
                                           tail_checks_starting_temps, x_tail_check, y_tail_check)
         # checking each point
         SCAT = lib_arai.get_SCAT(points, low_bound, high_bound, x_max, y_max)
+        fancy_SCAT = lib_arai.fancy_SCAT(fancy_points, low_bound, high_bound, x_max, y_max)
         self.pars['SCAT'] = SCAT
+        print 'points', points
+        print 'fancy points', fancy_points
+        print 'SCAT', SCAT
+        print 'fancy_SCAT', fancy_SCAT
         return SCAT
         
     def get_R_corr2(self):

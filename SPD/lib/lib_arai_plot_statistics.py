@@ -73,7 +73,7 @@ def get_vds(zdata, delta_y_prime, start, end):
             'specimen_fvds': f_vds, 'vector_diffs_segment': vector_diffs_segment, 
             'partial_vds': partial_vds, 'GAP-MAX': GAP_MAX}
 
-def get_SCAT_box(slope,  x_mean, y_mean, beta_threshold = .1): 
+def get_SCAT_box(slope, x_mean, y_mean, beta_threshold = .1): 
     """
     takes in data and returns information about SCAT box: 
     the largest possible x_value, the largest possible y_value, 
@@ -133,10 +133,14 @@ def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temp
                     x_tail_check, y_tail_check):
     """returns relevant points for a SCAT test"""
     points = []
+    points_arai = []
+    points_ptrm = []
+    points_tail = []
     for i in range(len(x_Arai_segment)): # uses only the best_fit segment, so no need for further selection
         x = x_Arai_segment[i]
         y = y_Arai_segment[i]
         points.append((x, y))
+        points_arai.append((x,y))
 
     for num, temp in enumerate(ptrm_checks_temperatures): # 
         if temp >= tmin and temp <= tmax: # if temp is within selected range
@@ -145,6 +149,7 @@ def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temp
                 x = x_ptrm_check[num]
                 y = y_ptrm_check[num]
                 points.append((x, y))
+                points_ptrm.append((x,y))
 
     for num, temp in enumerate(tail_checks_temperatures):  
         if temp >= tmin and temp <= tmax:
@@ -153,8 +158,10 @@ def get_SCAT_points(x_Arai_segment, y_Arai_segment, tmin, tmax, ptrm_checks_temp
                 x = x_tail_check[num]
                 y = y_tail_check[num]
                 points.append((x, y))
+                points_tail.append((x,y))
            # print "points (tail checks added)", points
-    return points
+    fancy_points = {'points_arai': points_arai, 'points_ptrm': points_ptrm, 'points_tail': points_tail}
+    return points, fancy_points
 
 def get_SCAT(points, low_bound, high_bound, x_max, y_max):
     """
@@ -168,6 +175,28 @@ def get_SCAT(points, low_bound, high_bound, x_max, y_max):
            # print "SCAT TEST FAILED"
             SCAT = False
     return SCAT
+
+def fancy_SCAT(points, low_bound, high_bound, x_max, y_max):
+    """
+    runs SCAT test and returns boolean
+    """
+    # iterate through all relevant points and see if any of them fall outside of your SCAT box
+    # {'points_arai': [(x,y),(x,y)], 'points_ptrm': [(x,y),(x,y)], ...}
+    SCAT = True
+    SCATs = {'SCAT_arai': True, 'SCAT_ptrm': True, 'SCAT_tail': True}
+    print 'fancy points', points
+    for point_type in points:
+        print 'point_type', point_type
+        for point in points[point_type]:
+            print 'point', point
+            result = in_SCAT_box(point[0], point[1], low_bound, high_bound, x_max, y_max)
+            if result == False:
+               # print "SCAT TEST FAILED"
+                x = 'SCAT' + point_type[4:]
+                SCATs[x] = False
+                SCAT = False
+    return SCAT, SCATs
+
 
 def get_FRAC(vds, vector_diffs_segment):   
     """
