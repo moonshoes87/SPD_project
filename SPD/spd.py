@@ -584,6 +584,7 @@ class PintPars(object):
 import new_lj_thellier_gui_spd as tgs
 cwd = os.getcwd()
 main_dir = cwd + '/SPD'
+print 'main_dir', main_dir
 gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 #gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
@@ -595,8 +596,21 @@ gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
 
 #gui10 = tgs.Arai_GUI('consistency_tests/Yamamoto_etal_2003_magic_measurements.txt')
 
+specimens = gui.Data.keys()
 thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
 thing.calculate_all_statistics()
+thing2 = PintPars(gui.Data, specimens[0], 473., 623.)
+thing2.calculate_all_statistics()
+thing3 = PintPars(gui.Data, specimens[1], 473., 623.)
+thing3.calculate_all_statistics()
+thing4 = PintPars(gui.Data, specimens[2], 473., 623.)
+thing4.calculate_all_statistics()
+thing5 = PintPars(gui.Data, specimens[3], 473., 623.)
+thing5.calculate_all_statistics()
+thing6 = PintPars(gui.Data, specimens[4], 473., 623.)
+thing6.calculate_all_statistics()
+
+
 
 #spec = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
 #spec1 = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)

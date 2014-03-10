@@ -231,8 +231,8 @@ class CheckSCAT(unittest.TestCase): # NOT DONE
         thing1 = spd.PintPars(spd.gui.Data, '0238x6011044', 273., 698.) # 0, 425
         thing1.York_Regression()
         #print thing1.tmin_K, thing1.tmax_K
-        self.assertFalse(thing.get_SCAT())
-        self.assertTrue(thing1.get_SCAT())
+        self.assertEqual('Fail', thing.get_SCAT())
+        self.assertEqual('Pass', thing1.get_SCAT())
         
 
 

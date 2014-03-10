@@ -178,24 +178,24 @@ def get_SCAT(points, low_bound, high_bound, x_max, y_max):
 
 def fancy_SCAT(points, low_bound, high_bound, x_max, y_max):
     """
-    runs SCAT test and returns boolean
+    runs SCAT test and returns 'Pass' or 'Fail'
     """
     # iterate through all relevant points and see if any of them fall outside of your SCAT box
     # {'points_arai': [(x,y),(x,y)], 'points_ptrm': [(x,y),(x,y)], ...}
-    SCAT = True
-    SCATs = {'SCAT_arai': True, 'SCAT_ptrm': True, 'SCAT_tail': True}
+    SCAT = 'Pass'
+    SCATs = {'SCAT_arai': 'Pass', 'SCAT_ptrm': 'Pass', 'SCAT_tail': 'Pass'}
     for point_type in points:
         #print 'point_type', point_type
         for point in points[point_type]:
             #print 'point', point
             result = in_SCAT_box(point[0], point[1], low_bound, high_bound, x_max, y_max)
-            if result == False:
+            if not result:
                # print "SCAT TEST FAILED"
                 x = 'SCAT' + point_type[6:]
                 #print 'lib point type', point_type
                 #print 'xxxx', x
-                SCATs[x] = False
-                SCAT = False
+                SCATs[x] = 'Fail'
+                SCAT = 'Fail'
     return SCAT, SCATs
 
 
