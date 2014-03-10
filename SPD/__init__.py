@@ -9,6 +9,6 @@ print "initialized in SPD_project directory"
 import os
 print 'cwd', os.getcwd()
 import SPD.lib
-import SPD.tests
+#import SPD.tests
 SPD.magic_file = 'SPD/magic_measurements.txt'
 #from SPD_project.tests import *

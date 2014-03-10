@@ -586,6 +586,25 @@ cwd = os.getcwd()
 main_dir = cwd + '/SPD'
 print 'main_dir', main_dir
 gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
+
+specimens = gui.Data.keys()
+try:
+    thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
+    thing.calculate_all_statistics()
+except:
+    pass
+#thing2 = PintPars(gui.Data, specimens[0], 473., 623.)
+#thing2.calculate_all_statistics()
+#thing3 = PintPars(gui.Data, specimens[1], 473., 623.)
+#thing3.calculate_all_statistics()
+#thing4 = PintPars(gui.Data, specimens[2], 473., 623.)
+#thing4.calculate_all_statistics()
+#thing5 = PintPars(gui.Data, specimens[3], 473., 623.)
+#thing5.calculate_all_statistics()
+#thing6 = PintPars(gui.Data, specimens[4], 473., 623.)
+#thing6.calculate_all_statistics()
+
+
 #gui2 = tgs.Arai_GUI('new_magic_measurements.txt')
 #gui3 = tgs.Arai_GUI('consistency_tests/Bowles_etal_2006_magic_measurements.txt')
 #gui4 = tgs.Arai_GUI('consistency_tests/Donadini_etal_2007_magic_measurements.txt')
@@ -593,38 +612,7 @@ gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
 #gui6 = tgs.Arai_GUI('consistency_tests/Muxworthy_etal_2011_magic_measurements.txt')
 #gui7 = tgs.Arai_GUI('consistency_tests/Paterson_etal_2010_magic_measurements.txt')
 #gui8 = tgs.Arai_GUI('consistency_tests/Selkin_etal_2000_magic_measurements.txt')
-
 #gui10 = tgs.Arai_GUI('consistency_tests/Yamamoto_etal_2003_magic_measurements.txt')
 
-specimens = gui.Data.keys()
-thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
-thing.calculate_all_statistics()
-thing2 = PintPars(gui.Data, specimens[0], 473., 623.)
-thing2.calculate_all_statistics()
-thing3 = PintPars(gui.Data, specimens[1], 473., 623.)
-thing3.calculate_all_statistics()
-thing4 = PintPars(gui.Data, specimens[2], 473., 623.)
-thing4.calculate_all_statistics()
-thing5 = PintPars(gui.Data, specimens[3], 473., 623.)
-thing5.calculate_all_statistics()
-thing6 = PintPars(gui.Data, specimens[4], 473., 623.)
-thing6.calculate_all_statistics()
-
-
-
-#spec = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
-#spec1 = PintPars(gui7.Data, 'LV3B3', 340.+ 273., 500. + 273.)
-#spec = PintPars(gui10.Data, 'C-1-3', 560. + 273., 600. + 273.)
-#spec1 = PintPars(gui10.Data, 'C-1-3', 250. + 273., 600. + 273.)
-
-#spec.calculate_all_statistics()
-
-
-#thing1 = PintPars(gui.Data, specimens[3], 523., 773.)
-#thing = PintPars(gui.Data,  '0238x6011044', 273., 798.)
-
-#thing = PintPars(gui.Data, specimens[3], 523., 773.)
-#thing = PintPars(gui.Data, specimens[4], 273., 798.)
-#thing = PintPars(gui.Data, specimens[2], 273., 773.)
 
 
