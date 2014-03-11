@@ -110,7 +110,9 @@ def get_SCAT_box(slope, x_mean, y_mean, beta_threshold = .1):
     def high_bound(x): 
         y = high_slope * x + high_y_int
         return y
-    return low_bound, high_bound, x_max, y_max
+    high_line = [high_y_int, high_slope]
+    low_line = [low_y_int, low_slope]
+    return low_bound, high_bound, x_max, y_max, low_line, high_line
 
 def in_SCAT_box(x, y, low_bound, high_bound, x_max, y_max):
     """determines if a particular point falls within a box"""

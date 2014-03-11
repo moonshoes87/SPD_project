@@ -703,7 +703,7 @@ class Arai_GUI():
     
         # collect Arai data points
         zerofields,infields=araiblock[0],araiblock[1]  # first_Z, first_I
-
+        
         Data[s]['NRMS']=zerofields
         Data[s]['PTRMS']=infields
         Data[s]['NRM']=NRM

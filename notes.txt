@@ -568,3 +568,4 @@ steps within thellier_gui
       read over get_PI_parameters
       put spd_project in python path
       work spd into get_PI_parameters
+      fix SCAT

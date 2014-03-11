@@ -77,7 +77,8 @@ import SPD.lib.lib_additivity_check_statistics as lib_add
 
 class PintPars(object):
     def __init__(self, Data,specimen_name,tmin,tmax):
-        #print "calling __init__ PintPars object"
+        print "calling __init__ PintPars object"
+        print 'specimens', Data.keys()
         self.s=specimen_name
         self.specimen_Data=Data[self.s]
         self.datablock = self.specimen_Data['datablock']
@@ -149,6 +150,10 @@ class PintPars(object):
         self.y_Arai_segment = self.y_Arai[self.start:self.end+1]
         self.x_Arai_mean = numpy.mean(self.x_Arai_segment)
         self.y_Arai_mean = numpy.mean(self.y_Arai_segment)
+        # try
+        self.pars['x_Arai_mean'] = self.x_Arai_mean
+        self.pars['y_Arai_mean'] = self.y_Arai_mean
+        #
         self.xy_Arai = lib_arai.get_xy_array(self.x_Arai, self.y_Arai)
         self.xy_Arai_segment = lib_arai.get_xy_array(self.x_Arai_segment, self.y_Arai_segment)
 
@@ -228,8 +233,8 @@ class PintPars(object):
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
         box = lib_arai.get_SCAT_box(slope, x_mean, y_mean)
-    #    print "SCAT-box", box
-        low_bound, high_bound, x_max, y_max = box[0], box[1], box[2], box[3]
+        print "SCAT-box", box
+        low_bound, high_bound, x_max, y_max, low_line, high_line = box[0], box[1], box[2], box[3], box[4], box[5]
         # getting SCAT points
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
         tmin, tmax = self.tmin, self.tmax
@@ -249,6 +254,8 @@ class PintPars(object):
         self.pars['fail_arai_beta_box_scatter'] = SCATs['SCAT_arai']
         self.pars["fail_ptrm_beta_box_scatter"] = SCATs['SCAT_ptrm']
         self.pars["fail_tail_beta_box_scatter"] = SCATs['SCAT_tail']
+        self.pars['scat_bounding_line_high'] = high_line # [y_int, slope]
+        self.pars['scat_bounding_line_low'] = low_line # [y_int, slope]
         return fancy_SCAT
         
     def get_R_corr2(self):
@@ -585,10 +592,9 @@ import new_lj_thellier_gui_spd as tgs
 cwd = os.getcwd()
 main_dir = cwd + '/SPD'
 print 'main_dir', main_dir
-gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
-
-specimens = gui.Data.keys()
 try:
+    gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
+    specimens = gui.Data.keys()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
     thing.calculate_all_statistics()
 except:
