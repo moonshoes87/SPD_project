@@ -316,6 +316,23 @@ class PintPars(object):
         self.pars['V_Anc'], self.pars['V_Free'] = V_Anc, V_Free
         self.pars['zdata_mass_center'] = mass_center
 
+    def get_new_thing(self):
+        PTRMS = self.PTRMS[1:]
+        CART_pTRMS_orig = numpy.array([lib_direct.dir2cart(row[1:4]) for row in PTRMS])
+        print 'PTRMS', PTRMS
+        print 'CART_pTRMS_orig', CART_pTRMS_orig
+        ptrms_dec, ptrms_inc, ptrm_best_fit, ptrm_tau, ptrm_v, ptrm_mass_center = lib_direct.get_dec_and_inc(PTRMS, self.t_Arai, self.tmin, self.tmax, anchored=False)
+        print 'ptrms_dec', ptrms_dec
+        print 'ptrms_inc', ptrms_inc
+                                                                                                             
+                                                                                                             
+       # Dec_Anc, Inc_Anc, best_fit_Anc, tau_Anc, V_Anc, mass_center = lib_direct.get_dec_and_inc(self.zdata,
+        #        self.t_Arai, self.tmin, self.tmax, anchored=True)
+
+        
+
+
+
     def get_MAD(self):
         MAD_Free = lib_direct.get_MAD(self.pars['tau_Free'])
         MAD_Anc = lib_direct.get_MAD(self.pars['tau_Anc'])
