@@ -153,6 +153,8 @@ class PintPars(object):
         # try
         self.pars['x_Arai_mean'] = self.x_Arai_mean
         self.pars['y_Arai_mean'] = self.y_Arai_mean
+        self.pars['tmin'] = tmin
+        self.pars['tmax'] = tmax
         #
         self.xy_Arai = lib_arai.get_xy_array(self.x_Arai, self.y_Arai)
         self.xy_Arai_segment = lib_arai.get_xy_array(self.x_Arai_segment, self.y_Arai_segment)
@@ -305,9 +307,9 @@ class PintPars(object):
     # directional statistics begin here:
 
     def get_dec_and_inc(self):
-        Dec_Anc, Inc_Anc, best_fit_Anc, tau_Anc, V_Anc, mass_center = lib_direct.get_dec_and_inc(self.zdata,
+        Dec_Anc, Inc_Anc, best_fit_Anc, tau_Anc, V_Anc, mass_center, PCA_sigma_Anc = lib_direct.get_dec_and_inc(self.zdata,
                 self.t_Arai, self.tmin, self.tmax, anchored=True)
-        Dec_Free, Inc_Free, best_fit_Free, tau_Free, V_Free, mass_center = lib_direct.get_dec_and_inc(self.zdata, 
+        Dec_Free, Inc_Free, best_fit_Free, tau_Free, V_Free, mass_center, PCA_sigma_Free = lib_direct.get_dec_and_inc(self.zdata, 
                 self.t_Arai, self.tmin, self.tmax, anchored=False)
         self.pars['Dec_Anc'], self.pars['Dec_Free'] = Dec_Anc, Dec_Free
         self.pars['Inc_Anc'], self.pars['Inc_Free'] = Inc_Anc, Inc_Free
@@ -315,22 +317,23 @@ class PintPars(object):
         self.pars['tau_Anc'], self.pars['tau_Free'] = tau_Anc, tau_Free
         self.pars['V_Anc'], self.pars['V_Free'] = V_Anc, V_Free
         self.pars['zdata_mass_center'] = mass_center
+        self.pars['PCA_sigma_max_Free'] = PCA_sigma_Free[0]
+        self.pars['PCA_sigma_int_Free'] = PCA_sigma_Free[1]
+        self.pars['PCA_sigma_min_Free'] = PCA_sigma_Free[2]
 
-    def get_new_thing(self):
+    def get_ptrm_dec_and_inc(self):
+        """not included in spd."""
         PTRMS = self.PTRMS[1:]
         CART_pTRMS_orig = numpy.array([lib_direct.dir2cart(row[1:4]) for row in PTRMS])
-        print 'PTRMS', PTRMS
-        print 'CART_pTRMS_orig', CART_pTRMS_orig
-        ptrms_dec, ptrms_inc, ptrm_best_fit, ptrm_tau, ptrm_v, ptrm_mass_center = lib_direct.get_dec_and_inc(PTRMS, self.t_Arai, self.tmin, self.tmax, anchored=False)
-        print 'ptrms_dec', ptrms_dec
-        print 'ptrms_inc', ptrms_inc
-                                                                                                             
-                                                                                                             
-       # Dec_Anc, Inc_Anc, best_fit_Anc, tau_Anc, V_Anc, mass_center = lib_direct.get_dec_and_inc(self.zdata,
-        #        self.t_Arai, self.tmin, self.tmax, anchored=True)
-
+        #B_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.] # dir
+        #print 'PTRMS', PTRMS
+        tmin, tmax = self.t_Arai[0], self.t_Arai[-1]
+        ptrms_dec_Free, ptrms_inc_Free, ptrm_best_fit_vector_Free, ptrm_tau_Free, ptrm_v_Free, ptrm_mass_center_Free, ptrm_PCA_sigma_Free = lib_direct.get_dec_and_inc(CART_pTRMS_orig, self.t_Arai, tmin, tmax, anchored=False)
+        ptrms_angle = lib_direct.get_ptrms_angle(ptrm_best_fit_vector_Free, self.B_lab_cart)
+        self.pars['ptrms_dec_Free'], self.pars['ptrms_inc_Free'] = ptrms_dec_Free, ptrms_inc_Free
+        self.pars['ptrms_tau_Free'] = ptrm_tau_Free
+        self.pars['ptrms_angle_Free'] = ptrms_angle
         
-
 
 
     def get_MAD(self):
@@ -338,6 +341,12 @@ class PintPars(object):
         MAD_Anc = lib_direct.get_MAD(self.pars['tau_Anc'])
         self.pars['MAD_Free'], self.pars['MAD_Anc'] = MAD_Free, MAD_Anc
         return {'MAD_Free': MAD_Free, 'MAD_Anc': MAD_Anc }
+
+    def get_ptrm_MAD(self):
+        pTRM_MAD_Free = lib_direct.get_MAD(self.pars['ptrms_tau_Free'])
+        self.pars['pTRM_MAD_Free'] = pTRM_MAD_Free
+        return pTRM_MAD_Free
+                                           
    
     def get_alpha(self): # need Int_Free and Int_Anc
         free = self.pars['best_fit_vector_Free']
@@ -364,14 +373,13 @@ class PintPars(object):
         return theta
 
     def get_gamma(self):
-        B_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.] # dir
-       # ptrm_vector = [self.PTRMS[-1][1], self.PTRMS[-1][2], 1] # dir
+        B_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.] 
         ind = self.t_Arai.index(self.tmax)
-        alt_ptrm_dir = [self.PTRMS[ind][1], self.PTRMS[ind][2], self.PTRMS[ind][3] / self.specimen_Data['NRM']] # dir
-        alt_ptrm_cart = lib_direct.dir2cart(alt_ptrm_dir)
-        ptrm_dir = [self.PTRMS[-1][1], self.PTRMS[-1][2], self.PTRMS[-1][3] / self.specimen_Data['NRM']] # dir
-        gamma = lib_direct.get_gamma(B_lab_dir, alt_ptrm_dir) # this agrees with Greig's code.
-#        gamma = lib_direct.get_gamma(B_lab_dir, ptrm_dir) # what I have been using
+        ptrm_dir = [self.PTRMS[ind][1], self.PTRMS[ind][2], self.PTRMS[ind][3] / self.specimen_Data['NRM']] 
+        #ptrm_cart = lib_direct.dir2cart(alt_ptrm_dir)
+        gamma = lib_direct.get_gamma(B_lab_dir, alt_ptrm_dir)
+        self.pars['ptrm_dir'] = alt_ptrm_dir
+        self.pars['ptrm_cart'] = alt_ptrm_cart
         self.pars['gamma'] = gamma
         return gamma
 
@@ -518,7 +526,9 @@ class PintPars(object):
         self.get_vds()
         #
         self.get_dec_and_inc()
+        self.get_ptrm_dec_and_inc()
         self.get_MAD()
+        self.get_ptrm_MAD()
         self.get_alpha()
         self.get_DANG()
         self.get_NRM_dev()
@@ -574,7 +584,9 @@ class PintPars(object):
         self.get_IZZI_MD()
         # directional statistics
         self.get_dec_and_inc()
+        self.get_ptrm_dec_and_inc()
         self.get_MAD()
+        self.get_ptrm_MAD()
         self.get_alpha()
         self.get_DANG()
         self.get_NRM_dev()
@@ -614,8 +626,13 @@ try:
     specimens = gui.Data.keys()
     thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
     thing.calculate_all_statistics()
-except:
-    pass
+    new_thing = PintPars(gui.Data, '0238x5721062', 100. + 273., 525. + 273.)
+    new_thing.calculate_all_statistics()
+    gui2 = tgs.Arai_GUI('/consistency_tests/Yamamoto_Hushi_2008_magic_measurements.txt', cwd)
+    thing2 = PintPars(gui2.Data, 'SW01-01A-2', 100. + 273., 480. + 273.)
+except Exception as ex:
+    print 'could not make standard specimen objects'
+    print ex
 #thing2 = PintPars(gui.Data, specimens[0], 473., 623.)
 #thing2.calculate_all_statistics()
 #thing3 = PintPars(gui.Data, specimens[1], 473., 623.)

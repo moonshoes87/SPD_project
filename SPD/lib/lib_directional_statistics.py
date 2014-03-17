@@ -28,9 +28,16 @@ def get_cart_primes_and_means(zdata_segment, anchored=True):
 
 def get_orientation_tensor(X1_p, X2_p, X3_p):  
     X1_p, X2_p, X3_p = numpy.array(X1_p), numpy.array(X2_p), numpy.array(X3_p)
+    #print 'X1_p, X2_p, X3_p (should be same as M)'
+    #print X1_p
+    #print X2_p
+    #print X3_p
+    M = numpy.array([X1_p, X2_p, X3_p])
+    #print 'cov(M)', numpy.cov(M)
     orient_tensor = [[sum(X1_p * X1_p), sum(X1_p * X2_p), sum(X1_p * X3_p)],
                      [sum(X1_p * X2_p), sum(X2_p * X2_p), sum(X2_p * X3_p)],
                      [sum(X1_p * X3_p), sum(X2_p * X3_p), sum(X3_p * X3_p)]]
+    print 'orientation_tensor (should be same as cov(M)', orient_tensor
     tau, V = numpy.linalg.eig(orient_tensor) 
     return {'orient_tensor': orient_tensor, 'tau': tau, 'V': V}
 
@@ -65,23 +72,33 @@ def tauV(T):
     t.append(t1)
     t.append(t2)
     t.append(t3)
+    print 'tau', t
+    print 'V', V
     return t,V
 
 def get_PD_direction(X1_prime, X2_prime, X3_prime, PD):
     """takes arrays of X1_prime, X2_prime, X3_prime, and the PD.  
     checks that the PD vector direction is correct"""
+    # problem is here!!!!!!  
+    #print 'PD before get direction', PD
+    #print 'X1_prime', X1_prime
     n = len(X1_prime) - 1
     X1 = X1_prime[0] - X1_prime[n]
     X2 = X2_prime[0] - X2_prime[n]
     X3 = X3_prime[0] - X3_prime[n]
     R= numpy.array([X1, X2, X3])
+    #print 'R (reference vector for PD direction)', R
     dot = numpy.dot(PD, R) # dot product of reference vector and the principal axis of the V matrix
+    #print 'dot (dot of PD and R)', dot
     if dot < -1:
         dot = -1
     elif dot > 1:
         dot = 1
-    if numpy.arccos(dot) > numpy.pi / 2:
+    if numpy.arccos(dot) > numpy.pi / 2.:
+        #print 'numpy.arccos(dot) {} > numpy.pi / 2. {}'.format(numpy.arccos(dot), numpy.pi / 2)
+        #print 'correcting PD direction'
         PD = -1. * numpy.array(PD)
+    #print 'PD after get PD direction', PD
     return PD
 
 def cart2dir(cart):
@@ -109,13 +126,19 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     means = data['zdata_mass_center']
     T = get_orientation_tensor(data['X1_prime'], data['X2_prime'], data['X3_prime'])
     tau,V=tauV(T['orient_tensor'])
+    PCA_sigma_max = numpy.sqrt(tau[0])
+    PCA_sigma_int = numpy.sqrt(tau[1])
+    PCA_sigma_min = numpy.sqrt(tau[2])
+    PCA_sigma = [PCA_sigma_max, PCA_sigma_int, PCA_sigma_min]
     PD = get_PD_direction(data['X1_prime'], data['X2_prime'], data['X3_prime'], V[0]) # makes PD + or -
     PDir=cart2dir(PD) # PDir is direction
     vector = PD # best fit vector / ChRM is cartesian
     dec = PDir[0]
     inc = PDir[1]
+    #print 'tau', tau
+    #print 'V', V
     print 'orient_tensor', T['orient_tensor']
-    return dec, inc, vector, tau, V, means
+    return dec, inc, vector, tau, V, means, PCA_sigma
 
 def get_MAD(tau):
     """
@@ -200,7 +223,6 @@ def get_theta(B_lab_dir, ChRM_cart):
     B_lab_cart = dir2cart(B_lab_dir)
     ChRM_dir = cart2dir(ChRM_cart)
     theta1 = get_angle_difference(B_lab_cart, ChRM_cart) # you should change it so that get_angle_difference can take dir or cart
-    #theta2 = pmag_angle(B_lab_dir, ChRM_dir)
     return theta1
 
 def get_gamma(B_lab_dir, pTRM_dir):
@@ -208,15 +230,12 @@ def get_gamma(B_lab_dir, pTRM_dir):
     pTRM_cart = dir2cart(pTRM_dir)
     gamma1 = pmag_angle(B_lab_dir, pTRM_dir)
     #gamma2 = get_angle_difference(B_lab_cart, pTRM_cart) # problem is likely because of the zero value in B_lab
-    # pmag_angle and get_angle difference are equivalent with non zero values
-    #gamma2 = numpy.array([gamma2])
-    #gamma3 = new_get_angle_diff(B_lab_cart, pTRM_cart)
     #if gamma1 - gamma2 <= .0000001: # checks that the two methods of getting gamma return approximately equal results
     return float(gamma1)
-    #else:
-        #print "not equal with different methods"
-        #print gamma1
-        #print gamma2
-        #return float(gamma2)
 
-
+def get_ptrms_angle(ptrms_best_fit_vector, B_lab_vector):
+    """
+    gives angle between principal direction of the ptrm data and the b_lab vector.  this is NOT in SPD, but taken from Ron Shaar's old thellier_gui.py code.  see PmagPy on github
+    """
+    ptrms_angle = math.degrees(math.acos(numpy.dot(ptrms_best_fit_vector,B_lab_vector)/(numpy.sqrt(sum(ptrms_best_fit_vector**2)) * numpy.sqrt(sum(B_lab_vector**2)))))  # from old thellier_gui.py code  
+    return ptrms_angle

@@ -7,3 +7,10 @@ copy_pmag.py
 for_magic/*
 for_magic/
 *.out*
+SPD/consistency_test/consistency_test_functions.txt
+SPD/consistency_test/consistency_test_log.txt.gz
+SPD/consistency_test/consistency_test_optimizer.log
+SPD/consistency_test/consistency_test_results.txt
+SPD/consistency_test/pmag_fixed_criteria.txt
+consistency_tests/pmag_criteria.txt
+thellier_GUI.log
