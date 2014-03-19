@@ -1,88 +1,108 @@
 #!/usr/bin/env python 
 
 import numpy
-#import lib_arai_plot_statistics as lib_arai
 
+
+# this is the main function which performs the entire curve fitting sequence using algebraic and geometric fitting
+def AraiCurvature(x,y):
+    """
+    input: list of x points, list of y points
+    output: k, a, b, SSE.  curvature, circle center, and SSE
+    Function for calculating the radius of the best fit circle to a set of 
+    x-y coordinates.
+    Paterson, G. A., (2011), A simple test for the presence of multidomain
+    behaviour during paleointensity experiments, J. Geophys. Res., in press,
+    doi: 10.1029/2011JB008369
+
+    """
+
+    XY = []
+    for num, X in enumerate(x):
+        XY.append([X, y[num]])
+    XY = numpy.array(XY)
+    # Normalizevectors
+    XY[:,0] = XY[:,0] / max(XY[:,0]) # 
+    XY[:,1] = XY[:,1] / max(XY[:,1]) # norms y values  
+    X = XY[:,0]
+    Y = XY[:,1]
+                  
+    #Provide the intitial estimate
+    E1=TaubinSVD(XY);
+
+    #Determine the iterative solution
+    E2=LMA(XY, E1);
+
+    estimates=[E2[2], E2[0], E2[1]];
+    
+    best_a = E2[0]
+    best_b = E2[1]
+    best_r = E2[2]
+
+    if best_a <= numpy.mean(X) and best_b <= numpy.mean(Y):
+        k = -1./best_r
+    else:
+        k = 1./best_r
+
+    SSE = get_SSE(best_a, best_b, best_r, X, Y)
+    return k, best_a, best_b, SSE
 
 
 def TaubinSVD(XY):
+    """
+    algebraic circle fit
+    input: list [[x_1, y_1], [x_2, y_2], ....]
+    output: a, b, r.  a and b are the center of the fitting circle, and r is the radius
+
+     Algebraic circle fit by Taubin
+      G. Taubin, "Estimation Of Planar Curves, Surfaces And Nonplanar
+                  Space Curves Defined By Implicit Equations, With
+                  Applications To Edge And Range Image Segmentation",
+      IEEE Trans. PAMI, Vol. 13, pages 1115-1138, (1991)
+    """
     XY = numpy.array(XY)
-#    print "XY", XY
     X = XY[:,0] - numpy.mean(XY[:,0]) # norming points by x avg
     Y = XY[:,1] - numpy.mean(XY[:,1]) # norming points by y avg
     centroid = [numpy.mean(XY[:,0]), numpy.mean(XY[:,1])]
-#    print "centroid", centroid
-#    XY[:,0] = XY[:, 0] - centroid[0] # from each x, subtract x_avg
-#    XY[:,1] = XY[:, 1] - centroid[1] # from each y, subtract y_avg
-    #print "XY", XY
-    #print "X", X, "Y", Y
-    # Z is correct
-    Z = X * X + Y * Y  # Z = X.*X + Y.*Y; .*   # in matlab, .* is equivalent to *, and * is equivalent to numpy.dot
-#    print "Z", Z
+    Z = X * X + Y * Y  
     Zmean = numpy.mean(Z)
-#    print "Zmean", Zmean
     Z0 = (Z - Zmean) / (2. * numpy.sqrt(Zmean))
-#    print "Z0", Z0
     ZXY = numpy.array([Z0, X, Y]).T
-#    print "ZXY", ZXY
-    U, S, V = numpy.linalg.svd(ZXY, full_matrices=False) # svd(X, 0) in original documentation.  however, belive that full_matrices=False accomplishes same
-#    print "U", U
-#    print "S", S
-#    print "V", V
+    U, S, V = numpy.linalg.svd(ZXY, full_matrices=False) # 
     V = V.transpose()
     A = V[:,2]
-#    print "A", A
     A[0] = A[0] / (2. * numpy.sqrt(Zmean))
-#    print "adjusted A", A
-#    print "A", A, "other part", (-1. * Zmean * A[0])
     A = numpy.concatenate([A, [(-1. * Zmean * A[0])]], axis=0)
-#    print "final A", A
-    #          -(A(2:3))'/A(1)/2+centroid
-    a, b = (-1 * A[1:3]) / A[0] / 2 + centroid # but should be transposed, somewhere???.  syntax is problematic.  
-    # A[1:3].conj().transpose()
-#    print "a,b", a,b
-    #         sqrt(A(2)*A(2)+A(3)*A(3)-4*A(1)*A(4))/abs(A(1))/2];
+    a, b = (-1 * A[1:3]) / A[0] / 2 + centroid 
     r = numpy.sqrt(A[1]*A[1]+A[2]*A[2]-4*A[0]*A[3])/abs(A[0])/2;
-#    return { 'a':a,'b': b, 'r': r } #, XY[:,0], XY[:,1]
     return a,b,r
-    
 
-
+# VarCircle() is used with the geometric fit function LMA()
 def VarCircle(XY, Par):  # must have at least 4 sets of xy points or else division by zero occurs
     """
     computing the sample variance of distances from data points (XY) to the circle Par = [a b R]
     """
-#    print "varcircle"
-#    print "XY", XY
     if type(XY) != numpy.ndarray:
         XY = numpy.array(XY)
     n = len(XY)
-#    print "n", n
     if n < 4:
         raise Warning("Circle cannot be calculated with less than 4 data points.  Please include more data")
     Dx = XY[:,0] - Par[0]
     Dy = XY[:,1] - Par[1]
     D = numpy.sqrt(Dx * Dx + Dy * Dy) - Par[2]
     result = numpy.dot(D, D)/(n-3)
-#    print n, Dx, Dy
-#    print D
-#    print result
-#    print "done varcircle"
     return result
 
 
 def LMA(XY,ParIni):
     """
+    input: list of x and y values [[x_1, y_1], [x_2, y_2], ....], and a tuple containing an initial guess (a, b, r)
+           which is acquired by using an algebraic circle fit (TaubinSVD)
+    output: a, b, r.  a and b are the center of the fitting circle, and r is the radius
     %     Geometric circle fit (minimizing orthogonal distances)  
     %     based on the Levenberg-Marquardt scheme in the
     %     "algebraic parameters" A,B,C,D  with constraint B*B+C*C-4*A*D=1
     %        N. Chernov and C. Lesort, "Least squares fitting of circles",
     %        J. Math. Imag. Vision, Vol. 23, 239-251 (2005)
-    %     Input:  XY[n,2] is the array of coordinates of n points x[i]=XY[i,0]), y[i]=XY[i,1]             
-    %             ParIni = [a b R] is the initial guess (supplied by user)
-    %     Output: Par = [a b R] is the fitting circle:                                               
-    %                           center (a,b) and radius R 
-    %                                                                                                     
     """
     factorUp=10
     factorDown=0.04
@@ -94,27 +114,21 @@ def LMA(XY,ParIni):
     Yshift=0  
     dX=1  
     dY=0;                                                                                    
-    n = len(XY);      # number of data points  # checked
+    n = len(XY);      # number of data points
 
     anew = ParIni[0] + Xshift
     bnew = ParIni[1] + Yshift
     Anew = 1./(2.*ParIni[2])                                                                              
     aabb = anew*anew + bnew*bnew    
-    Fnew = (aabb - ParIni[2]*ParIni[2])*Anew # checked
-#    print "Fnew", Fnew
-    Tnew = numpy.arccos(-anew/numpy.sqrt(aabb)) # checked
-#    print "Tnew", Tnew
+    Fnew = (aabb - ParIni[2]*ParIni[2])*Anew 
+    Tnew = numpy.arccos(-anew/numpy.sqrt(aabb)) 
     if bnew > 0:
         Tnew = 2*numpy.pi - Tnew
-#    print "XY & ParIni", XY, ParIni
-    VarNew = VarCircle(XY,ParIni) # checked
-#    print VarNew 
-
+    VarNew = VarCircle(XY,ParIni) 
 
     VarLambda = lambda0;  
     finish = 0;  
                                                                                                       
-#    for iter=1:IterMAX
     for it in range(0,IterMAX):
                                                                       
         Aold = Anew  
@@ -126,7 +140,6 @@ def LMA(XY,ParIni):
         aold = -H*numpy.cos(Told)/(Aold+Aold) - Xshift;
         bold = -H*numpy.sin(Told)/(Aold+Aold) - Yshift;
         Rold = 1/abs(Aold+Aold); 
-#        print "H, aold, bold, Rold", H, aold, bold, Rold
 
         DD = 1 + 4*Aold*Fold; 
         D = numpy.sqrt(DD);  
@@ -155,20 +168,19 @@ def LMA(XY,ParIni):
             Gi = 2*ADF/DEN;   
             FACT = 2/DEN*(1 - Aold*Gi/SQ);      
             DGDAi = FACT*(Zi + 2*Fold*Ui/D) - Gi*Gi/SQ;                
-            DGDFi = FACT*(2*Aold*Ui/D + 1);    # checked 
+            DGDFi = FACT*(2*Aold*Ui/D + 1);
             DGDTi = FACT*D*Vi;    
                                                           
             H11 = H11 + DGDAi*DGDAi;                 
             H12 = H12 + DGDAi*DGDFi;                           
             H13 = H13 + DGDAi*DGDTi;                                          
-            H22 = H22 + DGDFi*DGDFi;     # checked             
+            H22 = H22 + DGDFi*DGDFi;
             H23 = H23 + DGDFi*DGDTi;                                     
             H33 = H33 + DGDTi*DGDTi;                        
                                                  
-            F1 = F1 + Gi*DGDAi; # checked
+            F1 = F1 + Gi*DGDAi; 
             F2 = F2 + Gi*DGDFi;    
             F3 = F3 + Gi*DGDTi;
-#            print "DGDFi", DGDFi, "H22", H22, "F1", F1 #
 
 
         for adjust in range(1,AdjustMax):
@@ -186,22 +198,17 @@ def LMA(XY,ParIni):
             D2 = (F2 - G12*D1)/G22;                                                              
             D3 = (F3 - G13*D1 - G23*D2)/G33;                
 
-            dT = D3/G33;  # checked                                  
-            dF = (D2 - G23*dT)/G22 # checked
-            dA = (D1 - G12*dF - G13*dT)/G11 # checked    
-#            print 'dT', dT, 'dF', dF, 'dA', dA 
+            dT = D3/G33;  
+            dF = (D2 - G23*dT)/G22 
+            dA = (D1 - G12*dF - G13*dT)/G11 
                                                                                    
 #            updating the parameters
                                                                                             
-            Anew = Aold - dA;  # checked
+            Anew = Aold - dA;  
             Fnew = Fold - dF;                             
             Tnew = Told - dT;
-#            print "Anew", Anew
 
-
-            if 1+4*Anew*Fnew < epsilon and VarLambda>1:  # not hitting this condition in example or my code
-#                print "1+4*Anew*Fnew < epsilon and VarLambda>1:"
-#            fprintf(1,'     violation:  %f\n',1+4*Anew*Fnew);             
+            if 1+4*Anew*Fnew < epsilon and VarLambda>1:  
                 Xshift = Xshift + dX;                                          
                 Yshift = Yshift + dY;                                                                               
                                                                                      
@@ -218,14 +225,11 @@ def LMA(XY,ParIni):
                     Tnew = 2*pi - Tnew;           
                 VarNew = VarOld;                                         
                 break;                               
-           # end                                                    
+
             
-            if 1+4*Anew*Fnew < epsilon:  # not hitting this condition in example or my code
-#                print "it", it
+            if 1+4*Anew*Fnew < epsilon:  
                 VarLambda = VarLambda * factorUp;             
-#                print "VarLambda", VarLambda
                 continue;              
-           # end
 
             DD = 1 + 4*Anew*Fnew;                  
             D = numpy.sqrt(DD);                                                         
@@ -234,34 +238,29 @@ def LMA(XY,ParIni):
                     
             GG = 0;                
                             
-#            for i=1:n                 
+
             for i in range(0, n):
                 Xi = XY[i,0] + Xshift;          
                 Yi = XY[i,1] + Yshift;    
-                Zi = Xi*Xi + Yi*Yi; # checked
+                Zi = Xi*Xi + Yi*Yi; 
                 Ui = Xi*CT + Yi*ST;            
                                                  
                 ADF = Anew*Zi + D*Ui + Fnew;                    
                 SQ = numpy.sqrt(4*Anew*ADF + 1);               
                 DEN = SQ + 1;                   
-                Gi = 2*ADF/DEN; # checked  
+                Gi = 2*ADF/DEN; 
                 GG = GG + Gi*Gi;
-              #  print "Zi", Zi, "Gi", Gi
-           # end              
                                    
             VarNew = GG/(n-3);    
          
             H = numpy.sqrt(1+4*Anew*Fnew);               
-            anew = -H*numpy.cos(Tnew)/(Anew+Anew) - Xshift;  #checked
-            bnew = -H*numpy.sin(Tnew)/(Anew+Anew) - Yshift;  #checked
+            anew = -H*numpy.cos(Tnew)/(Anew+Anew) - Xshift;  
+            bnew = -H*numpy.sin(Tnew)/(Anew+Anew) - Yshift;  
             Rnew = 1/abs(Anew+Anew); 
-#            print "anew", anew, "bnew", bnew
 
-            if VarNew <= VarOld: #   yes, improvement                
-               # print "VarNew <= VarOld", VarNew, VarOld
+            if VarNew <= VarOld: 
                 progress = (abs(anew-aold) + abs(bnew-bold) + abs(Rnew-Rold))/(Rnew+Rold);      
                 if progress < epsilon: 
-#                    print "Progress < epsilon"
                     Aold = Anew;          
                     Fold = Fnew;      
                     Told = Tnew;           
@@ -272,7 +271,6 @@ def LMA(XY,ParIni):
                 VarLambda = VarLambda * factorDown
                 break  
             else:                 #    %   no improvement  
-#                print "doing else"
                 VarLambda = VarLambda * factorUp;      
                 continue;     
 
@@ -284,72 +282,15 @@ def LMA(XY,ParIni):
     result_b = -H*numpy.sin(Told)/(Aold+Aold) - Yshift;                                                 
     result_r = 1/abs(Aold+Aold);       
 
-#    print result_a, result_b, result_r
     return result_a, result_b, result_r
 
 
 
-
-def AraiCurvature(x,y):
-    """
-% Function for calculating the radius of the best fit circle to a set of 
-% x-y coordinates.
-% Paterson, G. A., (2011), A simple test for the presence of multidomain
-% behaviour during paleointensity experiments, J. Geophys. Res., in press,
-% doi: 10.1029/2011JB008369
-% input: x = [1, 2, 3], y = [6, 4, 3]
-% output: curvature, a (x coordinate circle center), b (y coordinate circle center), SSE (goodness of fit)
-% parameters[0] = k
-% parameters[1] = a
-% parameters[2] = b
-% parameters[3] = SSE (goodness of fit)
-    """
-
-    XY = []
-    for num, X in enumerate(x):
-        XY.append([X, y[num]])
-    XY = numpy.array(XY)
-    # Normalizevectors
-    XY[:,0] = XY[:,0] / max(XY[:,0]) # important that values are all floats  
-    XY[:,1] = XY[:,1] / max(XY[:,1]) # norms y values  # ThIS MAY ALREADY BE DONE.... from the thellier_magic processing
-    X = XY[:,0]
-    Y = XY[:,1]
-                  
-    #Provide the intitial estimate
-    E1=TaubinSVD(XY);
-
-#    print "E1", E1
-
-    #Determine the iterative solution
-    E2=LMA(XY, E1);
-
-    estimates=[E2[2], E2[0], E2[1]];
-    
-    best_a = E2[0]
-    best_b = E2[1]
-    best_r = E2[2]
-
-#    print "mean x"
-#    print numpy.mean(X)
-
-    if best_a <= numpy.mean(X) and best_b <= numpy.mean(Y):
-        #print "-1/r"
-        k = -1./best_r
-    else:
-        #print "1/r"
-        k = 1./best_r
-
-    SSE = get_SSE(best_a, best_b, best_r, X, Y)
-
-    #end
-    #print "best_r", best_r
-    #print "k, best_a, best_b, SSE"
-    #print k, best_a, best_b, SSE
-    return k, best_a, best_b, SSE
-
-
-
 def get_SSE(a,b,r,x,y):
+    """
+    input: a, b, r, x, y.  circle center, radius, xpts, ypts
+    output: SSE
+    """
     SSE = 0
     X = numpy.array(x)
     Y = numpy.array(y)
@@ -357,9 +298,7 @@ def get_SSE(a,b,r,x,y):
         x = X[i]
         y = Y[i]
         v = (numpy.sqrt( (x -a)**2 + (y - b)**2 ) - r )**2
-#            print v                                                                                  
         SSE += v
-    #print SSE
     return SSE
 
 
