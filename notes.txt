@@ -557,7 +557,7 @@ cookbook documentation -- links to thellier gui, spd document, etc.
 
 
 lori to do:
-     email dude about curvature statistics
+     email dude about curvature statistics  DONE
      figure out how to package spd in pmag.py
      also, write_spd failing with Bowles.  why?
      SPD_project tests are now failing

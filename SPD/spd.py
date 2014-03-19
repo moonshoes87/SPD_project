@@ -78,15 +78,12 @@ import SPD.lib.lib_additivity_check_statistics as lib_add
 class PintPars(object):
     def __init__(self, Data,specimen_name,tmin,tmax):
         print "calling __init__ PintPars object"
-        print 'specimens', Data.keys()
+        #print 'specimens', Data.keys()
         self.s=specimen_name
         self.specimen_Data=Data[self.s]
         self.datablock = self.specimen_Data['datablock']
 
         self.x_Arai=self.specimen_Data['x_Arai']
-        print 'name: ', self.s
-        print 'tmin, tmax:', tmin, tmax
-        print 'y_Arai in specimen_Data', self.specimen_Data['y_Arai']
         self.y_Arai=self.specimen_Data['y_Arai']
         self.t_Arai=self.specimen_Data['t_Arai']
 
@@ -238,7 +235,6 @@ class PintPars(object):
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
         box = lib_arai.get_SCAT_box(slope, x_mean, y_mean)
-        print "SCAT-box", box
         low_bound, high_bound, x_max, y_max, low_line, high_line = box[0], box[1], box[2], box[3], box[4], box[5]
         # getting SCAT points
         x_Arai_segment, y_Arai_segment = self.x_Arai_segment, self.y_Arai_segment
@@ -329,7 +325,6 @@ class PintPars(object):
         PTRMS = self.PTRMS[1:]
         CART_pTRMS_orig = numpy.array([lib_direct.dir2cart(row[1:4]) for row in PTRMS])
         #B_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.] # dir
-        #print 'PTRMS', PTRMS
         tmin, tmax = self.t_Arai[0], self.t_Arai[-1]
         ptrms_dec_Free, ptrms_inc_Free, ptrm_best_fit_vector_Free, ptrm_tau_Free, ptrm_v_Free, ptrm_mass_center_Free, ptrm_PCA_sigma_Free = lib_direct.get_dec_and_inc(CART_pTRMS_orig, self.t_Arai, tmin, tmax, anchored=False)
         ptrms_angle = lib_direct.get_ptrms_angle(ptrm_best_fit_vector_Free, self.B_lab_cart)
@@ -623,7 +618,6 @@ class PintPars(object):
 import new_lj_thellier_gui_spd as tgs
 cwd = os.getcwd()
 main_dir = cwd + '/SPD'
-print 'main_dir', main_dir
 try:
     gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
     specimens = gui.Data.keys()

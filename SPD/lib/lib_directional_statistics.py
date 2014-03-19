@@ -37,7 +37,7 @@ def get_orientation_tensor(X1_p, X2_p, X3_p):
     orient_tensor = [[sum(X1_p * X1_p), sum(X1_p * X2_p), sum(X1_p * X3_p)],
                      [sum(X1_p * X2_p), sum(X2_p * X2_p), sum(X2_p * X3_p)],
                      [sum(X1_p * X3_p), sum(X2_p * X3_p), sum(X3_p * X3_p)]]
-    print 'orientation_tensor (should be same as cov(M)', orient_tensor
+    #print 'orientation_tensor (should be same as cov(M)', orient_tensor
     tau, V = numpy.linalg.eig(orient_tensor) 
     return {'orient_tensor': orient_tensor, 'tau': tau, 'V': V}
 
@@ -72,8 +72,8 @@ def tauV(T):
     t.append(t1)
     t.append(t2)
     t.append(t3)
-    print 'tau', t
-    print 'V', V
+    #print 'tau', t
+    #print 'V', V
     return t,V
 
 def get_PD_direction(X1_prime, X2_prime, X3_prime, PD):
@@ -135,7 +135,7 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     vector = PD # best fit vector / ChRM is cartesian
     dec = PDir[0]
     inc = PDir[1]
-    print 'orient_tensor', T['orient_tensor']
+    #print 'orient_tensor', T['orient_tensor']
     return dec, inc, vector, tau, V, means, PCA_sigma
 
 def get_MAD(tau):
