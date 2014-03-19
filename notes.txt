@@ -558,14 +558,18 @@ cookbook documentation -- links to thellier gui, spd document, etc.
 
 lori to do:
      email dude about curvature statistics
-     figure out how to package stuff correctly as a module
-            problem is that top level directory is not in search path
-            this is ok if you only always work in that directory (see pg. 707)
-            alternatively, you can put it in your pythonpath, do a .pth file, or some such
+     figure out how to package spd in pmag.py
+     also, write_spd failing with Bowles.  why?
+     SPD_project tests are now failing
 
 
-steps within thellier_gui
-      read over get_PI_parameters
-      put spd_project in python path
-      work spd into get_PI_parameters
-      fix SCAT
+finish integration
+Wxpython
+figure out how users choose statistics on thellier-gui
+end goal:
+    options of all spd statistics
+
+
+problem with Rcorr in Bowles_AL2742_4g_0_2.  extremely small/close y point values create a dividing by zero type situation.
+this may be ok.  it returns nan, which is reasonable, I think.  
+matlab returns: 1.472715738988189e-31 / 1.697192565752226e-30 = 0.086773638342886

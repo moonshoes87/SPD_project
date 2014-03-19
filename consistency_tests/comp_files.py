@@ -115,7 +115,7 @@ def compare_all(categories, specs1, specs2):
                     print categories1[num]
                     print v1, "------", v2
                     print "--"
-            elif n1 != n2 and abs(n1 - n2) > .2:  # it's not a string, and not nan, and the values don't match
+            elif round(n1,-1) != round(n2,-1):  # it's not a string, and not nan, and the values don't match
                 add_to_dict(problems, categories1[num], specimen)
                 print "SPECIMEN: ", specimen
                 print categories1[num], categories2[num]

@@ -221,8 +221,12 @@ def get_R_corr2(x_avg, y_avg, x_segment, y_segment): #
     """
     xd = x_segment - x_avg # detrend x_segment
     yd = y_segment - y_avg # detrend y_segment
-    if sum(xd**2) * sum(yd**2) == 0:
-        raise ValueError('attempting to divide by zero')
+    print 'y_segment', y_segment
+    print 'y_avg', y_avg
+    print 'x detrended', xd
+    print 'y detrended', yd
+#    if sum(xd**2) * sum(yd**2) == 0:
+#        raise ValueError('attempting to divide by zero')
     rcorr = sum((xd * yd))**2 / (sum(xd**2) * sum(yd**2))
     return rcorr
 

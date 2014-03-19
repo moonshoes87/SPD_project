@@ -135,8 +135,6 @@ def get_dec_and_inc(zdata, t_Arai, tmin, tmax, anchored=True):
     vector = PD # best fit vector / ChRM is cartesian
     dec = PDir[0]
     inc = PDir[1]
-    #print 'tau', tau
-    #print 'V', V
     print 'orient_tensor', T['orient_tensor']
     return dec, inc, vector, tau, V, means, PCA_sigma
 

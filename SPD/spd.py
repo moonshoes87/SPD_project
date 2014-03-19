@@ -84,6 +84,9 @@ class PintPars(object):
         self.datablock = self.specimen_Data['datablock']
 
         self.x_Arai=self.specimen_Data['x_Arai']
+        print 'name: ', self.s
+        print 'tmin, tmax:', tmin, tmax
+        print 'y_Arai in specimen_Data', self.specimen_Data['y_Arai']
         self.y_Arai=self.specimen_Data['y_Arai']
         self.t_Arai=self.specimen_Data['t_Arai']
 
@@ -376,10 +379,10 @@ class PintPars(object):
         B_lab_dir = [self.B_lab_dir[0], self.B_lab_dir[1], 1.] 
         ind = self.t_Arai.index(self.tmax)
         ptrm_dir = [self.PTRMS[ind][1], self.PTRMS[ind][2], self.PTRMS[ind][3] / self.specimen_Data['NRM']] 
-        #ptrm_cart = lib_direct.dir2cart(alt_ptrm_dir)
-        gamma = lib_direct.get_gamma(B_lab_dir, alt_ptrm_dir)
-        self.pars['ptrm_dir'] = alt_ptrm_dir
-        self.pars['ptrm_cart'] = alt_ptrm_cart
+        ptrm_cart = lib_direct.dir2cart(ptrm_dir)
+        gamma = lib_direct.get_gamma(B_lab_dir, ptrm_dir)
+        self.pars['ptrm_dir'] = ptrm_dir
+        self.pars['ptrm_cart'] = ptrm_cart
         self.pars['gamma'] = gamma
         return gamma
 
